@@ -33,5 +33,5 @@ the same time:
 
 ```shell
 git submodule add https://github.com/MisterTicot/js-cosmic-lib-src cosmic-lib
-git submodule init -u
+git submodule update --init
 ```
