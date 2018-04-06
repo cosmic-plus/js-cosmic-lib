@@ -1,0 +1,145 @@
+/* cosmiclib styling */
+
+.CL_assetCode, .CL_address
+{
+    display: inline-block;
+    margin: 0.1em;
+    border: 1px solid lightgrey;
+    background-color: #F1F1F1;
+    border-radius: 0.2em;
+    padding: 0.1em;
+    color: #4C4C4C;
+}
+
+.CL_assetCode:hover, .CL_address:hover
+{
+    cursor: pointer;
+    background-color: lightgrey;
+}
+
+.CL_asset
+{
+    background-color: ghostwhite;
+    border-left: 0;
+    border-right: 0;
+}
+
+.CL_assetIssuer
+{
+    display: none;
+}
+
+.CL_hash:hover
+{
+    background-color: ghostwhite;
+    cursor: pointer;
+}
+
+.CL_done
+{
+    border: 0.1em solid mediumseagreen;
+    border-radius: 0.2em;
+    background-color: lightgreen;
+    padding: 0.1em;
+    color: black;
+}
+
+.CL_error
+{
+    border: 0.1em solid tomato;
+    border-radius: 0.2em;
+    background-color: salmon;
+    padding: 0.1em;
+    color: black;
+}
+
+/*** Transaction node styling ***/
+
+.CL_transactionNode ul.CL_sideInfo
+{
+    border-left: 0.2em solid lightgrey;
+    padding-left: 0.1em;
+    margin: 0;
+    list-style-type: none;
+    list-style-position: inside;
+    font-size: 0.9em;
+}
+
+
+/*** Status node styling ***/
+
+.CL_statusNode
+{
+    margin: 0.5em;
+    border-radius: 0.2em;
+    padding: 0;
+}
+
+.CL_statusNode.CL_done
+{
+    border: 0.1em solid mediumseagreen;
+    border-radius: 0.2em;
+    background-color: white;
+}
+
+.CL_statusNode.CL_error
+{
+    border: 0.1em solid tomato;
+    border-radius: 0.2em;
+    background-color: white;
+    padding: 0;
+}
+
+.CL_statusNode .CL_status
+{
+    display: block;
+    margin: 0.2em;
+    margin-left: 1em;
+}
+
+.CL_statusNode .CL_events
+{
+    list-style-type: none;
+    list-style-position: inside;
+    font-size: 0.9 em;
+    padding: 0;
+    margin: 0;
+}
+
+.CL_statusNode .CL_events li
+{
+    margin:0 ;
+    border-width: 0;
+    padding-left: 0.2em;
+    border-radius: 0;
+}
+
+.CL_statusNode .CL_events li.CL_done
+{
+    border-left: 0.3em solid mediumseagreen;
+
+}
+
+.CL_statusNode .CL_events li.CL_error
+{
+    border-left: 0.3em solid tomato;
+}
+
+/* Loading animation */
+
+.CL_loadingAnim {
+    display: inline-block;
+    width: 0.7em;
+    height: 0.7em;
+    margin: 0 0.2em;
+    border: 0.2em solid rgba(105,105,105,1);
+    border-top-color: rgba(105,105,105,0.4);
+    border-bottom-color: rgba(105,105,105,0.4);
+    border-radius: 50%;
+    animation: CL_spin 1s linear infinite;
+}
+
+@keyframes CL_spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}

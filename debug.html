@@ -1,0 +1,40 @@
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width">
+  <title>cosmic-lib debug page</title>
+  <link rel="stylesheet" type="text/css" href="cosmic-lib.css">
+</head>
+
+<body id="body" onload="debug.debug()" style="max-width:40em;margin:auto;font-size:1.2em;"/>
+
+  <header>
+    <h1>cosmic-lib debug page</h1>
+  </header>
+  
+  <hr>
+  
+  <nav></nav>
+  
+  <hr>
+
+  <main>
+    <div id='0'>
+      <p>Please choose a tests set.</p>
+    </div>
+  </main>
+  
+  <hr>
+
+  <footer>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/stellar-sdk/0.8.0/stellar-sdk.js"></script>
+  <script>console.log(StellarSdk)</script>
+  <script src="cosmic-lib.js"></script>
+  <script>console.log(cosmic-lib.js)</script>
+  <script src="debug.js"></script>
+  <script>console.log(debug)</script>
+
+</body>
+</html>
