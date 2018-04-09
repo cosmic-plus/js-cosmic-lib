@@ -76,7 +76,8 @@ export async function asset (cosmicLink, asset) {
  */
 export async function assetsArray (cosmicLink, assetsArray) {
   let path = []
-  for (let string of assetsArray) {
+  for (let index in assetsArray) {
+    const string = assetsArray[index]
     const preparedAsset = await asset(cosmicLink, string)
     path.push(preparedAsset)
   }

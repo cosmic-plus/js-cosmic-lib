@@ -51,7 +51,8 @@ export function queryToJson (cosmicLink, query) {
   }
 
   const queries = query.substr(operation.length + 2).split('&')
-  for (let argument of queries) {
+  for (let index in queries) {
+    const argument = queries[index]
     let temp = argument.split('=')
     let field = temp[0], value = temp[1]
 

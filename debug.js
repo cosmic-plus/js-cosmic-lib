@@ -167,7 +167,8 @@ function switchPage (number) {
 async function runSection (number) {
   const section = summary[number]
   section.status = 'run'
-  for (let entry of section.tests) {
+  for (let index in section.tests) {
+    const entry = section.tests[index]
     switch (entry[0]) {
       case 'title':
         appendTitle(section.node, entry[1])
