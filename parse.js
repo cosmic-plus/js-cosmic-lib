@@ -135,8 +135,8 @@ function typeTowardAll (cosmicLink, type, value, ...options) {
   const getter = 'get' + capitalize(type)
   cosmicLink[getter] = delay(() => value)
 
-  if (type !== 'xdr') typeTowardXdr(cosmicLink, type, value, ...options)
-  if (type !== 'uri') typeTowardUri(cosmicLink, type, value, ...options)
+  if (type !== 'xdr') typeTowardXdr(cosmicLink, type, ...options)
+  if (type !== 'uri') typeTowardUri(cosmicLink, type, ...options)
   cosmicLink.getTdesc = async () => {
     const json = await cosmicLink.getJson()
     return convert.jsonToTdesc(cosmicLink, json)
