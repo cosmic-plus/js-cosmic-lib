@@ -71,7 +71,7 @@ import * as status from './status'
 export class CosmicLink {
   constructor (transaction, network, user) {
     setDefaults(this, network, user)
-    parse.dispatch(this, transaction, network, user)
+    parse.dispatch(this, transaction, user)
   }
 
   /// Actions
