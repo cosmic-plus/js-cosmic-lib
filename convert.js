@@ -194,7 +194,7 @@ export async function jsonToTransaction (cosmicLink, json) {
   if (!cosmicLink.server) status.fail(cosmicLink, 'No server defined', 'throw')
 
   try {
-    _selectNetwork(cosmicLink)
+    resolve.selectNetwork(cosmicLink)
     const builder = await _makeTransactionBuilder(cosmicLink, tdesc)
     const operation = await _odescToOperation(cosmicLink, tdesc.operations[0])
     builder.addOperation(operation)
@@ -202,18 +202,6 @@ export async function jsonToTransaction (cosmicLink, json) {
   } catch (error) {
     if (!cosmicLink.errors) status.error(cosmicLink, error)
     if (!cosmicLink.status) status.fail(cosmicLink, "Can't build transaction", 'throw')
-  }
-}
-
-function _selectNetwork (cosmicLink) {
-  switch (cosmicLink.network) {
-    case 'test':
-      StellarSdk.Network.useTestNetwork()
-      break
-    case 'public':
-      StellarSdk.Network.usePublicNetwork()
-      break
-    default: throw new Error('Invalid network: ' + cosmicLink.network)
   }
 }
 

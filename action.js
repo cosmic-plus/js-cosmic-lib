@@ -5,6 +5,7 @@ import {shorter} from './helpers'
 
 import * as status from './status'
 import * as convert from './convert'
+import * as resolve from './resolve'
 
 /**
  * Contains the action methods for CosmicLink.
@@ -58,6 +59,7 @@ async function _signingPromise (cosmicLink, keypair, publicKey) {
   _addLoadingAnim(eventNode)
 
   try {
+    resolve.selectNetwork(cosmicLink)
     transaction.sign(keypair)
   } catch (error) {
     console.log(error)

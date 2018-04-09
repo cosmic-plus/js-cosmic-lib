@@ -11,6 +11,24 @@ import * as status from './status'
  */
 
 /**
+ * Select the network to be used by `StellarSdk` as being `cosmicLink` current
+ * network.
+ *
+ * @param {CL}
+ */
+export function selectNetwork (cosmicLink) {
+  switch (cosmicLink.network) {
+    case 'test':
+      StellarSdk.Network.useTestNetwork()
+      break
+    case 'public':
+      StellarSdk.Network.usePublicNetwork()
+      break
+    default: throw new Error('Invalid network: ' + cosmicLink.network)
+  }
+}
+
+/**
  * Configure for how much time the resolved addresses are kept in cache,
  * in seconds. The default is set to 5 minutes to avoid resolving to an outdated
  * address.
