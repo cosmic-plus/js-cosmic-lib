@@ -226,10 +226,8 @@ async function checkCosmicLink (cosmicLink, options) {
   const xdr2 = await cLinkLoopback.getXdr()
 
   if (xdr !== xdr2) {
-    append(
-      node.create('div', '.debug_error', 'Loopback XDR differ from original'),
-      node.create('textarea', {}, xdr2)
-    )
+    append(node.create('textarea', {}, xdr2))
+    throw new Error("Loopback XDR differ from original")
   } else {
     append(node.create('div', '.debug_done', 'Conversion check: ok'))
   }
