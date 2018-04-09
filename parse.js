@@ -124,10 +124,12 @@ typeParser.xdrUri = function (cosmicLink, xdrUri) {
   }
 
   typeTowardAll(cosmicLink, 'transaction', transaction, keepSource)
+  typeTowardAllUsingDelayed(cosmicLink, 'query', cosmicLink.getQuery)
 }
 
 /**
- * Setup all formats getters for `cosmicLink` using entry point `type` `value`.
+ * Setup all formats getters for `cosmicLink` using entry point `value`, which
+ * is a transaction formatted in `type`.
  *
  * @param {CL}
  * @param {string} type One of 'uri', 'query', 'json', 'tdesc', 'transaction' or
@@ -140,8 +142,22 @@ function typeTowardAll (cosmicLink, type, value, ...options) {
     value = convert.tdescToJson(cosmicLink, value, ...options)
   }
 
+  typeTowardAllUsingDelayed(cosmicLink, type, delay(() => value), ...options)
+}
+
+/**
+ * Setup all formats getters for `cosmicLink` using entry point `delayed`. Here
+ * we name `delayed` a function that returns a promise of the transaction
+ * formatted in `type`.
+ *
+ * @param {CL}
+ * @param {string} type One of 'uri', 'query', 'json', 'tdesc', 'transaction' or
+ *                      'xdr'
+ * @param {function} delayed A function that return a promise for `type`
+ */
+function typeTowardAllUsingDelayed (cosmicLink, type, delayed, ...options) {
   const getter = 'get' + capitalize(type)
-  cosmicLink[getter] = delay(() => value)
+  cosmicLink[getter] = delayed
 
   if (type !== 'xdr') typeTowardXdr(cosmicLink, type, ...options)
   if (type !== 'uri') typeTowardUri(cosmicLink, type, ...options)
@@ -210,8 +226,9 @@ function makeConverter (cosmicLink, from, to, ...options) {
   const getTo = 'get' + capitalize(to)
   const converter = from + 'To' + capitalize(to)
 
+  const getter = cosmicLink[getFrom]
   cosmicLink[getTo] = delay(async () => {
-    const value = await cosmicLink[getFrom]()
+    const value = await getter()
     return convert[converter](cosmicLink, value, ...options)
   })
 }
