@@ -99,7 +99,7 @@ function setDefaults (cosmicLink, network = 'public', user) {
   if (network === 'test') {
     cosmicLink.network = 'test'
     cosmicLink.server = new StellarSdk.Server('https://horizon-testnet.stellar.org')
-  } else if (network === 'public') {
+  } else if (network === 'public' || !network) {
     cosmicLink.server = new StellarSdk.Server('https://horizon.stellar.org')
   } else {
     status.fail(cosmicLink, 'Invalid network: ' + network)
