@@ -318,7 +318,7 @@ export function transactionToJson (cosmicLink, transaction, keepSourceFlag) {
   delete copy.sequence
   delete copy.signatures
 
-  cosmicLink.user = copy.source
+  if (!cosmicLink.user) cosmicLink.user = copy.source
   if (!keepSourceFlag) delete copy.source
 
   if (copy.fee === 100) delete copy.fee
