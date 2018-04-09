@@ -23,9 +23,9 @@ import * as encode from './encode'
  */
 
 export function uriToQuery (cosmicLink, uri) {
+  if (!uri.match(/\?/)) return null
   const query = uri.replace(/^[^?]*/, '')
-  if (query !== uri) return query
-  else return null
+  return query
 }
 
 /**
