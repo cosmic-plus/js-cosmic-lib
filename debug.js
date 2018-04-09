@@ -22,6 +22,8 @@ const invalidKey = 'GBP7EQX652UPJJJRYFAPH64V2MHGUGFJNKJN7RNOPNSFIBH4BW6NSF54'
 const tests = [
   /** * Transaction fields ***/
   ['bigTitle', 'Transaction fields'],
+  ['url', 'https://cosmic.link/?xdr=AAAAAF/yQv7uqPSlMcFA8/uV0w5qGKlqkt/FrntkVAT8DbzZAAAAZAB6PFkAAAOyAAAAAAAAAAAAAAABAAAAAAAAAAkAAAAAAAAAAA=='],
+  ['url', 'https://cosmic.link/?xdr=AAAAAF/yQv7uqPSlMcFA8/uV0w5qGKlqkt/FrntkVAT8DbzZAAAAZAB6PFkAAAOyAAAAAAAAAAAAAAABAAAAAAAAAAkAAAAAAAAAAA==&keepSource'],
   ['url', 'https://cosmic.link/?inflation&source=' + account1],
   ['url', 'https://cosmic.link/?inflation&fee=500'],
   ['url', 'https://cosmic.link/?manageData&name=test&value=true&minTime=2017-12-12&maxTime=2018-12-12',

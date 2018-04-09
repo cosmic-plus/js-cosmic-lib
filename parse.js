@@ -4,6 +4,7 @@ import {capitalize, delay} from './helpers'
 
 import * as convert from './convert'
 import * as format from './format'
+import * as status from './status'
 
 /**
  * Contains the methods to parse transactions in various format and create a
@@ -65,7 +66,9 @@ export function dispatch (cosmicLink, value, ...options) {
 function _guessType (value) {
   let type
   if (typeof value === 'string') {
-    if (value.substr(0, 1) === '?') type = 'query'
+    const query = convert.uriToQuery('', value)
+    if (query.substr(0, 5) === '?xdr=') type = 'xdrUri'
+    else if (value.substr(0, 1) === '?') type = 'query'
     else if (value.substr(0, 1) === '{') type = 'json'
     else if (value.match(/^[a-zA-Z0-9+-=/]+$/)) type = 'xdr'
     else type = 'uri'
@@ -86,10 +89,33 @@ const typeParser = {}
 
 typeParser.uri = function (cosmicLink, uri) {
   const page = uri.replace(/[?][^?]*$/, '')
-  const query = uri.replace(/^[^?]*/, '')
+  const query = convert.uriToQuery(cosmicLink, uri)
 
   cosmicLink._page = encodeURI(page)
   typeTowardAll(cosmicLink, 'query', query)
+}
+
+typeParser.xdrUri = function (cosmicLink, xdrUri) {
+  const query = convert.uriToQuery(cosmicLink, xdrUri)
+  const temp = query.split('&')
+  const xdr = temp[0].substr(4)
+
+  let keepSource = false
+  temp.slice(1).forEach(entry => {
+    switch (entry) {
+      case 'keepSource':
+        keepSource = true
+        break
+      default:
+        status.fail(cosmicLink, 'Invalid query')
+        status.error(cosmicLink, 'Unknow option: ' + entry, 'throw')
+    }
+  })
+
+  typeTowardAll(cosmicLink, 'xdr', xdr, keepSource)
+
+  const page = xdrUri.split('?')[0]
+  if (page) cosmicLink._page = encodeURI(page)
 }
 
 /**
