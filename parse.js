@@ -103,11 +103,11 @@ typeParser.xdrUri = function (cosmicLink, xdrUri) {
   const temp = query.split('&')
   const xdr = temp[0].substr(5)
 
-  let keepSource = false
+  let keepSource = true
   temp.slice(1).forEach(entry => {
     switch (entry) {
-      case 'keepSource':
-        keepSource = true
+      case 'stripSource':
+        keepSource = false
         break
       default:
         status.fail(cosmicLink, 'Invalid query')
