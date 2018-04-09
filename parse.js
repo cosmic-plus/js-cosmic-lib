@@ -96,6 +96,9 @@ typeParser.uri = function (cosmicLink, uri) {
 }
 
 typeParser.xdrUri = function (cosmicLink, xdrUri) {
+  const page = xdrUri.split('?')[0]
+  if (page) cosmicLink._page = encodeURI(page)
+
   const query = convert.uriToQuery(cosmicLink, xdrUri)
   const temp = query.split('&')
   const xdr = temp[0].substr(5)
@@ -112,10 +115,15 @@ typeParser.xdrUri = function (cosmicLink, xdrUri) {
     }
   })
 
-  typeTowardAll(cosmicLink, 'xdr', xdr, keepSource)
+  let transaction
+  try {
+    transaction = new StellarSdk.Transaction(xdr)
+  } catch (error) {
+    console.log(error)
+    status.fail(cosmicLink, 'Invalid XDR', 'throw')
+  }
 
-  const page = xdrUri.split('?')[0]
-  if (page) cosmicLink._page = encodeURI(page)
+  typeTowardAll(cosmicLink, 'transaction', transaction, keepSource)
 }
 
 /**
