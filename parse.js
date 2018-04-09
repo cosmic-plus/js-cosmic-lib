@@ -67,7 +67,7 @@ function _guessType (value) {
   let type
   if (typeof value === 'string') {
     const query = convert.uriToQuery('', value)
-    if (query.substr(0, 5) === '?xdr=') type = 'xdrUri'
+    if (query && query.substr(0, 5) === '?xdr=') type = 'xdrUri'
     else if (value.substr(0, 1) === '?') type = 'query'
     else if (value.substr(0, 1) === '{') type = 'json'
     else if (value.match(/^[a-zA-Z0-9+-=/]+$/)) type = 'xdr'
@@ -98,7 +98,7 @@ typeParser.uri = function (cosmicLink, uri) {
 typeParser.xdrUri = function (cosmicLink, xdrUri) {
   const query = convert.uriToQuery(cosmicLink, xdrUri)
   const temp = query.split('&')
-  const xdr = temp[0].substr(4)
+  const xdr = temp[0].substr(5)
 
   let keepSource = false
   temp.slice(1).forEach(entry => {
