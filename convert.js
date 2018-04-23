@@ -254,7 +254,7 @@ async function _makeTransactionBuilder (cosmicLink, tdesc) {
     const account = await resolve.address(cosmicLink, operation.destination)
     if (account.memo) {
       const memoType = account.memo_type
-      const memoValue = account.memo_value
+      const memoValue = account.memo
       if (tdesc.memo && (tdesc.memo.type !== memoType || tdesc.memo.value !== memoValue)) {
         status.error(cosmicLink, 'Memo conflict', 'throw')
       } else {
