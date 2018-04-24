@@ -26,6 +26,25 @@ export function setPage (cosmicLink, page) {
 }
 
 /**
+ * Set `cosmicLink` `network`.
+ *
+ * @param {CL}
+ * @param {string} network Either `public` or `test`
+ */
+export function network (cosmicLink, network) {
+  if (network === cosmicLink.network) return
+  if (network === 'test') {
+    cosmicLink._network = 'test'
+    cosmicLink.server = new StellarSdk.Server('https://horizon-testnet.stellar.org')
+  } else if (network === 'public' || !network) {
+    cosmicLink._network = 'public'
+    cosmicLink.server = new StellarSdk.Server('https://horizon.stellar.org')
+  } else {
+    status.fail(cosmicLink, 'Invalid network: ' + network)
+  }
+}
+
+/**
  * Setup the getters for each format form `cosmicLink`, using `value` and
  * `...options` as input. The six getters are:
  * * CosmicLink.getUri()

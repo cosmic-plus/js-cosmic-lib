@@ -85,6 +85,9 @@ export class CosmicLink {
   set page (uri) {
     parse.setPage(this, uri)
   }
+
+  get network () { return this._network }
+  set network (network) { parse.network(this, network) }
 }
 
 function setDefaults (cosmicLink, network = 'public', user) {
@@ -95,16 +98,7 @@ function setDefaults (cosmicLink, network = 'public', user) {
   makeHtmlNodes(cosmicLink)
 
   cosmicLink.user = user
-
-  if (network === 'test') {
-    cosmicLink.network = 'test'
-    cosmicLink.server = new StellarSdk.Server('https://horizon-testnet.stellar.org')
-  } else if (network === 'public' || !network) {
-    cosmicLink.network = 'public'
-    cosmicLink.server = new StellarSdk.Server('https://horizon.stellar.org')
-  } else {
-    status.fail(cosmicLink, 'Invalid network: ' + network)
-  }
+  cosmicLink.network = network
 }
 
 function makeHtmlNodes (cosmicLink) {
