@@ -1,11 +1,14 @@
 'use strict'
 
+import {shorter} from './helpers'
+
 import * as specs from './specs'
 import * as status from './status'
 import * as decode from './decode'
 import * as resolve from './resolve'
 import * as prepare from './prepare'
 import * as encode from './encode'
+
 /**
  * Contains the methods to convert transactions between various formats.
  *
@@ -245,8 +248,7 @@ async function _makeTransactionBuilder (cosmicLink, tdesc) {
     if (tdesc.maxTime) opts.timebounds.maxTime = tdesc.maxTime
   }
 
-  const address = await prepare.address(cosmicLink, tdesc.source)
-  const loadedAccount = await cosmicLink.server.loadAccount(address)
+  const loadedAccount = await _loadAccount(cosmicLink, tdesc.source)
   const builder = new StellarSdk.TransactionBuilder(loadedAccount, opts)
 
   /// Check if memo is needed for destination account.
@@ -265,6 +267,16 @@ async function _makeTransactionBuilder (cosmicLink, tdesc) {
   }
 
   return builder
+}
+
+async function _loadAccount (cosmicLink, address) {
+  const publicKey = await prepare.address(cosmicLink, address)
+  try {
+    return await cosmicLink.server.loadAccount(publicKey)
+  } catch (error) {
+    console.log(error)
+    status.error(cosmicLink, "Can't find account source on current network: " + shorter(publicKey), 'throw')
+  }
 }
 
 /**
