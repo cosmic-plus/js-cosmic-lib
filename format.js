@@ -169,6 +169,8 @@ function _odescToMeaning (odesc) {
         else msg += 'Set signer: {signer}{newline}'
       }
       if (odesc.homeDomain) msg += 'Set home domain: {homeDomain}{newline}'
+      if (odesc.homeDomain === '') msg += 'Unset home domain'
+      if (!msg) msg = 'Do nothing'
       return msg
     default:
       throw new Error('Unknow operation: ' + odesc.type)

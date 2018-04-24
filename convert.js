@@ -58,7 +58,7 @@ export function queryToJson (cosmicLink, query) {
 
     try {
       if (!field) continue
-      if (!value) {
+      if (!value && field !== 'homeDomain') {
         value = '(empty)'
         status.error(cosmicLink, 'No value for ' + field, 'throw')
       }
