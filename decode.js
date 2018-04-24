@@ -153,6 +153,28 @@ export function memo (cosmicLink, memo) {
 }
 
 /**
+ * Setup `cosmicLink.network` according to `network`. Throw an error if `network`
+ * is invalid. Set error status if `network` is conflicting to `cosmicLink.network`.
+ *
+ * @param {CL}
+ * @param {string} network
+ * @return network
+ */
+export function network (cosmicLink, network) {
+  let previousNetwork = cosmicLink.network
+  cosmicLink.network = network
+
+  /// Check for network mismatch only after network validity check for
+  /// better error reporting.
+  if (previousNetwork && previousNetwork !== network) {
+    status.fail(cosmicLink, 'Network mismatch')
+    status.error(cosmicLink, 'Current account is not on network: ' + network)
+  }
+
+  return network
+}
+
+/**
  * Convert a `price` string to an equivalent object in cosmic link
  * representation, which is a string representing a number or a
  * { n: nominator, d: denominator } couple.

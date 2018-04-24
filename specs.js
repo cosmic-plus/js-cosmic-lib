@@ -9,6 +9,7 @@
  * Transaction optional fields.
  */
 export const transactionOptionalFields = [
+  'network',
   'source', 'fee', 'minTime', 'maxTime', 'memo'
 ]
 
@@ -72,6 +73,7 @@ export const fieldType = {
   medThreshold: 'threshold',
   memo: 'memo',
   minTime: 'date',
+  network: 'network',
   offerId: 'string',
   price: 'price',
   name: 'string',

@@ -23,7 +23,8 @@ const tests = [
   /** * Transaction fields ***/
   ['bigTitle', 'Transaction fields'],
   ['url', 'https://cosmic.link/?xdr=AAAAAF/yQv7uqPSlMcFA8/uV0w5qGKlqkt/FrntkVAT8DbzZAAAAZAB6PFkAAAOyAAAAAAAAAAAAAAABAAAAAAAAAAkAAAAAAAAAAA=='],
-  ['url', 'https://cosmic.link/?xdr=AAAAAF/yQv7uqPSlMcFA8/uV0w5qGKlqkt/FrntkVAT8DbzZAAAAZAB6PFkAAAOyAAAAAAAAAAAAAAABAAAAAAAAAAkAAAAAAAAAAA==&stripSource'],
+  ['url', 'https://cosmic.link/?xdr=AAAAAF/yQv7uqPSlMcFA8/uV0w5qGKlqkt/FrntkVAT8DbzZAAAAZAB6PFkAAAOyAAAAAAAAAAAAAAABAAAAAAAAAAkAAAAAAAAAAA==&stripSource&network=test'],
+  ['url', 'https://cosmic.link/?inflation&network=test'],
   ['url', 'https://cosmic.link/?inflation&source=' + account1],
   ['url', 'https://cosmic.link/?inflation&fee=500'],
   ['url', 'https://cosmic.link/?manageData&name=test&value=true&minTime=2017-12-12&maxTime=2018-12-12',
@@ -188,24 +189,20 @@ function appendTitle (parent, title) {
 async function appendCosmicLink (parent, url, options = {}) {
   const cosmicLink = new CosmicLink(url, 'test', user)
 
-  try {
-    node.create('pre', {}, await cosmicLink.getUri())
-  } catch (e) { console.log(e) }
-
   node.append(
     parent,
-    node.create('pre', {}, await cosmicLink.getUri()),
+    node.create('pre', {}, url),
     cosmicLink.transactionNode,
     node.create('hr')
   )
 
-  cosmicLink.transactionNode.style.display = 'none'
+  //  cosmicLink.transactionNode.style.display = 'none'
   try {
     await checkCosmicLink(cosmicLink, options)
     await tryCosmicLink(cosmicLink, options)
   } catch (error) {
     console.log(error)
-    cosmicLink.transactionNode.style.display = 'block'
+    //  cosmicLink.transactionNode.style.display = 'block'
     node.append(cosmicLink.transactionNode,
       node.create('div', '.debug_error', error)
     )
@@ -228,7 +225,7 @@ async function checkCosmicLink (cosmicLink, options) {
 
   if (xdr !== xdr2) {
     append(node.create('textarea', {}, xdr2))
-    throw new Error("Loopback XDR differ from original")
+    throw new Error('Loopback XDR differ from original')
   } else {
     append(node.create('div', '.debug_done', 'Conversion check: ok'))
   }

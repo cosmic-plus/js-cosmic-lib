@@ -26,21 +26,20 @@ export function setPage (cosmicLink, page) {
 }
 
 /**
- * Set `cosmicLink` `network`.
+ * Set `cosmicLink` `network`. Throw an error if `network` is not valid.
  *
  * @param {CL}
  * @param {string} network Either `public` or `test`
  */
 export function network (cosmicLink, network) {
-  if (network === cosmicLink.network) return
+  cosmicLink._network = network
   if (network === 'test') {
-    cosmicLink._network = 'test'
     cosmicLink.server = new StellarSdk.Server('https://horizon-testnet.stellar.org')
-  } else if (network === 'public' || !network) {
-    cosmicLink._network = 'public'
+  } else if (network === 'public') {
     cosmicLink.server = new StellarSdk.Server('https://horizon.stellar.org')
   } else {
-    status.fail(cosmicLink, 'Invalid network: ' + network)
+    cosmicLink.server = null
+    status.error(cosmicLink, 'Invalid network: ' + network, 'throw')
   }
 }
 
@@ -60,14 +59,14 @@ export function network (cosmicLink, network) {
  *
  * @param {CL}
  * @param {string|Object} value A transaction in on of the supported format
- * @param {*} ...options The options as specified for CosmicLink constructor
+ * @param {Object} options The options as specified for CosmicLink constructor
  * @return {void}
  */
-export function dispatch (cosmicLink, value, ...options) {
+export function dispatch (cosmicLink, value, options) {
   const type = _guessType(value)
   const parser = typeParser[type]
-  if (parser) parser(cosmicLink, value, ...options)
-  else typeTowardAll(cosmicLink, type, value, ...options)
+  if (parser) parser(cosmicLink, value, options)
+  else typeTowardAll(cosmicLink, type, value, options)
   if (cosmicLink.transactionNode) {
     cosmicLink.getTdesc().then(tdesc => format.tdesc(cosmicLink, tdesc))
   }
@@ -122,11 +121,18 @@ typeParser.xdrUri = function (cosmicLink, xdrUri) {
   const temp = query.split('&')
   const xdr = temp[0].substr(5)
 
-  let keepSource = true
+  let options = {}
   temp.slice(1).forEach(entry => {
-    switch (entry) {
+    let field = entry.replace(/=.*$/, '')
+    let value = entry.substr(field.length + 1)
+
+    switch (field) {
       case 'stripSource':
-        keepSource = false
+        options.stripSource = true
+        break
+      case 'network':
+        if (!cosmicLink._network) cosmicLink._network = value
+        options.network = value
         break
       default:
         status.fail(cosmicLink, 'Invalid query')
@@ -142,7 +148,7 @@ typeParser.xdrUri = function (cosmicLink, xdrUri) {
     status.fail(cosmicLink, 'Invalid XDR', 'throw')
   }
 
-  typeTowardAll(cosmicLink, 'transaction', transaction, keepSource)
+  typeTowardAll(cosmicLink, 'transaction', transaction, options)
   typeTowardAllUsingDelayed(cosmicLink, 'query', cosmicLink.getQuery)
 }
 

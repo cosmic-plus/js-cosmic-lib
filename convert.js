@@ -71,8 +71,9 @@ export function queryToJson (cosmicLink, query) {
       /// This line catch program error for debugging purpose.
       if (!cosmicLink.errors) status.error(cosmicLink, error)
       isValid = false
-      if (_isTransactionField(field)) tdesc[field] = 'error'
-      else odesc[field] = { error: error, value: value }
+      const errorObject = { error: error, value: value }
+      if (_isTransactionField(field)) tdesc[field] = errorObject
+      else odesc[field] = errorObject
     }
   }
 
@@ -293,16 +294,20 @@ export function xdrToTransaction (cosmicLink, xdr) {
 /**
  * Return the `transaction descriptor` JSON equivalent to Stellar `Transaction`
  * object.
- * Ignore 'keepSourceFlag' for a transaction that is account-agnostic, like an
- * exchange operation for example. Set 'keepSourceFlag' for a transaction that
+ *
+ * Set options.stripSource to true for a transaction that is account-agnostic,
+ * like an exchange operation for example. Ignore it for a transaction that
  * is required to be performed from the source account defined in 'XDR'
  * (example: subscription monthly fee).
  *
+ * You may set options.network to the desired network.
+ *
  * @param {CL}
  * @param {Transaction} transaction
+ * @param {Object} options
  * @return {JSON} transaction descriptor JSON
  */
-export function transactionToJson (cosmicLink, transaction, keepSourceFlag) {
+export function transactionToJson (cosmicLink, transaction, options = {}) {
   const copy = JSON.parse(JSON.stringify(transaction))
 
   if (copy.operations.length > 1) {
@@ -319,7 +324,7 @@ export function transactionToJson (cosmicLink, transaction, keepSourceFlag) {
   delete copy.signatures
 
   if (!cosmicLink.user) cosmicLink.user = copy.source
-  if (!keepSourceFlag) delete copy.source
+  if (options.stripSource) delete copy.source
 
   if (copy.fee === 100) delete copy.fee
   if (copy._memo._switch.name !== 'memoNone') {
@@ -371,6 +376,8 @@ export function transactionToJson (cosmicLink, transaction, keepSourceFlag) {
     }
   }
 
+  if (options.network !== undefined) copy.network = options.network
+
   return JSON.stringify(copy, null, 2)
 }
 
@@ -398,7 +405,7 @@ export function jsonToQuery (cosmicLink, json) {
   let query = '?' + operation
 
   specs.transactionOptionalFields.forEach(field => {
-    if (tdesc[field]) {
+    if (tdesc[field] !== undefined) {
       query = query + encode.field(cosmicLink, field, tdesc[field])
     }
   })

@@ -57,7 +57,9 @@ const _fieldDesc = {
   fee: 'Fees',
   minTime: 'Valid only after',
   maxTime: 'Valid only before',
-  memo: 'Memo'
+  memo: 'Memo',
+
+  network: 'Network'
 }
 
 /**

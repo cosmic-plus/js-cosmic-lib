@@ -31,28 +31,34 @@ import * as status from './status'
  *     by the produced cosmic link.
  */
 // --- Constructor ---
-// new CosmicLink("uri", "[network]", "[userAddress]")
-// new CosmicLink("xdr", "[network]", "[keepUser]")
+// new CosmicLink(uri, "[userNetwork]", "[userAddress]")
+// new CosmicLink(query, "[userNetwork]", "[userAddress]")
+// new CosmicLink(transaction, "[userNetwork]", "[userAddress]", {options...})
+// new CosmicLink(xdr, "[userNetwork]", "[userAddress]", {options...})
 //
-// --- Formats (get) ---        <<< Return promises >>>
-// CosmicLink.getUri()          < The URI string
-// CosmicLink.getQuery()        < The query string
-// CosmicLink.getJson()         < A stringified JSON of the object
-// CosmicLink.getObject()       < A promised simplified object representation of transaction
-// CosmicLink.getTransaction()  < A promise of the transaction
-// CosmicLink.getXdr()          < A promise of the transaction's XDR
+// --- Options for transaction & xdr ---
+// stripSource = true   < Don't keep source account when converting to URI
+// network = ...        < Specify a network for this transaction
+//
+// --- Formats (get) ---
+// CosmicLink.getUri()          < Return a promise of the URI string
+// CosmicLink.getQuery()        < Return a promise of the query string
+// CosmicLink.getJson()         < Return stringified JSON of the object
+// CosmicLink.getTdesc()        < Return a promise of the transaction descriptor
+// CosmicLink.getTransaction()  < Return a promise of the transaction
+// CosmicLink.getXdr()          < Return a promise of the transaction's XDR
 //
 // --- Formats (parse) ---    <<< Update everything on the go >>>
 // *CosmicLink.parse          < Same use than constructor. Update the link.
 //
 // --- Datas ---           <<< Update everything on the go >>>
-// CosmicLink.user         < User publicKey
+// CosmicLink.user         < User address
 // *CosmicLink.aliases     < Local aliases for public keys
-// CosmicLink.network      < Test/Public/Private network
-// CosmicLink.server       < Address of the horizon server
+// CosmicLink.network      < Test/Public network
+// CosmicLink.server       < The horizon server to use
 // CosmicLink.status       < Status of the CosmicLink (valid or specific error)
 // CosmicLink.errors       < An array of errors (or undefined if no error)
-// CosmicLink.page         < Optionally the Uri that handle the querry
+// CosmicLink.page         < The base URI, without the query
 //
 // --- Actions ---
 // *CosmicLink.resolve()       < Resolve addresses and fetch sequence for offline signing
@@ -69,9 +75,19 @@ import * as status from './status'
 // CosmicLink.statusNode       < HTML box for the signing & sending status
 
 export class CosmicLink {
-  constructor (transaction, network, user) {
-    setDefaults(this, network, user)
-    parse.dispatch(this, transaction, user)
+  constructor (transaction, network, user, options) {
+    this.user = user
+    if (network) this.network = network
+
+    this._page = 'https://cosmic.link/'
+    this.onClick = event.defaultHandler
+
+    makeHtmlNodes(this)
+
+    parse.dispatch(this, transaction, options)
+
+    /// Fallback to public only when network is not set from the URI.
+    if (!this.network) this.network = 'public'
   }
 
   /// Actions
@@ -88,17 +104,6 @@ export class CosmicLink {
 
   get network () { return this._network }
   set network (network) { parse.network(this, network) }
-}
-
-function setDefaults (cosmicLink, network = 'public', user) {
-  cosmicLink.onClick = event.defaultHandler
-
-  cosmicLink.page = 'https://cosmic.link/'
-
-  makeHtmlNodes(cosmicLink)
-
-  cosmicLink.user = user
-  cosmicLink.network = network
 }
 
 function makeHtmlNodes (cosmicLink) {
