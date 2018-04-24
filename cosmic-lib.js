@@ -4,7 +4,6 @@ import * as action from './action'
 import * as node from './node'
 import * as event from './event'
 import * as parse from './parse'
-import * as status from './status'
 
 /**
  * A `CosmicLink` object represents a Stellar transaction. It can be created
@@ -22,13 +21,11 @@ import * as status from './status'
  *
  * @constructor
  * @param {*} transaction
- * @param {test|public} [network] The Stellar network to use, will be public by
- *     default.
- * @param {string} [userAddress] In the context of cosmic link parsing, the
- *     fallback address to use in case there's no source specified for the
- *     transaction. In the context of XDR/Transaction object parsing, set this
- *     to any true value if you want the transaction source to be "enforced"
- *     by the produced cosmic link.
+ * @param {test|public} [userNetwork] The Stellar network to use, will be public
+ *     by default.
+ * @param {string} [userAddress] This is the fallback source address when none
+ *     is specified from the transaction.
+ * @param {Object} options Additional options
  */
 // --- Constructor ---
 // new CosmicLink(uri, "[userNetwork]", "[userAddress]")
