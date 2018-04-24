@@ -110,7 +110,15 @@ typeParser.uri = function (cosmicLink, uri) {
   const query = convert.uriToQuery(cosmicLink, uri)
 
   cosmicLink._page = encodeURI(page)
-  typeTowardAll(cosmicLink, 'query', query)
+  typeParser.query(cosmicLink, query)
+}
+
+/// Immediate JSON conversion for accurate cosmicLink.network value when network
+/// field is set.
+typeParser.query = function (cosmicLink, query) {
+  typeTowardAll(cosmicLink, 'json', convert.queryToJson(cosmicLink, query))
+  cosmicLink.getQuery = delay(() => query)
+  makeConverter(cosmicLink, 'query', 'uri')
 }
 
 typeParser.xdrUri = function (cosmicLink, xdrUri) {
