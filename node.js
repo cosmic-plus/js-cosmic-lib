@@ -92,7 +92,8 @@ export function create (name, attributes, ...childs) {
  * */
 export function destroy (element) {
   try {
-    element.parentNode.removeChild(element)
+    element.innerHTML = ''
+    element.remove()
   } catch (e) { console.log(e) }
 }
 
@@ -115,6 +116,23 @@ export function grab (pattern, parent = document) {
     default:
       return parent.getElementsByTagName(pattern)[0]
   }
+}
+
+/**
+ * Set the `style.display` property of `...elements` to `block`.
+ *
+ * @param {...HTMLElement} elements
+ */
+export function show (...elements) {
+  elements.forEach(element => element.style.display = 'block')
+}
+
+/** Set the `style.display` property of `...elements` to `none`.
+ *
+ * @param {...HTMLElement} elements
+ */
+export function hide (...elements) {
+  elements.forEach(element => element.style.display = 'none')
 }
 
 /**
