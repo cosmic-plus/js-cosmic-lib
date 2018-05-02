@@ -68,7 +68,9 @@ export function dispatch (cosmicLink, value, options) {
   if (parser) parser(cosmicLink, value, options)
   else typeTowardAll(cosmicLink, type, value, options)
   if (cosmicLink.transactionNode) {
-    cosmicLink.getTdesc().then(tdesc => format.tdesc(cosmicLink, tdesc))
+    cosmicLink.getTdesc()
+      .then(tdesc => format.tdesc(cosmicLink, tdesc))
+      .catch(console.log)
   }
 }
 
@@ -116,9 +118,14 @@ typeParser.uri = function (cosmicLink, uri) {
 /// Immediate JSON conversion for accurate cosmicLink.network value when network
 /// field is set.
 typeParser.query = function (cosmicLink, query) {
-  typeTowardAll(cosmicLink, 'json', convert.queryToJson(cosmicLink, query))
-  cosmicLink.getQuery = delay(() => query)
-  makeConverter(cosmicLink, 'query', 'uri')
+  try {
+    const json = convert.queryToJson(null, query)
+    typeTowardAll(cosmicLink, 'json', json)
+    cosmicLink.getQuery = delay(() => query)
+    makeConverter(cosmicLink, 'query', 'uri')
+  } catch (error) {
+    typeTowardAll(cosmicLink, 'query', query)
+  }
 }
 
 typeParser.xdrUri = function (cosmicLink, xdrUri) {
