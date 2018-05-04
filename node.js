@@ -70,7 +70,7 @@ export function create (name, attributes, ...childs) {
 
   if (typeof attributes === 'string') {
     switch (attributes.substr(0, 1)) {
-      case '#': element.id = attributes.subtstr(1); break
+      case '#': element.id = attributes.substr(1); break
       case '.': element.className = attributes.substr(1); break
       default: throw new Error('Unhandled attribute')
     }
