@@ -151,7 +151,7 @@ typeParser.xdrUri = function (cosmicLink, xdrUri) {
         break
       default:
         status.fail(cosmicLink, 'Invalid query')
-        status.error(cosmicLink, 'Unknow option: ' + entry, 'throw')
+        status.error(cosmicLink, 'Unknow option: ' + entry)
     }
   })
 
@@ -160,11 +160,16 @@ typeParser.xdrUri = function (cosmicLink, xdrUri) {
     transaction = new StellarSdk.Transaction(xdr)
   } catch (error) {
     console.log(error)
-    status.fail(cosmicLink, 'Invalid XDR', 'throw')
+    status.fail(cosmicLink, 'Invalid XDR')
   }
 
-  typeTowardAll(cosmicLink, 'transaction', transaction, options)
-  typeTowardAllUsingDelayed(cosmicLink, 'query', cosmicLink.getQuery)
+  if (!cosmicLink.status) {
+    typeTowardAll(cosmicLink, 'transaction', transaction, options)
+    typeTowardAllUsingDelayed(cosmicLink, 'query', cosmicLink.getQuery)
+  } else {
+    typeTowardAllUsingDelayed(cosmicLink, 'transaction',
+      delay(() => { throw new Error(cosmicLink.status) }))
+  }
 }
 
 /**
