@@ -4,6 +4,7 @@ import * as action from './action'
 import * as node from './node'
 import * as event from './event'
 import * as parse from './parse'
+import './cosmic-lib.css'
 
 /**
  * A `CosmicLink` object represents a Stellar transaction. It can be created
