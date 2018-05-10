@@ -54,7 +54,7 @@ export function capitalize (string) {
  * @return {string}
  */
 export function shorter (string) {
-  if (string.length > 30) {
+  if (string.length > 50) {
     return string.substr(0, 5) + '...' + string.substr(-5)
   } else {
     return string
