@@ -161,7 +161,7 @@ function _odescToMeaning (odesc) {
           msg += 'Set master key weight at: {masterWeight}{newline}'
         }
       }
-      ['lowThreshold', 'medThreshold', 'highTreshold'].forEach(field => {
+      ['lowThreshold', 'medThreshold', 'highThreshold'].forEach(field => {
         if (odesc[field]) msg += 'Set ' + field + ' at: {' + field + '}{newline}'
       })
       if (odesc.signer) {
@@ -298,7 +298,7 @@ _format.flags = function (cosmicLink, flags) {
     string = 'revocable' + string
     flags = flags - 2
   }
-  if (flags === 1) {
+  if (+flags === 1) {
     if (string) string = ', ' + string
     string = 'required' + string
   }
