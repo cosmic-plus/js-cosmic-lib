@@ -1,6 +1,7 @@
 /* cosmiclib styling */
 
-.CL_assetCode, .CL_address
+.CL_assetCode,
+.CL_address
 {
     display: inline-block;
     margin: 0.1em;
@@ -11,7 +12,8 @@
     color: #4C4C4C;
 }
 
-.CL_assetCode:hover, .CL_address:hover
+.CL_assetCode:hover,
+.CL_address:hover
 {
     cursor: pointer;
     background-color: lightgrey;
@@ -35,7 +37,8 @@
     cursor: pointer;
 }
 
-.CL_done
+.CL_done,
+.CL_signed
 {
     border: 0.1em solid mediumseagreen;
     border-radius: 0.2em;
@@ -68,7 +71,8 @@
 
 /*** Status node styling ***/
 
-.CL_statusNode
+.CL_statusNode,
+.CL_signers
 {
     margin: 0.5em;
     border-radius: 0.2em;
@@ -97,7 +101,8 @@
     margin-left: 1em;
 }
 
-.CL_statusNode .CL_events
+.CL_statusNode .CL_events,
+.CL_signers ul
 {
     list-style-type: none;
     list-style-position: inside;
@@ -106,7 +111,8 @@
     margin: 0;
 }
 
-.CL_statusNode .CL_events li
+.CL_statusNode .CL_events li,
+.CL_signers li
 {
     margin:0 ;
     border-width: 0;
@@ -114,7 +120,8 @@
     border-radius: 0;
 }
 
-.CL_statusNode .CL_events li.CL_done
+.CL_statusNode .CL_events li.CL_done,
+.CL_signers li.CL_signed
 {
     border-left: 0.3em solid mediumseagreen;
 

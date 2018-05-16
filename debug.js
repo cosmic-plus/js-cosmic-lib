@@ -1,4 +1,4 @@
-'use strict'
+'use_strict'
 
 import * as node from './node.js'
 const CosmicLink = cosmicLib.CosmicLink
@@ -9,6 +9,7 @@ const account1 = 'GBWYUHFOHJECKDLFNCPGPVU6XRDJIBT5BYF6VXZEDHWVQRCR4HZVCGPU'
 const account2 = 'GBI6LRKMFJ5CXNIFYU3VQLQ7DUP5M4TQ6ONOYNV6SNUITIH4KFOMTTV4'
 const account3 = 'GB6NJPLQ6ZQ6IQQTLIUIXEKPLWCB32HDVWWVE2KSU7LQKGY4JL4AITOV'
 const account4 = 'GBQTHFN6MNU42FSWFOSXBTZI4YYHXC6WLC6RNQQUDNWYEAA4DVJ5QQ3A'
+const accountMultiSig = 'GCAB6VK735PMBZGBO556VBOFMJ5LTALYHRTEPLTJW2IRDQF6SXLQVZJN'
 const asset1 = 'ETH:GBDEVU63Y6NTHJQQZIKVTC23NWLQVP3WJ2RI2OTSJTNYOIGICST6DUXR'
 const asset2 = 'CNY:admin*ripplefox.com'
 const asset3 = 'EURT:GAP5LETOV6YIE62YAM56STDANPRDO7ZFDBGSNHJQIYGGKSMOZAHOOS2S'
@@ -25,7 +26,7 @@ const tests = [
   ['url', 'https://cosmic.link/?xdr=AAAAAF/yQv7uqPSlMcFA8/uV0w5qGKlqkt/FrntkVAT8DbzZAAAAZAB6PFkAAAOyAAAAAAAAAAAAAAABAAAAAAAAAAkAAAAAAAAAAA=='],
   ['url', 'https://cosmic.link/?xdr=AAAAAF/yQv7uqPSlMcFA8/uV0w5qGKlqkt/FrntkVAT8DbzZAAAAZAB6PFkAAAOyAAAAAAAAAAAAAAABAAAAAAAAAAkAAAAAAAAAAA==&stripSource&network=test'],
   ['url', 'https://cosmic.link/?inflation&network=test'],
-  ['url', 'https://cosmic.link/?inflation&source=' + account1],
+  ['url', 'https://cosmic.link/?inflation&source=' + accountMultiSig],
   ['url', 'https://cosmic.link/?inflation&fee=500'],
   ['url', 'https://cosmic.link/?manageData&name=test&value=true&minTime=2017-12-12&maxTime=2018-12-12',
     {send: 1}],

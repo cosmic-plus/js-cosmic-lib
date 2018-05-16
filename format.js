@@ -42,6 +42,7 @@ export function tdesc (cosmicLink, tdesc) {
   try {
     const opNode = _formatOdesc(cosmicLink, tdesc.operations[0])
     node.append(trNode, opNode)
+    formatSigners(cosmicLink)
   } catch (error) {
     console.log(error)
     status.error(cosmicLink, 'Unhandled formatting error')
@@ -198,6 +199,36 @@ export function field (cosmicLink, field, value) {
   return fieldNode
 }
 
+/**
+ * Returns an HTML node that displays signers for the transaction represented by
+ * `cosmicLink`.
+ *
+ * @param {CL}
+ * @return {HTMLElement} - A `div` element containing the signers
+ */
+async function formatSigners (cosmicLink) {
+  const signersNode = node.create('div', '.CL_signers')
+  node.append(cosmicLink.transactionNode, signersNode)
+
+  const signers = await cosmicLink.getSigners()
+  if (signers.length === 1) return
+
+  const listNode = node.create('ul')
+  node.append(signersNode, node.create('h3', null, 'Signers'), listNode)
+
+  signers.forEach(entry => {
+    const signerNode = _format.signer(cosmicLink, entry)
+    const animation = node.create('span', '.CL_loadingAnim')
+    const lineNode = node.create('li', null, signerNode, animation)
+    entry.node = lineNode
+    entry.getSignature().then(signature => {
+      signature && node.appendClass(lineNode, 'CL_signed')
+      node.destroy(animation)
+    })
+    node.append(listNode, lineNode)
+  })
+}
+
 /******************************************************************************/
 
 let _format = {}
@@ -341,12 +372,12 @@ _format.signer = function (cosmicLink, signer) {
       break
     case 'tx':
       node.append(signerNode,
-        'Transaction whose hash is ',
+        'Transaction ',
         _makeHashNode(signer.value)
       )
   }
   if (signer.weight !== '0') {
-    node.append(signerNode, ' with a weight of ' + signer.weight)
+    node.append(signerNode, ' (weight: ' + signer.weight + ')')
   }
   return signerNode
 }

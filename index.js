@@ -4,6 +4,8 @@ import * as action from './action'
 import * as node from './node'
 import * as event from './event'
 import * as parse from './parse'
+import * as resolve from './resolve'
+import {delay} from './helpers'
 import './cosmic-lib.css'
 
 /**
@@ -54,9 +56,16 @@ import './cosmic-lib.css'
 // *CosmicLink.aliases     < Local aliases for public keys
 // CosmicLink.network      < Test/Public network
 // CosmicLink.server       < The horizon server to use
+// CosmicLink.getSource    < Transaction source
+// CosmicLink.getSourceAccount  < Transaction source account object
+// CosmicLink.getSigners   < Array of transaction legit signers
 // CosmicLink.status       < Status of the CosmicLink (valid or specific error)
 // CosmicLink.errors       < An array of errors (or undefined if no error)
 // CosmicLink.page         < The base URI, without the query
+//
+// --- Tests ---
+// CosmicLink.hasSigner(publicKey)   < Test if `publicKey` is a signer for CosmicLink
+// CosmicLink.hasSigned(publicKey)   < Test if `publicKey` signature is available
 //
 // --- Actions ---
 // *CosmicLink.resolve()       < Resolve addresses and fetch sequence for offline signing
@@ -70,7 +79,8 @@ import './cosmic-lib.css'
 //
 // --- HTML Nodes ---
 // CosmicLink.transactionNode  < HTML description of the transaction
-// CosmicLink.statusNode       < HTML box for the signing & sending status
+// CosmicLink.statusNode       < HTML element for the transaction status & errors
+// CosmicLink.signersNode      < HTML element for the signers list
 
 export class CosmicLink {
   constructor (transaction, network, user, options) {
@@ -86,9 +96,29 @@ export class CosmicLink {
 
     /// Fallback to public only when network is not set from the URI.
     if (!this.network) this.network = 'public'
+
+    this.getSourceAccount = delay(() => resolve.getSourceAccount(this))
+    this.getSigners = delay(() => resolve.getSigners(this))
+  }
+
+  async getSource () {
+    const tdesc = await this.getTdesc()
+    if (tdesc.source) return tdesc.source
+    else if (this.user) return this.user
+    else throw new error ('No source defined for this transaction')
+  }
+
+  async hasSigner (value, type = 'key') {
+    const signers = await this.getSigners()
+    return signers.find(entry => entry.value === value && entry.type === type)
+  }
+
+  async hasSigned (value, type = 'key') {
+    return await resolve.hasSigned(this, type, value)
   }
 
   /// Actions
+  selectNetwork () { resolve.selectNetwork(this) }
   async sign (seed) { await action.sign(this, seed) }
   async send (server) { await action.send(this, server) }
 

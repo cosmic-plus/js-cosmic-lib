@@ -191,15 +191,9 @@ export async function jsonToTransaction (cosmicLink, json) {
   const tdesc = jsonToTdesc(cosmicLink, json)
   if (cosmicLink.status) throw cosmicLink.status
 
-  if (!tdesc.source) {
-    if (cosmicLink.user) tdesc.source = cosmicLink.user
-    else status.fail(cosmicLink, 'Missing user/source account', 'throw')
-  }
-
   if (!cosmicLink.server) status.fail(cosmicLink, 'No server defined', 'throw')
 
   try {
-    resolve.selectNetwork(cosmicLink)
     const builder = await _makeTransactionBuilder(cosmicLink, tdesc)
     const operation = await _odescToOperation(cosmicLink, tdesc.operations[0])
     builder.addOperation(operation)
@@ -248,7 +242,7 @@ async function _makeTransactionBuilder (cosmicLink, tdesc) {
     if (tdesc.maxTime) opts.timebounds.maxTime = tdesc.maxTime
   }
 
-  const loadedAccount = await _loadAccount(cosmicLink, tdesc.source)
+  const loadedAccount = await cosmicLink.getSourceAccount()
   const builder = new StellarSdk.TransactionBuilder(loadedAccount, opts)
 
   /// Check if memo is needed for destination account.
@@ -267,16 +261,6 @@ async function _makeTransactionBuilder (cosmicLink, tdesc) {
   }
 
   return builder
-}
-
-async function _loadAccount (cosmicLink, address) {
-  const publicKey = await prepare.address(cosmicLink, address)
-  try {
-    return await cosmicLink.server.loadAccount(publicKey)
-  } catch (error) {
-    console.log(error)
-    status.error(cosmicLink, "Can't find account source on current network: " + shorter(publicKey), 'throw')
-  }
 }
 
 /**

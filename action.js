@@ -1,7 +1,7 @@
 'use strict'
 
 import * as node from './node'
-import {shorter} from './helpers'
+import {shorter, delay} from './helpers'
 
 import * as status from './status'
 import * as convert from './convert'
@@ -35,7 +35,10 @@ export async function sign (cosmicLink, seed) {
   }
 
   if (cosmicLink.status) throw new Error("Can't sign invalid transaction")
-  if (cosmicLink.signers && cosmicLink.signers.indexOf(publicKey) !== -1) {
+  if (!await cosmicLink.hasSigner(publicKey)) {
+    throw new Error('Not a legit signer: ' + shorter(publicKey))
+  }
+  if (await cosmicLink.hasSigned(publicKey)) {
     throw new Error('Transaction already signed with this key')
   }
 
@@ -55,24 +58,28 @@ export async function sign (cosmicLink, seed) {
 
 async function _signingPromise (cosmicLink, keypair, publicKey) {
   const transaction = await cosmicLink.getTransaction()
-  const eventNode = status.message(cosmicLink, 'Signing...')
-  _addLoadingAnim(eventNode)
 
   try {
     resolve.selectNetwork(cosmicLink)
     transaction.sign(keypair)
   } catch (error) {
     console.log(error)
-    node.destroy(eventNode)
     status.error(cosmicLink,
       'Failed to sign with key: ' + shorter(publicKey),
       'throw'
     )
   }
 
-  node.rewrite(eventNode, 'Signed with ' + shorter(publicKey))
-  if (!cosmicLink.signers) cosmicLink.signers = []
-  cosmicLink.signers.push(publicKey)
+  const signers = await cosmicLink.getSigners()
+  signers.find(entry => {
+    if (entry.type === 'key' && entry.value === publicKey) {
+      entry.getSignature = delay(() => true)
+      if (entry.node) node.appendClass(entry.node, 'CL_signed')
+      return true
+    }
+  })
+
+  if (! cosmicLink.hasSigned(publicKey)) throw new Error('bug')
 
   return transaction
 }
@@ -88,36 +95,6 @@ async function _signingPromise (cosmicLink, keypair, publicKey) {
  */
 export async function send (cosmicLink, server) {
   if (!server) server = cosmicLink.server
-
   const transaction = await cosmicLink.getTransaction()
-  if (!cosmicLink.signers) throw new Error("Can't send unsigned transaction")
-
-  let eventNode = status.message(cosmicLink, 'Sending transaction...')
-  _addLoadingAnim(eventNode)
-
-  let answer
-  try {
-    answer = await server.submitTransaction(transaction)
-    node.rewrite(eventNode, 'Transaction submitted')
-    status.update(cosmicLink, 'Submitted')
-    node.appendClass(cosmicLink.statusNode, 'CL_done')
-  } catch (error) {
-    console.log(error)
-    node.destroy(eventNode)
-    status.error(cosmicLink, 'Transaction submission failed', 'throw')
-  }
-
-  return answer
-}
-
-/**
- * Add a loading animation inside `parent`.
- *
- * @private
- * @param {HTMLElement} parent
- */
-function _addLoadingAnim (parent) {
-  const loadingAnim = node.create('span', '.CL_loadingAnim')
-  parent.insertBefore(loadingAnim, parent.firstChild)
-  loadingAnim.style.float = 'left'
+  return server.submitTransaction(transaction)
 }
