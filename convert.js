@@ -327,6 +327,7 @@ export function transactionToJson (cosmicLink, transaction, options = {}) {
         signature: entry.signature().toString('base64')
       }
     })
+    if (copy.signatures.length === 0) delete copy.signatures
   }
 
   if (copy.fee === 100) delete copy.fee
