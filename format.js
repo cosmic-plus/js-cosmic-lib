@@ -377,7 +377,7 @@ _format.signer = function (cosmicLink, signer) {
         _makeHashNode(signer.value)
       )
   }
-  if (signer.weight !== '0') {
+  if (signer.weight > 1) {
     node.append(signerNode, ' (weight: ' + signer.weight + ')')
   }
   return signerNode
