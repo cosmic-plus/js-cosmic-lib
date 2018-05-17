@@ -165,7 +165,12 @@ typeParser.xdrUri = function (cosmicLink, xdrUri) {
 
   if (!cosmicLink.status) {
     typeTowardAll(cosmicLink, 'transaction', transaction, options)
-    typeTowardAllUsingDelayed(cosmicLink, 'query', cosmicLink.getQuery)
+    if (options.stripSource) {
+      typeTowardAllUsingDelayed(cosmicLink, 'query', cosmicLink.getQuery)
+    } else {
+      cosmicLink.getQuery = delay(() => xdrUri)
+      typeTowardUri(cosmicLink, 'query')
+    }
   } else {
     typeTowardAllUsingDelayed(cosmicLink, 'transaction',
       delay(() => { throw new Error(cosmicLink.status) }))

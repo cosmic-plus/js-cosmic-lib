@@ -211,7 +211,8 @@ async function formatSigners (cosmicLink) {
   node.append(cosmicLink.transactionNode, signersNode)
 
   const signers = await cosmicLink.getSigners()
-  if (signers.length === 1) return
+  const tdesc = await cosmicLink.getTdesc()
+  if (signers.length === 1 && ! tdesc.signatures) return
 
   const listNode = node.create('ul')
   node.append(signersNode, node.create('h3', null, 'Signers'), listNode)

@@ -310,17 +310,24 @@ export function transactionToJson (cosmicLink, transaction, options = {}) {
     status.error(cosmicLink, "Can't parse multi-operation transactions yet.")
     status.fail(cosmicLink, 'Unhandled transaction', 'throw')
   }
-  if (copy.signatures.length > 0) {
-    status.error(cosmicLink, "Can't handle multi-signature yet.")
-    status.fail(cosmicLink, 'Unhandled transaction', 'throw')
-  }
 
   delete copy.tx
   delete copy.sequence
-  delete copy.signatures
 
   if (!cosmicLink.user) cosmicLink.user = copy.source
-  if (options.stripSource) delete copy.source
+  if (options.stripSource) {
+    delete copy.source
+    delete copy.signatures
+  }
+
+  if (copy.signatures) {
+    copy.signatures = transaction.signatures.map(entry => {
+      return {
+        hint: entry.hint().toString('base64'),
+        signature: entry.signature().toString('base64')
+      }
+    })
+  }
 
   if (copy.fee === 100) delete copy.fee
   if (copy._memo._switch.name !== 'memoNone') {

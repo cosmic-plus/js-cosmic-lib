@@ -153,7 +153,15 @@ function getSignature (cosmicLink, signer) {
           return false
         }
       case 'hash': return false
-      case 'key': return false
+      case 'key':
+        const tdesc = await cosmicLink.getTdesc()
+        if(!tdesc.signatures) return false
+
+        const keypair = StellarSdk.Keypair.fromPublicKey(signer.value)
+        const hint = keypair.signatureHint().toString('base64')
+        return tdesc.signatures.find(entry => {
+          if (entry.hint === hint) return entry.signature
+        })
     }
   })
 }
@@ -165,7 +173,7 @@ export async function hasSigned (cosmicLink, type, value) {
     if (
       signer.type === type
       && signer.value === value
-      && await signer.getSignature() === true
+      && await signer.getSignature()
     ) {
       return true
     }
