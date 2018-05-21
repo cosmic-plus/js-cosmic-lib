@@ -93,7 +93,7 @@ export function create (name, attributes, ...childs) {
 export function destroy (element) {
   try {
     element.innerHTML = ''
-    element.remove()
+    if (element.parentNode) element.parentNode.removeChild(element)
   } catch (e) { console.log(e) }
 }
 
