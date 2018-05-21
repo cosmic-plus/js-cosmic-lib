@@ -56,17 +56,17 @@ export function queryToJson (cosmicLink, query) {
   const queries = query.substr(operation.length + 2).split('&')
   for (let index in queries) {
     const argument = queries[index]
-    let temp = argument.split('=')
-    let field = temp[0], value = temp[1]
+    const field = argument.replace(/=.*/, '')
+    let value = argument.replace(/^[^=]*=/, '')
 
     try {
       if (!field) continue
       if (!value && field !== 'homeDomain') {
         value = '(empty)'
-        status.error(cosmicLink, 'No value for ' + field, 'throw')
+        status.error(cosmicLink, 'No value for: ' + field, 'throw')
       }
 
-      let decodedValue = decode.fieldValue(cosmicLink, field, value)
+      const decodedValue = decode.fieldValue(cosmicLink, field, value)
       if (_isTransactionField(field)) tdesc[field] = decodedValue
       else odesc[field] = decodedValue
     } catch (error) {
