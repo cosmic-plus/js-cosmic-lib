@@ -108,14 +108,7 @@ export function destroy (element) {
  * @param {HTMLElement} [parent=document]
  * */
 export function grab (pattern, parent = document) {
-  switch (pattern.substr(0, 1)) {
-    case '#':
-      return parent.getElementById(pattern.substr(1))
-    case '.':
-      return parent.getElementsByClassName(pattern.substr(1))[0]
-    default:
-      return parent.getElementsByTagName(pattern)[0]
-  }
+  return parent.querySelector(pattern)
 }
 
 /**
