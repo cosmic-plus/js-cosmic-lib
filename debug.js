@@ -193,7 +193,7 @@ async function appendCosmicLink (parent, url, options = {}) {
   node.append(
     parent,
     node.create('pre', {}, url),
-    cosmicLink.transactionNode,
+    cosmicLink.htmlNode,
     node.create('hr')
   )
 

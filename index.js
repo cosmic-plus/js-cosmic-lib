@@ -1,12 +1,20 @@
 'use strict'
 
 import * as action from './action'
-import * as node from './node'
 import * as event from './event'
 import * as parse from './parse'
 import * as resolve from './resolve'
+import * as status from './status'
 import {delay} from './helpers'
-import './cosmic-lib.css'
+
+let node, format
+if (typeof document !== 'undefined') {
+  node = require('./node')
+  format = require('./format')
+  require('./cosmic-lib.css')
+} else if(typeof StellarSdk === 'undefined') {
+  global.StellarSdk = require('stellar-sdk')
+}
 
 /**
  * A `CosmicLink` object represents a Stellar transaction. It can be created
@@ -78,9 +86,10 @@ import './cosmic-lib.css'
 // *CosmicLink.onParse.format  < Trigger when cosmicLink is re-parsed
 //
 // --- HTML Nodes ---
+// CosmicLink.htmlNode         < HTML element for CosmicLink
 // CosmicLink.transactionNode  < HTML description of the transaction
-// CosmicLink.statusNode       < HTML element for the transaction status & errors
 // CosmicLink.signersNode      < HTML element for the signers list
+// CosmicLink.statusNode       < HTML element for the transaction status & errors
 
 export class CosmicLink {
   constructor (transaction, network, user, options) {
@@ -90,7 +99,12 @@ export class CosmicLink {
     this._page = 'https://cosmic.link/'
     this.onClick = event.defaultHandler
 
-    makeHtmlNodes(this)
+    if (typeof document !== 'undefined') {
+      let htmlNode = node.grab('#CL_htmlNode')
+      /// Backward compatibility
+      if (!htmlNode) htmlNode = node.grab('#CL_transactionNode')
+      if (htmlNode) makeHtmlNodes(this, htmlNode)
+    }
 
     parse.dispatch(this, transaction, options)
 
@@ -132,31 +146,53 @@ export class CosmicLink {
 
   get network () { return this._network }
   set network (network) { parse.network(this, network) }
+
+  /// HTML
+  get htmlNode () {
+    if (!this._htmlNode) makeHtmlNodes(this)
+    return this._htmlNode
+  }
+  set htmlNode (value) { this._htmlNode = value }
+
+  get transactionNode () {
+    this.htmlNode
+    return this._transactionNode
+  }
+  set transactionNode (value) { this._transactionNode = value }
+
+  get statusNode () {
+    this.htmlNode
+    return this._statusNode
+  }
+  set statusNode (value) { this._statusNode = value }
+
+  get signersNode () {
+    this.htmlNode
+    return this._signersNode
+  }
+  set signersNode (value) { this._signersNode = value }
+
 }
 
-function makeHtmlNodes (cosmicLink) {
-  let transactionNode = node.grab('#CL_transactionNode')
-  if (transactionNode) {
-    node.clear(transactionNode)
-    transactionNode.className = 'CL_transactionNode'
-  } else {
-    transactionNode = node.create('div', '.CL_transactionNode')
-  }
-  node.append(transactionNode, node.create('div', '.CL_transaction'))
+function makeHtmlNodes (cosmicLink, htmlNode) {
+  if (htmlNode) {
+    node.clear(htmlNode)
+    htmlNode.className = 'CL_htmlNode'
+  } else htmlNode = node.create('div', '.CL_htmlNode')
+  cosmicLink._htmlNode = htmlNode
 
-  let statusNode = node.grab('#CL_statusNode')
-  if (statusNode) {
-    node.clear(statusNode)
-    statusNode.className = 'CL_statusNode'
-  } else {
-    statusNode = node.create('div', '.CL_statusNode')
-    node.append(transactionNode, statusNode)
+  const nodes = ['_transactionNode', '_statusNode', '_signersNode']
+  for (let index in nodes) {
+    const name = nodes[index]
+    cosmicLink[name] = node.create('div', '.CL' + name)
+    node.append(htmlNode, cosmicLink[name])
   }
-  node.append(statusNode,
-    node.create('span', '.CL_status'),
+
+  node.append(cosmicLink._statusNode,
+    node.create('h3', '.CL_status'),
     node.create('ul', '.CL_events')
   )
 
-  cosmicLink.transactionNode = transactionNode
-  cosmicLink.statusNode = statusNode
+  if (cosmicLink.getTdesc) format.tdesc(cosmicLink)
+  status.populateHtmlNode(cosmicLink)
 }

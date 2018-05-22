@@ -11,8 +11,8 @@ import * as node from './node'
 
 /**
  * Set `cosmicLink` status as `status` and update statusNode.
- * All status are considered erroneous except 'signed' & 'sended'.
- * Error status should be recorder using the fail function bellow.
+ * All status are considered erroneous.
+ * Error status should be recorded using the fail function bellow.
  * A valid cosmic link may have no status at all.
  * `status` changes are logged.
  *
@@ -21,24 +21,12 @@ import * as node from './node'
  */
 export function update (cosmicLink, status) {
   console.log('Set status: ' + status)
-  if (cosmicLink) {
-    cosmicLink.status = status
-    _stateNode(cosmicLink).textContent = '↪ ' + status
-  }
-}
+  if (cosmicLink) cosmicLink.status = status
 
-/**
- * Log event into the console.
- * Append `event` to the HTML event list of `cosmicLink` (in statusNode).
- *
- * @param {cosmicLink} cosmicLink
- * @param {string} event
- * @return {HTLMElement} The <li>event</li> inserted into events list
- */
-export function message (cosmicLink, event) {
-  const lineNode = node.create('li', {}, event)
-  if (cosmicLink) node.append(_eventsNode(cosmicLink), lineNode)
-  return lineNode
+  if (cosmicLink._statusNode) {
+    const title = node.grab('.CL_status', cosmicLink._statusNode)
+    title.textContent = status
+  }
 }
 
 /**
@@ -53,12 +41,12 @@ export function message (cosmicLink, event) {
  */
 export function fail (cosmicLink, status, continuation) {
   update(cosmicLink, status)
-  if (cosmicLink) node.appendClass(cosmicLink.statusNode, 'CL_error')
-  _errorContinuation(status, continuation)
+  if (cosmicLink._statusNode) node.appendClass(cosmicLink.statusNode, 'CL_error')
+  errorContinuation(status, continuation)
 }
 
 /**
- * Append `error` to `cosmicLink`.errors and to its the HTML event list.
+ * Append `error` to `cosmicLink`.errors and to the HTML display.
  * Then, call `continuation` if any. `continuation` should be a either a
  * function or 'throw'.
  * `error`s are logged.
@@ -69,35 +57,38 @@ export function fail (cosmicLink, status, continuation) {
  */
 export function error (cosmicLink, error, continuation) {
   console.log(error)
-  const errorNode = message(cosmicLink, error)
 
   if (cosmicLink) {
     if (!cosmicLink.errors) cosmicLink.errors = []
     cosmicLink.errors.push(error)
-    errorNode.className = 'CL_error'
+  }
+  if (cosmicLink._statusNode) {
+    const errorsNode = node.grab('.CL_events', cosmicLink._statusNode)
+    const lineNode = node.create('li', '.CL_error', error)
+    node.append(errorsNode, lineNode)
   }
 
-  _errorContinuation(error, continuation)
+  errorContinuation(error, continuation)
 }
 
 /**
- * Return the head of `cosmicLink` statusNode.
+ * Populate `cosmicLink.statusNode` with status anderrors from
+ * `cosmicLink.errors`.
  *
- * @private
- * @param {cosmicLink} cosmicLink
+ * @param {CL}
  */
-function _stateNode (cosmicLink) {
-  return node.grab('.CL_status', cosmicLink.statusNode)
-}
-
-/**
- * Return the list of `cosmicLink` statusNode.
- *
- * @private
- * @param {cosmicLink} cosmicLink
- */
-function _eventsNode (cosmicLink) {
-  return node.grab('.CL_events', cosmicLink.statusNode)
+export function populateHtmlNode (cosmicLink) {
+  if (cosmicLink.status) {
+    const titleNode = node.grab('.CL_status', cosmicLink.statusNode)
+    titleNode.textContent = cosmicLink.status
+  }
+  if (cosmicLink.errors) {
+    const errorsNode = node.grab('.CL_events', cosmicLink.statusNode)
+    for (let index in cosmicLink.errors) {
+      const error = cosmicLink.errors[index]
+      node.append(errorsNode, node.create('li', '.CL_error', error))
+    }
+  }
 }
 
 /**
@@ -109,7 +100,7 @@ function _eventsNode (cosmicLink) {
  * @param {string} error
  * @param {function|'throw'} [continuation]
  */
-function _errorContinuation (error, continuation) {
+function errorContinuation (error, continuation) {
   if (continuation) {
     if (continuation === 'throw') throw new Error(error)
     else continuation(error)

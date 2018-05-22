@@ -72,37 +72,20 @@
 /*** Status node styling ***/
 
 .CL_statusNode,
-.CL_signers
+.CL_signersNode
 {
     margin: 0.5em;
-    border-radius: 0.2em;
     padding: 0;
-}
-
-.CL_statusNode.CL_done
-{
-    border: 0.1em solid mediumseagreen;
-    border-radius: 0.2em;
-    background-color: white;
 }
 
 .CL_statusNode.CL_error
 {
-    border: 0.1em solid tomato;
-    border-radius: 0.2em;
     background-color: white;
-    padding: 0;
+    border: none;
 }
 
-.CL_statusNode .CL_status
-{
-    display: block;
-    margin: 0.2em;
-    margin-left: 1em;
-}
-
-.CL_statusNode .CL_events,
-.CL_signers ul
+.CL_events,
+.CL_signers
 {
     list-style-type: none;
     list-style-position: inside;
@@ -111,7 +94,7 @@
     margin: 0;
 }
 
-.CL_statusNode .CL_events li,
+.CL_events li,
 .CL_signers li
 {
     margin:0 ;
@@ -120,14 +103,14 @@
     border-radius: 0;
 }
 
-.CL_statusNode .CL_events li.CL_done,
+.CL_events li.CL_done,
 .CL_signers li.CL_signed
 {
     border-left: 0.3em solid mediumseagreen;
 
 }
 
-.CL_statusNode .CL_events li.CL_error
+.CL_events li.CL_error
 {
     border-left: 0.3em solid tomato;
 }

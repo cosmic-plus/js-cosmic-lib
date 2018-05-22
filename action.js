@@ -96,5 +96,7 @@ async function _signingPromise (cosmicLink, keypair, publicKey) {
 export async function send (cosmicLink, server) {
   if (!server) server = cosmicLink.server
   const transaction = await cosmicLink.getTransaction()
-  return server.submitTransaction(transaction)
+  const response = server.submitTransaction(transaction)
+  response.catch(console.log)
+  return response
 }

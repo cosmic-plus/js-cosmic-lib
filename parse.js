@@ -67,7 +67,7 @@ export function dispatch (cosmicLink, value, options) {
   const parser = typeParser[type]
   if (parser) parser(cosmicLink, value, options)
   else typeTowardAll(cosmicLink, type, value, options)
-  if (cosmicLink.transactionNode) {
+  if (cosmicLink._transactionNode) {
     cosmicLink.getTdesc()
       .then(tdesc => format.tdesc(cosmicLink, tdesc))
       .catch(console.log)

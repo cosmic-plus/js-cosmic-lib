@@ -22,8 +22,9 @@ import * as event from './event'
  * @param {CL}
  * @param {Object} tdesc Transaction descriptor
  */
-export function tdesc (cosmicLink, tdesc) {
-  const trNode = node.grab('.CL_transaction', cosmicLink.transactionNode)
+export async function tdesc (cosmicLink) {
+  const trNode = cosmicLink.transactionNode
+  const tdesc = await cosmicLink.getTdesc()
 
   let infoNode
   specs.transactionOptionalFields.forEach(entry => {
@@ -42,7 +43,7 @@ export function tdesc (cosmicLink, tdesc) {
   try {
     const opNode = _formatOdesc(cosmicLink, tdesc.operations[0])
     node.append(trNode, opNode)
-    formatSigners(cosmicLink)
+    exports.signers(cosmicLink)
   } catch (error) {
     console.log(error)
     status.error(cosmicLink, 'Unhandled formatting error')
@@ -206,16 +207,15 @@ export function field (cosmicLink, field, value) {
  * @param {CL}
  * @return {HTMLElement} - A `div` element containing the signers
  */
-async function formatSigners (cosmicLink) {
-  const signersNode = node.create('div', '.CL_signers')
-  node.append(cosmicLink.transactionNode, signersNode)
-
+exports.signers = async function (cosmicLink) {
   const signers = await cosmicLink.getSigners()
   const tdesc = await cosmicLink.getTdesc()
   if (signers.length === 1 && ! tdesc.signatures) return
 
-  const listNode = node.create('ul')
-  node.append(signersNode, node.create('h3', null, 'Signers'), listNode)
+  const signersNode = cosmicLink.signersNode
+  const titleNode = node.create('h3', null, 'Signatures')
+  const listNode = node.create('ul', '.CL_signers')
+  node.append(cosmicLink.signersNode, titleNode, listNode)
 
   signers.forEach(entry => {
     const signerNode = _format.signer(cosmicLink, entry)
