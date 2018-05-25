@@ -184,14 +184,8 @@ export function tdescToJson (cosmicLink, tdesc) {
  * @return {Transaction}
  */
 export async function jsonToTransaction (cosmicLink, json) {
-  if (cosmicLink.errors) {
-    throw new Error("Can't build transaction from invalid cosmic link.")
-  }
-
+  if (cosmicLink.status) throw new Error(cosmicLink.status)
   const tdesc = jsonToTdesc(cosmicLink, json)
-  if (cosmicLink.status) throw cosmicLink.status
-
-  if (!cosmicLink.server) status.fail(cosmicLink, 'No server defined', 'throw')
 
   try {
     const builder = await _makeTransactionBuilder(cosmicLink, tdesc)
@@ -201,6 +195,7 @@ export async function jsonToTransaction (cosmicLink, json) {
   } catch (error) {
     if (!cosmicLink.errors) status.error(cosmicLink, error)
     if (!cosmicLink.status) status.fail(cosmicLink, "Can't build transaction", 'throw')
+    else throw error
   }
 }
 

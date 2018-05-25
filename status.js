@@ -20,6 +20,7 @@ import * as node from './node'
  * @param {string} status
  */
 export function update (cosmicLink, status) {
+  if (cosmicLink.status) return
   console.log('Set status: ' + status)
   if (cosmicLink) cosmicLink.status = status
 

@@ -106,15 +106,17 @@ async function _addressResolver (cosmicLink, address) {
 }
 
 export async function getSourceAccount (cosmicLink) {
+  cosmicLink.selectNetwork()
   const source = await cosmicLink.getSource()
   const account = await resolveAddress(cosmicLink, source)
   const publicKey = account.account_id
-  cosmicLink.selectNetwork()
   try {
-    return cosmicLink.server.loadAccount(publicKey)
+    const accountResponse = await cosmicLink.server.loadAccount(publicKey)
+    return accountResponse
   } catch (error) {
     console.log(error)
-    status.error(cosmicLink, "Can't find account source on current network: " + shorter(publicKey), 'throw')
+    status.error(cosmicLink, `Can't find source account on ${cosmicLink.network} network`)
+    status.fail(cosmicLink, 'Empty source account', 'throw')
   }
 }
 
