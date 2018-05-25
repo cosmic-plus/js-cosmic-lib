@@ -6,6 +6,8 @@ import {shorter, delay} from './helpers'
 import * as status from './status'
 import * as convert from './convert'
 import * as resolve from './resolve'
+import * as parse from './parse'
+import * as format from './format'
 
 /**
  * Contains the action methods for CosmicLink.
@@ -43,16 +45,7 @@ export async function sign (cosmicLink, seed) {
   }
 
   const signingPromise = _signingPromise(cosmicLink, keypair, publicKey)
-
-  /// Immediatly update getters so that we get correct results even if dev
-  /// doesn't call cosmicLink.sign() with await.
-  cosmicLink.getTransaction = function () { return signingPromise }
-  cosmicLink.getXdr = function () {
-    return signingPromise.then(transaction =>
-      convert.transactionToXdr(cosmicLink, transaction)
-    )
-  }
-
+  parse.typeTowardAllUsingDelayed(cosmicLink, 'transaction', () => signingPromise)
   await signingPromise
 }
 
@@ -70,16 +63,8 @@ async function _signingPromise (cosmicLink, keypair, publicKey) {
     )
   }
 
-  const signers = await cosmicLink.getSigners()
-  signers.find(entry => {
-    if (entry.type === 'key' && entry.value === publicKey) {
-      entry.getSignature = delay(() => true)
-      if (entry.node) node.appendClass(entry.node, 'CL_signed')
-      return true
-    }
-  })
-
-  if (! cosmicLink.hasSigned(publicKey)) throw new Error('bug')
+  cosmicLink.getSigners = delay(() => resolve.getSigners(cosmicLink))
+  format.signers(cosmicLink)
 
   return transaction
 }

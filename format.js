@@ -25,6 +25,7 @@ import * as event from './event'
 export async function tdesc (cosmicLink) {
   const trNode = cosmicLink.transactionNode
   const tdesc = await cosmicLink.getTdesc()
+  node.clear(trNode)
 
   let infoNode
   specs.transactionOptionalFields.forEach(entry => {
@@ -213,6 +214,8 @@ exports.signers = async function (cosmicLink) {
   if (signers.length === 1 && ! tdesc.signatures) return
 
   const signersNode = cosmicLink.signersNode
+  node.clear(signersNode)
+
   const titleNode = node.create('h3', null, 'Signatures')
   const listNode = node.create('ul', '.CL_signers')
   node.append(cosmicLink.signersNode, titleNode, listNode)

@@ -5,6 +5,7 @@ import {capitalize, delay} from './helpers'
 import * as convert from './convert'
 import * as format from './format'
 import * as status from './status'
+import * as event from './event'
 
 /**
  * Contains the methods to parse transactions in various format and create a
@@ -67,6 +68,7 @@ export function dispatch (cosmicLink, value, options) {
   const parser = typeParser[type]
   if (parser) parser(cosmicLink, value, options)
   else typeTowardAll(cosmicLink, type, value, options)
+
   if (cosmicLink._transactionNode) {
     cosmicLink.getTdesc()
       .then(tdesc => format.tdesc(cosmicLink, tdesc))
@@ -205,7 +207,7 @@ function typeTowardAll (cosmicLink, type, value, ...options) {
  *                      'xdr'
  * @param {function} delayed A function that return a promise for `type`
  */
-function typeTowardAllUsingDelayed (cosmicLink, type, delayed, ...options) {
+export function typeTowardAllUsingDelayed (cosmicLink, type, delayed, ...options) {
   const getter = 'get' + capitalize(type)
   cosmicLink[getter] = delayed
 
@@ -281,4 +283,6 @@ function makeConverter (cosmicLink, from, to, ...options) {
     const value = await getter()
     return convert[converter](cosmicLink, value, ...options)
   })
+
+  event.callFormatHandlers(cosmicLink, to)
 }

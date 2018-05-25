@@ -41,12 +41,19 @@ if (typeof document !== 'undefined') {
 // --- Constructor ---
 // new CosmicLink(uri, "[userNetwork]", "[userAddress]")
 // new CosmicLink(query, "[userNetwork]", "[userAddress]")
-// new CosmicLink(transaction, "[userNetwork]", "[userAddress]", {options...})
-// new CosmicLink(xdr, "[userNetwork]", "[userAddress]", {options...})
+// new CosmicLink(transaction, "[userNetwork]", "[userAddress]", {...options})
+// new CosmicLink(xdr, "[userNetwork]", "[userAddress]", {...options})
 //
 // --- Options for transaction & xdr ---
 // stripSource = true   < Don't keep source account when converting to URI
 // network = ...        < Specify a network for this transaction
+//
+// --- Edit ---
+// CosmicLink.parse(any-format, {...options})
+// *CosmicLink.setField(field, value)
+// *CosmicLink.addOperation({...params})
+// *CosmicLink.changeOperation(index, {...params})
+// *CosmicLink.removeOperation(index)
 //
 // --- Formats (get) ---
 // CosmicLink.getUri()          < Return a promise of the URI string
@@ -56,34 +63,36 @@ if (typeof document !== 'undefined') {
 // CosmicLink.getTransaction()  < Return a promise of the transaction
 // CosmicLink.getXdr()          < Return a promise of the transaction's XDR
 //
-// --- Formats (parse) ---    <<< Update everything on the go >>>
-// *CosmicLink.parse          < Same use than constructor. Update the link.
+// --- Handlers ---
+// CosmicLink.addFormatHandler(format, callback)
+// CosmicLink.removeFormatHandler(format, callback)
+// with event = { cosmicLink: ..., value: ..., error: ... }
 //
 // --- Datas ---           <<< Update everything on the go >>>
 // CosmicLink.user         < User address
 // *CosmicLink.aliases     < Local aliases for public keys
 // CosmicLink.network      < Test/Public network
 // CosmicLink.server       < The horizon server to use
-// CosmicLink.getSource    < Transaction source
-// CosmicLink.getSourceAccount  < Transaction source account object
-// CosmicLink.getSigners   < Array of transaction legit signers
 // CosmicLink.status       < Status of the CosmicLink (valid or specific error)
 // CosmicLink.errors       < An array of errors (or undefined if no error)
 // CosmicLink.page         < The base URI, without the query
+//
+// --- Datas (asynchronous)
+// CosmicLink.getSource()         < Transaction source
+// CosmicLink.getSourceAccount()  < Transaction source account object
+// CosmicLink.getSigners()        < Array of legit signers
 //
 // --- Tests ---
 // CosmicLink.hasSigner(publicKey)   < Test if `publicKey` is a signer for CosmicLink
 // CosmicLink.hasSigned(publicKey)   < Test if `publicKey` signature is available
 //
 // --- Actions ---
-// *CosmicLink.resolve()       < Resolve addresses and fetch sequence for offline signing
-// CosmicLink.sign("seed")     < Sign the transaction
-// CosmicLink.send("[server]") < Send the transaction to the network
+// CosmicLink.selectNetwork()  < Select CosmicLink network for Stellar SDK
+// CosmicLink.sign(seed)       < Sign the transaction
+// CosmicLink.send([server])   < Send the transaction to the network
 //
-// --- Tools ---
-// *CosmicLink.builder         < Builder akin to StellarSdk.TransactionBuilder
-// CosmicLink.onClick.format   < For onClick events on the HTML description
-// *CosmicLink.onParse.format  < Trigger when cosmicLink is re-parsed
+// --- Events ---
+// CosmicLink.onClick.type      < For onClick events on the HTML description
 //
 // --- HTML Nodes ---
 // CosmicLink.htmlNode         < HTML element for CosmicLink
@@ -96,8 +105,14 @@ export class CosmicLink {
     this.user = user
     if (network) this.network = network
 
-    this._page = 'https://cosmic.link/'
     this.onClick = event.defaultHandler
+    if(!this._page) this._page = CosmicLink.page
+
+    this.formatHandlers = {}
+    for (let format in CosmicLink.formatHandlers) {
+      const handlers = CosmicLink.formatHandlers[format]
+      this.formatHandlers[format] = handlers.slice(0)
+    }
 
     if (typeof document !== 'undefined') {
       let htmlNode = node.grab('#CL_htmlNode')
@@ -113,6 +128,10 @@ export class CosmicLink {
 
     this.getSourceAccount = delay(() => resolve.getSourceAccount(this))
     this.getSigners = delay(() => resolve.getSigners(this))
+  }
+
+  parse (transaction, options) {
+    parse.dispatch(this, transaction, options)
   }
 
   async getSource () {
@@ -172,6 +191,16 @@ export class CosmicLink {
   }
   set signersNode (value) { this._signersNode = value }
 
+}
+
+/// Class-wide configuration
+CosmicLink.page = 'https://cosmic.link/'
+CosmicLink.formatHandlers = {}
+CosmicLink.addFormatHandler = function (format, callback) {
+  event.addFormatHandler(CosmicLink, format, callback)
+}
+CosmicLink.removeFormatHandler = function (format, callback) {
+  event.removeFormatHandler(CosmicLink, format, callback)
 }
 
 function makeHtmlNodes (cosmicLink, htmlNode) {
