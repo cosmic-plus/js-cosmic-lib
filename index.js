@@ -102,7 +102,7 @@ if (typeof document !== 'undefined') {
 
 export class CosmicLink {
   constructor (transaction, network, user, options) {
-    this.user = user
+    if (user) this.user = user
     if (network) this.network = network
 
     this.onClick = event.defaultHandler
@@ -123,8 +123,8 @@ export class CosmicLink {
 
     parse.dispatch(this, transaction, options)
 
-    /// Fallback to public only when network is not set from the URI.
-    if (!this.network) this.network = 'public'
+    /// Fallback only when network is not set from the URI.
+    if (!this.network) this.network = CosmicLink.network
 
     this.getSourceAccount = delay(() => resolve.getSourceAccount(this))
     this.getSigners = delay(() => resolve.getSigners(this))
@@ -195,6 +195,8 @@ export class CosmicLink {
 
 /// Class-wide configuration
 CosmicLink.page = 'https://cosmic.link/'
+CosmicLink.network = 'public'
+
 CosmicLink.formatHandlers = {}
 CosmicLink.addFormatHandler = function (format, callback) {
   event.addFormatHandler(CosmicLink, format, callback)

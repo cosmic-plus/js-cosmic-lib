@@ -40,7 +40,8 @@ export function network (cosmicLink, network) {
     cosmicLink.server = new StellarSdk.Server('https://horizon.stellar.org')
   } else {
     cosmicLink.server = null
-    status.error(cosmicLink, 'Invalid network: ' + network, 'throw')
+    status.error(cosmicLink, 'Invalid network: ' + network)
+    status.fail(cosmicLink, 'Invalid network', 'throw')
   }
 }
 
@@ -66,6 +67,18 @@ export function network (cosmicLink, network) {
 export function dispatch (cosmicLink, value, options) {
   const type = _guessType(value)
   const parser = typeParser[type]
+
+  /// Get network parameter now.
+  if (
+    (type === 'uri' || type === 'query' || type === 'xdrUri')
+    && value.match('&network=')
+  ) {
+    console.log(value)
+    const network = value.replace(/.*&network=/, '').replace(/&.*/, '')
+    try { cosmicLink.network = network }
+    catch (error) {}
+  }
+
   if (parser) parser(cosmicLink, value, options)
   else typeTowardAll(cosmicLink, type, value, options)
 
@@ -110,24 +123,10 @@ function _guessType (value) {
 const typeParser = {}
 
 typeParser.uri = function (cosmicLink, uri) {
-  const page = uri.replace(/[?][^?]*$/, '')
+  const page = uri.split('?')[0]
   const query = convert.uriToQuery(cosmicLink, uri)
-
   cosmicLink._page = encodeURI(page)
-  typeParser.query(cosmicLink, query)
-}
-
-/// Immediate JSON conversion for accurate cosmicLink.network value when network
-/// field is set.
-typeParser.query = function (cosmicLink, query) {
-  try {
-    const json = convert.queryToJson(null, query)
-    typeTowardAll(cosmicLink, 'json', json)
-    cosmicLink.getQuery = delay(() => query)
-    makeConverter(cosmicLink, 'query', 'uri')
-  } catch (error) {
-    typeTowardAll(cosmicLink, 'query', query)
-  }
+  typeTowardAll(cosmicLink, 'query', query)
 }
 
 typeParser.xdrUri = function (cosmicLink, xdrUri) {
@@ -148,7 +147,6 @@ typeParser.xdrUri = function (cosmicLink, xdrUri) {
         options.stripSource = true
         break
       case 'network':
-        if (!cosmicLink._network) cosmicLink._network = value
         options.network = value
         break
       default:
