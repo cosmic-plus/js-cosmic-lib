@@ -219,7 +219,7 @@ function makeHtmlNodes (cosmicLink, htmlNode) {
   }
 
   node.append(cosmicLink._statusNode,
-    node.create('h3', '.CL_status'),
+    node.create('span', '.CL_status'),
     node.create('ul', '.CL_events')
   )
 

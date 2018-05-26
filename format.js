@@ -217,7 +217,7 @@ exports.signers = async function (cosmicLink) {
   const signersNode = cosmicLink.signersNode
   node.clear(signersNode)
 
-  const titleNode = node.create('h3', null, 'Signatures')
+  const titleNode = node.create('span', '.CL_threshold', 'Signatures')
   const listNode = node.create('ul', '.CL_signers')
   node.append(cosmicLink.signersNode, titleNode, listNode)
 

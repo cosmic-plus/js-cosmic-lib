@@ -58,6 +58,11 @@
 
 /*** Transaction node styling ***/
 
+.CL_transactionNode
+{
+    margin: 0.5em 0;
+}
+
 .CL_transactionNode ul.CL_sideInfo
 {
     border-left: 0.2em solid lightgrey;
@@ -69,13 +74,23 @@
 }
 
 
-/*** Status node styling ***/
+/*** Status/Signers node styling ***/
 
 .CL_statusNode,
 .CL_signersNode
 {
     margin: 0.5em;
     padding: 0;
+}
+
+.CL_status,
+.CL_threshold
+{
+    margin: 0;
+    font-size: 0.85em;
+    font-weight: bold;
+    text-transform: uppercase;
+    font-stretch: condensed;
 }
 
 .CL_statusNode.CL_error
