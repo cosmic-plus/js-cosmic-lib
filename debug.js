@@ -17,16 +17,16 @@ const asset4 = 'XRP:GBXRPL45NPHCVMFFAYZVUVFFVKSIZ362ZXFP7I2ETNQ3QKZMFLPRDTD5'
 const shasum = '4a3ec3730504983f960fb2df35a1d68d640ff55d151fa3128ca0fc707f86882e'
 const txsum = '3389e9f0f1a65f19736cacf544c2e825313e8447f569233bb8db39aa607c1234'
 const id = '18446744073709551615'
+const xdr = 'AAAAAPNZplGf6IuHluM86bq4GjGnQOoy5+cL4BlCi8fjUaOvAAAAZACL7QgAAAABAAAAAAAAAAAAAAABAAAAAAAAAAkAAAAAAAAAAeNRo68AAABAruAWxO6KiC3Q3K+icSYVrKgrseIh3190V1+82d0CA90ycZ/hjxgqXufv00WStBfRP85fRHDzCwdzPNvy6GeRDQ=='
 
 const invalidKey = 'GBP7EQX652UPJJJRYFAPH64V2MHGUGFJNKJN7RNOPNSFIBH4BW6NSF54'
 
 const tests = [
   /** * Transaction fields ***/
   ['bigTitle', 'Transaction fields'],
-  ['url', 'https://cosmic.link/?xdr=AAAAAF/yQv7uqPSlMcFA8/uV0w5qGKlqkt/FrntkVAT8DbzZAAAAZAB6PFkAAAOyAAAAAAAAAAAAAAABAAAAAAAAAAkAAAAAAAAAAA=='],
-  ['url', 'https://cosmic.link/?xdr=AAAAAF/yQv7uqPSlMcFA8/uV0w5qGKlqkt/FrntkVAT8DbzZAAAAZAB6PFkAAAOyAAAAAAAAAAAAAAABAAAAAAAAAAkAAAAAAAAAAA==&stripSource&network=test'],
   ['url', 'https://cosmic.link/?inflation&network=test'],
-  ['url', 'https://cosmic.link/?inflation&source=' + accountMultiSig],
+  ['url', 'https://cosmic.link/?inflation&source=' + accountMultiSig,
+    { dontSign: 1 }],
   ['url', 'https://cosmic.link/?inflation&fee=500'],
   ['url', 'https://cosmic.link/?manageData&name=test&value=true&minTime=2017-12-12&maxTime=2018-12-12',
     {send: 1}],
@@ -89,6 +89,18 @@ const tests = [
   ['url', 'https://cosmic.link/?setOptions&signer=0:tx:' + txsum],
   ['url', 'https://cosmic.link/?setOptions&homeDomain=cosmic.link'],
   ['url', 'https://cosmic.link/?setOptions&homeDomain='],
+
+  /** * XDR conversion **/
+  ['bigTitle', 'XDR conversion'],
+  ['url', 'https://cosmic.link/?xdr=' + xdr, { dontSign: 1 }],
+  ['url', 'https://cosmic.link/?xdr=' + xdr + '&stripSource&network=test',
+    { dontSign: 1 }],
+  ['url', 'https://cosmic.link/?xdr=' + xdr + '&stripSequence',
+    { dontSign: 1 }],
+  ['url', 'https://cosmic.link/?xdr=' + xdr + '&stripSignatures',
+    { dontSign: 1 }],
+
+
   /** * Sending tests ***/
   ['bigTitle', 'Sending tests'],
   ['url', 'stellar://?manageData&name=name&value=Mister.Ticot',
@@ -101,6 +113,7 @@ const tests = [
     {send: 1}],
   ['url', 'https://cosmic.link/?payment&amount=0.00001&destination=' + account1,
     {send: 1}],
+
   /** * Error handling ***/
   ['bigTitle', 'Error handling'],
   ['title', 'Unknow operation'],
@@ -192,26 +205,30 @@ async function appendCosmicLink (parent, url, options = {}) {
 
   node.append(
     parent,
-    node.create('pre', {}, url),
+    node.create('input', { value: url}),
+    //~ node.create('pre', {}, url),
     cosmicLink.htmlNode,
     node.create('hr')
   )
 
-  //  cosmicLink.transactionNode.style.display = 'none'
+  cosmicLink.debugNode = node.create('div', '.CL_debug')
+  node.append(cosmicLink.htmlNode, cosmicLink.debugNode)
+
+  cosmicLink.debugNode.style.display = 'none'
   try {
     await checkCosmicLink(cosmicLink, options)
     await tryCosmicLink(cosmicLink, options)
   } catch (error) {
     console.log(error)
-    //  cosmicLink.transactionNode.style.display = 'block'
-    node.append(cosmicLink.transactionNode,
+    cosmicLink.debugNode.style.display = 'block'
+    node.append(cosmicLink.debugNode,
       node.create('div', '.debug_error', error)
     )
   }
 }
 
 async function checkCosmicLink (cosmicLink, options) {
-  function append (...el) { node.append(cosmicLink.transactionNode, ...el) }
+  function append (...el) { node.append(cosmicLink.debugNode, ...el) }
 
   const xdr = await cosmicLink.getXdr()
   append(node.create('textarea', {}, xdr))
@@ -228,13 +245,18 @@ async function checkCosmicLink (cosmicLink, options) {
     append(node.create('textarea', {}, xdr2))
     throw new Error('Loopback XDR differ from original')
   } else {
-    append(node.create('div', '.debug_done', 'Conversion check: ok'))
+    node.append(cosmicLink.htmlNode,
+      node.create('div', '.debug_done', 'Conversion check: ok'))
   }
 }
 
 async function tryCosmicLink (cosmicLink, options) {
-  await cosmicLink.sign(secret)
-  if (options.send) await cosmicLink.send()
+  if (!options.dontSign) await cosmicLink.sign(secret)
+  if (options.send) {
+    await cosmicLink.send()
+    node.append(cosmicLink.htmlNode,
+      node.create('div', '.debug_done', 'Validated by network'))
+  }
 }
 
 function addStyle (string) {
@@ -246,6 +268,7 @@ addStyle(`
   nav { display: block; margin: auto; }
   nav a { display: inline-block; margin: 1em; }
   footer { text-align: right; }
+  input { width: 100%; }
   textarea { width: 100%; rows: 3; }
   .debug_done { color: mediumseagreen; }
   .debug_error { color: tomato; }
