@@ -73,7 +73,6 @@ export function dispatch (cosmicLink, value, options) {
     (type === 'uri' || type === 'query' || type === 'xdrUri')
     && value.match('&network=')
   ) {
-    console.log(value)
     const network = value.replace(/.*&network=/, '').replace(/&.*/, '')
     try { cosmicLink.network = network }
     catch (error) {}
@@ -81,6 +80,19 @@ export function dispatch (cosmicLink, value, options) {
 
   if (parser) parser(cosmicLink, value, options)
   else typeTowardAll(cosmicLink, type, value, options)
+
+  /// A transaction with sequence number uses xdrUri format.
+  if (type === 'xdr' || type === 'transaction') {
+    if (options.stripSource || options.stripSequence || options.stripSignatures) {
+      typeTowardXdr(cosmicLink, 'json')
+    }
+    if (! options.stripSource && ! options.stripSequence) {
+      makeConverter(cosmicLink, 'xdr', 'query', options)
+      makeConverter(cosmicLink, 'query', 'uri')
+    }
+  }
+
+  event.callFormatHandlers(cosmicLink)
 
   if (cosmicLink._transactionNode) {
     cosmicLink.getTdesc()
@@ -143,6 +155,12 @@ typeParser.xdrUri = function (cosmicLink, xdrUri) {
     let value = entry.substr(field.length + 1)
 
     switch (field) {
+      case 'stripSignatures':
+        options.stripSignatures = true
+        break
+      case 'stripSequence':
+        options.stripSequence = true
+        break
       case 'stripSource':
         options.stripSource = true
         break
@@ -155,26 +173,7 @@ typeParser.xdrUri = function (cosmicLink, xdrUri) {
     }
   })
 
-  let transaction
-  try {
-    transaction = new StellarSdk.Transaction(xdr)
-  } catch (error) {
-    console.log(error)
-    status.fail(cosmicLink, 'Invalid XDR')
-  }
-
-  if (!cosmicLink.status) {
-    typeTowardAll(cosmicLink, 'transaction', transaction, options)
-    if (options.stripSource) {
-      typeTowardAllUsingDelayed(cosmicLink, 'query', cosmicLink.getQuery)
-    } else {
-      cosmicLink.getQuery = delay(() => xdrUri)
-      typeTowardUri(cosmicLink, 'query')
-    }
-  } else {
-    typeTowardAllUsingDelayed(cosmicLink, 'transaction',
-      delay(() => { throw new Error(cosmicLink.status) }))
-  }
+  dispatch(cosmicLink, xdr, options)
 }
 
 /**
@@ -271,7 +270,7 @@ function typeTowardUri (cosmicLink, type, ...options) {
  * @param {string} to One of 'uri', 'query', 'json', 'tdesc', 'transaction' or
  *                    'xdr'
  */
-function makeConverter (cosmicLink, from, to, ...options) {
+export function makeConverter (cosmicLink, from, to, ...options) {
   const getFrom = 'get' + capitalize(from)
   const getTo = 'get' + capitalize(to)
   const converter = from + 'To' + capitalize(to)
@@ -281,6 +280,4 @@ function makeConverter (cosmicLink, from, to, ...options) {
     const value = await getter()
     return convert[converter](cosmicLink, value, ...options)
   })
-
-  event.callFormatHandlers(cosmicLink, to)
 }

@@ -8,6 +8,7 @@ import * as convert from './convert'
 import * as resolve from './resolve'
 import * as parse from './parse'
 import * as format from './format'
+import * as event from './event'
 
 /**
  * Contains the action methods for CosmicLink.
@@ -46,6 +47,9 @@ export async function sign (cosmicLink, seed) {
 
   const signingPromise = _signingPromise(cosmicLink, keypair, publicKey)
   parse.typeTowardAllUsingDelayed(cosmicLink, 'transaction', () => signingPromise)
+  parse.makeConverter(cosmicLink, 'xdr', 'query')
+  parse.makeConverter(cosmicLink, 'query', 'uri')
+  event.callFormatHandlers(cosmicLink)
   await signingPromise
 }
 

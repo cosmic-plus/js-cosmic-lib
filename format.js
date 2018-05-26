@@ -62,7 +62,8 @@ const _fieldDesc = {
   maxTime: 'Valid only before',
   memo: 'Memo',
 
-  network: 'Network'
+  network: 'Network',
+  sequence: 'Sequence'
 }
 
 /**
@@ -282,7 +283,7 @@ async function _resolveAddressAndUpdate (cosmicLink, address, addressNode) {
 
   node.destroy(node.grab('.CL_loadingAnim', addressNode))
   const grandpa = addressNode.parentNode.parentNode
-  if (grandpa.className === 'CL_asset') {
+  if (grandpa && grandpa.className === 'CL_asset') {
     node.destroy(node.grab('.CL_loadingAnim', grandpa))
   }
 }

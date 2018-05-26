@@ -9,8 +9,8 @@
  * Transaction optional fields.
  */
 export const transactionOptionalFields = [
-  'network',
-  'source', 'fee', 'minTime', 'maxTime', 'memo'
+  'network', 'memo', 'source', 'sequence',
+  'minTime', 'maxTime', 'fee'
 ]
 
 /**
@@ -81,6 +81,7 @@ export const fieldType = {
   selling: 'asset',
   sendAsset: 'asset',
   sendMax: 'amount',
+  sequence: 'amount',
   setFlags: 'flags',
   signer: 'signer',
   source: 'address',
