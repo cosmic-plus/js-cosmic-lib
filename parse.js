@@ -64,7 +64,7 @@ export function network (cosmicLink, network) {
  * @param {Object} options The options as specified for CosmicLink constructor
  * @return {void}
  */
-export function dispatch (cosmicLink, value, options) {
+export function dispatch (cosmicLink, value, options = {}) {
   const type = _guessType(value)
   const parser = typeParser[type]
 
