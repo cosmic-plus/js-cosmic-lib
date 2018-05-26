@@ -133,7 +133,7 @@ export async function getSigners (cosmicLink) {
     const entry = account.signers[index]
     const StrKey = StellarSdk.StrKey
     const signer = { weight: entry.weight, value: entry.key }
-    signer.type = entry.type.replace(/^.*_/,'')
+    signer.type = entry.type.replace(/^.*_/, '')
     if (signer.type === 'hash') signer.value = StrKey.decodeSha256Hash(entry.key).toString('hex')
     if (signer.type === 'tx') {
       signer.value = StrKey.decodePreAuthTx(entry.key).toString('hex')
@@ -157,7 +157,7 @@ function getSignature (cosmicLink, signer) {
       case 'hash': return false
       case 'key':
         const tdesc = await cosmicLink.getTdesc()
-        if(!tdesc.signatures) return false
+        if (!tdesc.signatures) return false
 
         const keypair = StellarSdk.Keypair.fromPublicKey(signer.value)
         const hint = keypair.signatureHint().toString('base64')
@@ -173,9 +173,9 @@ export async function hasSigned (cosmicLink, type, value) {
   for (let index in signers) {
     const signer = signers[index]
     if (
-      signer.type === type
-      && signer.value === value
-      && await signer.getSignature()
+      signer.type === type &&
+      signer.value === value &&
+      await signer.getSignature()
     ) {
       return true
     }
@@ -183,7 +183,7 @@ export async function hasSigned (cosmicLink, type, value) {
   return false
 }
 
-async function resolveTransaction(cosmicLink, transactionId) {
+async function resolveTransaction (cosmicLink, transactionId) {
   const caller = cosmicLink.server.transactions()
   return caller.transaction(transactionId).call()
 }

@@ -71,7 +71,7 @@ const allFormats = ['uri', 'query', 'tdesc', 'json', 'transaction', 'xdr']
 
 event.addFormatHandler = function (cosmicLink, format, callback) {
   const handlers = cosmicLink.formatHandlers
-  if (! handlers[format]) handlers[format] = []
+  if (!handlers[format]) handlers[format] = []
   handlers[format].push(callback)
 
   handleFormat(cosmicLink, format, [callback])
@@ -79,13 +79,13 @@ event.addFormatHandler = function (cosmicLink, format, callback) {
 
 event.removeFormatHandler = function (cosmicLink, format, callback) {
   const handlers = cosmicLink.formatHandlers
-  if (! handlers[format]) return
+  if (!handlers[format]) return
 
   handlers[format] = handlers[format].filter(entry => entry !== callback)
 }
 
 event.callFormatHandlers = function (cosmicLink, ...formats) {
-  if (! formats.length) formats = allFormats
+  if (!formats.length) formats = allFormats
   const handlers = cosmicLink.formatHandlers
 
   formats.forEach(entry => {
@@ -95,7 +95,7 @@ event.callFormatHandlers = function (cosmicLink, ...formats) {
 
 function handleFormat (cosmicLink, format, handlers) {
   const getter = cosmicLink['get' + capitalize(format)]
-  if (! getter) return
+  if (!getter) return
 
   getter().then(value => {
     const event = { cosmicLink: cosmicLink, value: value }

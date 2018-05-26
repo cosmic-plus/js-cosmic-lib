@@ -70,12 +70,11 @@ export function dispatch (cosmicLink, value, options) {
 
   /// Get network parameter now.
   if (
-    (type === 'uri' || type === 'query' || type === 'xdrUri')
-    && value.match('&network=')
+    (type === 'uri' || type === 'query' || type === 'xdrUri') &&
+    value.match('&network=')
   ) {
     const network = value.replace(/.*&network=/, '').replace(/&.*/, '')
-    try { cosmicLink.network = network }
-    catch (error) {}
+    try { cosmicLink.network = network } catch (error) {}
   }
 
   if (parser) parser(cosmicLink, value, options)
@@ -86,7 +85,7 @@ export function dispatch (cosmicLink, value, options) {
     if (options.stripSource || options.stripSequence || options.stripSignatures) {
       typeTowardXdr(cosmicLink, 'json')
     }
-    if (! options.stripSource && ! options.stripSequence) {
+    if (!options.stripSource && !options.stripSequence) {
       makeConverter(cosmicLink, 'xdr', 'query', options)
       makeConverter(cosmicLink, 'query', 'uri')
     }

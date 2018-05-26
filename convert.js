@@ -1,7 +1,5 @@
 'use strict'
 
-import {shorter} from './helpers'
-
 import * as specs from './specs'
 import * as status from './status'
 import * as decode from './decode'
@@ -286,8 +284,7 @@ export function transactionToXdr (cosmicLink, transaction) {
 export function xdrToTransaction (cosmicLink, xdr) {
   try {
     return new StellarSdk.Transaction(xdr)
-  }
-  catch (error) {
+  } catch (error) {
     console.log(error)
     status.fail(cosmicLink, 'Invalid XDR', 'throw')
   }

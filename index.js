@@ -12,7 +12,7 @@ if (typeof document !== 'undefined') {
   node = require('./node')
   format = require('./format')
   require('./cosmic-lib.css')
-} else if(typeof StellarSdk === 'undefined') {
+} else if (typeof StellarSdk === 'undefined') {
   global.StellarSdk = require('stellar-sdk')
 }
 
@@ -106,7 +106,7 @@ export class CosmicLink {
     if (network) this.network = network
 
     this.onClick = event.defaultHandler
-    if(!this._page) this._page = CosmicLink.page
+    if (!this._page) this._page = CosmicLink.page
 
     this.formatHandlers = {}
     for (let format in CosmicLink.formatHandlers) {
@@ -138,7 +138,7 @@ export class CosmicLink {
     const tdesc = await this.getTdesc()
     if (tdesc.source) return tdesc.source
     else if (this.user) return this.user
-    else throw new error ('No source defined for this transaction')
+    else throw new Error('No source defined for this transaction')
   }
 
   async hasSigner (value, type = 'key') {
@@ -190,7 +190,6 @@ export class CosmicLink {
     return this._signersNode
   }
   set signersNode (value) { this._signersNode = value }
-
 }
 
 /// Class-wide configuration

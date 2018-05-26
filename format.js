@@ -212,7 +212,7 @@ export function field (cosmicLink, field, value) {
 exports.signers = async function (cosmicLink) {
   const signers = await cosmicLink.getSigners()
   const tdesc = await cosmicLink.getTdesc()
-  if (signers.length === 1 && ! tdesc.signatures) return
+  if (signers.length === 1 && !tdesc.signatures) return
 
   const signersNode = cosmicLink.signersNode
   node.clear(signersNode)
