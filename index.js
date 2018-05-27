@@ -1,5 +1,7 @@
 'use strict'
 
+import nothing from './polyfill'
+
 import {delay} from './helpers'
 
 import * as action from './action'
