@@ -96,7 +96,12 @@ async function _addressResolver (cosmicLink, address) {
 
   try {
     const account = await StellarSdk.FederationServer.resolve(address)
-    if (!account.account_id) throw new Error('Empty account')
+    const publicKey = account.account_id
+    if (!publicKey) throw new Error('Empty account')
+    if (!account.memo_type && account.memo !== undefined) delete account.memo
+    if (address !== publicKey) account.address = address
+    const alias = cosmicLink.aliases[publicKey]
+    if (alias) account.alias = alias
     return account
   } catch (error) {
     console.log(error)

@@ -1,11 +1,13 @@
 'use strict'
 
+import {delay} from './helpers'
+
 import * as action from './action'
 import * as event from './event'
 import * as parse from './parse'
 import * as resolve from './resolve'
 import * as status from './status'
-import {delay} from './helpers'
+import * as aliases from './aliases'
 
 let node, format
 if (typeof document !== 'undefined') {
@@ -72,17 +74,21 @@ if (typeof document !== 'undefined') {
 //
 // --- Datas ---           <<< Update everything on the go >>>
 // CosmicLink.user         < User address
-// *CosmicLink.aliases     < Local aliases for public keys
 // CosmicLink.network      < Test/Public network
 // CosmicLink.server       < The horizon server to use
+// CosmicLink.page         < The base URI, without the query
 // CosmicLink.status       < Status of the CosmicLink (valid or specific error)
 // CosmicLink.errors       < An array of errors (or undefined if no error)
-// CosmicLink.page         < The base URI, without the query
 //
-// --- Datas (asynchronous)
+// --- Datas (asynchronous) ---
 // CosmicLink.getSource()         < Transaction source
 // CosmicLink.getSourceAccount()  < Transaction source account object
 // CosmicLink.getSigners()        < Array of legit signers
+//
+// --- Aliases ---
+// CosmicLink.aliases                     < Local aliases for public keys
+// CosmicLink.addAliases({id: name,...})  < Append new aliases
+// CosmicLink.removeAliases([id...])      < Remove aliases
 //
 // --- Tests ---
 // CosmicLink.hasSigner(publicKey)   < Test if `publicKey` is a signer for CosmicLink
@@ -109,6 +115,7 @@ export class CosmicLink {
 
     this.onClick = event.defaultHandler
     if (!this._page) this._page = CosmicLink.page
+    this.aliases = CosmicLink.aliases
 
     this.formatHandlers = {}
     for (let format in CosmicLink.formatHandlers) {
@@ -157,6 +164,10 @@ export class CosmicLink {
   async sign (seed) { await action.sign(this, seed) }
   async send (server) { await action.send(this, server) }
 
+  /// Aliases
+  addAliases (aliasesArg) { aliases.add(this, aliasesArg) }
+  removeAliases (array) { aliases.remove(this, aliases) }
+
   /// Datas
   get page () {
     return this._page
@@ -197,6 +208,10 @@ export class CosmicLink {
 /// Class-wide configuration
 CosmicLink.page = 'https://cosmic.link/'
 CosmicLink.network = 'public'
+
+CosmicLink.aliases = aliases.all
+CosmicLink.addAliases = function (aliases) { aliases.add(CosmicLink, aliases) }
+CosmicLink.removeAliases = function (array) { aliases.remove(CosmicLink, array) }
 
 CosmicLink.formatHandlers = {}
 CosmicLink.addFormatHandler = function (format, callback) {

@@ -268,6 +268,9 @@ async function _resolveAddressAndUpdate (cosmicLink, address, addressNode) {
       addressNode.title += `\nMemo (${account.memo_format}): ${account.memo}`
     }
 
+    if (account.address) addressNode.textContent = account.address
+    else if (account.alias) addressNode.textContent = account.alias
+
     addressNode.onclick = event.trigger(cosmicLink, 'address', account,
       addressNode)
   } catch (error) {
@@ -281,7 +284,8 @@ async function _resolveAddressAndUpdate (cosmicLink, address, addressNode) {
     }
   }
 
-  node.destroy(node.grab('.CL_loadingAnim', addressNode))
+  const animation = node.grab('.CL_loadingAnim', addressNode)
+  if (animation) node.destroy(animation)
   const grandpa = addressNode.parentNode.parentNode
   if (grandpa && grandpa.className === 'CL_asset') {
     node.destroy(node.grab('.CL_loadingAnim', grandpa))
