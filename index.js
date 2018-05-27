@@ -45,8 +45,10 @@ if (typeof document !== 'undefined') {
 // new CosmicLink(xdr, "[userNetwork]", "[userAddress]", {...options})
 //
 // --- Options for transaction & xdr ---
-// stripSource = true   < Don't keep source account when converting to URI
-// network = ...        < Specify a network for this transaction
+// stripSource = true      < Strip out source account
+// stripSequence = true    < Strip out sequence number
+// stripSignatures = true  < Strip out signatures
+// network = ...           < Specify a network for this transaction (kept in URI after conversion)
 //
 // --- Edit ---
 // CosmicLink.parse(any-format, {...options})
@@ -66,7 +68,7 @@ if (typeof document !== 'undefined') {
 // --- Handlers ---
 // CosmicLink.addFormatHandler(format, callback)
 // CosmicLink.removeFormatHandler(format, callback)
-// with event = { cosmicLink: ..., value: ..., error: ... }
+// callback will receive event = { cosmicLink: ..., value: ..., error: ... }
 //
 // --- Datas ---           <<< Update everything on the go >>>
 // CosmicLink.user         < User address
