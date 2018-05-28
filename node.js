@@ -52,7 +52,7 @@ export function clear (element) {
  * */
 export function copyContent (element) {
   element.select()
-  document.execCommand('copy')
+  return document.execCommand('copy')
 }
 
 /**
