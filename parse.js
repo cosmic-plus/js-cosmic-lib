@@ -93,10 +93,13 @@ export function dispatch (cosmicLink, value, options = {}) {
 
   event.callFormatHandlers(cosmicLink)
 
-  if (cosmicLink._transactionNode) {
+  if (cosmicLink._htmlNode) {
     cosmicLink.getTdesc()
-      .then(tdesc => format.tdesc(cosmicLink, tdesc))
-      .catch(console.log)
+      .then(tdesc => {
+        try { format.tdesc(cosmicLink) }
+        catch (error) { console.log(error) }
+      })
+      .catch(() => {})
   }
 }
 
