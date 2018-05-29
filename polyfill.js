@@ -1,3 +1,5 @@
+'use_strict'
+
 /// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/find
 if (!Array.prototype.find) {
   Object.defineProperty(Array.prototype, 'find', {

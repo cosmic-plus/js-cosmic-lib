@@ -1,10 +1,10 @@
 'use strict'
-
 /**
  * Various independent helpers.
  *
- * @module
+ * @exports helpers
  */
+const helpers = exports
 
 /**
  * Return a function that will execute `thunk` when called, and return the
@@ -14,7 +14,7 @@
  * @param {function} thunk A parameterless function
  * @return {function}
  */
-export function delay (thunk) {
+helpers.delay = function (thunk) {
   let firstCall = true
   let memoized
   return function () {
@@ -32,7 +32,7 @@ export function delay (thunk) {
  * @param {number} x Time to wait
  * @return {Promise}
  */
-export function timeout (x) {
+helpers.timeout = function (x) {
   return new Promise(function (resolve) { setTimeout(resolve, x) })
 }
 
@@ -42,7 +42,7 @@ export function timeout (x) {
  * @param {string} string
  * @return {string}
  */
-export function capitalize (string) {
+helpers.capitalize = function (string) {
   return string.substr(0, 1).toUpperCase() + string.slice(1)
 }
 
@@ -53,7 +53,7 @@ export function capitalize (string) {
  * @param {string}
  * @return {string}
  */
-export function shorter (string) {
+helpers.shorter = function (string) {
   if (string.length > 50) {
     return string.substr(0, 5) + '...' + string.substr(-5)
   } else {

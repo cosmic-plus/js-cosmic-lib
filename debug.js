@@ -1,6 +1,6 @@
 'use_strict'
 
-import * as node from './node.js'
+const node = require('./node.js')
 const CosmicLink = cosmicLib.CosmicLink
 
 const user = 'GBP7EQX652UPJJJRYFAPH64V2MHGUGFJNKJN7RNOPNSFIBH4BW6NSF45'

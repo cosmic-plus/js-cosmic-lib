@@ -1,12 +1,4 @@
 'use strict'
-
-import {capitalize, delay} from './helpers'
-
-import * as convert from './convert'
-import * as format from './format'
-import * as status from './status'
-import * as event from './event'
-
 /**
  * Contains the methods to parse transactions in various format and create a
  * `CosmicLink` object out of them.
@@ -14,14 +6,24 @@ import * as event from './event'
  * Also contains methods to update some of the `CosmicLink` datas when it
  * require update/re-parse of part or totallity of the object.
  *
- * @module
+ * @exports parse
  */
+const parse = exports
+
+const helpers = require('./helpers')
+const convert = require('./convert')
+const format = require('./format')
+const status = require('./status')
+const event = require('./event')
 
 /**
  * Set `page` as the base URI for `cosmicLink`. Update the URI getter
  * accordingly.
+ *
+ * @param {CL}
+ * @param {string} page URI basename
  */
-export function setPage (cosmicLink, page) {
+parse.page = function (cosmicLink, page) {
   cosmicLink._page = encodeURI(page)
   makeConverter(cosmicLink, 'query', 'uri')
 }
@@ -32,7 +34,7 @@ export function setPage (cosmicLink, page) {
  * @param {CL}
  * @param {string} network Either `public` or `test`
  */
-export function network (cosmicLink, network) {
+parse.network = function (cosmicLink, network) {
   cosmicLink._network = network
   if (network === 'test') {
     cosmicLink.server = new StellarSdk.Server('https://horizon-testnet.stellar.org')
@@ -64,8 +66,8 @@ export function network (cosmicLink, network) {
  * @param {Object} options The options as specified for CosmicLink constructor
  * @return {void}
  */
-export function dispatch (cosmicLink, value, options = {}) {
-  const type = _guessType(value)
+parse.dispatch = function (cosmicLink, value, options = {}) {
+  const type = guessType(value)
   const parser = typeParser[type]
 
   /// Get network parameter now.
@@ -78,7 +80,7 @@ export function dispatch (cosmicLink, value, options = {}) {
   }
 
   if (parser) parser(cosmicLink, value, options)
-  else typeTowardAll(cosmicLink, type, value, options)
+  else parse.typeTowardAll(cosmicLink, type, value, options)
 
   /// A transaction with sequence number uses xdrUri format.
   if (type === 'xdr' || type === 'transaction') {
@@ -86,8 +88,8 @@ export function dispatch (cosmicLink, value, options = {}) {
       typeTowardXdr(cosmicLink, 'json')
     }
     if (!options.stripSource && !options.stripSequence) {
-      makeConverter(cosmicLink, 'xdr', 'query', options)
-      makeConverter(cosmicLink, 'query', 'uri')
+      parse.makeConverter(cosmicLink, 'xdr', 'query', options)
+      parse.makeConverter(cosmicLink, 'query', 'uri')
     }
   }
 
@@ -112,7 +114,7 @@ export function dispatch (cosmicLink, value, options = {}) {
  *     a Stellar transaction XDR.
  * @return {string} type Type of `value`
  */
-function _guessType (value) {
+function guessType (value) {
   let type
   if (typeof value === 'string') {
     const query = convert.uriToQuery('', value)
@@ -140,7 +142,7 @@ typeParser.uri = function (cosmicLink, uri) {
   const page = uri.split('?')[0]
   const query = convert.uriToQuery(cosmicLink, uri)
   cosmicLink._page = encodeURI(page)
-  typeTowardAll(cosmicLink, 'query', query)
+  parse.typeTowardAll(cosmicLink, 'query', query)
 }
 
 typeParser.xdrUri = function (cosmicLink, xdrUri) {
@@ -175,7 +177,7 @@ typeParser.xdrUri = function (cosmicLink, xdrUri) {
     }
   })
 
-  dispatch(cosmicLink, xdr, options)
+  parse.dispatch(cosmicLink, xdr, options)
 }
 
 /**
@@ -187,13 +189,16 @@ typeParser.xdrUri = function (cosmicLink, xdrUri) {
  *                      'xdr'
  * @param {*} value The value for `type`
  */
-function typeTowardAll (cosmicLink, type, value, ...options) {
+parse.typeTowardAll = function (cosmicLink, type, value, ...options) {
   if (type === 'tdesc') {
     type = 'json'
     value = convert.tdescToJson(cosmicLink, value, ...options)
   }
 
-  typeTowardAllUsingDelayed(cosmicLink, type, delay(() => value), ...options)
+  parse.typeTowardAllUsingDelayed(cosmicLink,
+    type,
+    helpers.delay(() => value),
+    ...options)
 }
 
 /**
@@ -206,8 +211,8 @@ function typeTowardAll (cosmicLink, type, value, ...options) {
  *                      'xdr'
  * @param {function} delayed A function that return a promise for `type`
  */
-export function typeTowardAllUsingDelayed (cosmicLink, type, delayed, ...options) {
-  const getter = 'get' + capitalize(type)
+parse.typeTowardAllUsingDelayed = function (cosmicLink, type, delayed, ...options) {
+  const getter = 'get' + helpers.capitalize(type)
   cosmicLink[getter] = delayed
 
   if (type !== 'xdr') typeTowardXdr(cosmicLink, type, ...options)
@@ -223,17 +228,17 @@ export function typeTowardAllUsingDelayed (cosmicLink, type, delayed, ...options
  * until xdr. For example, if `type` is 'query', it will setup
  * `cosmicLink.getJson`, `cosmicLink.getTransaction` and `cosmicLink.getXdr`.
  *
- *
+ * @private
  * @param {CL}
  * @param {string} type One of 'uri', 'query', 'json', 'transaction'
  * @param {*} value The value of `type`
  */
 function typeTowardXdr (cosmicLink, type, ...options) {
   switch (type) {
-    case 'uri': makeConverter(cosmicLink, 'uri', 'query', ...options)
-    case 'query': makeConverter(cosmicLink, 'query', 'json', ...options)
-    case 'json': makeConverter(cosmicLink, 'json', 'transaction', ...options)
-    case 'transaction': makeConverter(cosmicLink, 'transaction', 'xdr', ...options)
+    case 'uri': parse.makeConverter(cosmicLink, 'uri', 'query', ...options)
+    case 'query': parse.makeConverter(cosmicLink, 'query', 'json', ...options)
+    case 'json': parse.makeConverter(cosmicLink, 'json', 'transaction', ...options)
+    case 'transaction': parse.makeConverter(cosmicLink, 'transaction', 'xdr', ...options)
       break
     default: throw new Error('Invalid type: ' + type)
   }
@@ -244,15 +249,16 @@ function typeTowardXdr (cosmicLink, type, ...options) {
  * until xdr. For example, if `type` is 'json', it will setup
  * `cosmicLink.getQuery` and `cosmicLink.getUri`.
  *
+ * @private
  * @param {CL}
  * @param {string} type One of 'xdr', 'transaction', 'json', 'query'
  */
 function typeTowardUri (cosmicLink, type, ...options) {
   switch (type) {
-    case 'xdr': makeConverter(cosmicLink, 'xdr', 'transaction', ...options)
-    case 'transaction': makeConverter(cosmicLink, 'transaction', 'json', ...options)
-    case 'json': makeConverter(cosmicLink, 'json', 'query', ...options)
-    case 'query': makeConverter(cosmicLink, 'query', 'uri', ...options)
+    case 'xdr': parse.makeConverter(cosmicLink, 'xdr', 'transaction', ...options)
+    case 'transaction': parse.makeConverter(cosmicLink, 'transaction', 'json', ...options)
+    case 'json': parse.makeConverter(cosmicLink, 'json', 'query', ...options)
+    case 'query': parse.makeConverter(cosmicLink, 'query', 'uri', ...options)
       break
     default: throw new Error('Invalid type: ' + type)
   }
@@ -272,13 +278,13 @@ function typeTowardUri (cosmicLink, type, ...options) {
  * @param {string} to One of 'uri', 'query', 'json', 'tdesc', 'transaction' or
  *                    'xdr'
  */
-export function makeConverter (cosmicLink, from, to, ...options) {
-  const getFrom = 'get' + capitalize(from)
-  const getTo = 'get' + capitalize(to)
-  const converter = from + 'To' + capitalize(to)
+parse.makeConverter = function (cosmicLink, from, to, ...options) {
+  const getFrom = 'get' + helpers.capitalize(from)
+  const getTo = 'get' + helpers.capitalize(to)
+  const converter = from + 'To' + helpers.capitalize(to)
 
   const getter = cosmicLink[getFrom]
-  cosmicLink[getTo] = delay(async () => {
+  cosmicLink[getTo] = helpers.delay(async () => {
     const value = await getter()
     return convert[converter](cosmicLink, value, ...options)
   })

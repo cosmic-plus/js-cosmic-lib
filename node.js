@@ -1,3 +1,4 @@
+'use_strict'
 /**
  * Utilities to manipulate HTML element from javascript.
  *
@@ -5,8 +6,9 @@
  * cosmic-lib and Stellar Authenticator development, rather than provide a
  * generic-case toolbox.
  *
- * @module
+ * @exports node
  */
+const node = exports
 
 /**
  * Append `childs` as the end of `element`.
@@ -14,7 +16,7 @@
  * @param {HTMLElement} element
  * @param {...(HTMLElement|String|Error)} childs
  */
-export function append (element, ...childs) {
+node.append = function (element, ...childs) {
   childs.forEach(child => {
     if (typeof child === 'string' || child instanceof Error) {
       element.appendChild(document.createTextNode(child))
@@ -30,8 +32,8 @@ export function append (element, ...childs) {
  * @param {HTMLElement} element
  * @param {string} newClass
  * */
-export function appendClass (element, newClass) {
-  element.className = element.className + ' ' + newClass
+node.appendClass = function (element, newClass) {
+  element.className += ' ' + newClass
 }
 
 /**
@@ -39,7 +41,7 @@ export function appendClass (element, newClass) {
  *
  * @param {HTMLElement} element
  * */
-export function clear (element) {
+node.clear = function (element) {
   element.innerHTML = ''
 }
 
@@ -50,7 +52,7 @@ export function clear (element) {
  * @param {HTMLElement} element
  * @param
  * */
-export function copyContent (element) {
+node.copyContent = function (element) {
   element.select()
   return document.execCommand('copy')
 }
@@ -63,7 +65,7 @@ export function copyContent (element) {
  * @param {object|string} [attributes|className|ID]
  * @param {...HTMLElement} [childs]
  */
-export function create (name, attributes, ...childs) {
+node.create = function (name, attributes, ...childs) {
   if (!name) throw new Error('Missing tag name')
 
   const element = document.createElement(name)
@@ -80,7 +82,7 @@ export function create (name, attributes, ...childs) {
     }
   }
 
-  if (childs.length > 0) append(element, ...childs)
+  if (childs.length > 0) node.append(element, ...childs)
 
   return element
 }
@@ -90,11 +92,11 @@ export function create (name, attributes, ...childs) {
  *
  * @param {HTMLElement} element
  * */
-export function destroy (element) {
+node.destroy = function (element) {
   try {
     element.innerHTML = ''
     if (element.parentNode) element.parentNode.removeChild(element)
-  } catch (e) { console.log(e) }
+  } catch (error) { console.log(error) }
 }
 
 /**
@@ -107,7 +109,7 @@ export function destroy (element) {
  * @param {string} pattern
  * @param {HTMLElement} [parent=document]
  * */
-export function grab (pattern, parent = document) {
+node.grab = function (pattern, parent = document) {
   return parent.querySelector(pattern)
 }
 
@@ -116,7 +118,7 @@ export function grab (pattern, parent = document) {
  *
  * @param {...HTMLElement} elements
  */
-export function show (...elements) {
+node.show = function (...elements) {
   elements.forEach(element => element.style.display = 'block')
 }
 
@@ -124,7 +126,7 @@ export function show (...elements) {
  *
  * @param {...HTMLElement} elements
  */
-export function hide (...elements) {
+node.hide = function (...elements) {
   elements.forEach(element => element.style.display = 'none')
 }
 
@@ -134,7 +136,7 @@ export function hide (...elements) {
  * @param {HTMLElement} element
  * @param {...HTMLElement} childs
  */
-export function rewrite (element, ...childs) {
-  clear(element)
-  append(element, ...childs)
+node.rewrite = function (element, ...childs) {
+  node.clear(element)
+  node.append(element, ...childs)
 }

@@ -1,4 +1,10 @@
 'use strict'
+/**
+ * Contains the methods to convert transactions between various formats.
+ *
+ * @exports convert
+ */
+const convert = exports
 
 import * as specs from './specs'
 import * as status from './status'
@@ -7,11 +13,6 @@ import * as resolve from './resolve'
 import * as prepare from './prepare'
 import * as encode from './encode'
 
-/**
- * Contains the methods to convert transactions between various formats.
- *
- * @module
- */
 
 /** ****************************    URI -> XDR    ******************************/
 
@@ -23,7 +24,7 @@ import * as encode from './encode'
  * @return {string} query
  */
 
-export function uriToQuery (cosmicLink, uri) {
+convert.uriToQuery = function (cosmicLink, uri) {
   if (!uri.match(/\?/)) return null
   const query = uri.replace(/^[^?]*/, '')
   return query
@@ -36,7 +37,7 @@ export function uriToQuery (cosmicLink, uri) {
  * @param {string} query
  * @return {Object} tdesc
  */
-export function queryToJson (cosmicLink, query) {
+convert.queryToJson = function (cosmicLink, query) {
   if (query.length < 2) status.fail(cosmicLink, 'Empty query', 'throw')
 
   /// Transaction descriptor.
@@ -46,7 +47,7 @@ export function queryToJson (cosmicLink, query) {
   const operation = query.substr(1).replace(/&.*/, '')
   let isValid = true
 
-  if (!_isOperationTypeValid(operation)) {
+  if (!isOperationTypeValid(operation)) {
     status.error(cosmicLink, 'Unknow operation: ' + operation)
     status.fail(cosmicLink, 'Invalid query', 'throw')
   }
@@ -64,8 +65,8 @@ export function queryToJson (cosmicLink, query) {
         status.error(cosmicLink, 'No value for: ' + field, 'throw')
       }
 
-      const decodedValue = decode.fieldValue(cosmicLink, field, value)
-      if (_isTransactionField(field)) tdesc[field] = decodedValue
+      const decodedValue = decode.field(cosmicLink, field, value)
+      if (isTransactionField(field)) tdesc[field] = decodedValue
       else odesc[field] = decodedValue
     } catch (error) {
       /// At this point decoding errors should already be handled.
@@ -73,7 +74,7 @@ export function queryToJson (cosmicLink, query) {
       if (!cosmicLink.errors) status.error(cosmicLink, error)
       isValid = false
       const errorObject = { error: error, value: value }
-      if (_isTransactionField(field)) tdesc[field] = errorObject
+      if (isTransactionField(field)) tdesc[field] = errorObject
       else odesc[field] = errorObject
     }
   }
@@ -109,7 +110,7 @@ export function queryToJson (cosmicLink, query) {
     }
   })
   for (let field in odesc) {
-    if (!_isOperationField(operation, field)) {
+    if (!isOperationField(operation, field)) {
       isValid = false
       status.error(cosmicLink, 'Invalid field: ' + field)
     }
@@ -118,7 +119,7 @@ export function queryToJson (cosmicLink, query) {
   tdesc.operations = [ odesc ]
   odesc.type = operation
   if (!isValid) status.fail(cosmicLink, 'Invalid query')
-  return tdescToJson(cosmicLink, tdesc)
+  return convert.tdescToJson(cosmicLink, tdesc)
 }
 
 /**
@@ -128,7 +129,7 @@ export function queryToJson (cosmicLink, query) {
  * @param {string} string
  * @return {boolean}
  */
-function _isOperationTypeValid (string) {
+function isOperationTypeValid (string) {
   if (specs.operationMandatoryFields[string]) return true
   else return false
 }
@@ -140,7 +141,7 @@ function _isOperationTypeValid (string) {
  * @param {string} string
  * @return {boolean}
  */
-function _isTransactionField (string) {
+function isTransactionField (string) {
   if (specs.transactionOptionalFields.indexOf(string) !== -1) return true
   else return false
 }
@@ -154,7 +155,7 @@ function _isTransactionField (string) {
  * @param {string} string
  * @return {boolean}
  */
-function _isOperationField (operation, string) {
+function isOperationField (operation, string) {
   if (
     specs.operationMandatoryFields[operation].indexOf(string) === -1 &&
     specs.operationOptionalFields[operation].indexOf(string) === -1
@@ -169,7 +170,7 @@ function _isOperationField (operation, string) {
  * @param {Object} tdesc transaction descriptor
  * @return {string} transaction descriptor JSON
  */
-export function tdescToJson (cosmicLink, tdesc) {
+convert.tdescToJson = function (cosmicLink, tdesc) {
   return JSON.stringify(tdesc, null, 2)
 }
 
@@ -181,13 +182,13 @@ export function tdescToJson (cosmicLink, tdesc) {
  * @param {Object} tdesc transaction descriptor
  * @return {Transaction}
  */
-export async function jsonToTransaction (cosmicLink, json) {
+convert.jsonToTransaction = async function (cosmicLink, json) {
   if (cosmicLink.status) throw new Error(cosmicLink.status)
-  const tdesc = jsonToTdesc(cosmicLink, json)
+  const tdesc = convert.jsonToTdesc(cosmicLink, json)
 
   try {
-    const builder = await _makeTransactionBuilder(cosmicLink, tdesc)
-    const operation = await _odescToOperation(cosmicLink, tdesc.operations[0])
+    const builder = await makeTransactionBuilder(cosmicLink, tdesc)
+    const operation = await odescToOperation(cosmicLink, tdesc.operations[0])
     builder.addOperation(operation)
     return builder.build()
   } catch (error) {
@@ -205,12 +206,12 @@ export async function jsonToTransaction (cosmicLink, json) {
  * @param {Object} odesc Operation descriptor
  * @return {Operation}
  */
-async function _odescToOperation (cosmicLink, odesc) {
+async function odescToOperation (cosmicLink, odesc) {
   let operation = odesc.type
   delete odesc.type
 
   for (let field in odesc) {
-    const value = await prepare.fieldValue(cosmicLink, field, odesc[field])
+    const value = await prepare.field(cosmicLink, field, odesc[field])
     odesc[field] = value
   }
 
@@ -225,7 +226,7 @@ async function _odescToOperation (cosmicLink, odesc) {
  * @param {Object} tdesc Transaction descriptor
  * @return {TransactionBuilder}
  */
-async function _makeTransactionBuilder (cosmicLink, tdesc) {
+async function makeTransactionBuilder (cosmicLink, tdesc) {
   let opts = {}
   if (tdesc.fee) opts.fee = tdesc.fee
   if (tdesc.memo) opts.memo = prepare.memo(cosmicLink, tdesc.memo)
@@ -268,7 +269,7 @@ async function _makeTransactionBuilder (cosmicLink, tdesc) {
  * @param {Transaction} transaction
  * @return {XDR}
  */
-export function transactionToXdr (cosmicLink, transaction) {
+convert.transactionToXdr = function (cosmicLink, transaction) {
   return transaction.toEnvelope().toXDR('base64')
 }
 
@@ -281,7 +282,7 @@ export function transactionToXdr (cosmicLink, transaction) {
  * @param {XDR} xdr
  * @return {Transaction}
  */
-export function xdrToTransaction (cosmicLink, xdr) {
+convert.xdrToTransaction = function (cosmicLink, xdr) {
   try {
     return new StellarSdk.Transaction(xdr)
   } catch (error) {
@@ -297,7 +298,7 @@ export function xdrToTransaction (cosmicLink, xdr) {
  * @param {XDR} xdr Transaction envelope
  * @return {String}
  */
-export function xdrToQuery (cosmicLink, xdr, options = {}) {
+convert.xdrToQuery = function (cosmicLink, xdr, options = {}) {
   let query = '?xdr=' + xdr
   if (options.network) query += '&network=' + options.network
   return query
@@ -319,7 +320,7 @@ export function xdrToQuery (cosmicLink, xdr, options = {}) {
  * @param {Object} options
  * @return {JSON} transaction descriptor JSON
  */
-export function transactionToJson (cosmicLink, transaction, options = {}) {
+convert.transactionToJson = function (cosmicLink, transaction, options = {}) {
   const copy = JSON.parse(JSON.stringify(transaction))
 
   if (copy.operations.length > 1) {
@@ -414,7 +415,7 @@ export function transactionToJson (cosmicLink, transaction, options = {}) {
  * @param {JSON} JSON transaction descriptior
  * @return {Object} transaction descriptor
  */
-export function jsonToTdesc (cosmicLink, json) {
+convert.jsonToTdesc = function (cosmicLink, json) {
   return JSON.parse(json)
 }
 
@@ -425,8 +426,8 @@ export function jsonToTdesc (cosmicLink, json) {
  * @param {Object} tdesc Transaction descriptor
  * @return {string} query
  */
-export function jsonToQuery (cosmicLink, json) {
-  const tdesc = jsonToTdesc(cosmicLink, json)
+convert.jsonToQuery = function (cosmicLink, json) {
+  const tdesc = convert.jsonToTdesc(cosmicLink, json)
   const operation = tdesc.operations[0].type
   let query = '?' + operation
 
@@ -456,6 +457,6 @@ export function jsonToQuery (cosmicLink, json) {
  * @param {string} query
  * @param {string} cosmic link URI
  */
-export function queryToUri (cosmicLink, query) {
+convert.queryToUri = function (cosmicLink, query) {
   return cosmicLink.page + query
 }

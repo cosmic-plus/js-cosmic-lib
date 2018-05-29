@@ -1,19 +1,20 @@
 'use strict'
-
-import * as node from './node'
-import {shorter} from './helpers'
-
-import * as specs from './specs'
-import * as status from './status'
-import * as resolve from './resolve'
-import * as event from './event'
-
 /**
  * Contains methods to format a `transaction descriptor` into CSS/HTML for
  * display in browser.
  *
- * @module
+ * @exports format
  */
+const format = exports
+
+const helpers = require('./helpers')
+const node = require('./node')
+const check = require('./check')
+const specs = require('./specs')
+const status = require('./status')
+const resolve = require('./resolve')
+const event = require('./event')
+
 
 /**
  * Populate `cosmicLink.transactionNode` with a description of `transaction
@@ -22,7 +23,7 @@ import * as event from './event'
  * @param {CL}
  * @param {Object} tdesc Transaction descriptor
  */
-export async function tdesc (cosmicLink) {
+format.tdesc = async function (cosmicLink) {
   const trNode = cosmicLink.transactionNode
   const tdesc = await cosmicLink.getTdesc()
   node.clear(trNode)
@@ -32,8 +33,8 @@ export async function tdesc (cosmicLink) {
     if (tdesc[entry]) {
       if (!infoNode) infoNode = node.create('ul', '.CL_sideInfo')
       const lineNode = node.create('li', {},
-        _fieldDesc[entry] + ': ',
-        field(cosmicLink, entry, tdesc[entry])
+        specs.fieldDesc[entry] + ': ',
+        format.field(cosmicLink, entry, tdesc[entry])
       )
       node.append(infoNode, lineNode)
     }
@@ -42,9 +43,9 @@ export async function tdesc (cosmicLink) {
   if (infoNode) node.append(trNode, infoNode)
 
   try {
-    const opNode = _formatOdesc(cosmicLink, tdesc.operations[0])
+    const opNode = format.operation(cosmicLink, tdesc.operations[0])
     node.append(trNode, opNode)
-    exports.signers(cosmicLink)
+    format.signatures(cosmicLink)
   } catch (error) {
     console.log(error)
     status.error(cosmicLink, 'Unhandled formatting error')
@@ -52,30 +53,14 @@ export async function tdesc (cosmicLink) {
 }
 
 /**
- * Transaction field meaning.
- * @private
- */
-const _fieldDesc = {
-  source: 'Source',
-  fee: 'Fees',
-  minTime: 'Valid only after',
-  maxTime: 'Valid only before',
-  memo: 'Memo',
-
-  network: 'Network',
-  sequence: 'Sequence'
-}
-
-/**
- * Return an HTMLElement with `operation descriptor` in human language.
+ * Return an HTMLElement with `operation` in human language.
  *
- * @private
  * @param {CL}
- * @param {Object} odesc Operation Descriptor
+ * @param {Object} odesc Operation in cosmic link JSON format
  */
-function _formatOdesc (cosmicLink, odesc) {
+format.operation = function (cosmicLink, odesc) {
   const opNode = node.create('div', '.CL_operation')
-  let meaning = _odescToMeaning(odesc)
+  let meaning = operationMeaning(odesc)
 
   while (meaning) {
     if (meaning.substr(0, 1) === '{') {
@@ -85,7 +70,7 @@ function _formatOdesc (cosmicLink, odesc) {
         if (meaning === '') break
         node.append(opNode, node.create('br'))
       } else {
-        const fieldNode = field(cosmicLink, query, odesc[query])
+        const fieldNode = format.field(cosmicLink, query, odesc[query])
         node.append(opNode, fieldNode)
       }
     } else {
@@ -104,7 +89,7 @@ function _formatOdesc (cosmicLink, odesc) {
  * @param {Object} odesc Operation descriptor
  * @return {string} Meaning of `operation descriptor`
  */
-function _odescToMeaning (odesc) {
+function operationMeaning (odesc) {
   let msg
   switch (odesc.type) {
     case 'accountMerge':
@@ -188,13 +173,13 @@ function _odescToMeaning (odesc) {
  * @param {string} field The field name of `value` as defined in `spec.js`
  * @return {HTLMElement} `value` formatted in HTML/CSS
  */
-export function field (cosmicLink, field, value) {
+format.field = function (cosmicLink, field, value) {
   let type = specs.fieldType[field]
   if (!type) throw new Error('Unknow field: ' + field)
 
+  check.type(cosmicLink, type)
   if (typeof value === 'object' && value.error) type = 'error'
-
-  const formatter = _format[type] || _format.string
+  const formatter = format[type] || format.string
   const fieldNode = formatter(cosmicLink, value)
 
   fieldNode.className = 'CL_' + type
@@ -209,7 +194,7 @@ export function field (cosmicLink, field, value) {
  * @param {CL}
  * @return {HTMLElement} - A `div` element containing the signers
  */
-exports.signers = async function (cosmicLink) {
+format.signatures = async function (cosmicLink) {
   const signers = await cosmicLink.getSigners()
   const tdesc = await cosmicLink.getTdesc()
   if (signers.length === 1 && !tdesc.signatures) return
@@ -222,7 +207,7 @@ exports.signers = async function (cosmicLink) {
   node.append(cosmicLink.signersNode, titleNode, listNode)
 
   signers.forEach(entry => {
-    const signerNode = _format.signer(cosmicLink, entry)
+    const signerNode = format.signer(cosmicLink, entry)
     const animation = node.create('span', '.CL_loadingAnim')
     const lineNode = node.create('li', null, signerNode, animation)
     entry.node = lineNode
@@ -236,36 +221,34 @@ exports.signers = async function (cosmicLink) {
 
 /******************************************************************************/
 
-let _format = {}
-
-_format.string = function (cosmicLink, string) {
+format.string = function (cosmicLink, string) {
   return document.createTextNode(string)
 }
 
-_format.error = function (cosmicLink, error) {
+format.error = function (cosmicLink, error) {
   const errorNode = node.create('span', '.CL_error', error.value)
   errorNode.title = 'Invalid value'
   return errorNode
 }
 
-_format.address = function (cosmicLink, address) {
+format.address = function (cosmicLink, address) {
   const addressNode = node.create('span',
     { title: 'Resolving...', className: 'CL_address' },
-    shorter(address),
+    helpers.shorter(address),
     node.create('span', '.CL_loadingAnim')
   )
 
-  _resolveAddressAndUpdate(cosmicLink, address, addressNode)
+  resolveAddressAndUpdate(cosmicLink, address, addressNode)
   return addressNode
 }
 
-async function _resolveAddressAndUpdate (cosmicLink, address, addressNode) {
+async function resolveAddressAndUpdate (cosmicLink, address, addressNode) {
   try {
     const account = await resolve.address(cosmicLink, address)
 
     addressNode.title = account.account_id
     if (account.memo) {
-      addressNode.title += `\nMemo (${account.memo_format}): ${account.memo}`
+      addressNode.title += `\nMemo (${account.memoexports}): ${account.memo}`
     }
 
     if (account.address) addressNode.textContent = account.address
@@ -292,7 +275,7 @@ async function _resolveAddressAndUpdate (cosmicLink, address, addressNode) {
   }
 }
 
-_format.asset = function (cosmicLink, asset) {
+format.asset = function (cosmicLink, asset) {
   const codeNode = node.create('span', '.CL_assetCode', asset.code)
   const issuerNode = node.create('span', '.CL_assetIssuer')
   const assetNode = node.create('span', '.CL_asset', codeNode, issuerNode)
@@ -302,7 +285,7 @@ _format.asset = function (cosmicLink, asset) {
   if (asset.issuer) {
     codeNode.title = 'Issued by ' + asset.issuer
     node.append(issuerNode, ' issued by ')
-    node.append(issuerNode, _format.address(cosmicLink, asset.issuer))
+    node.append(issuerNode, format.address(cosmicLink, asset.issuer))
     node.append(codeNode, node.create('span', '.CL_loadingAnim'))
   } else {
     codeNode.title = 'Native asset'
@@ -312,22 +295,22 @@ _format.asset = function (cosmicLink, asset) {
   return assetNode
 }
 
-_format.assetsArray = function (cosmicLink, assetsArray) {
+format.assetsArray = function (cosmicLink, assetsArray) {
   const assetsArrayNode = node.create('span')
   for (let i = 0; i < assetsArray.length; i++) {
     if (i !== 0) node.append(assetsArrayNode, ', ')
-    node.append(assetsArrayNode, _format.asset(cosmicLink, assetsArray[i]))
+    node.append(assetsArrayNode, format.asset(cosmicLink, assetsArray[i]))
   }
 
   return assetsArrayNode
 }
 
-_format.date = function (cosmicLink, timestamp) {
+format.date = function (cosmicLink, timestamp) {
   const date = new Date(timestamp * 1000)
   return node.create('span', {}, date.toLocaleString())
 }
 
-_format.flags = function (cosmicLink, flags) {
+format.flags = function (cosmicLink, flags) {
   let string = ''
   if (flags >= 4) {
     string = 'immutable'
@@ -346,11 +329,11 @@ _format.flags = function (cosmicLink, flags) {
   return node.create('span', {}, string)
 }
 
-_format.memo = function (cosmicLink, memo) {
+format.memo = function (cosmicLink, memo) {
   const typeNode = node.create('span', '.CL_memoType', memo.type)
   let valueNode
   if (memo.value.length > 30) {
-    valueNode = _makeHashNode(memo.value)
+    valueNode = makeHashNode(memo.value)
     node.appendClass(valueNode, '.CL_memoValue')
   } else {
     valueNode = node.create('span', '.CL_memoValue', memo.value)
@@ -358,7 +341,7 @@ _format.memo = function (cosmicLink, memo) {
   return node.create('span', {}, '(', typeNode, ') ', valueNode)
 }
 
-_format.price = function (cosmicLink, price) {
+format.price = function (cosmicLink, price) {
   if (typeof price === 'string') {
     return node.create('span', {}, price)
   } else {
@@ -366,23 +349,23 @@ _format.price = function (cosmicLink, price) {
   }
 }
 
-_format.signer = function (cosmicLink, signer) {
+format.signer = function (cosmicLink, signer) {
   const signerNode = node.create('span')
   switch (signer.type) {
     case 'key':
       node.append(signerNode, 'Account ')
-      node.append(signerNode, _format.address(cosmicLink, signer.value))
+      node.append(signerNode, format.address(cosmicLink, signer.value))
       break
     case 'hash':
       node.append(signerNode,
         'Key whose hash is ',
-        _makeHashNode(signer.value)
+        makeHashNode(signer.value)
       )
       break
     case 'tx':
       node.append(signerNode,
         'Transaction ',
-        _makeHashNode(signer.value)
+        makeHashNode(signer.value)
       )
   }
   if (signer.weight > 1) {
@@ -391,10 +374,10 @@ _format.signer = function (cosmicLink, signer) {
   return signerNode
 }
 
-function _makeHashNode (hash) {
+function makeHashNode (hash) {
   return node.create('span',
-    { className: 'CL_hash', title: hash, onclick: _copier(hash) },
-    shorter(hash)
+    { className: 'CL_hash', title: hash, onclick: copier(hash) },
+    helpers.shorter(hash)
   )
 }
 
@@ -405,7 +388,7 @@ function _makeHashNode (hash) {
  * @param {string} string
  * @return {function}
  */
-function _copier (string) {
+function copier (string) {
   return function () {
     const textBox = node.create('textarea', {}, string)
     node.append(node.grab('body'), textBox)

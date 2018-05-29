@@ -1,8 +1,4 @@
 'use strict'
-
-import * as status from './status'
-import * as specs from './specs'
-
 /**
  * Provide checks for varous type of field used in cosmic links. In case of
  * error, `cosmicLink` is updated accordingly.
@@ -12,8 +8,48 @@ import * as specs from './specs'
  *
  * The check apply on values using the cosmic link JSON format.
  *
- * @module
+ * @exports check
  */
+const check = exports
+
+const specs = require('./specs')
+const status = require('./status')
+
+
+/**
+ * Check that `field` is a valid transaction/operation field. If `value` is
+ * given, check that it is valid for that `field`. If a check doesn't pass, an
+ * error is throwed.
+ *
+ * @param {cosmicLink} cosmicLink
+ * @param {string} field
+ * @param {string} [value]
+ */
+check.field = function (cosmicLink, field, value) {
+  const type = specs.fieldType[field]
+  if (!type) status.error(cosmicLink, 'Unknow field: ' + field, 'throw')
+  if (value) check.type(cosmicLink, type, value)
+}
+
+/**
+ * Check that `type` is a valid transaction/operation field type. If `value` is
+ * given, check that it is valid for that `type`. If a check doesn't pass, an
+ * error is throwed.
+ *
+ * @param {cosmicLink} cosmicLink
+ * @param {string} type
+ * @param {string} [value]
+ */
+check.type = function (cosmicLink, type, value) {
+  if (! specs.types.find(entry => entry === type)) {
+    throw new Error('Invalid type: ' + type)
+  }
+  if (value) {
+    check.type(cosmicLink, type)
+    const checker = check[type]
+    if (checker) checker(cosmicLink, value)
+  }
+}
 
 /**
  * Generic check for numbers. Check that `value` is a number or a string
@@ -27,69 +63,87 @@ import * as specs from './specs'
  * @param {number|string} [min]
  * @param {number|string} [max]
  */
-export function number (cosmicLink, value, type = 'number', min, max) {
+check.number = function (cosmicLink, value, type = 'number', min, max) {
   const num = +value
   if (isNaN(num)) {
-    status.error(cosmicLink, 'Invalid ' + type + ' (should be a number): ' +
-        value, 'throw')
+    status.error(cosmicLink,
+      `Invalid ${type} (should be a number): ${value}`,
+      'throw'
+    )
   } else if ((min && num < min) || (max && num > max)) {
-    status.error(cosmicLink, 'Invalid ' + type +
-      ' (should be between ' + min + ' and ' + max + ' ): ' + value, 'throw')
+    status.error(cosmicLink,
+      `Invalid ${type} (should be between ${min} and ${max} ): ${value}`,
+      'throw'
+    )
   }
 }
 
 /**
- * Check that `value` respect the cosmic link JSON format for `field`.
+ * Generic check for integers. Check that `value` is an integer or a string
+ * representing an integer. `type` is for the customization of the message in
+ * case of error. `min` and `max` may be provided as additional restriction for
+ * `value`.
  *
  * @param {cosmicLink} cosmicLink
- * @param {string} field
- * @param {string} value
+ * @param {number|string} value
+ * @param {string} [type = 'integer']
+ * @param {number|string} [min]
+ * @param {number|string} [max]
  */
-export function fieldValue (cosmicLink, field, value) {
-  const type = specs.fieldType[field]
-  if (type) typedValue(cosmicLink, type, value)
-  else status.error(cosmicLink, 'Unknow field: ' + field, 'throw')
-}
-
-/**
- * Check that `value` respect the cosmic link JSON format for `type`.
- *
- * @param {cosmicLink} cosmicLink
- * @param {string} type
- * @param {string} value
- */
-export function typedValue (cosmicLink, type, value) {
-  const checker = exports[type]
-  if (checker) checker(cosmicLink, value)
+check.integer = function (cosmicLink, value, type = 'integer', min, max) {
+  check.number(cosmicLink, value, type, min, max)
+  if (parseInt(value) + '' !== value + '') {
+    status.error(cosmicLink, `Not an integer: ${value}`, 'throw')
+  }
 }
 
 /******************************************************************************/
 
-/**
- * @param {cosmicLink} cosmicLink
- * @param {object} asset
- */
-export function asset (cosmicLink, asset) {
+check.asset = function (cosmicLink, asset) {
   const code = asset.code.toLowerCase()
   if (!asset.issuer && code !== 'xlm' && code !== 'native') {
     status.error(cosmicLink, 'Missing issuer for asset: ' + code, 'throw')
   }
 }
 
-/**
- * @param {cosmicLink} cosmicLink
- * @param {string|number} amount
- */
-export function amount (cosmicLink, amount) {
-  number(cosmicLink, amount, 'amount')
+check.assetsArray = function (cosmicLink, assetsArray) {
+  let isValid = true
+  for (let index in assetsArray) {
+    try { check.asset(cosmicLink, assetsArray[index]) }
+    catch (error) { isValid = false }
+  }
+  if (!isValid) throw new Error ('Invalid assets array')
 }
 
-/**
- * @param {cosmicLink} cosmicLink
- * @param {object} signer
- */
-export function signer (cosmicLink, signer) {
-  number(cosmicLink, signer.weight, 'weight', 0, 255)
+check.amount = function (cosmicLink, amount) {
+  check.number(cosmicLink, amount, 'amount')
+}
+
+check.boolean = function (cosmicLink, boolean) {
+  if (typeof boolean !== 'boolean') {
+    status.error(cosmicLink, 'Invalid boolean: ' + boolean, 'throw')
+  }
+}
+
+check.flags = function (cosmicLink, flags) {
+  check.integer(cosmicLink, flags, 'flags', 0, 7)
+}
+
+check.price = function (cosmicLink, price) {
+  if (typeof price === 'object') {
+    try {
+      check.price(null, price.n)
+      check.price(null, price.d)
+    } catch (error) {
+      status.error(cosmicLink, 'Invalid price', 'throw')
+    }
+  } else {
+    check.number(cosmicLink, price, 0)
+  }
+}
+
+check.signer = function (cosmicLink, signer) {
+  check.weight(cosmicLink, signer.weight)
   switch (signer.type) {
     case 'key': break
     case 'hash':
@@ -103,18 +157,14 @@ export function signer (cosmicLink, signer) {
   }
 }
 
-/**
- * @param {cosmicLink} cosmicLink
- * @param {string|number} threshold
- */
-export function threshold (cosmicLink, threshold) {
-  number(cosmicLink, threshold, 'threshold', 0, 255)
+check.sequence = function (cosmicLink, sequence) {
+  check.integer(cosmicLink, sequence, 'sequence', 0)
 }
 
-/**
- * @param {cosmicLink} cosmicLink
- * @param {string|number} weight
- */
-export function weight (cosmicLink, weight) {
-  number(cosmicLink, weight, 'weight', 0, 255)
+check.threshold = function (cosmicLink, threshold) {
+  check.integer(cosmicLink, threshold, 'threshold', 0, 255)
+}
+
+check.weight = function (cosmicLink, weight) {
+  check.integer(cosmicLink, weight, 'weight', 0, 255)
 }

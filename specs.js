@@ -1,14 +1,15 @@
-
+'use_strict'
 /**
  * Contains Stellar transactions specification.
  *
- * @module
+ * @export specs
  */
+const specs = exports
 
 /**
  * Transaction optional fields.
  */
-export const transactionOptionalFields = [
+specs.transactionOptionalFields = [
   'network', 'memo', 'source', 'sequence',
   'minTime', 'maxTime', 'fee'
 ]
@@ -16,7 +17,7 @@ export const transactionOptionalFields = [
 /**
  * Operation mandatory fields.
  */
-export const operationMandatoryFields = {
+specs.operationMandatoryFields = {
   accountMerge: ['destination'],
   allowTrust: ['assetCode', 'trustor'],
   changeTrust: ['asset'],
@@ -33,7 +34,7 @@ export const operationMandatoryFields = {
 /**
  * Operation optionnal fields.
  */
-export const operationOptionalFields = {
+specs.operationOptionalFields = {
   accountMerge: ['source'],
   allowTrust: ['authorize', 'source'],
   changeTrust: ['limit', 'source'],
@@ -49,10 +50,12 @@ export const operationOptionalFields = {
     'source']
 }
 
+
+
 /**
  * Field types.
  */
-export const fieldType = {
+specs.fieldType = {
   amount: 'amount',
   asset: 'asset',
   assetCode: 'string',
@@ -81,11 +84,34 @@ export const fieldType = {
   selling: 'asset',
   sendAsset: 'asset',
   sendMax: 'amount',
-  sequence: 'amount',
+  sequence: 'sequence',
   setFlags: 'flags',
   signer: 'signer',
   source: 'address',
   startingBalance: 'amount',
   trustor: 'address',
   value: 'string'
+}
+
+/**
+ * Transaction field meaning.
+ */
+specs.fieldDesc = {
+  source: 'Source',
+  fee: 'Fees',
+  minTime: 'Valid only after',
+  maxTime: 'Valid only before',
+  memo: 'Memo',
+
+  network: 'Network',
+  sequence: 'Sequence'
+}
+
+/**
+ * An array of each valid type for fields.
+ */
+specs.types = []
+for (let field in specs.fieldType) {
+  const type = specs.fieldType[field]
+  specs.types.find(entry => entry === type) || specs.types.push(type)
 }

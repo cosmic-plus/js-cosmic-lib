@@ -2,14 +2,13 @@
 
 import nothing from './polyfill'
 
-import {delay} from './helpers'
-
-import * as action from './action'
-import * as event from './event'
-import * as parse from './parse'
-import * as resolve from './resolve'
-import * as status from './status'
-import * as aliases from './aliases'
+const helpers = require('./helpers')
+const action = require('./action')
+const event = require('./event')
+const parse = require('./parse')
+const resolve = require('./resolve')
+const status = require('./status')
+const aliases = require('./aliases')
 
 let node, format
 if (typeof document !== 'undefined') {
@@ -34,14 +33,8 @@ if (typeof document !== 'undefined') {
  * it is valid, and may want to provide a default user, which could be your
  * accountID or the accountID of anybody using your service.
  *
- * @constructor
- * @param {*} transaction
- * @param {test|public} [userNetwork] The Stellar network to use, will be public
- *     by default.
- * @param {string} [userAddress] This is the fallback source address when none
- *     is specified from the transaction.
- * @param {Object} options Additional options
- */
+ * Cheat sheet:
+ *```
 // --- Constructor ---
 // new CosmicLink(uri, "[userNetwork]", "[userAddress]")
 // new CosmicLink(query, "[userNetwork]", "[userAddress]")
@@ -109,7 +102,16 @@ if (typeof document !== 'undefined') {
 // CosmicLink.transactionNode  < HTML description of the transaction
 // CosmicLink.signersNode      < HTML element for the signers list
 // CosmicLink.statusNode       < HTML element for the transaction status & errors
-
+ * ```
+ *
+ * @constructor
+ * @param {*} transaction
+ * @param {test|public} [userNetwork] The Stellar network to use, will be public
+ *     by default.
+ * @param {string} [userAddress] This is the fallback source address when none
+ *     is specified from the transaction.
+ * @param {Object} options Additional options
+ */
 export class CosmicLink {
   constructor (transaction, network, user, options) {
     if (user) this.user = user
@@ -137,8 +139,8 @@ export class CosmicLink {
     /// Fallback only when network is not set from the URI.
     if (!this.network) this.network = CosmicLink.network
 
-    this.getSourceAccount = delay(() => resolve.getSourceAccount(this))
-    this.getSigners = delay(() => resolve.getSigners(this))
+    this.getSourceAccount = helpers.delay(() => resolve.getSourceAccount(this))
+    this.getSigners = helpers.delay(() => resolve.signers(this))
   }
 
   parse (transaction, options) {
@@ -171,12 +173,8 @@ export class CosmicLink {
   removeAliases (array) { aliases.remove(this, aliases) }
 
   /// Datas
-  get page () {
-    return this._page
-  }
-  set page (uri) {
-    parse.setPage(this, uri)
-  }
+  get page () { return this._page }
+  set page (uri) { parse.page(this, uri) }
 
   get network () { return this._network }
   set network (network) { parse.network(this, network) }

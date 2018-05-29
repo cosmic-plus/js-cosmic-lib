@@ -1,13 +1,14 @@
 'use strict'
 
-import * as node from './node'
-
 /**
  * Contains the methods to update cosmic link status and HTML status node.
  * This is mostly about error handling.
  *
- * @module
+ * @exports status
  */
+const status = exports
+
+const node = require('./node')
 
 /**
  * Set `cosmicLink` status as `status` and update statusNode.
@@ -19,7 +20,7 @@ import * as node from './node'
  * @param {cosmicLink} cosmicLink
  * @param {string} status
  */
-export function update (cosmicLink, status) {
+status.update = function (cosmicLink, status) {
   if (cosmicLink.status) return
   console.log('Set status: ' + status)
   if (cosmicLink) cosmicLink.status = status
@@ -40,10 +41,10 @@ export function update (cosmicLink, status) {
  * @param {string} status
  * @param {function|'throw'} [continuation]
  */
-export function fail (cosmicLink, status, continuation) {
-  update(cosmicLink, status)
+status.fail = function (cosmicLink, errorStatus, continuation) {
+  status.update(cosmicLink, errorStatus)
   if (cosmicLink._statusNode) node.appendClass(cosmicLink.statusNode, 'CL_error')
-  errorContinuation(status, continuation)
+  errorContinuation(errorStatus, continuation)
 }
 
 /**
@@ -56,7 +57,7 @@ export function fail (cosmicLink, status, continuation) {
  * @param {string} error
  * @param {procedure|'throw'} [continuation]
  */
-export function error (cosmicLink, error, continuation) {
+status.error = function (cosmicLink, error, continuation) {
   console.log(error)
 
   if (cosmicLink) {
@@ -78,7 +79,7 @@ export function error (cosmicLink, error, continuation) {
  *
  * @param {CL}
  */
-export function populateHtmlNode (cosmicLink) {
+status.populateHtmlNode = function (cosmicLink) {
   if (cosmicLink.status) {
     const titleNode = node.grab('.CL_status', cosmicLink.statusNode)
     titleNode.textContent = cosmicLink.status
@@ -95,7 +96,7 @@ export function populateHtmlNode (cosmicLink) {
 /**
  * If `continuation` is a function, call it with `error` as argument.
  * If `continuation` equal 'throw', throw a new error with *error as message.
- * If *continuation is undefined, do nothing.
+ * If `continuation` is undefined, do nothing.
  *
  * @private
  * @param {string} error

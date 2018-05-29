@@ -1,14 +1,15 @@
 'use strict'
-
-import {shorter, timeout, delay} from './helpers'
-import * as status from './status'
-
 /**
  * Contains functions that probe the blockchain or federation servers to collect
  * datas.
  *
- * @module
+ * @exports resolve
  */
+const resolve = exports
+
+const helpers = require('./helpers')
+const status = require('./status')
+
 
 /**
  * Select the network to be used by `StellarSdk` as being `cosmicLink` current
@@ -16,7 +17,7 @@ import * as status from './status'
  *
  * @param {CL}
  */
-export function selectNetwork (cosmicLink) {
+resolve.selectNetwork = function (cosmicLink) {
   switch (cosmicLink.network) {
     case 'test':
       StellarSdk.Network.useTestNetwork()
@@ -35,7 +36,7 @@ export function selectNetwork (cosmicLink) {
  *
  * @const
  */
-export let accountCacheExpiration = 5 * 60
+resolve.accountCacheExpiration = 5 * 60
 
 /**
  * Contains promise of previously fetched accounts.
@@ -43,7 +44,7 @@ export let accountCacheExpiration = 5 * 60
  * @private
  * @type {Object}
  */
-const _accountCache = {}
+const accountCache = {}
 
 /**
  * Cache `promise` resolving to `address`'s account for `accountCacheExpiration`
@@ -53,10 +54,10 @@ const _accountCache = {}
  * @param {string} address
  * @param {Promise} promise
  */
-async function _cacheAccount (address, promise) {
-  _accountCache[address] = promise
-  await timeout(accountCacheExpiration * 1000)
-  delete _accountCache[address]
+async function cacheAccount (address, promise) {
+  accountCache[address] = promise
+  await helpers.timeout(resolve.accountCacheExpiration * 1000)
+  delete accountCache[address]
 }
 
 /**
@@ -71,13 +72,12 @@ async function _cacheAccount (address, promise) {
  * @param {string} address
  * @return {Promise} Resolve to `address` account object
  */
-function resolveAddress (cosmicLink, address) {
-  if (_accountCache[address]) return _accountCache[address]
-  const promise = _addressResolver(cosmicLink, address)
-  _cacheAccount(address, promise)
+resolve.address = function (cosmicLink, address) {
+  if (accountCache[address]) return accountCache[address]
+  const promise = addressResolver(cosmicLink, address)
+  cacheAccount(address, promise)
   return promise
 }
-exports.address = resolveAddress
 
 /**
  * Helper for the previous resolve.address function.
@@ -88,10 +88,10 @@ exports.address = resolveAddress
  * @param {cosmicLink} cosmicLink
  * @param {string} address
  */
-async function _addressResolver (cosmicLink, address) {
+async function addressResolver (cosmicLink, address) {
   if (address.length !== 56 && !address.match(/.*\*.*\..*/)) {
     status.fail(cosmicLink, 'Invalid address(es)')
-    status.error(cosmicLink, 'Invalid address: ' + shorter(address), 'throw')
+    status.error(cosmicLink, 'Invalid address: ' + helpers.shorter(address), 'throw')
   }
 
   try {
@@ -106,14 +106,14 @@ async function _addressResolver (cosmicLink, address) {
   } catch (error) {
     console.log(error)
     status.fail(cosmicLink, 'Unresolved address(es)')
-    status.error(cosmicLink, "Can't resolve: " + shorter(address), 'throw')
+    status.error(cosmicLink, "Can't resolve: " + helpers.shorter(address), 'throw')
   }
 }
 
-export async function getSourceAccount (cosmicLink) {
+resolve.getSourceAccount = async function (cosmicLink) {
   cosmicLink.selectNetwork()
   const source = await cosmicLink.getSource()
-  const account = await resolveAddress(cosmicLink, source)
+  const account = await resolve.address(cosmicLink, source)
   const publicKey = account.account_id
   try {
     const accountResponse = await cosmicLink.server.loadAccount(publicKey)
@@ -131,7 +131,7 @@ export async function getSourceAccount (cosmicLink) {
  * @param {CL}
  * @return {Array} Signers
  */
-export async function getSigners (cosmicLink) {
+resolve.signers = async function (cosmicLink) {
   const account = await cosmicLink.getSourceAccount()
   const signers = []
   for (let index in account.signers) {
@@ -150,11 +150,11 @@ export async function getSigners (cosmicLink) {
 }
 
 function getSignature (cosmicLink, signer) {
-  return delay(async () => {
+  return helpers.delay(async () => {
     switch (signer.type) {
       case 'tx':
         try {
-          await resolveTransaction(cosmicLink, signer.value)
+          await resolve.transaction(cosmicLink, signer.value)
           return true
         } catch (error) {
           return false
@@ -173,7 +173,7 @@ function getSignature (cosmicLink, signer) {
   })
 }
 
-export async function hasSigned (cosmicLink, type, value) {
+resolve.hasSigned = async function (cosmicLink, type, value) {
   const signers = await cosmicLink.getSigners()
   for (let index in signers) {
     const signer = signers[index]
@@ -188,9 +188,9 @@ export async function hasSigned (cosmicLink, type, value) {
   return false
 }
 
-async function resolveTransaction (cosmicLink, transactionId) {
+resolve.transaction = async function (cosmicLink, txHash) {
   const caller = cosmicLink.server.transactions()
-  return caller.transaction(transactionId).call()
+  return caller.transaction(txHash).call()
 }
 
 //~ async function getThreshold (cosmicLink) {

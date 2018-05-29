@@ -1,13 +1,46 @@
+'use_strict'
+/**
+ * Aliases handlers & most known Stellar addresses. Aliases are put together as
+ * an `Object` in the form:
+ * ```
+ * {
+ *   'publicKey1': 'name1',
+ *   'publicKey2': 'name2',
+ *    ...
+ *   'publicKeyN': 'nameN'
+ * }
+ * ```
+ *
+ * Aliases are only used as a displaying sugar and can't be used as a
+ * replacement for federated address as it would lead to security issues.
+ *
+ * @exports aliases
+ */
 const aliases = exports
 
+/**
+ * Append `aliases` to `cosmicLink.aliases`.
+ *
+ * @param {CL}
+ * @param {Object} aliases
+ */
 aliases.add = function (cosmicLink, aliases) {
   cosmicLink.aliases = Object.assign(cosmicLink.aliases, aliases)
 }
 
-aliases.remove = function (cosmicLink, array) {
-  array.forEach(entry => delete cosmicLink.aliases[entry])
+/**
+ * Remove `publicKeys` from `cosmicLink.aliases`.
+ *
+ * @param {CL}
+ * @param {Array} publicKeys An array of public keys
+ */
+aliases.remove = function (cosmicLink, publicKeys) {
+  publicKeys.forEach(entry => delete cosmicLink.aliases[entry])
 }
 
+/**
+ * Aliases for most known anchors.
+ */
 aliases.anchors = {
   'GAEDLNMCQZOSLY7Y4NW3DTEWQEVVCXYYMBDNGPPGBMQH4GFYECBI7YVK': 'anclax.com',
   'GAEGOS7I6TYZSVHPSN76RSPIVL3SELATXZWLFO4DIAFYJF7MPAHFE7H4': 'apay.io',
@@ -54,6 +87,9 @@ aliases.anchors = {
   'GAO4DADCRAHA35GD6J3KUNOB5ELZE5D6CGPSJX2WBMEQV7R2M4PGKJL5': 'xirkle.com',
 }
 
+/**
+ * Aliases for most known destinations (exchanges/inflation pools/services).
+ */
 aliases.destinations = {
   'GDZCEWJ5TVXUTFH6V5CVDQDE43KRXYUFRHKI7X64EWMVOVYYZJFWIFQ2': 'AEX',
   'GAHK7EEG2WWHVKDNT4CEQFZGKF2LGDSW2IVM4S5DP42RBW3K6BTODB4A': 'Binance',
@@ -83,4 +119,7 @@ aliases.destinations = {
   'GBZ35ZJRIKJGYH5PBKLKOZ5L6EXCNTO7BKIL7DAVVDFQ2ODJEEHHJXIM': 'XIM',
 }
 
+/**
+ * Concatenated aliases.
+ */
 aliases.all = Object.assign({}, aliases.anchors, aliases.destinations)

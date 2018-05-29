@@ -1,16 +1,13 @@
 'use strict'
-
-import {capitalize} from './helpers'
-
-import * as node from './node'
-
-const event = exports
-
 /**
  * Contains the methods to trigger and handle events.
  *
- * @module
+ * @exports event
  */
+const event = exports
+
+const helpers = require('./helpers')
+const node = require('./node')
 
 /**
  * Call handler (in any) defined for `type` in `cosmicLink`. Call it with
@@ -23,14 +20,14 @@ const event = exports
  * @param {HTMLElement} element HTML element displaying `value`
  * @return *
  */
-export function handle (cosmicLink, type, value, element) {
+event.handle = function (cosmicLink, type, value, element) {
   if (!cosmicLink || !cosmicLink.onClick) return
   const handler = cosmicLink.onClick[type]
   if (handler) return handler(cosmicLink, value, element)
 }
 
-export function trigger (cosmicLink, type, value, element) {
-  return () => handle(cosmicLink, type, value, element)
+event.trigger = function (cosmicLink, type, value, element) {
+  return () => event.handle(cosmicLink, type, value, element)
 }
 
 /**
@@ -38,9 +35,9 @@ export function trigger (cosmicLink, type, value, element) {
  *
  * @namespace
  */
-export const defaultHandler = {}
+event.defaultHandler = {}
 
-defaultHandler.address = function address (cosmicLink, account) {
+event.defaultHandler.address = function address (cosmicLink, account) {
   let message = ''
   for (let field in account) {
     message += field + ':\n' + account[field] + '\n\n'
@@ -48,7 +45,7 @@ defaultHandler.address = function address (cosmicLink, account) {
   window.alert(message)
 }
 
-defaultHandler.asset = function (cosmicLink, asset, element) {
+event.defaultHandler.asset = function (cosmicLink, asset, element) {
   const issuerNode = node.grab('.CL_assetIssuer', element)
   if (issuerNode.style.display === 'inline') issuerNode.style.display = 'none'
   else issuerNode.style.display = 'inline'
@@ -94,7 +91,7 @@ event.callFormatHandlers = function (cosmicLink, ...formats) {
 }
 
 function handleFormat (cosmicLink, format, handlers) {
-  const getter = cosmicLink['get' + capitalize(format)]
+  const getter = cosmicLink['get' + helpers.capitalize(format)]
   if (!getter) return
 
   getter().then(value => {
