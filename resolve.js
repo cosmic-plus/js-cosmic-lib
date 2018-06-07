@@ -17,17 +17,20 @@ const status = require('./status')
  *
  * @param {CL}
  */
-resolve.selectNetwork = function (cosmicLink) {
-  switch (cosmicLink.network) {
+resolve.network = function (cosmicLink, network) {
+  switch (network) {
     case 'test':
       StellarSdk.Network.useTestNetwork()
-      break
+      return testServer
     case 'public':
       StellarSdk.Network.usePublicNetwork()
-      break
-    default: throw new Error('Invalid network: ' + cosmicLink.network)
+      return publicServer
+    default: throw new Error('Invalid network: ' + network)
   }
 }
+
+const testServer = new StellarSdk.Server('https://horizon-testnet.stellar.org')
+const publicServer = new StellarSdk.Server('https://horizon.stellar.org')
 
 /**
  * Configure for how much time the resolved addresses are kept in cache,
@@ -110,43 +113,101 @@ async function addressResolver (cosmicLink, address) {
   }
 }
 
-resolve.getSourceAccount = async function (cosmicLink) {
-  cosmicLink.selectNetwork()
-  const source = await cosmicLink.getSource()
-  const account = await resolve.address(cosmicLink, source)
+
+/**
+ * Return the account object for `address` on `network`.
+ *
+ * @param {CL}
+ * @param {string} address A public key or a federated address
+ * @param {string} network Either 'test' or 'public'
+ * @return {Object} The account response
+ */
+resolve.account = async function (cosmicLink, address, network) {
+  const server = resolve.network(cosmicLink, network)
+  const account = await resolve.address(cosmicLink, address)
   const publicKey = account.account_id
   try {
-    const accountResponse = await cosmicLink.server.loadAccount(publicKey)
-    return accountResponse
+    return server.loadAccount(publicKey)
   } catch (error) {
     console.log(error)
+    status.error(cosmicLink, `Can't find account`, 'throw')
+  }
+}
+
+/**
+ * Returns the source account object for `cosmicLink`
+ *
+ * @param {CL}
+ * @return {Object} The account response
+ */
+resolve.getSourceAccount = async function (cosmicLink) {
+  const source = await cosmicLink.getSource()
+  try {
+    return resolve.account(cosmicLink, source, cosmicLink.network)
+  } catch (error) {
     status.error(cosmicLink, `Can't find source account on ${cosmicLink.network} network`)
     status.fail(cosmicLink, 'Empty source account', 'throw')
   }
 }
 
 /**
- * Return an array containing the legit signers for `cosmicLink`.
+ * Return the signers for the account at `address` on `network`.
+ *
+ * @param {CL}
+ * @param {string} address Either a public key or a federated address
+ * @param {string} network Either 'test' or 'public'
+ * @return {Object} The signers object from the account response
+ */
+resolve.accountSigners = async function (cosmicLink, address, network) {
+  const account = await resolve.account(cosmicLink, address, network)
+  return account.signers
+}
+
+/**
+ * Return an array containing the legit signers for `cosmicLink` transaction.
  *
  * @param {CL}
  * @return {Array} Signers
  */
 resolve.signers = async function (cosmicLink) {
-  const account = await cosmicLink.getSourceAccount()
+  const tdesc = await cosmicLink.getTdesc()
+  const sources = await transactionSources(cosmicLink, tdesc)
+
   const signers = []
-  for (let index in account.signers) {
-    const entry = account.signers[index]
-    const StrKey = StellarSdk.StrKey
-    const signer = { weight: entry.weight, value: entry.key }
-    signer.type = entry.type.replace(/^.*_/, '')
-    if (signer.type === 'hash') signer.value = StrKey.decodeSha256Hash(entry.key).toString('hex')
-    if (signer.type === 'tx') {
-      signer.value = StrKey.decodePreAuthTx(entry.key).toString('hex')
+  for (let index in sources) {
+    const source = sources[index]
+    const account = await resolve.account(cosmicLink, source, cosmicLink.network)
+
+    for (let index in account.signers) {
+      const entry = account.signers[index]
+      const StrKey = StellarSdk.StrKey
+      const signer = { weight: entry.weight, value: entry.key }
+      signer.type = entry.type.replace(/^.*_/, '')
+      if (signer.type === 'hash') signer.value = StrKey.decodeSha256Hash(entry.key).toString('hex')
+      if (signer.type === 'tx') {
+        signer.value = StrKey.decodePreAuthTx(entry.key).toString('hex')
+      }
+      signer.getSignature = getSignature(cosmicLink, signer)
+      signers.push(signer)
     }
-    signer.getSignature = getSignature(cosmicLink, signer)
-    signers.push(signer)
   }
+
   return signers.sort((a, b) => b.weight - a.weight)
+}
+
+async function transactionSources (cosmicLink, tdesc) {
+  const sources = tdesc.operations.map(entry => entry.source)
+  sources.push(tdesc.source || cosmicLink.user)
+
+  let accounts = {}
+  for (let index in sources) {
+    const source = sources[index]
+    if (!source) continue
+    const account = await resolve.address(cosmicLink, source)
+    accounts[account.account_id] = account
+  }
+
+  return Object.keys(accounts)
 }
 
 function getSignature (cosmicLink, signer) {

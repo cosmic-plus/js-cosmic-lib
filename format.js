@@ -39,12 +39,18 @@ format.tdesc = async function (cosmicLink) {
       node.append(infoNode, lineNode)
     }
   })
-
   if (infoNode) node.append(trNode, infoNode)
 
+  /// Sort operations so that the ones with declared sources are at the end.
+  /// (makes data presentation better)
+  let operations = tdesc.operations.sort(entry => entry.source ? 1 : 0)
+
   try {
-    const opNode = format.operation(cosmicLink, tdesc.operations[0])
-    node.append(trNode, opNode)
+    for (let index in operations) {
+      const operation = tdesc.operations[index]
+      const opNode = format.operation(cosmicLink, operation)
+      node.append(trNode, opNode)
+    }
     format.signatures(cosmicLink)
   } catch (error) {
     console.log(error)
@@ -60,8 +66,16 @@ format.tdesc = async function (cosmicLink) {
  */
 format.operation = function (cosmicLink, odesc) {
   const opNode = node.create('div', '.CL_operation')
-  let meaning = operationMeaning(odesc)
 
+  if (odesc.source) {
+    node.appendClass(opNode, 'CL_sourcedOperation')
+    const sourceNode = node.create('div', '.CL_source', 'Source: ')
+    const addressNode = format.field(cosmicLink, 'source', odesc.source)
+    node.append(sourceNode, addressNode)
+    node.append(opNode, sourceNode)
+  }
+
+  let meaning = operationMeaning(odesc)
   while (meaning) {
     if (meaning.substr(0, 1) === '{') {
       const query = meaning.substr(1).replace(/}.*/, '')

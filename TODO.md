@@ -1,7 +1,5 @@
 Before beta release (planned for this summer):
 * Class-wide configuration and dynamical update for datas
-* Support custom aliases for addresses
-* Support multi-operation transactions
 * Support hash signatures
 * Write a demo page & examples
 

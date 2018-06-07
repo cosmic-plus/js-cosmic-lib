@@ -1,5 +1,6 @@
 /* cosmiclib styling */
 
+
 .CL_assetCode,
 .CL_address
 {
@@ -63,16 +64,31 @@
     margin: 0.5em 0;
 }
 
-.CL_transactionNode ul.CL_sideInfo
+.CL_transactionNode ul.CL_sideInfo,
+.CL_source
 {
     border-left: 0.2em solid lightgrey;
-    padding-left: 0.1em;
+    padding-left: 0.2em;
     margin: 0;
     list-style-type: none;
     list-style-position: inside;
+/*
     font-size: 0.9em;
+*/
 }
 
+.CL_operation
+{
+    margin: 0.5em 0;
+}
+
+.CL_sourcedOperation
+{
+    border-left: 0.2em solid lightgrey;
+    padding-left: 0.2em;
+    background-color: ghostwhite;
+
+}
 
 /*** Status/Signers node styling ***/
 

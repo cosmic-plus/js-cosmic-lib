@@ -53,7 +53,7 @@ async function makeSigningPromise (cosmicLink, keypair, publicKey) {
   const transaction = await cosmicLink.getTransaction()
 
   try {
-    resolve.selectNetwork(cosmicLink)
+    cosmicLink.selectNetwork()
     transaction.sign(keypair)
   } catch (error) {
     console.log(error)

@@ -84,3 +84,5 @@ prepare.signer = async function (cosmicLink, signer) {
   }
   return preparedSigner
 }
+
+prepare.source = prepare.address

@@ -40,19 +40,21 @@ convert.uriToQuery = function (cosmicLink, uri) {
 convert.queryToJson = function (cosmicLink, query) {
   if (query.length < 2) status.fail(cosmicLink, 'Empty query', 'throw')
 
-  /// Transaction descriptor.
   const tdesc = {}
-  /// Operation descriptor.
-  const odesc = {}
-  const operation = query.substr(1).replace(/&.*/, '')
+  const odesc = []
   let isValid = true
 
-  if (!isOperationTypeValid(operation)) {
-    status.error(cosmicLink, 'Unknow operation: ' + operation)
-    status.fail(cosmicLink, 'Invalid query', 'throw')
+  let operation = query.substr(1).replace(/&.*/, '')
+  const queries = query.substr(operation.length + 2).split('&')
+  let mode = operation
+  if (operation === 'transaction') {
+    mode = 'transaction'
+  } else {
+    odesc.unshift({ type: mode })
+    checkOperationType(cosmicLink, operation)
   }
 
-  const queries = query.substr(operation.length + 2).split('&')
+
   for (let index in queries) {
     const argument = queries[index]
     const field = argument.replace(/=.*/, '')
@@ -60,66 +62,110 @@ convert.queryToJson = function (cosmicLink, query) {
 
     try {
       if (!field) continue
-      if (!value && field !== 'homeDomain') {
+
+      if (!value && field !== 'homeDomain' && field !== 'value') {
         value = '(empty)'
         status.error(cosmicLink, 'No value for: ' + field, 'throw')
       }
 
+      if (mode === 'transaction' && field === 'operation') {
+        operation = value
+        odesc.unshift({ type: value })
+        checkOperationType(cosmicLink, value)
+        continue
+      }
+
+      if (operation === 'transaction' && !isTransactionField(field)) {
+        status.error(cosmicLink, 'Not a valid transaction field: ' + field, 'throw')
+      } else if (mode === 'operation' && !isOperationField(field)) {
+        status
+      }
+
       const decodedValue = decode.field(cosmicLink, field, value)
-      if (isTransactionField(field)) tdesc[field] = decodedValue
-      else odesc[field] = decodedValue
+      if (operation === 'transaction') {
+        tdesc[field] = decodedValue
+      } else if (mode !== 'transaction' && isTransactionField(field)) {
+        tdesc[field] = decodedValue
+      } else {
+        odesc[0][field] = decodedValue
+      }
     } catch (error) {
       /// At this point decoding errors should already be handled.
       /// This line catch program error for debugging purpose.
       if (!cosmicLink.errors) status.error(cosmicLink, error)
-      isValid = false
       const errorObject = { error: error, value: value }
-      if (isTransactionField(field)) tdesc[field] = errorObject
-      else odesc[field] = errorObject
-    }
-  }
-
-  const native = StellarSdk.Asset.native()
-  switch (operation) {
-    case 'allowTrust':
-      if (odesc.authorize === undefined) odesc.authorize = true
-      break
-    case 'createPassiveOffer':
-    case 'manageOffer': {
-      if (odesc.buying && !odesc.selling) odesc.selling = native
-      if (odesc.selling && !odesc.buying) odesc.buying = native
-      break
-    }
-    case 'manageData':
-      if (!odesc.value) odesc.value = null
-      break
-    case 'pathPayment':
-      if (odesc.destAsset && !odesc.sendAsset) odesc.sendAsset = native
-      if (odesc.sendAsset && !odesc.destAsset) odesc.destAsset = native
-      break
-    case 'payment':
-      if (!odesc.asset) odesc.asset = native
-      break
-  }
-
-  const mandatoryFields = specs.operationMandatoryFields[operation]
-  mandatoryFields.forEach(field => {
-    if (odesc[field] === undefined) {
       isValid = false
-      status.error(cosmicLink, 'Missing mandatory field: ' + field)
-    }
-  })
-  for (let field in odesc) {
-    if (!isOperationField(operation, field)) {
-      isValid = false
-      status.error(cosmicLink, 'Invalid field: ' + field)
+
+      if (operation === 'transaction') {
+        tdesc[field] = errorObject
+      } else if (mode !== 'transaction' && isTransactionField(field)) {
+        tdesc[field] = errorObject
+      } else if (field === 'operation') {
+        odesc[0].error = 'Unknow operation'
+      } else {
+        odesc[0][field] = errorObject
+      }
     }
   }
 
-  tdesc.operations = [ odesc ]
-  odesc.type = operation
+  for (let index in odesc) {
+    const operation = odesc[index]
+
+    switch (operation.type) {
+      case 'allowTrust':
+        if (operation.authorize === undefined) operation.authorize = true
+        break
+      case 'createPassiveOffer':
+      case 'manageOffer': {
+        if (operation.buying && !operation.selling) operation.selling = XLM
+        if (operation.selling && !operation.buying) operation.buying = XLM
+        break
+      }
+      case 'manageData':
+        if (!operation.value) operation.value = null
+        break
+      case 'pathPayment':
+        if (operation.destAsset && !operation.sendAsset) operation.sendAsset = XLM
+        if (operation.sendAsset && !operation.destAsset) operation.destAsset = XLM
+        break
+      case 'payment':
+        if (!operation.asset) operation.asset = XLM
+        break
+    }
+
+    const mandatoryFields = specs.operationMandatoryFields[operation.type]
+    mandatoryFields.forEach(field => {
+      if (operation[field] === undefined) {
+        status.error(cosmicLink, 'Missing mandatory field: ' + field)
+        isValid = false
+      }
+    })
+    for (let field in operation) {
+      if (!isOperationField(operation.type, field)) {
+        status.error(cosmicLink, 'Invalid field: ' + field)
+        isValid = false
+      }
+    }
+  }
+
+  tdesc.operations = odesc.reverse()
   if (!isValid) status.fail(cosmicLink, 'Invalid query')
   return convert.tdescToJson(cosmicLink, tdesc)
+}
+
+const XLM = StellarSdk.Asset.native()
+
+/**
+ * Throw an error if `type` is not a valid operation type.
+ *
+ * @private
+ * @param {CL}
+ * @param {string} type
+ */
+function checkOperationType (cosmicLink, type) {
+  if (!isOperationTypeValid(type)) {
+    status.error(cosmicLink, 'Unknow operation: ' + type, 'throw')
+  }
 }
 
 /**
@@ -156,7 +202,8 @@ function isTransactionField (string) {
  * @return {boolean}
  */
 function isOperationField (operation, string) {
-  if (
+  if (string === 'type') return true
+  else if (
     specs.operationMandatoryFields[operation].indexOf(string) === -1 &&
     specs.operationOptionalFields[operation].indexOf(string) === -1
   ) return false
@@ -188,8 +235,11 @@ convert.jsonToTransaction = async function (cosmicLink, json) {
 
   try {
     const builder = await makeTransactionBuilder(cosmicLink, tdesc)
-    const operation = await odescToOperation(cosmicLink, tdesc.operations[0])
-    builder.addOperation(operation)
+    for (let index in tdesc.operations) {
+      const odesc = tdesc.operations[index]
+      const operation = await odescToOperation(cosmicLink, odesc)
+      builder.addOperation(operation)
+    }
     return builder.build()
   } catch (error) {
     if (!cosmicLink.errors) status.error(cosmicLink, error)
@@ -323,11 +373,6 @@ convert.xdrToQuery = function (cosmicLink, xdr, options = {}) {
 convert.transactionToJson = function (cosmicLink, transaction, options = {}) {
   const copy = JSON.parse(JSON.stringify(transaction))
 
-  if (copy.operations.length > 1) {
-    status.error(cosmicLink, "Can't parse multi-operation transactions yet.")
-    status.fail(cosmicLink, 'Unhandled transaction', 'throw')
-  }
-
   delete copy.tx
 
   if (!cosmicLink.user) cosmicLink.user = copy.source
@@ -353,7 +398,7 @@ convert.transactionToJson = function (cosmicLink, transaction, options = {}) {
     if (copy.signatures.length === 0) delete copy.signatures
   }
 
-  if (copy.fee === 100) delete copy.fee
+  if (copy.fee === 100 * copy.operations.length) delete copy.fee
   if (copy._memo._switch.name !== 'memoNone') {
     copy.memo = {}
     copy.memo.type = copy._memo._arm
@@ -376,30 +421,32 @@ convert.transactionToJson = function (cosmicLink, transaction, options = {}) {
     delete copy.timeBounds
   }
 
-  var operation = copy.operations[0]
-  if (operation.limit === '922337203685.4775807') delete operation.limit
-  if (operation.value) {
-    operation.value = transaction.operations[0].value.toString()
-  }
-  if (operation.offerId === '0') delete operation.offerId
-  if (operation.path && operation.path.length === 0) delete operation.path
-  if (operation.line) {
-    operation.asset = operation.line
-    delete operation.line
-  }
-  if (operation.signer) {
-    if (operation.signer.ed25519PublicKey) {
-      operation.signer.type = 'key'
-      operation.signer.value = operation.signer.ed25519PublicKey
-      delete operation.signer.ed25519PublicKey
-    } else if (operation.signer.sha256Hash) {
-      operation.signer.type = 'hash'
-      operation.signer.value = transaction.operations[0].signer.sha256Hash.toString('hex')
-      delete operation.signer.sha256Hash
-    } else if (operation.signer.preAuthTx) {
-      operation.signer.type = 'tx'
-      operation.signer.value = transaction.operations[0].signer.preAuthTx.toString('hex')
-      delete operation.signer.preAuthTx
+  for (let index in copy.operations) {
+    const operation = copy.operations[index]
+    if (operation.limit === '922337203685.4775807') delete operation.limit
+    if (operation.value) {
+      operation.value = transaction.operations[0].value.toString()
+    }
+    if (operation.offerId === '0') delete operation.offerId
+    if (operation.path && operation.path.length === 0) delete operation.path
+    if (operation.line) {
+      operation.asset = operation.line
+      delete operation.line
+    }
+    if (operation.signer) {
+      if (operation.signer.ed25519PublicKey) {
+        operation.signer.type = 'key'
+        operation.signer.value = operation.signer.ed25519PublicKey
+        delete operation.signer.ed25519PublicKey
+      } else if (operation.signer.sha256Hash) {
+        operation.signer.type = 'hash'
+        operation.signer.value = transaction.operations[0].signer.sha256Hash.toString('hex')
+        delete operation.signer.sha256Hash
+      } else if (operation.signer.preAuthTx) {
+        operation.signer.type = 'tx'
+        operation.signer.value = transaction.operations[0].signer.preAuthTx.toString('hex')
+        delete operation.signer.preAuthTx
+      }
     }
   }
 
@@ -428,24 +475,28 @@ convert.jsonToTdesc = function (cosmicLink, json) {
  */
 convert.jsonToQuery = function (cosmicLink, json) {
   const tdesc = convert.jsonToTdesc(cosmicLink, json)
-  const operation = tdesc.operations[0].type
-  let query = '?' + operation
+
+  let query = '?'
+  if (tdesc.operations.length === 1) query += tdesc.operations[0].type
+  else query += 'transaction'
 
   specs.transactionOptionalFields.forEach(field => {
     if (tdesc[field] !== undefined) {
-      query = query + encode.field(cosmicLink, field, tdesc[field])
+      query += encode.field(cosmicLink, field, tdesc[field])
     }
   })
 
-  const odesc = tdesc.operations[0]
-  const operationFields = specs.operationMandatoryFields[operation]
-    .concat(specs.operationOptionalFields[operation])
+  for (let index in tdesc.operations) {
+    const operation = tdesc.operations[index]
+    const fields = specs.operationMandatoryFields[operation.type]
+      .concat(specs.operationOptionalFields[operation.type])
 
-  operationFields.forEach(field => {
-    if (odesc[field] !== undefined) {
-      query = query + encode.field(cosmicLink, field, odesc[field])
-    }
-  })
+    if (tdesc.operations.length > 1) query += '&operation=' + operation.type
+    fields.forEach(field => {
+      query += encode.field(cosmicLink, field, operation[field])
+    })
+  }
+
   return query
 }
 

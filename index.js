@@ -164,7 +164,7 @@ export class CosmicLink {
   }
 
   /// Actions
-  selectNetwork () { resolve.selectNetwork(this) }
+  selectNetwork () { resolve.network(this, this.network) }
   async sign (seed) { await action.sign(this, seed) }
   async send (server) { await action.send(this, server) }
 

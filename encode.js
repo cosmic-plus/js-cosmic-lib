@@ -24,7 +24,8 @@ encode.field = function (cosmicLink, field, value) {
   const type = specs.fieldType[field]
   if (!type) status.error(cosmicLink, 'Unknow field: ' + field, 'throw')
   const encodedValue = encode.type(cosmicLink, type, value)
-  return encodedValue ? `&${field}=${encodedValue}` : ''
+  if (encodedValue) return `&${field}=${encodedValue}`
+  else return ''
 }
 
 /**
@@ -37,11 +38,11 @@ encode.field = function (cosmicLink, field, value) {
  */
 encode.type = function (cosmicLink, type, value) {
   check.type(cosmicLink, type)
+  if (value === undefined) return ''
   const encoder = encode[type]
   value = encodeURIComponent(value)
   if (encoder) value = encoder (cosmicLink, value)
-  if (value === undefined) return ''
-  else return value
+  return value ? value : ''
 }
 
 /******************************************************************************/
