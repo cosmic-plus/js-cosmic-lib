@@ -233,10 +233,11 @@ async function checkCosmicLink (cosmicLink, options) {
   const xdr = await cosmicLink.getXdr()
   append(node.create('textarea', {}, xdr))
 
-  const cLinkReverse = new CosmicLink(xdr)
+  const cLinkReverse = new CosmicLink(xdr, 'test', user, { stripSource: true })
   const json = await cLinkReverse.getJson()
   append(node.create('pre', {}, json))
   const uri2 = await cLinkReverse.getUri()
+  append(node.create('input', { value: uri2 }))
 
   const cLinkLoopback = new CosmicLink(uri2, 'test', user)
   const xdr2 = await cLinkLoopback.getXdr()
