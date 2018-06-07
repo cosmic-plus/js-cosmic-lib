@@ -93,7 +93,7 @@ decode.memo = function (cosmicLink, memo) {
 decode.price = function (cosmicLink, price) {
   const numerator = price.replace(/:.*/, '')
   const denominator = price.replace(/^[^:]*:/, '')
-  if (numerator === denominator) return +price
+  if (numerator === denominator) return price
   else return { n: +numerator, d: +denominator }
 }
 
