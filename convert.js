@@ -425,7 +425,7 @@ convert.transactionToJson = function (cosmicLink, transaction, options = {}) {
     const operation = copy.operations[index]
     if (operation.limit === '922337203685.4775807') delete operation.limit
     if (operation.value) {
-      operation.value = transaction.operations[0].value.toString()
+      operation.value = transaction.operations[index].value.toString()
     }
     if (operation.offerId === '0') delete operation.offerId
     if (operation.path && operation.path.length === 0) delete operation.path
@@ -440,11 +440,11 @@ convert.transactionToJson = function (cosmicLink, transaction, options = {}) {
         delete operation.signer.ed25519PublicKey
       } else if (operation.signer.sha256Hash) {
         operation.signer.type = 'hash'
-        operation.signer.value = transaction.operations[0].signer.sha256Hash.toString('hex')
+        operation.signer.value = transaction.operations[index].signer.sha256Hash.toString('hex')
         delete operation.signer.sha256Hash
       } else if (operation.signer.preAuthTx) {
         operation.signer.type = 'tx'
-        operation.signer.value = transaction.operations[0].signer.preAuthTx.toString('hex')
+        operation.signer.value = transaction.operations[index].signer.preAuthTx.toString('hex')
         delete operation.signer.preAuthTx
       }
     }

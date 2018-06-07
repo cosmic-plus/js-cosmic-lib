@@ -23,9 +23,10 @@ const specs = require('./specs')
 encode.field = function (cosmicLink, field, value) {
   const type = specs.fieldType[field]
   if (!type) status.error(cosmicLink, 'Unknow field: ' + field, 'throw')
+  if (value === undefined) return ''
   const encodedValue = encode.type(cosmicLink, type, value)
-  if (encodedValue) return `&${field}=${encodedValue}`
-  else return ''
+  if (encodedValue === '' && field !== 'homeDomain') return ''
+  else return `&${field}=${encodedValue}`
 }
 
 /**
@@ -40,15 +41,16 @@ encode.type = function (cosmicLink, type, value) {
   check.type(cosmicLink, type)
   if (value === undefined) return ''
   const encoder = encode[type]
-  value = encodeURIComponent(value)
+  if (typeof value === 'string') value = encodeURIComponent(value)
   if (encoder) value = encoder (cosmicLink, value)
-  return value ? value : ''
+  if (value === undefined) return ''
+  else return value
 }
 
 /******************************************************************************/
 
 encode.asset = function (cosmicLink, asset) {
-  if (asset.issuer) return asset.code + ':' + asset.issuer
+  if (asset.issuer) return encodeURIComponent(asset.code) + ':' + encodeURIComponent(asset.issuer)
 }
 
 encode.assetsArray = function (cosmicLink, assetsArray) {
@@ -56,7 +58,7 @@ encode.assetsArray = function (cosmicLink, assetsArray) {
 }
 
 encode.boolean = function (cosmicLink, boolean) {
-  if (!boolean) return 'false'
+  if (boolean === 'false' || !boolean) return 'false'
 }
 
 encode.date = function (cosmicLink, timestamp) {
@@ -69,8 +71,8 @@ encode.date = function (cosmicLink, timestamp) {
 }
 
 encode.memo = function (cosmicLink, memo) {
-  if (memo.type === 'text') return memo.value
-  else return memo.type + ':' + memo.value
+  if (memo.type === 'text') return encodeURIComponent(memo.value)
+  else return memo.type + ':' + encodeURIComponent(memo.value)
 }
 
 encode.signer = function (cosmicLink, signer) {
