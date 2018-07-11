@@ -15,7 +15,6 @@ const check = exports
 const specs = require('./specs')
 const status = require('./status')
 
-
 /**
  * Check that `field` is a valid transaction/operation field. If `value` is
  * given, check that it is valid for that `field`. If a check doesn't pass, an
@@ -41,7 +40,7 @@ check.field = function (cosmicLink, field, value) {
  * @param {string} [value]
  */
 check.type = function (cosmicLink, type, value) {
-  if (! specs.types.find(entry => entry === type)) {
+  if (!specs.types.find(entry => entry === type)) {
     throw new Error('Invalid type: ' + type)
   }
   if (value) {
@@ -112,7 +111,7 @@ check.assetsArray = function (cosmicLink, assetsArray) {
     try { check.asset(cosmicLink, assetsArray[index]) }
     catch (error) { isValid = false }
   }
-  if (!isValid) throw new Error ('Invalid assets array')
+  if (!isValid) throw new Error('Invalid assets array')
 }
 
 check.amount = function (cosmicLink, amount) {

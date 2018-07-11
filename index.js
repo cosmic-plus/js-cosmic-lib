@@ -175,8 +175,8 @@ export class CosmicLink {
   removeAliases (array) { aliases.remove(this, aliases) }
 
   /// Handlers
-  setClickHandler(fieldType, callback) { event.setClickHandler(this, fieldType, callback) }
-  clearClickHandler(fieldType) { event.clearClickHandler(this, fieldType) }
+  setClickHandler (fieldType, callback) { event.setClickHandler(this, fieldType, callback) }
+  clearClickHandler (fieldType) { event.clearClickHandler(this, fieldType) }
 
   /// Datas
   get page () { return this._page }

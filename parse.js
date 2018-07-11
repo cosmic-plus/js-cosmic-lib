@@ -98,8 +98,7 @@ parse.dispatch = function (cosmicLink, value, options = {}) {
   if (cosmicLink._htmlNode) {
     cosmicLink.getTdesc()
       .then(tdesc => {
-        try { format.tdesc(cosmicLink) }
-        catch (error) { console.log(error) }
+        try { format.tdesc(cosmicLink) } catch (error) { console.log(error) }
       })
       .catch(() => {})
   }

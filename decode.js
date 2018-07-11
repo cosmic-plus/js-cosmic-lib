@@ -16,7 +16,6 @@ const status = require('./status')
 const check = require('./check')
 const specs = require('./specs')
 
-
 /**
  * Decode `value` accordingly to `field` type.
  *

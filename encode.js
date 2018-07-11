@@ -10,7 +10,6 @@ const encode = exports
 const check = require('./check')
 const specs = require('./specs')
 
-
 /**
  * Encode `value` into cosmic link query format and return
  * `&${field}=${encodedValue}`
@@ -42,7 +41,7 @@ encode.type = function (cosmicLink, type, value) {
   if (value === undefined) return ''
   const encoder = encode[type]
   if (typeof value === 'string') value = encodeURIComponent(value)
-  if (encoder) value = encoder (cosmicLink, value)
+  if (encoder) value = encoder(cosmicLink, value)
   if (value === undefined) return ''
   else return value
 }

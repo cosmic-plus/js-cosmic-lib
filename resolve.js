@@ -10,7 +10,6 @@ const resolve = exports
 const helpers = require('./helpers')
 const status = require('./status')
 
-
 /**
  * Select the network to be used by `StellarSdk` as being `cosmicLink` current
  * network.
@@ -112,7 +111,6 @@ async function addressResolver (cosmicLink, address) {
     status.error(cosmicLink, "Can't resolve: " + helpers.shorter(address), 'throw')
   }
 }
-
 
 /**
  * Return the account object for `address` on `network`.
@@ -254,9 +252,9 @@ resolve.transaction = async function (cosmicLink, txHash) {
   return caller.transaction(txHash).call()
 }
 
-//~ async function getThreshold (cosmicLink) {
-  //~ const signers = await cosmicLink.getSigners()
-  //~ const max = signers.reduce((accum, entry) => accum + entry.weight)
-  //~ const current = signers.reduce((accum, entry) => accum + entry.signature ? entry.weight : 0)
-  //~ return { current: current, max: max, required: 0 }
-//~ }
+// ~ async function getThreshold (cosmicLink) {
+// ~ const signers = await cosmicLink.getSigners()
+// ~ const max = signers.reduce((accum, entry) => accum + entry.weight)
+// ~ const current = signers.reduce((accum, entry) => accum + entry.signature ? entry.weight : 0)
+// ~ return { current: current, max: max, required: 0 }
+// ~ }

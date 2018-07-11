@@ -13,7 +13,6 @@ import * as resolve from './resolve'
 import * as prepare from './prepare'
 import * as encode from './encode'
 
-
 /** ****************************    URI -> XDR    ******************************/
 
 /**
@@ -53,7 +52,6 @@ convert.queryToJson = function (cosmicLink, query) {
     odesc.unshift({ type: mode })
     checkOperationType(cosmicLink, operation)
   }
-
 
   for (let index in queries) {
     const argument = queries[index]

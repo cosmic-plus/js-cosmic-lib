@@ -100,7 +100,6 @@ const tests = [
   ['url', 'https://cosmic.link/?xdr=' + xdr + '&stripSignatures',
     { dontSign: 1 }],
 
-
   /** * Sending tests ***/
   ['bigTitle', 'Sending tests'],
   ['url', 'stellar://?manageData&name=name&value=Mister.Ticot',
@@ -206,7 +205,7 @@ async function appendCosmicLink (parent, url, options = {}) {
   node.append(
     parent,
     node.create('input', { value: url}),
-    //~ node.create('pre', {}, url),
+    // ~ node.create('pre', {}, url),
     cosmicLink.htmlNode,
     node.create('hr')
   )

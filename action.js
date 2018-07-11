@@ -65,7 +65,7 @@ async function makeSigningPromise (cosmicLink, type, ...value) {
         continue
       }
 
-      if(hasSigned(transaction, keypair)) continue
+      if (hasSigned(transaction, keypair)) continue
 
       try {
         transaction.sign(keypair)

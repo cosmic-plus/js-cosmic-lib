@@ -50,8 +50,6 @@ specs.operationOptionalFields = {
     'source']
 }
 
-
-
 /**
  * Field types.
  */

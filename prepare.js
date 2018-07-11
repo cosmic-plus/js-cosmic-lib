@@ -11,7 +11,6 @@ const specs = require('./specs')
 const resolve = require('./resolve')
 const status = require('./status')
 
-
 /**
  * Prepare `value` accordingly to `field` type.
  *
