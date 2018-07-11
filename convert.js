@@ -373,7 +373,7 @@ convert.transactionToJson = function (cosmicLink, transaction, options = {}) {
 
   delete copy.tx
 
-  if (!cosmicLink.user) cosmicLink.user = copy.source
+  if (!cosmicLink.user) cosmicLink._user = copy.source
 
   if (options.stripSource) {
     delete copy.source

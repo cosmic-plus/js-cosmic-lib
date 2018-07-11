@@ -116,7 +116,9 @@ if (typeof document !== 'undefined') {
  */
 export class CosmicLink {
   constructor (transaction, network, user, options) {
-    if (user) this.user = user
+    if (user) this._user = user
+    else if (CosmicLink.user) this._user = CosmicLink.user
+
     if (network) this.network = network
 
     if (!this._page) this._page = CosmicLink.page
@@ -185,6 +187,9 @@ export class CosmicLink {
   get network () { return this._network }
   set network (network) { parse.network(this, network) }
 
+  get user () { return this._user }
+  set user (user) { parse.user(this, user) }
+
   /// HTML
   get htmlNode () {
     if (!this._htmlNode) makeHtmlNodes(this)
@@ -214,6 +219,7 @@ export class CosmicLink {
 /// Class-wide configuration
 CosmicLink.page = 'https://cosmic.link/'
 CosmicLink.network = 'public'
+CosmicLink.user = null
 
 CosmicLink.aliases = aliases.all
 CosmicLink.addAliases = function (aliases) { aliases.add(CosmicLink, aliases) }

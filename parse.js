@@ -23,9 +23,22 @@ const event = require('./event')
  * @param {CL}
  * @param {string} page URI basename
  */
-parse.page = function (cosmicLink, page) {
+parse.setPage = function (cosmicLink, page) {
   cosmicLink._page = encodeURI(page)
   parse.makeConverter(cosmicLink, 'query', 'uri')
+  event.callFormatHandlers(cosmicLink, 'uri')
+}
+
+/**
+ * Set `cosmicLink.user` as `address`.
+ *
+ * @param {CL}
+ * @param {string} address An account ID or a federated address
+ */
+parse.user = function (cosmicLink, address) {
+  cosmicLink._user = address
+  parse.typeTowardAllUsingDelayed(cosmicLink, 'json', cosmicLink.getJson)
+  event.callFormatHandlers(cosmicLink)
 }
 
 /**
@@ -45,6 +58,8 @@ parse.network = function (cosmicLink, network) {
     status.error(cosmicLink, 'Invalid network: ' + network)
     status.fail(cosmicLink, 'Invalid network', 'throw')
   }
+  parse.typeTowardAllUsingDelayed(cosmicLink, 'json', cosmicLink.getJson)
+  event.callFormatHandlers(cosmicLink)
 }
 
 /**
