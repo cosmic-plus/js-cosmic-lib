@@ -63,6 +63,11 @@ if (typeof document !== 'undefined') {
 // CosmicLink.getXdr()          < Return a promise of the transaction's XDR
 //
 // --- Handlers ---
+// CosmicLink.setClickHandler(fieldType, callback)
+// CosmicLink.clearClickHandler(fieldType, callback)
+// callback will receive event = { cosmicLink..., fieldType: ..., field: ...,
+//     value: ..., node: ... }
+//
 // CosmicLink.addFormatHandler(format, callback)
 // CosmicLink.removeFormatHandler(format, callback)
 // callback will receive event = { cosmicLink: ..., value: ..., error: ... }
@@ -94,9 +99,6 @@ if (typeof document !== 'undefined') {
 // CosmicLink.sign(seed)       < Sign the transaction
 // CosmicLink.send([server])   < Send the transaction to the network
 //
-// --- Events ---
-// CosmicLink.onClick.type      < For onClick events on the HTML description
-//
 // --- HTML Nodes ---
 // CosmicLink.htmlNode         < HTML element for CosmicLink
 // CosmicLink.transactionNode  < HTML description of the transaction
@@ -117,10 +119,10 @@ export class CosmicLink {
     if (user) this.user = user
     if (network) this.network = network
 
-    this.onClick = event.defaultHandler
     if (!this._page) this._page = CosmicLink.page
     this.aliases = CosmicLink.aliases
 
+    this.clickHandlers = Object.assign({}, CosmicLink.clickHandlers)
     this.formatHandlers = {}
     for (let format in CosmicLink.formatHandlers) {
       const handlers = CosmicLink.formatHandlers[format]
@@ -172,6 +174,10 @@ export class CosmicLink {
   addAliases (aliasesArg) { aliases.add(this, aliasesArg) }
   removeAliases (array) { aliases.remove(this, aliases) }
 
+  /// Handlers
+  setClickHandler(fieldType, callback) { event.setClickHandler(this, fieldType, callback) }
+  clearClickHandler(fieldType) { event.clearClickHandler(this, fieldType) }
+
   /// Datas
   get page () { return this._page }
   set page (uri) { parse.page(this, uri) }
@@ -212,6 +218,14 @@ CosmicLink.network = 'public'
 CosmicLink.aliases = aliases.all
 CosmicLink.addAliases = function (aliases) { aliases.add(CosmicLink, aliases) }
 CosmicLink.removeAliases = function (array) { aliases.remove(CosmicLink, array) }
+
+CosmicLink.clickHandlers = event.defaultClickHandlers
+CosmicLink.setClickHandler = function (fieldType, callback) {
+  event.setClickHandler(CosmicLink, fieldType, callback)
+}
+CosmicLink.clearClickHandler = function (fieldType, callback) {
+  event.clearClickHandler(CosmicLink, fieldType, callback)
+}
 
 CosmicLink.formatHandlers = {}
 CosmicLink.addFormatHandler = function (format, callback) {

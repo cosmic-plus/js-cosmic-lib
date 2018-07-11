@@ -15,7 +15,6 @@ const status = require('./status')
 const resolve = require('./resolve')
 const event = require('./event')
 
-
 /**
  * Populate `cosmicLink.transactionNode` with a description of `transaction
  * descriptor`.
@@ -185,6 +184,7 @@ function operationMeaning (odesc) {
  *
  * @param {CL}
  * @param {string} field The field name of `value` as defined in `spec.js`
+ * @param {*} value The value of that field
  * @return {HTLMElement} `value` formatted in HTML/CSS
  */
 format.field = function (cosmicLink, field, value) {
@@ -197,7 +197,21 @@ format.field = function (cosmicLink, field, value) {
   const fieldNode = formatter(cosmicLink, value)
 
   fieldNode.className = 'CL_' + type
-  fieldNode.onClick = event.trigger(cosmicLink, type, value, fieldNode)
+
+  let clickableNode = fieldNode
+  if (type === 'asset') clickableNode = node.grab('.CL_assetCode', fieldNode)
+
+  clickableNode.onclick = function () {
+    const eventObject = {
+      cosmicLink: cosmicLink,
+      field: field,
+      fieldType: type,
+      value: value,
+      node: fieldNode
+    }
+    event.callClickHandler(cosmicLink, type,
+      Object.assign(eventObject, clickableNode.additionalEventData))
+  }
   return fieldNode
 }
 
@@ -268,8 +282,7 @@ async function resolveAddressAndUpdate (cosmicLink, address, addressNode) {
     if (account.address) addressNode.textContent = account.address
     else if (account.alias) addressNode.textContent = account.alias
 
-    addressNode.onclick = event.trigger(cosmicLink, 'address', account,
-      addressNode)
+    addressNode.additionalEventData = { account: account }
   } catch (error) {
     console.log(error)
     addressNode.title = "Can't resolve address"
@@ -294,12 +307,10 @@ format.asset = function (cosmicLink, asset) {
   const issuerNode = node.create('span', '.CL_assetIssuer')
   const assetNode = node.create('span', '.CL_asset', codeNode, issuerNode)
 
-  codeNode.onclick = event.trigger(cosmicLink, 'asset', asset, assetNode)
-
   if (asset.issuer) {
     codeNode.title = 'Issued by ' + asset.issuer
     node.append(issuerNode, ' issued by ')
-    node.append(issuerNode, format.address(cosmicLink, asset.issuer))
+    node.append(issuerNode, format.field(cosmicLink, 'assetIssuer', asset.issuer))
     node.append(codeNode, node.create('span', '.CL_loadingAnim'))
   } else {
     codeNode.title = 'Native asset'
@@ -322,6 +333,10 @@ format.assetsArray = function (cosmicLink, assetsArray) {
 format.date = function (cosmicLink, timestamp) {
   const date = new Date(timestamp * 1000)
   return node.create('span', {}, date.toLocaleString())
+}
+
+format.hash = function (cosmicLink, hash) {
+  return node.create('span', { title: hash }, helpers.shorter(hash))
 }
 
 format.flags = function (cosmicLink, flags) {
@@ -347,7 +362,7 @@ format.memo = function (cosmicLink, memo) {
   const typeNode = node.create('span', '.CL_memoType', memo.type)
   let valueNode
   if (memo.value.length > 30) {
-    valueNode = makeHashNode(memo.value)
+    valueNode = format.field(cosmicLink, 'memoHash', memo.value)
     node.appendClass(valueNode, '.CL_memoValue')
   } else {
     valueNode = node.create('span', '.CL_memoValue', memo.value)
@@ -368,45 +383,22 @@ format.signer = function (cosmicLink, signer) {
   switch (signer.type) {
     case 'key':
       node.append(signerNode, 'Account ')
-      node.append(signerNode, format.address(cosmicLink, signer.value))
+      node.append(signerNode, format.field(cosmicLink, 'signerAddress', signer.value))
       break
     case 'hash':
       node.append(signerNode,
         'Key whose hash is ',
-        makeHashNode(signer.value)
+        format.field(cosmicLink, 'signerHash', signer.value)
       )
       break
     case 'tx':
       node.append(signerNode,
         'Transaction ',
-        makeHashNode(signer.value)
+        format.field(cosmicLink, 'signerTx', signer.value)
       )
   }
   if (signer.weight > 1) {
     node.append(signerNode, ' (weight: ' + signer.weight + ')')
   }
   return signerNode
-}
-
-function makeHashNode (hash) {
-  return node.create('span',
-    { className: 'CL_hash', title: hash, onclick: copier(hash) },
-    helpers.shorter(hash)
-  )
-}
-
-/**
- * Return a function that copy `string` into user clipboard.
- *
- * @private
- * @param {string} string
- * @return {function}
- */
-function copier (string) {
-  return function () {
-    const textBox = node.create('textarea', {}, string)
-    node.append(node.grab('body'), textBox)
-    node.copyContent(textBox)
-    node.destroy(textBox)
-  }
 }

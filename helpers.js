@@ -6,6 +6,8 @@
  */
 const helpers = exports
 
+const node = require('./node')
+
 /**
  * Return a function that will execute `thunk` when called, and return the
  * result of its execution as a Promise. Handle async and regular functions
@@ -59,4 +61,18 @@ helpers.shorter = function (string) {
   } else {
     return string
   }
+}
+
+/**
+ * Return a function that copy `string` into user clipboard.
+ *
+ * @private
+ * @param {string} string
+ * @return {function}
+ */
+helpers.copy = function (string) {
+  const textBox = node.create('textarea', {}, string)
+  node.append(node.grab('body'), textBox)
+  node.copyContent(textBox)
+  node.destroy(textBox)
 }

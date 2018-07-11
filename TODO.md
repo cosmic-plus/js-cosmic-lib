@@ -8,7 +8,6 @@ Before stable release (planned for this autumn):
 * Support DKIF
 * Support SEP-0007
 * Implement on-chain signatures & transactions sharing
-* Implement better handlers for onclick events
 * Implement cosmic link builder
 * Extensive documentation for developpers
 
