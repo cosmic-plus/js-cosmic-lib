@@ -1,6 +1,5 @@
 Before beta release (planned for this summer):
 * Class-wide configuration and dynamical update for datas
-* Support hash signatures
 * Write a demo page & examples
 
 Before stable release (planned for this autumn):

@@ -167,8 +167,8 @@ export class CosmicLink {
 
   /// Actions
   selectNetwork () { resolve.network(this, this.network) }
-  async sign (seed) { await action.sign(this, seed) }
-  async send (server) { await action.send(this, server) }
+  sign (...keypairs_or_preimage) { return action.sign(this, ...keypairs_or_preimage) }
+  send (server) { return action.send(this, server) }
 
   /// Aliases
   addAliases (aliasesArg) { aliases.add(this, aliasesArg) }

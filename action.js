@@ -14,34 +14,36 @@ const format = require('./format')
 const event = require('./event')
 
 /**
- * Sign `cosmicLink` using secret `Keypair`.
- * Return a promise that terminate when signing is over, and that resolve to
- * the signed Transaction object.
+ * Sign `cosmicLink` using `keypairs_or_preimage`.
+ * Return a promise that resolve to the signed transaction. The cosmic link data
+ * is updated as well, so you don't necessarely need to await or make use of
+ * this returned promise.
  *
  * @param {cosmicLink} cosmicLink
- * @param {seed} seed
+ * @param {...Keypair|preimage} keypairs_or_preimage One or more keypair, or a
+ *     preimage
  * @promise Signed Transaction object
  */
 
-action.sign = async function (cosmicLink, seed) {
-  let keypair, publicKey
-  try {
-    keypair = StellarSdk.Keypair.fromSecret(seed)
-    publicKey = keypair.publicKey()
-  } catch (error) {
-    console.log(error)
-    throw new Error('Invalid secret seed')
-  }
-
+action.sign = async function (cosmicLink, ...keypairs_or_preimage) {
   if (cosmicLink.status) throw new Error("Can't sign invalid transaction")
-  if (!await cosmicLink.hasSigner(publicKey)) {
-    throw new Error('Not a legit signer: ' + helpers.shorter(publicKey))
-  }
-  if (await cosmicLink.hasSigned(publicKey)) {
-    throw new Error('Transaction already signed with this key')
+
+  let type, value
+
+  if (keypairs_or_preimage.length === 1 &&
+      typeof keypairs_or_preimage[0] === 'string'
+  ) {
+    type = 'preimage'
+    value = keypairs_or_preimage
+  } else {
+    type = 'keypair'
+    value = keypairs_or_preimage
+    value.forEach(entry => {
+      if (!entry.canSign) throw new Error('Invalid keypair')
+    })
   }
 
-  const signingPromise = makeSigningPromise(cosmicLink, keypair, publicKey)
+  const signingPromise = makeSigningPromise(cosmicLink, type, ...value)
   parse.typeTowardAllUsingDelayed(cosmicLink, 'transaction', () => signingPromise)
   parse.makeConverter(cosmicLink, 'xdr', 'query')
   parse.makeConverter(cosmicLink, 'query', 'uri')
@@ -49,24 +51,57 @@ action.sign = async function (cosmicLink, seed) {
   await signingPromise
 }
 
-async function makeSigningPromise (cosmicLink, keypair, publicKey) {
+async function makeSigningPromise (cosmicLink, type, ...value) {
   const transaction = await cosmicLink.getTransaction()
 
-  try {
-    cosmicLink.selectNetwork()
-    transaction.sign(keypair)
-  } catch (error) {
-    console.log(error)
-    status.error(cosmicLink,
-      'Failed to sign with key: ' + helpers.shorter(publicKey),
-      'throw'
-    )
+  if (type === 'keypair') {
+    for (let index in value) {
+      const keypair = value[index]
+      const publicKey = keypair.publicKey()
+
+      if (!await cosmicLink.hasSigner(publicKey)) {
+        const short = helpers.shorter(publicKey)
+        status.error(cosmicLink, 'Not a legit signer: ' + short)
+        continue
+      }
+
+      if(hasSigned(transaction, keypair)) continue
+
+      try {
+        transaction.sign(keypair)
+      } catch (error) {
+        console.log(error)
+        const short = helpers.shorter(publicKey)
+        status.error(cosmicLink, 'Failed to sign with key: ' + short)
+        return transaction
+      }
+    }
+  } else if (type === 'preimage') {
+    try {
+      transaction.signHashX(value[0])
+    } catch (error) {
+      console.log(error)
+      const short = helpers.shorter(value[0])
+      status.error(cosmicLink, 'Failed to sign with preimage: ' + short)
+      return transaction
+    }
   }
 
   cosmicLink.getSigners = helpers.delay(() => resolve.signers(cosmicLink))
   format.signatures(cosmicLink)
-
   return transaction
+}
+
+function hasSigned (transaction, keypair) {
+  const keypairHint = keypair.signatureHint().toString('base64')
+  const signatures = transaction.signatures
+
+  for (let index in signatures) {
+    const hint = signatures[index].hint().toString('base64')
+    if (hint === keypairHint) return true
+  }
+
+  return false
 }
 
 /**

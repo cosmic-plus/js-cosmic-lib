@@ -56,7 +56,13 @@ event.defaultClickHandlers = {
     else issuerNode.style.display = 'inline'
   },
   hash: function (event) {
-    helpers.copy(event.value)
+    const grandma = event.node.parentNode.parentNode.parentNode
+    if (grandma.className === 'CL_signers') {
+      const preimage = prompt('Please enter preimage:')
+      if (preimage) event.cosmicLink.sign(preimage)
+    } else {
+      helpers.copy(event.value)
+    }
   }
 }
 
