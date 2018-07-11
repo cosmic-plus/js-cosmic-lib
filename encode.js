@@ -9,6 +9,7 @@ const encode = exports
 
 const check = require('./check')
 const specs = require('./specs')
+const status = require('./status')
 
 /**
  * Encode `value` into cosmic link query format and return

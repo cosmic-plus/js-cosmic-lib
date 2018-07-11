@@ -25,7 +25,7 @@ const event = require('./event')
  */
 parse.page = function (cosmicLink, page) {
   cosmicLink._page = encodeURI(page)
-  makeConverter(cosmicLink, 'query', 'uri')
+  parse.makeConverter(cosmicLink, 'query', 'uri')
 }
 
 /**

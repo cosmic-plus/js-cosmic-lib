@@ -108,8 +108,7 @@ check.asset = function (cosmicLink, asset) {
 check.assetsArray = function (cosmicLink, assetsArray) {
   let isValid = true
   for (let index in assetsArray) {
-    try { check.asset(cosmicLink, assetsArray[index]) }
-    catch (error) { isValid = false }
+    try { check.asset(cosmicLink, assetsArray[index]) } catch (error) { isValid = false }
   }
   if (!isValid) throw new Error('Invalid assets array')
 }

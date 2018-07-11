@@ -6,12 +6,12 @@
  */
 const convert = exports
 
-import * as specs from './specs'
-import * as status from './status'
-import * as decode from './decode'
-import * as resolve from './resolve'
-import * as prepare from './prepare'
-import * as encode from './encode'
+const specs = require('./specs')
+const status = require('./status')
+const decode = require('./decode')
+const resolve = require('./resolve')
+const prepare = require('./prepare')
+const encode = require('./encode')
 
 /** ****************************    URI -> XDR    ******************************/
 
@@ -76,7 +76,7 @@ convert.queryToJson = function (cosmicLink, query) {
       if (operation === 'transaction' && !isTransactionField(field)) {
         status.error(cosmicLink, 'Not a valid transaction field: ' + field, 'throw')
       } else if (mode === 'operation' && !isOperationField(field)) {
-        status
+        status.error(cosmicLink, 'Not a valid field for this operation: ' + field, 'throw')
       }
 
       const decodedValue = decode.field(cosmicLink, field, value)

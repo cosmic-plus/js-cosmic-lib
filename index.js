@@ -1,6 +1,6 @@
 'use strict'
 
-import nothing from './polyfill'
+require('./polyfill')
 
 const helpers = require('./helpers')
 const action = require('./action')
