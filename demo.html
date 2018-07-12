@@ -1,0 +1,69 @@
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width">
+  <title>cosmic-lib debug page</title>
+  <link rel="stylesheet" type="text/css" href="cosmic-lib.css">
+</head>
+
+<script>
+  function init () {
+    var CosmicLink = cosmicLib.CosmicLink
+    var cosmicLink = new cosmicLib.CosmicLink()
+
+    makeBoxUpdater('uri')
+    makeBoxUpdater('query')
+    makeBoxUpdater('json')
+    makeBoxUpdater('xdr')
+  }
+
+  function makeBoxUpdater (cosmicLink, format) {
+    const box = document.querySelector('#' + id)
+
+    box.onchange = function () {
+      cosmicLink.parse(format, cosmicLink.network, cosmicLink.user)
+    }
+
+    cosmicLink.addFormatHandler(format, function (event) {
+      box.value = event.value
+    })
+  }
+
+</script>
+
+<body id="body" onload="demo.init()" style="max-width:40em;margin:auto;font-size:1.2em;"/>
+
+  <header>
+    <h1>cosmic-lib demo page</h1>
+  </header>
+
+  <hr>
+
+  <nav></nav>
+
+  <hr>
+
+  <main>
+    <form autocomplete="off">
+
+      <input id="uri" type="text" placeholder="URI">
+      <input id="query" type="text" placeholder="Query">
+      <textarea id="json" placeholder="JSON"></textarea>
+      <textarea id="xdr" placeholder="XDR"></textarea>
+    </form>
+  </main>
+
+  <hr>
+
+  <footer>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/stellar-sdk/0.9.1/stellar-sdk.js"></script>
+  <script>console.log(StellarSdk)</script>
+  <script src="cosmic-lib.js"></script>
+  <script>console.log(cosmicLib)</script>
+  <script src="demo.js"></script>
+  <script>console.log(demo)</script>
+
+</body>
+</html>

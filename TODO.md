@@ -1,6 +1,3 @@
-Before beta release (planned for this summer):
-* Write a demo page & examples
-
 Before stable release (planned for this autumn):
 * Have a native english speaker check all the texts
 * Support DKIF
