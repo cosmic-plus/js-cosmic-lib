@@ -23,7 +23,7 @@ const event = require('./event')
  * @param {CL}
  * @param {string} page URI basename
  */
-parse.setPage = function (cosmicLink, page) {
+parse.page = function (cosmicLink, page) {
   cosmicLink._page = encodeURI(page)
   parse.makeConverter(cosmicLink, 'query', 'uri')
   event.callFormatHandlers(cosmicLink, 'uri')
