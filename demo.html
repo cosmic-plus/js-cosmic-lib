@@ -2,55 +2,176 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width">
-  <title>cosmic-lib debug page</title>
-  <link rel="stylesheet" type="text/css" href="cosmic-lib.css">
+  <title>cosmic-lib demo page</title>
+  <link rel="stylesheet" type="text/css" href="https://necolas.github.io/normalize.css/latest/normalize.css">
 </head>
 
 <script>
-  function init () {
-    var CosmicLink = cosmicLib.CosmicLink
-    var cosmicLink = new cosmicLib.CosmicLink()
+  var Constructor, cosmicLink, pageBox, networkBox, userBox, signerBox
 
-    makeBoxUpdater('uri')
-    makeBoxUpdater('query')
-    makeBoxUpdater('json')
-    makeBoxUpdater('xdr')
+  function init () {
+    pageBox = document.querySelector('#page')
+    networkBox = document.querySelector('#network')
+    userBox = document.querySelector('#user')
+    signerBox = document.querySelector('#signer')
+
+    Constructor = cosmicLib.CosmicLink
+
+    /// Default configuration
+    Constructor.page = location.href.replace(/\?.*/,'')
+    Constructor.network = 'test'
+    Constructor.user = 'tips*cosmic.link'
+
+    initBox('uri')
+    initBox('query')
+    initBox('json')
+    initBox('xdr')
+
+    Constructor.addFormatHandler('query', function (event) {
+      if (event.value) history.replaceState({}, '', event.value)
+      pageBox.value = cosmicLink.page
+      networkBox.value = cosmicLink.network
+      if (cosmicLink.user) userBox.value = cosmicLink.user
+      else userBox.value = ''
+    })
+
+    cosmicLink = new Constructor(location.search || '?')
   }
 
-  function makeBoxUpdater (cosmicLink, format) {
-    const box = document.querySelector('#' + id)
+  function initBox (format) {
+    const box = document.querySelector('#' + format)
 
-    box.onchange = function () {
-      cosmicLink.parse(format, cosmicLink.network, cosmicLink.user)
-    }
+    box.onchange = function () { refresh(box.value) }
 
-    cosmicLink.addFormatHandler(format, function (event) {
-      box.value = event.value
+    Constructor.addFormatHandler(format, function (event) {
+      if (event.value) box.value = event.value
+      else box.value = ''
     })
   }
 
+  function refresh (transaction) {
+    Constructor.page = pageBox.value
+    if (!transaction) transaction = location.search || '?'
+    cosmicLink = new Constructor(transaction, networkBox.value, userBox.value)
+  }
+
+  function sign () {
+    var signer = signerBox.value
+    console.log(signer.substr(0,1))
+    if (signer.substr(0,1) === 'S') {
+      var signer = StellarSdk.Keypair.fromSecret(signer)
+    }
+    cosmicLink.sign(signer)
+  }
+
+  function send () {
+    const promise = cosmicLink.send()
+    display('Sending...')
+    promise.then(display).catch(display)
+  }
+
+  function display (response) {
+    var box = document.querySelector('#message')
+    if (response._links) {
+      box.textContent = 'Success: ' + response._links.transaction.href
+    } else {
+      box.textContent = response
+    }
+  }
 </script>
 
-<body id="body" onload="demo.init()" style="max-width:40em;margin:auto;font-size:1.2em;"/>
+<style>
+body {
+  width: 100%;
+  font-size: 1.2em;
+}
+
+h1 {
+  font-size: 1.6em;
+  float: left;
+}
+
+h2 {
+  font-size: 1.4em;
+}
+
+hr {
+  clear: both;
+}
+
+a {
+  font-size: 1.2em;
+}
+
+
+main {
+  max-width: 60em;
+  margin: auto;
+}
+
+.column {
+  width: 30em;
+  overflow: hidden;
+  float: left;
+}
+
+label {
+  float: left;
+  width: 10em;
+  margin: auto;
+}
+
+input, textarea {
+  display: block;
+  width: 100%;
+  max-width: 20em;
+  resize: none;
+  margin: 0.5em auto;
+}
+
+</style>
+
+<body id="body" onload="init()">
 
   <header>
     <h1>cosmic-lib demo page</h1>
+    <a href="https://github.com/MisterTicot/js-cosmic-lib-src/demo.html">
+      (Source code)</a>
   </header>
 
   <hr>
 
-  <nav></nav>
-
-  <hr>
-
   <main>
-    <form autocomplete="off">
-
-      <input id="uri" type="text" placeholder="URI">
-      <input id="query" type="text" placeholder="Query">
-      <textarea id="json" placeholder="JSON"></textarea>
-      <textarea id="xdr" placeholder="XDR"></textarea>
-    </form>
+    <div class="column">
+      <h2>Transaction</h2>
+      <div id="CL_htmlNode"></div>
+      <h2>Sign & Send</h2>
+      <form autocomplete="off">
+        <input id="signer" type="text" placeholder="Private key or preimage">
+        <input type="button" value="Sign" onclick="sign()">
+        <input type="button" value="Send" onclick="send()">
+        <span id="message"></span>
+      </form>
+    </div>
+    <div class="column">
+      <h2>Edit</h2>
+      <form autocomplete="off">
+        <label for="page">Page:</label>
+        <input id="page" type="text" onchange="refresh()">
+        <label for="network">Network:</label>
+        <input id="network" type="text" onchange="refresh()">
+        <label for="user">User:</label>
+        <input id="user" type="text" onchange="refresh()">
+        <label for="uri">Link:</label>
+        <input id="uri" type="text" placeholder="URI">
+        <label for="query">Query:</label>
+        <input id="query" type="text" placeholder="Query">
+        <label for="json">JSON:</label>
+        <textarea id="json" rows=8 placeholder="JSON"></textarea>
+        <label for="xdr">XDR:</label>
+        <textarea id="xdr" rows=3 placeholder="XDR"></textarea>
+      </form>
+    </div>
   </main>
 
   <hr>
@@ -62,8 +183,5 @@
   <script>console.log(StellarSdk)</script>
   <script src="cosmic-lib.js"></script>
   <script>console.log(cosmicLib)</script>
-  <script src="demo.js"></script>
-  <script>console.log(demo)</script>
-
 </body>
 </html>
