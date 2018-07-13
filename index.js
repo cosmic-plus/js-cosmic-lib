@@ -119,7 +119,7 @@ export class CosmicLink {
     if (user) this._user = user
     else if (CosmicLink.user) this._user = CosmicLink.user
 
-    if (network) this.network = network
+    if (network) this._network = network
 
     if (!this._page) this._page = CosmicLink.page
     this.aliases = CosmicLink.aliases
@@ -141,7 +141,7 @@ export class CosmicLink {
     parse.dispatch(this, transaction, options)
 
     /// Fallback only when network is not set from the URI.
-    if (!this.network) this.network = CosmicLink.network
+    if (!this.network) this._network = CosmicLink.network
 
     this.getSourceAccount = helpers.delay(() => resolve.getSourceAccount(this))
     this.getSigners = helpers.delay(() => resolve.signers(this))
@@ -195,10 +195,10 @@ export class CosmicLink {
   set page (uri) { parse.page(this, uri) }
 
   get network () { return this._network }
-  set network (network) { parse.network(this, network) }
+  set network (network) { throw new Error('network is read-only') }
 
   get user () { return this._user }
-  set user (user) { parse.user(this, user) }
+  set user (user) { throw new Error('user is read-only') }
 
   /// HTML
   get htmlNode () {

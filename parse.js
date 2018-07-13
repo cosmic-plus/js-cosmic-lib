@@ -30,18 +30,6 @@ parse.page = function (cosmicLink, page) {
 }
 
 /**
- * Set `cosmicLink.user` as `address`.
- *
- * @param {CL}
- * @param {string} address An account ID or a federated address
- */
-parse.user = function (cosmicLink, address) {
-  cosmicLink._user = address
-  parse.typeTowardAllUsingDelayed(cosmicLink, 'json', cosmicLink.getJson)
-  event.callFormatHandlers(cosmicLink)
-}
-
-/**
  * Set `cosmicLink` `network`. Throw an error if `network` is not valid.
  *
  * @param {CL}
@@ -58,8 +46,6 @@ parse.network = function (cosmicLink, network) {
     status.error(cosmicLink, 'Invalid network: ' + network)
     status.fail(cosmicLink, 'Invalid network', 'throw')
   }
-  parse.typeTowardAllUsingDelayed(cosmicLink, 'json', cosmicLink.getJson)
-  event.callFormatHandlers(cosmicLink)
 }
 
 /**
@@ -91,7 +77,7 @@ parse.dispatch = function (cosmicLink, value, options = {}) {
     value.match('&network=')
   ) {
     const network = value.replace(/.*&network=/, '').replace(/&.*/, '')
-    try { cosmicLink.network = network } catch (error) {}
+    try { parse.network(cosmicLink, network) } catch (error) {}
   }
 
   if (parser) parser(cosmicLink, value, options)
