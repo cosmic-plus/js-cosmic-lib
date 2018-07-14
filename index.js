@@ -32,102 +32,18 @@ if (typeof document !== 'undefined') {
  * To make a `CosmicLink` object, you'll need to provide the network on wich
  * it is valid, and may want to provide a default user, which could be your
  * accountID or the accountID of anybody using your service.
- *
- * Cheat sheet:
- *```
-// --- Constructor ---
-// new CosmicLink(uri, "[userNetwork]", "[userAddress]")
-// new CosmicLink(query, "[userNetwork]", "[userAddress]")
-// new CosmicLink(transaction, "[userNetwork]", "[userAddress]", {...options})
-// new CosmicLink(xdr, "[userNetwork]", "[userAddress]", {...options})
-//
-// --- Options for transaction & xdr ---
-// stripSource = true      < Strip out source account
-// stripSequence = true    < Strip out sequence number
-// stripSignatures = true  < Strip out signatures
-// network = ...           < Specify a network for this transaction (kept in URI after conversion)
-//
-// --- Edit ---
-// CosmicLink.parse(any-format, {...options})
-// *CosmicLink.setField(field, value)
-// *CosmicLink.addOperation({...params})
-// *CosmicLink.changeOperation(index, {...params})
-// *CosmicLink.removeOperation(index)
-//
-// --- Formats (get) ---
-// CosmicLink.getUri()          < Return a promise of the URI string
-// CosmicLink.getQuery()        < Return a promise of the query string
-// CosmicLink.getJson()         < Return stringified JSON of the object
-// CosmicLink.getTdesc()        < Return a promise of the transaction descriptor
-// CosmicLink.getTransaction()  < Return a promise of the transaction
-// CosmicLink.getXdr()          < Return a promise of the transaction's XDR
-//
-// --- Handlers ---
-// CosmicLink.setClickHandler(fieldType, callback)
-// CosmicLink.clearClickHandler(fieldType, callback)
-// callback will receive event = { cosmicLink..., fieldType: ..., field: ...,
-//     value: ..., node: ... }
-//
-// CosmicLink.addFormatHandler(format, callback)
-// CosmicLink.removeFormatHandler(format, callback)
-// callback will receive event = { cosmicLink: ..., value: ..., error: ... }
-//
-// --- Datas ---           <<< Update everything on the go >>>
-// CosmicLink.user         < User address
-// CosmicLink.network      < Test/Public network
-// CosmicLink.server       < The horizon server to use
-// CosmicLink.page         < The base URI, without the query
-// CosmicLink.status       < Status of the CosmicLink (valid or specific error)
-// CosmicLink.errors       < An array of errors (or undefined if no error)
-//
-// --- Datas (asynchronous) ---
-// CosmicLink.getSource()         < Transaction source
-// CosmicLink.getSourceAccount()  < Transaction source account object
-// CosmicLink.getSigners()        < Array of legit signers
-//
-// --- Aliases ---
-// CosmicLink.aliases                     < Local aliases for public keys
-// CosmicLink.addAliases({id: name,...})  < Append new aliases
-// CosmicLink.removeAliases([id...])      < Remove aliases
-//
-// --- Tests ---
-// CosmicLink.hasSigner(publicKey)   < Test if `publicKey` is a signer for CosmicLink
-// CosmicLink.hasSigned(publicKey)   < Test if `publicKey` signature is available
-//
-// --- Actions ---
-// CosmicLink.selectNetwork()  < Select CosmicLink network for Stellar SDK
-// CosmicLink.sign(seed)       < Sign the transaction
-// CosmicLink.send([server])   < Send the transaction to the network
-//
-// --- HTML Nodes ---
-// CosmicLink.htmlNode         < HTML element for CosmicLink
-// CosmicLink.transactionNode  < HTML description of the transaction
-// CosmicLink.signersNode      < HTML element for the signers list
-// CosmicLink.statusNode       < HTML element for the transaction status & errors
- * ```
- *
+*
  * @constructor
  * @param {*} transaction
- * @param {test|public} [userNetwork] The Stellar network to use, will be public
- *     by default.
- * @param {string} [userAddress] This is the fallback source address when none
- *     is specified from the transaction.
  * @param {Object} options Additional options
  */
-export class CosmicLink {
-  constructor (transaction, network, user, options) {
-    if (user) this._user = user
-    else if (CosmicLink.user) this._user = CosmicLink.user
-
-    if (network) this._network = network
-
-    if (!this._page) this._page = CosmicLink.page
-    this.aliases = CosmicLink.aliases
-
-    this.clickHandlers = Object.assign({}, CosmicLink.clickHandlers)
+const CosmicLink = module.exports = class CosmicLink {
+  constructor (transaction, options) {
+    this.aliases = CosmicLink.defaults.aliases
+    this.clickHandlers = Object.assign({}, CosmicLink.defaults.clickHandlers)
     this.formatHandlers = {}
-    for (let format in CosmicLink.formatHandlers) {
-      const handlers = CosmicLink.formatHandlers[format]
+    for (let format in CosmicLink.defaults.formatHandlers) {
+      const handlers = CosmicLink.defaults.formatHandlers[format]
       this.formatHandlers[format] = handlers.slice(0)
     }
 
@@ -139,12 +55,6 @@ export class CosmicLink {
     }
 
     parse.dispatch(this, transaction, options)
-
-    /// Fallback only when network is not set from the URI.
-    if (!this.network) this._network = CosmicLink.network
-
-    this.getSourceAccount = helpers.delay(() => resolve.getSourceAccount(this))
-    this.getSigners = helpers.delay(() => resolve.signers(this))
   }
 
   parse (transaction, options) {
@@ -226,31 +136,6 @@ export class CosmicLink {
   set signersNode (value) { this._signersNode = value }
 }
 
-/// Class-wide configuration
-CosmicLink.page = 'https://cosmic.link/'
-CosmicLink.network = 'public'
-CosmicLink.user = null
-
-CosmicLink.aliases = aliases.all
-CosmicLink.addAliases = function (aliases) { aliases.add(CosmicLink, aliases) }
-CosmicLink.removeAliases = function (array) { aliases.remove(CosmicLink, array) }
-
-CosmicLink.clickHandlers = event.defaultClickHandlers
-CosmicLink.setClickHandler = function (fieldType, callback) {
-  event.setClickHandler(CosmicLink, fieldType, callback)
-}
-CosmicLink.clearClickHandler = function (fieldType, callback) {
-  event.clearClickHandler(CosmicLink, fieldType, callback)
-}
-
-CosmicLink.formatHandlers = {}
-CosmicLink.addFormatHandler = function (format, callback) {
-  event.addFormatHandler(CosmicLink, format, callback)
-}
-CosmicLink.removeFormatHandler = function (format, callback) {
-  event.removeFormatHandler(CosmicLink, format, callback)
-}
-
 function makeHtmlNodes (cosmicLink, htmlNode) {
   if (htmlNode) {
     node.clear(htmlNode)
@@ -273,3 +158,6 @@ function makeHtmlNodes (cosmicLink, htmlNode) {
   if (cosmicLink.getTdesc) format.tdesc(cosmicLink)
   status.populateHtmlNode(cosmicLink)
 }
+
+
+CosmicLink.defaults = require('./defaults')

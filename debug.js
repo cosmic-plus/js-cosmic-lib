@@ -1,10 +1,10 @@
 'use_strict'
 
 const node = require('./node.js')
-const CosmicLink = cosmicLib.CosmicLink
 
 const user = 'GBP7EQX652UPJJJRYFAPH64V2MHGUGFJNKJN7RNOPNSFIBH4BW6NSF45'
 const secret = 'SAZMGMO2DUBRGQIXNHIEBRLUQOPC7SYLABFMC55JZVPXMZPBRXLMVKKV'
+const keypair = StellarSdk.Keypair.fromSecret(secret)
 const account1 = 'GBWYUHFOHJECKDLFNCPGPVU6XRDJIBT5BYF6VXZEDHWVQRCR4HZVCGPU'
 const account2 = 'GBI6LRKMFJ5CXNIFYU3VQLQ7DUP5M4TQ6ONOYNV6SNUITIH4KFOMTTV4'
 const account3 = 'GB6NJPLQ6ZQ6IQQTLIUIXEKPLWCB32HDVWWVE2KSU7LQKGY4JL4AITOV'
@@ -132,6 +132,9 @@ const tests = [
   ['url', 'https://cosmic.link/?payment&amount=abc&destination=' + account1]
 ]
 
+CosmicLink.defaults.network = 'test'
+CosmicLink.defaults.user = user
+
 const mainNode = node.grab('main')
 
 export async function debug () {
@@ -200,7 +203,7 @@ function appendTitle (parent, title) {
 }
 
 async function appendCosmicLink (parent, url, options = {}) {
-  const cosmicLink = new CosmicLink(url, 'test', user)
+  const cosmicLink = new CosmicLink(url)
 
   node.append(
     parent,
@@ -232,13 +235,13 @@ async function checkCosmicLink (cosmicLink, options) {
   const xdr = await cosmicLink.getXdr()
   append(node.create('textarea', {}, xdr))
 
-  const cLinkReverse = new CosmicLink(xdr, 'test', user, { stripSource: true })
+  const cLinkReverse = new CosmicLink(xdr, { stripSource: true })
   const json = await cLinkReverse.getJson()
   append(node.create('pre', {}, json))
   const uri2 = await cLinkReverse.getUri()
   append(node.create('input', { value: uri2 }))
 
-  const cLinkLoopback = new CosmicLink(uri2, 'test', user)
+  const cLinkLoopback = new CosmicLink(uri2)
   const xdr2 = await cLinkLoopback.getXdr()
 
   if (xdr !== xdr2) {
@@ -251,7 +254,7 @@ async function checkCosmicLink (cosmicLink, options) {
 }
 
 async function tryCosmicLink (cosmicLink, options) {
-  if (!options.dontSign) await cosmicLink.sign(secret)
+  if (!options.dontSign) await cosmicLink.sign(keypair)
   if (options.send) {
     await cosmicLink.send()
     node.append(cosmicLink.htmlNode,

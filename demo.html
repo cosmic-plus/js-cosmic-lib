@@ -7,7 +7,7 @@
 </head>
 
 <script>
-  var Constructor, cosmicLink, pageBox, networkBox, userBox, signerBox
+  var cosmicLink, pageBox, networkBox, userBox, signerBox
 
   function init () {
     pageBox = document.querySelector('#page')
@@ -15,19 +15,17 @@
     userBox = document.querySelector('#user')
     signerBox = document.querySelector('#signer')
 
-    Constructor = cosmicLib.CosmicLink
-
     /// Default configuration
-    Constructor.page = location.href.replace(/\?.*/,'')
-    Constructor.network = 'test'
-    Constructor.user = 'tips*cosmic.link'
+    CosmicLink.defaults.page = location.href.replace(/\?.*/,'')
+    CosmicLink.defaults.network = 'test'
+    CosmicLink.defaults.user = 'tips*cosmic.link'
 
     initBox('uri')
     initBox('query')
     initBox('json')
     initBox('xdr')
 
-    Constructor.addFormatHandler('query', function (event) {
+    CosmicLink.defaults.addFormatHandler('query', function (event) {
       if (event.value) history.replaceState({}, '', event.value)
       pageBox.value = cosmicLink.page
       networkBox.value = cosmicLink.network
@@ -35,7 +33,7 @@
       else userBox.value = ''
     })
 
-    cosmicLink = new Constructor(location.search || '?')
+    cosmicLink = new CosmicLink(location.search || '?')
   }
 
   function initBox (format) {
@@ -43,16 +41,20 @@
 
     box.onchange = function () { refresh(box.value) }
 
-    Constructor.addFormatHandler(format, function (event) {
+    CosmicLink.defaults.addFormatHandler(format, function (event) {
       if (event.value) box.value = event.value
       else box.value = ''
     })
   }
 
   function refresh (transaction) {
-    Constructor.page = pageBox.value
     if (!transaction) transaction = location.search || '?'
-    cosmicLink = new Constructor(transaction, networkBox.value, userBox.value)
+    const options = {
+      page: pageBox.value,
+      network: networkBox.value,
+      user: userBox.value
+    }
+    cosmicLink = new CosmicLink(transaction, options)
   }
 
   function sign () {
@@ -182,6 +184,6 @@ input, textarea {
   <script src="https://cdnjs.cloudflare.com/ajax/libs/stellar-sdk/0.9.1/stellar-sdk.js"></script>
   <script>console.log(StellarSdk)</script>
   <script src="cosmic-lib.js"></script>
-  <script>console.log(cosmicLib)</script>
+  <script>console.log(CosmicLink)</script>
 </body>
 </html>

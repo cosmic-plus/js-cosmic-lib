@@ -7,7 +7,6 @@
 const event = exports
 
 const helpers = require('./helpers')
-const node = require('./node')
 
 /**
  * Set click handler for `fieldType` HTML elements as `callback`.
@@ -39,31 +38,6 @@ event.clearClickHandler = function (cosmicLink, fieldType) {
 event.callClickHandler = function (cosmicLink, fieldType, eventObject) {
   const handler = cosmicLink.clickHandlers[fieldType]
   if (handler) handler(eventObject)
-}
-
-event.defaultClickHandlers = {
-  address: function (event) {
-    if (!event.account) return
-    let message = ''
-    for (let field in event.account) {
-      message += `${field}:\n` + `${event.account[field]}\n\n`
-    }
-    window.alert(message)
-  },
-  asset: function (event) {
-    const issuerNode = node.grab('.CL_assetIssuer', event.node)
-    if (issuerNode.style.display === 'inline') issuerNode.style.display = 'none'
-    else issuerNode.style.display = 'inline'
-  },
-  hash: function (event) {
-    const grandma = event.node.parentNode.parentNode.parentNode
-    if (grandma.className === 'CL_signers') {
-      const preimage = prompt('Please enter preimage:')
-      if (preimage) event.cosmicLink.sign(preimage)
-    } else {
-      helpers.copy(event.value)
-    }
-  }
 }
 
 /// Format events

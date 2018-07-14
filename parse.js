@@ -15,6 +15,8 @@ const convert = require('./convert')
 const format = require('./format')
 const status = require('./status')
 const event = require('./event')
+const defaults = require('./defaults')
+const resolve = require('./resolve')
 
 /**
  * Set `page` as the base URI for `cosmicLink`. Update the URI getter
@@ -43,8 +45,8 @@ parse.network = function (cosmicLink, network) {
     cosmicLink.server = new StellarSdk.Server('https://horizon.stellar.org')
   } else {
     cosmicLink.server = null
-    status.error(cosmicLink, 'Invalid network: ' + network)
-    status.fail(cosmicLink, 'Invalid network', 'throw')
+    status.fail(cosmicLink, 'Invalid network')
+    status.error(cosmicLink, 'Invalid network: ' + network, 'throw')
   }
 }
 
@@ -68,17 +70,21 @@ parse.network = function (cosmicLink, network) {
  * @return {void}
  */
 parse.dispatch = function (cosmicLink, value, options = {}) {
-  const type = guessType(value)
-  const parser = typeParser[type]
+  cosmicLink._page = options.page || defaults.page
+  cosmicLink._user = options.user || defaults.user
 
-  /// Get network parameter now.
+  let network = options.network || defaults.network
   if (
     (type === 'uri' || type === 'query' || type === 'xdrUri') &&
     value.match('&network=')
   ) {
-    const network = value.replace(/.*&network=/, '').replace(/&.*/, '')
-    try { parse.network(cosmicLink, network) } catch (error) {}
+    network = value.replace(/.*&network=/, '').replace(/&.*/, '')
   }
+  try { parse.network(cosmicLink, network) }
+  catch (error) { console.log(error) }
+
+  const type = guessType(value)
+  const parser = typeParser[type]
 
   if (parser) parser(cosmicLink, value, options)
   else parse.typeTowardAll(cosmicLink, type, value, options)
@@ -93,6 +99,9 @@ parse.dispatch = function (cosmicLink, value, options = {}) {
       parse.makeConverter(cosmicLink, 'query', 'uri')
     }
   }
+
+  cosmicLink.getSourceAccount = helpers.delay(() => resolve.getSourceAccount(cosmicLink))
+  cosmicLink.getSigners = helpers.delay(() => resolve.signers(cosmicLink))
 
   event.callFormatHandlers(cosmicLink)
 
