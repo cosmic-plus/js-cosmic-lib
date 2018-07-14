@@ -70,6 +70,9 @@ parse.network = function (cosmicLink, network) {
  * @return {void}
  */
 parse.dispatch = function (cosmicLink, value, options = {}) {
+  const type = guessType(value)
+  const parser = typeParser[type]
+
   cosmicLink._page = options.page || defaults.page
   cosmicLink._user = options.user || defaults.user
 
@@ -80,11 +83,7 @@ parse.dispatch = function (cosmicLink, value, options = {}) {
   ) {
     network = value.replace(/.*&network=/, '').replace(/&.*/, '')
   }
-  try { parse.network(cosmicLink, network) }
-  catch (error) { console.log(error) }
-
-  const type = guessType(value)
-  const parser = typeParser[type]
+  try { parse.network(cosmicLink, network) } catch (error) { console.log(error) }
 
   if (parser) parser(cosmicLink, value, options)
   else parse.typeTowardAll(cosmicLink, type, value, options)

@@ -159,5 +159,4 @@ function makeHtmlNodes (cosmicLink, htmlNode) {
   status.populateHtmlNode(cosmicLink)
 }
 
-
 CosmicLink.defaults = require('./defaults')
