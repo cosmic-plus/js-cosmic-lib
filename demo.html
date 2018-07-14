@@ -7,7 +7,7 @@
 </head>
 
 <script>
-  var cosmicLink, pageBox, networkBox, userBox, signerBox
+  var cosmicLink, pageBox, networkBox, userBox, signerBox, formatBoxes = []
 
   function init () {
     pageBox = document.querySelector('#page')
@@ -26,6 +26,7 @@
     initBox('xdr')
 
     CosmicLink.defaults.addFormatHandler('query', function (event) {
+      if (cosmicLink !== event.cosmicLink) return
       if (event.value) history.replaceState({}, '', event.value)
       pageBox.value = cosmicLink.page
       networkBox.value = cosmicLink.network
@@ -38,12 +39,21 @@
 
   function initBox (format) {
     const box = document.querySelector('#' + format)
+    formatBoxes.push(box)
 
     box.onchange = function () { refresh(box.value) }
 
     CosmicLink.defaults.addFormatHandler(format, function (event) {
+      if (cosmicLink !== event.cosmicLink) return
       if (event.value) box.value = event.value
-      else box.value = ''
+      else if (event.error) box.placeholder = event.error.message
+    })
+  }
+
+  function clearBoxes () {
+    formatBoxes.forEach(function (box) {
+      box.value = ''
+      box.placeholder = 'Computing...'
     })
   }
 
@@ -54,6 +64,7 @@
       network: networkBox.value,
       user: userBox.value
     }
+    clearBoxes()
     cosmicLink = new CosmicLink(transaction, options)
   }
 
@@ -105,16 +116,24 @@ a {
   font-size: 1.2em;
 }
 
-
 main {
   max-width: 60em;
   margin: auto;
 }
 
 .column {
-  width: 30em;
+  max-width: 40em;
+  margin: auto;
   overflow: hidden;
-  float: left;
+}
+
+@media (min-width: 85.375em) {
+  .column {
+    width: 40%;
+    min-width: 30em;
+    max-width: 50em;
+    float: left;
+  }
 }
 
 label {
