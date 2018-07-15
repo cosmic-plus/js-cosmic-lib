@@ -2,7 +2,7 @@
 /**
  * Contains the action methods for CosmicLink.
  *
- * @exports action
+ * @private
  */
 const action = exports
 
@@ -14,15 +14,21 @@ const format = require('./format')
 const event = require('./event')
 
 /**
- * Sign `cosmicLink` using `keypairs_or_preimage`.
- * Return a promise that resolve to the signed transaction. The cosmic link data
- * is updated as well, so you don't necessarely need to await or make use of
+ * Sign a CosmicLink object using `...keypairs_or_preimage`.
+ * Returns a promise that resolve to the signed transaction. The cosmic link data
+ * are updated as well, so you don't necessarily need to await or make use of
  * this returned promise.
  *
- * @param {cosmicLink} cosmicLink
+ * @example
+ * cosmicLink.sign(keypair1, keypair2)
+ * cosmicLink.send()
+ *   .then(console.log)
+ *   .catch(console.error)
+ *
+ * @alias CosmicLink#sign
  * @param {...Keypair|preimage} keypairs_or_preimage One or more keypair, or a
  *     preimage
- * @promise Signed Transaction object
+ * @returns {Promise} Signed Transaction object
  */
 
 action.sign = async function (cosmicLink, ...keypairs_or_preimage) {
@@ -105,13 +111,21 @@ function hasSigned (transaction, keypair) {
 }
 
 /**
- * Send `cosmicLink`'s transaction to `server`. It should have been signed
- * beforehand.
- * Return a promise that terminate when submission is over.
+ * Send CosmicLink transaction to `server`, or to `cosmicLink.server`. It should
+ * have been signed beforehand to be validated.
  *
- * @param {CL}
- * @param {Server} [server=cosmicLink.server] Stellar SDK Server object
- * @return {Object} The server response
+ * Returns a promise that resolve with horizon server response when transaction
+ * is accepted, or that reject to horizon server response if transaction is
+ * rejected.
+ *
+ * @example
+ * cosmicLink.send()
+ *   .then(console.log)
+ *   .catch(console.error)
+ *
+ * @alias CosmicLink#send
+ * @param {Server} [server=cosmicLink.server] A Stellar SDK [Server]{@link https://stellar.github.io/js-stellar-sdk/Server.html} object
+ * @return {Promise} The server response
  */
 action.send = async function (cosmicLink, server) {
   if (!server) server = cosmicLink.server

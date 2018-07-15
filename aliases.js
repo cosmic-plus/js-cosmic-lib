@@ -14,7 +14,7 @@
  * Aliases are only used as a displaying sugar and can't be used as a
  * replacement for federated address as it would lead to security issues.
  *
- * @exports aliases
+ * @private
  */
 const aliases = exports
 

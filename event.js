@@ -2,36 +2,24 @@
 /**
  * Contains the methods to trigger and handle events.
  *
- * @exports event
+ * @private
  */
 const event = exports
 
 const helpers = require('./helpers')
 
-/**
- * Set click handler for `fieldType` HTML elements as `callback`.
- *
- * @param {CL}
- * @param {string} fieldType One of: `address`, `asset`, `hash`
- * @param {function} callback
- */
 event.setClickHandler = function (cosmicLink, fieldType, callback) {
   cosmicLink.clickHandlers[fieldType] = callback
 }
 
-/** Clear the current onclick handler for `fieldType`.
- *
- * @param {CL}
- * @param {string} fieldType One of: `address`, `asset`, `hash`
- */
 event.clearClickHandler = function (cosmicLink, fieldType) {
   cosmicLink.clickHandlers[fieldType] = undefined
 }
 
-/** Call the current clickhandler for `fieldType` with `eventObject` as
+/** Call the current click handler for `fieldType` with `eventObject` as
  * argument.
  *
- * @param {CL}
+ * @private
  * @param {string} fieldType One of: `address`, `asset`, `hash`
  * @param {Object} eventObject
  */
@@ -40,7 +28,8 @@ event.callClickHandler = function (cosmicLink, fieldType, eventObject) {
   if (handler) handler(eventObject)
 }
 
-/// Format events
+
+/***** Format events *****/
 
 const allFormats = ['uri', 'query', 'tdesc', 'json', 'transaction', 'xdr']
 
@@ -59,6 +48,13 @@ event.removeFormatHandler = function (cosmicLink, format, callback) {
   handlers[format] = handlers[format].filter(entry => entry !== callback)
 }
 
+/**
+ * Calls format handlers for `...formats` or for every formats if `...formats`
+ * is not specified.
+ *
+ * @private
+ * @param {...string} ...formats
+ */
 event.callFormatHandlers = function (cosmicLink, ...formats) {
   if (!formats.length) formats = allFormats
   const handlers = cosmicLink.formatHandlers

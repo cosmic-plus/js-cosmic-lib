@@ -2,7 +2,7 @@
 /**
  * Contains Stellar transactions specification.
  *
- * @export specs
+ * @exports specs
  */
 const specs = exports
 
