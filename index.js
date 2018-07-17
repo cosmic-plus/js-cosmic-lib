@@ -9,6 +9,7 @@ const parse = require('./parse')
 const resolve = require('./resolve')
 const status = require('./status')
 const aliases = require('./aliases')
+const defaults = require('./defaults')
 
 let node, format
 if (typeof document !== 'undefined') {
@@ -20,8 +21,6 @@ if (typeof document !== 'undefined') {
 }
 
 /**
- * @class
- *
  * A `CosmicLink` object represents a Stellar transaction. It can be created
  * from an actual cosmic link or any link build with a cosmic query, and
  * also from a Stellar Transaction object or its XDR representation.
@@ -38,7 +37,7 @@ if (typeof document !== 'undefined') {
  * @borrows module:defaults.addFormatHandler as CosmicLink#addFormatHandler
  * @borrows module:defaults.removeFormatHandler as CosmicLink#removeFormatHandler
  */
-const CosmicLink = class CosmicLink {
+exports.CosmicLink = class CosmicLink {
    /**
     * @constructor
     * @param {*} transaction A transaction in one of thoses formats: `uri`, `query`,
@@ -46,11 +45,11 @@ const CosmicLink = class CosmicLink {
     * @param {Object} options Additional options
     */
   constructor (transaction, options) {
-    this.aliases = CosmicLink.defaults.aliases
-    this.clickHandlers = Object.assign({}, CosmicLink.defaults.clickHandlers)
+    this.aliases = defaults.aliases
+    this.clickHandlers = Object.assign({}, defaults.clickHandlers)
     this.formatHandlers = {}
-    for (let format in CosmicLink.defaults.formatHandlers) {
-      const handlers = CosmicLink.defaults.formatHandlers[format]
+    for (let format in defaults.formatHandlers) {
+      const handlers = defaults.formatHandlers[format]
       this.formatHandlers[format] = handlers.slice(0)
     }
 
@@ -213,6 +212,5 @@ function makeHtmlNodes (cosmicLink, htmlNode) {
   status.populateHtmlNode(cosmicLink)
 }
 
-CosmicLink.defaults = require('./defaults')
-
-module.exports = CosmicLink
+exports.defaults = defaults
+exports.specs = require('./specs')

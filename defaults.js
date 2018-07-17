@@ -62,7 +62,7 @@ defaults.removeAliases = function (array) { aliases.remove(defaults, array) }
  * Set the click handler for `fieldType` HTML elements as `callback`.
  *
  * @example
- * CosmicLink.defaults.setClickHandler('address', showAddressPopup)
+ * cosmicLib.defaults.setClickHandler('address', showAddressPopup)
  * @example
  * cosmicLink.setClickHandler('asset', showAssetBox)
  *
@@ -78,7 +78,7 @@ defaults.setClickHandler = function (fieldType, callback) {
  * Remove the current click handler for `fieldType`.
  *
  * @example
- * CosmicLink.defaults.clearClickHandler('address')
+ * cosmicLib.defaults.clearClickHandler('address')
  * @example
  * cosmicLink.clearClickHandler('asset')
  *
@@ -90,12 +90,12 @@ defaults.clearClickHandler = function (fieldType) {
 }
 
 /**
- * The active format handlers. Can be defined globally (`CosmicLink.defaults.formathandlers`)
+ * The active format handlers. Can be defined globally (`cosmicLib.defaults.formathandlers`)
  * or for a particular CosmicLink object (`cosmicLink.formatHandlers`). Takes the
  * form:
  *
  * ```
- * CosmicLink.defaults.formatHandlers = {
+ * cosmicLib.defaults.formatHandlers = {
  *  format1: [ callback1, ..., callbackN ],
  *  ...
  *  formatN: [ callback1, ..., callbackN ]
@@ -116,7 +116,7 @@ defaults.formatHandlers = {}
  * Where `value` is set only when the format conversion resolves, and where
  * `error` is set only when format conversion fails.
  *
- * Format handlers can be added either globally (`CosmicLink.defaults.addFormatHandler`)
+ * Format handlers can be added either globally (`cosmicLib.defaults.addFormatHandler`)
  * or to a specific cosmicLink object (`cosmicLink.addFormatHandler`). When
  * added to a specific cosmicLink object, `callback` is immediately called with
  * the current return value of `format`.
@@ -124,7 +124,7 @@ defaults.formatHandlers = {}
  * @example
  * // This will update the current page URL each time a CosmicLink is parsed
  *
- * CosmicLink.defaults.addFormatHandler('query', updateDocumentUrl)
+ * cosmicLib.defaults.addFormatHandler('query', updateDocumentUrl)
  *
  * function updateDocumentUrl (event) {
  *   if (event.value) history.replaceState({}, '', event.value)
@@ -141,7 +141,7 @@ defaults.addFormatHandler = function (format, callback) {
  * Remove format handler `callback` for `format`.
  *
  * @example
- * CosmicLink.defaults.removeFormatHandler('query', updateDocumentUrl)
+ * cosmicLib.defaults.removeFormatHandler('query', updateDocumentUrl)
  *
  * @alias module:defaults.removeFormatHandler
  * @param {string} format Either `uri`, `query`, `tdesc`, `json`, `transaction` or `xdr`
@@ -152,12 +152,12 @@ defaults.removeFormatHandler = function (format, callback) {
 }
 
 /**
- * The active click handlers. Can be defined globally (`CosmicLink.defaults.clickhandlers`)
+ * The active click handlers. Can be defined globally (`cosmicLib.defaults.clickhandlers`)
  * or for a particular CosmicLink object (`cosmicLink.clickHandlers`). Takes the
  * form:
  *
  * ```
- * CosmicLink.defaults.clickHandlers = {
+ * cosmicLib.defaults.clickHandlers = {
  *   fieldType1: callback1,
  *   ...
  *   fieldTypeN: callbackN

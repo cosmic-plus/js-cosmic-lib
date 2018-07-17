@@ -132,8 +132,8 @@ const tests = [
   ['url', 'https://cosmic.link/?payment&amount=abc&destination=' + account1]
 ]
 
-CosmicLink.defaults.network = 'test'
-CosmicLink.defaults.user = user
+cosmicLib.defaults.network = 'test'
+cosmicLib.defaults.user = user
 
 const mainNode = node.grab('main')
 

@@ -16,16 +16,16 @@
     signerBox = document.querySelector('#signer')
 
     /// Default configuration
-    CosmicLink.defaults.page = location.href.replace(/\?.*/,'')
-    CosmicLink.defaults.network = 'test'
-    CosmicLink.defaults.user = 'tips*cosmic.link'
+    cosmicLib.defaults.page = location.href.replace(/\?.*/,'')
+    cosmicLib.defaults.network = 'test'
+    cosmicLib.defaults.user = 'tips*cosmic.link'
 
     initBox('uri')
     initBox('query')
     initBox('json')
     initBox('xdr')
 
-    CosmicLink.defaults.addFormatHandler('query', function (event) {
+    cosmicLib.defaults.addFormatHandler('query', function (event) {
       if (cosmicLink !== event.cosmicLink) return
       if (event.value) history.replaceState({}, '', event.value)
       pageBox.value = cosmicLink.page
@@ -43,7 +43,7 @@
 
     box.onchange = function () { refresh(box.value) }
 
-    CosmicLink.defaults.addFormatHandler(format, function (event) {
+    cosmicLib.defaults.addFormatHandler(format, function (event) {
       if (cosmicLink !== event.cosmicLink) return
       if (event.value) box.value = event.value
       else if (event.error) box.placeholder = event.error.message
@@ -204,5 +204,6 @@ input, textarea {
   <script>console.log(StellarSdk)</script>
   <script src="cosmic-lib.js"></script>
   <script>console.log(CosmicLink)</script>
+  <script>var CosmicLink = cosmicLib.CosmicLink</script>
 </body>
 </html>

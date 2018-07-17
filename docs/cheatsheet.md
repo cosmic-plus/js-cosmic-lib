@@ -1,8 +1,8 @@
 ```
  --- Global Configuration (1) ---
- CosmicLink.defaults.page       // The page to use instead of 'https://cosmic.link/'
- CosmicLink.defaults.network    // The fallback network ('public'|'test')
- CosmicLink.defaults.user       // The fallback source address (federated or accountId)
+ cosmicLib.defaults.page       // The page to use instead of 'https://cosmic.link/'
+ cosmicLib.defaults.network    // The fallback network ('public'|'test')
+ cosmicLib.defaults.user       // The fallback source address (federated or accountId)
 
  --- Constructor ---
  var cosmicLink = new CosmicLink(uri, {...options})
@@ -79,15 +79,15 @@
 
  --- Global configuration (2) ---
  /** Aliases and handlers can be defined globally **/
- CosmicLink.defaults.aliases
- CosmicLink.defaults.addAliases({id: name,...})
- CosmicLink.defaults.removeAliases([id...])
+ cosmicLib.defaults.aliases
+ cosmicLib.defaults.addAliases({id: name,...})
+ cosmicLib.defaults.removeAliases([id...])
 
- CosmicLink.defaults.clickHandlers
- CosmicLink.defaults.setClickHandler(fieldType, callback)
- CosmicLink.defaults.clearClickHandler(fieldType, callback)
+ cosmicLib.defaults.clickHandlers
+ cosmicLib.defaults.setClickHandler(fieldType, callback)
+ cosmicLib.defaults.clearClickHandler(fieldType, callback)
 
- CosmicLink.defaults.formatHandlers
- CosmicLink.defaults.addFormatHandler(format, callback)
- CosmicLink.defaults.removeFormatHandler(format, callback)
+ cosmicLib.defaults.formatHandlers
+ cosmicLib.defaults.addFormatHandler(format, callback)
+ cosmicLib.defaults.removeFormatHandler(format, callback)
 ```
