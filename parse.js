@@ -13,11 +13,8 @@ const parse = exports
 
 const helpers = require('./helpers')
 const convert = require('./convert')
-const format = require('./format')
 const status = require('./status')
 const event = require('./event')
-const defaults = require('./defaults')
-const resolve = require('./resolve')
 
 /**
  * Set `page` as the base URI for `cosmicLink`. Update the URI getter
@@ -52,39 +49,24 @@ parse.network = function (cosmicLink, network) {
 }
 
 /**
- * Setup the getters for each format form `cosmicLink`, using `value` and
- * `...options` as input. The six getters are:
- * * CosmicLink.getUri()
- * * CosmicLink.getQuery()
- * * CosmicLink.getTdesc()
- * * CosmicLink.getJson()
- * * CosmicLink.getTransaction()
- * * CosmicLink.getXdr()
- * Each format offers a way to represent the same transaction. This function
- * only setup the getters, which returns a promise resolving to the transaction
- * in the corresponding format. The conversion only occurs if/when the getter
- * is called.
+ * Setup the network, the format converters for cosmicLink and call the format
+ * handlers.
  *
  * @param {CL}
- * @param {string|Object} value A transaction in on of the supported format
- * @param {Object} options The options as specified for CosmicLink constructor
- * @return {void}
+ * @param {*} value A transaction in any format
+ * @param {Object} options Same options as {@see CosmicLink#constructor}
  */
 parse.dispatch = function (cosmicLink, value, options = {}) {
   const type = guessType(value)
   const parser = typeParser[type]
 
-  cosmicLink._page = options.page || defaults.page
-  cosmicLink._user = options.user || defaults.user
-
-  let network = options.network || defaults.network
   if (
     (type === 'uri' || type === 'query' || type === 'xdrUri') &&
     value.match('&network=')
   ) {
-    network = value.replace(/.*&network=/, '').replace(/&.*/, '')
+    cosmicLink.network = value.replace(/.*&network=/, '').replace(/&.*/, '')
   }
-  try { parse.network(cosmicLink, network) } catch (error) { console.log(error) }
+  parse.network(cosmicLink, cosmicLink.network)
 
   if (parser) parser(cosmicLink, value, options)
   else parse.typeTowardAll(cosmicLink, type, value, options)
@@ -100,37 +82,7 @@ parse.dispatch = function (cosmicLink, value, options = {}) {
     }
   }
 
-  /**
-   * Returns a promise of the transaction source
-   * [Account]{@link https://www.stellar.org/developers/guides/concepts/accounts.html}
-   * object from the current ledger.
-   *
-   * @alias CosmicLink#getSourceAccount
-   * @function
-   * @async
-   * @return {Promise}
-   */
-  cosmicLink.getSourceAccount = helpers.delay(() => resolve.getSourceAccount(cosmicLink))
-
-  /**
-   * Returns the legit signers for this transaction.
-   *
-   * @name CosmicLink#getSigners
-   * @function
-   * @async
-   * @return {Promise}
-   */
-  cosmicLink.getSigners = helpers.delay(() => resolve.signers(cosmicLink))
-
   event.callFormatHandlers(cosmicLink)
-
-  if (cosmicLink._htmlNode) {
-    cosmicLink.getTdesc()
-      .then(tdesc => {
-        try { format.tdesc(cosmicLink) } catch (error) { console.log(error) }
-      })
-      .catch(() => {})
-  }
 }
 
 /**
