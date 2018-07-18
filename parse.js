@@ -100,7 +100,26 @@ parse.dispatch = function (cosmicLink, value, options = {}) {
     }
   }
 
+  /**
+   * Returns a promise of the transaction source
+   * [Account]{@link https://www.stellar.org/developers/guides/concepts/accounts.html}
+   * object from the current ledger.
+   *
+   * @alias CosmicLink#getSourceAccount
+   * @function
+   * @async
+   * @return {Promise}
+   */
   cosmicLink.getSourceAccount = helpers.delay(() => resolve.getSourceAccount(cosmicLink))
+
+  /**
+   * Returns the legit signers for this transaction.
+   *
+   * @name CosmicLink#getSigners
+   * @function
+   * @async
+   * @return {Promise}
+   */
   cosmicLink.getSigners = helpers.delay(() => resolve.signers(cosmicLink))
 
   event.callFormatHandlers(cosmicLink)

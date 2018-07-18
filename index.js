@@ -21,6 +21,8 @@ if (typeof document !== 'undefined') {
 }
 
 /**
+ * @class CosmicLink
+ *
  * A `CosmicLink` object represents a Stellar transaction. It can be created
  * from an actual cosmic link or any link build with a cosmic query, and
  * also from a Stellar Transaction object or its XDR representation.
@@ -31,7 +33,7 @@ if (typeof document !== 'undefined') {
  * (referred as **tdesc**) or stringified form (referred as **json**).
  *
  * @borrows module:defaults.aliases as CosmicLink#aliases
- * @borrows module:defaults.setAliases as CosmicLink#setAliases
+ * @borrows module:defaults.addAliases as CosmicLink#addAliases
  * @borrows module:defaults.removeAliases as CosmicLink#removeAliases
  * @borrows module:defaults.clickHandlers as CosmicLink#clickHandlers
  * @borrows module:defaults.setClickHandler as CosmicLink#setClickHandler
@@ -39,44 +41,43 @@ if (typeof document !== 'undefined') {
  * @borrows module:defaults.formatHandlers as CosmicLink#formatHandlers
  * @borrows module:defaults.addFormatHandler as CosmicLink#addFormatHandler
  * @borrows module:defaults.removeFormatHandler as CosmicLink#removeFormatHandler
- *
  */
 exports.CosmicLink = class CosmicLink {
-   /**
-    * Create a new CosmicLink object. `transaction` can be one of the accepted
-    * format: uri, query, json, tdesc, transaction or xdr.
-    *
-    * uri & query are link formats and are written according to the Cosmic Link
-    * protocol itself.
-    *
-    * json & tdesc is the format this library is using internally to store
-    * transaction data. json is the stringified form, while tdesc is the
-    * objectified form. This format is made to be simple and convertible between
-    * string and object without information loss.
-    *
-    * transaction and xdr are refering to the standard format implemented in
-    * official Stellar libraries, like
-    * [js-stellar-sdk]@{link https://github.com/stellar/js-stellar-sdk}.
-    *
-    * @param {*} transaction A transaction in one of thoses formats: `uri`, `query`,
-    *     `json`, `tdesc`, `transaction`, `xdr`
-    * @param {Object} options Additional options
-    * @param {string} options.page The base URI to use when converting transaction
-    *     to URI format
-    * @param {string} options.network The fallback network: either `public` or
-    *     `test`. Please note that the query may enforce a different network.
-    * @param {string} options.user The fallback transaction source account. Will
-    *     take effect if the cosmic link doesn't include one. Note that XDR and
-    *     Transaction format always include a source account.
-    * @param {boolean} options.stripSignatures If set to a true value, will strip
-    *     out signatures for XDR/Transaction formats.
-    * @param {boolean} options.stripSequence If set to a true value, will strip
-    *     out signatures and sequence number for XDR/Transaction formats.
-    * @param {boolean} options.stripSource If set to a true value, will strip out
-    *     signatures, sequence number and transaction source account for
-    *     XDR/Transaction formats.
-    * @return {CosmicLink} A CosmicLink object
-    */
+  /**
+   * Create a new CosmicLink object. `transaction` can be one of the accepted
+   * format: uri, query, json, tdesc, transaction or xdr.
+   *
+   * Uri & query are link formats and are written according to the Cosmic Link
+   * protocol itself.
+   *
+   * Json & tdesc is the format this library is using internally to store
+   * transaction data. json is the stringified form, while tdesc is the
+   * objectified form. This format is made to be simple and convertible between
+   * string and object without information loss.
+   *
+   * Transaction and xdr are refering to the standard format implemented in
+   * official Stellar libraries, like
+   * [js-stellar-sdk]{@link https://github.com/stellar/js-stellar-sdk}.
+   *
+   * @param {*} transaction A transaction in one of thoses formats: `uri`, `query`,
+   *     `json`, `tdesc`, `transaction`, `xdr`
+   * @param {Object} options Additional options
+   * @param {string} options.page The base URI to use when converting transaction
+   *     to URI format
+   * @param {string} options.network The fallback network: either `public` or
+   *     `test`. Please note that the query may enforce a different network.
+   * @param {string} options.user The fallback transaction source account. Will
+   *     take effect if the cosmic link doesn't include one. Note that XDR and
+   *     Transaction format always include a source account.
+   * @param {boolean} options.stripSignatures If set to a true value, will strip
+   *     out signatures for XDR/Transaction formats.
+   * @param {boolean} options.stripSequence If set to a true value, will strip
+   *     out signatures and sequence number for XDR/Transaction formats.
+   * @param {boolean} options.stripSource If set to a true value, will strip out
+   *     signatures, sequence number and transaction source account for
+   *     XDR/Transaction formats.
+   * @return {CosmicLink} A CosmicLink object
+   */
   constructor (transaction, options) {
     this.aliases = defaults.aliases
     this.clickHandlers = Object.assign({}, defaults.clickHandlers)
@@ -100,24 +101,25 @@ exports.CosmicLink = class CosmicLink {
    * Re-parse this cosmic link. Usefull for implementing link editors.
    * The parameters are the same than [Constructor]{@link CosmicLink#Constructor}.
    *
-    * @param {*} transaction A transaction in one of thoses formats: `uri`, `query`,
-    *     `json`, `tdesc`, `transaction`, `xdr`
-    * @param {Object} options Additional options
-    * @param {string} options.page The base URI to use when converting transaction
-    *     to URI format
-    * @param {string} options.network The fallback network: either `public` or
-    *     `test`. Please note that the query may enforce a different network.
-    * @param {string} options.user The fallback transaction source account. Will
-    *     take effect if the cosmic link doesn't include one. Note that XDR and
-    *     Transaction format always include a source account.
-    * @param {boolean} options.stripSignatures If set to a true value, will strip
-    *     out signatures for XDR/Transaction formats.
-    * @param {boolean} options.stripSequence If set to a true value, will strip
-    *     out signatures and sequence number for XDR/Transaction formats.
-    * @param {boolean} options.stripSource If set to a true value, will strip out
-    *     signatures, sequence number and transaction source account for
-    *     XDR/Transaction formats.
-    * @return {CosmicLink} A CosmicLink object
+   * @alias CosmicLink#parse
+   * @param {*} transaction A transaction in one of thoses formats: `uri`, `query`,
+   *     `json`, `tdesc`, `transaction`, `xdr`
+   * @param {Object} options Additional options
+   * @param {string} options.page The base URI to use when converting transaction
+   *     to URI format
+   * @param {string} options.network The fallback network: either `public` or
+   *     `test`. Please note that the query may enforce a different network.
+   * @param {string} options.user The fallback transaction source account. Will
+   *     take effect if the cosmic link doesn't include one. Note that XDR and
+   *     Transaction format always include a source account.
+   * @param {boolean} options.stripSignatures If set to a true value, will strip
+   *     out signatures for XDR/Transaction formats.
+   * @param {boolean} options.stripSequence If set to a true value, will strip
+   *     out signatures and sequence number for XDR/Transaction formats.
+   * @param {boolean} options.stripSource If set to a true value, will strip out
+   *     signatures, sequence number and transaction source account for
+   *     XDR/Transaction formats.
+   * @return {CosmicLink} A CosmicLink object
    */
   parse (transaction, options) {
     parse.dispatch(this, transaction, options)
@@ -126,6 +128,7 @@ exports.CosmicLink = class CosmicLink {
   /**
    * Return the source address of the current transaction.
    *
+   * @alias CosmicLink#getSource
    * @return {string} Federated address or account ID
    */
   async getSource () {
@@ -138,6 +141,7 @@ exports.CosmicLink = class CosmicLink {
   /**
    * Check if `value` is a legit signer for this transaction.
    *
+   * @alias CosmicLink#hasSigner
    * @param {string} value An account ID, a txhash or a preimage
    * @param {string} [type='key'] The signer type. Could be either `key`, `tx`
    *     or `hash`.
@@ -152,6 +156,7 @@ exports.CosmicLink = class CosmicLink {
   /**
    * Check if `value` has already signed the transaction.
    *
+   * @alias CosmicLink#hasSigned
    * @param {string} value An account ID, a txhash or a preimage
    * @param {string} [type='key'] The signer type. Could be either `key`, `tx`
    *     or `hash`.
@@ -167,7 +172,8 @@ exports.CosmicLink = class CosmicLink {
    * Select the network in use in this cosmic link. Returns the corresponding
    * Server object.
    *
-   * @returns {Server} A Stellar SDK Server object
+   * @alias CosmicLink#selectNetwork
+   * @return {Server} A Stellar SDK Server object
    */
   selectNetwork () { return resolve.network(this, this.network) }
   sign (...keypairs_or_preimage) { return action.sign(this, ...keypairs_or_preimage) }
@@ -195,12 +201,16 @@ exports.CosmicLink = class CosmicLink {
   /// Datas
   /**
    * The base URI to use when converting to URI format.
+   *
+   * @alias CosmicLink.page
    */
   get page () { return this._page }
   set page (uri) { parse.page(this, uri) }
 
   /**
    * The network in use for this cosmic link.
+   *
+   * @alias CosmicLink.network
    */
   get network () { return this._network }
   set network (network) { throw new Error('network is read-only') }
@@ -210,6 +220,8 @@ exports.CosmicLink = class CosmicLink {
    * the transaction source, as the query may enforce another source. See
    * {@link CosmicLink#getSource} for a method that reliably returns the source
    * address.
+   *
+   * @alias CosmicLink.user
    */
   get user () { return this._user }
   set user (user) { throw new Error('user is read-only') }
@@ -223,6 +235,8 @@ exports.CosmicLink = class CosmicLink {
    * If HTML your page contains an element with `id="CL_htmlNode"`, this node
    * will automatically be used as the htmlNode of any CosmicLink you create.
    * This implies you should have onle one living at a time.
+   *
+   * @alias CosmicLink.htmlNode
    */
   get htmlNode () {
     if (!this._htmlNode) makeHtmlNodes(this)
@@ -232,6 +246,8 @@ exports.CosmicLink = class CosmicLink {
 
   /**
    * The HTML element that contains a description of the current transaction.
+   *
+   * @alias CosmicLink.transactionNode
    */
   get transactionNode () {
     this.htmlNode
@@ -242,6 +258,8 @@ exports.CosmicLink = class CosmicLink {
   /**
    * The HTML node that contains a description of any error that may have
    * happened with this cosmic link.
+   *
+   * @alias CosmicLink.statusNode
    */
   get statusNode () {
     this.htmlNode
@@ -252,6 +270,8 @@ exports.CosmicLink = class CosmicLink {
   /**
    * The HTML node that contains a list of missing/available signatures. Please
    * note that it doesn't shows when there's only one signer.
+   *
+   * @alias CosmicLink.signersNode
    */
   get signersNode () {
     this.htmlNode
