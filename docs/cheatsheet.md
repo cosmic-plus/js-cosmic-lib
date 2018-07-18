@@ -5,13 +5,18 @@
  cosmicLib.defaults.user       // The fallback source address (federated or accountId)
 
  --- Constructor ---
- var cosmicLink = new CosmicLink(uri, {...options})
+ var cosmicLink = new CosmicLink(uri, { ...options})
  var cosmicLink = new CosmicLink(query, {...options})
+ var cosmicLink = new CosmicLink(json, {...options})
+ var cosmicLink = new CosmicLink(tdesc, {...options})
  var cosmicLink = new CosmicLink(transaction, {...options})
  var cosmicLink = new CosmicLink(xdr, {...options})
 
  /* {...options} for any format */
- page, network, user          // See 'Global Configuration (1)' for more info
+ page, network                // See 'Global Configuration (1)' for more info
+
+ /* {...options} for uri, query, json & tdesc */
+ user                         // See 'Global Configuration (1)' for more info
 
  /* {...options} for transaction and xdr formats */
  stripSource: true            // Strip out source account

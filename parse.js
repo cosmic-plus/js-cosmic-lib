@@ -6,6 +6,7 @@
  * Also contains methods to update some of the `CosmicLink` datas when it
  * require update/re-parse of part or totallity of the object.
  *
+ * @private
  * @exports parse
  */
 const parse = exports
@@ -287,6 +288,53 @@ function typeTowardUri (cosmicLink, type, ...options) {
  *                    'xdr'
  */
 parse.makeConverter = function (cosmicLink, from, to, ...options) {
+  /**
+   * @name CosmicLink#getUri
+   * @function
+   * @desc Returns a promise that resolves to the current transaction in URI format.
+   * @async
+   * @return {Promise}
+   */
+
+  /**
+   * @name CosmicLink#getQuery
+   * @function
+   * @desc Returns a promise that resolves to the current transaction in query format.
+   * @async
+   * @return {Promise}
+   */
+
+  /**
+   * @name CosmicLink#getJson
+   * @function
+   * @desc Returns a promise that resolves to the current transaction in json format.
+   * @async
+   * @return {Promise}
+   */
+
+  /**
+   * @name CosmicLink#getTdesc
+   * @function
+   * @desc Returns a promise that resolves to the current transaction in tdesc format.
+   * @async
+   * @return {Promise}
+   */
+
+  /**
+   * @name CosmicLink#getTransaction
+   * @function
+   * @desc Returns a promise that resolves to the current transaction in Transaction format.
+   * @async
+   * @return {Promise}
+   */
+
+  /**
+   * @name CosmicLink#getXdr
+   * @function
+   * @desc Returns a promise that resolves to the current transaction in XDR format.
+   * @async
+   * @return {Promise}
+   */
   const getFrom = 'get' + helpers.capitalize(from)
   const getTo = 'get' + helpers.capitalize(to)
   const converter = from + 'To' + helpers.capitalize(to)
