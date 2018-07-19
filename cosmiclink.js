@@ -1,9 +1,5 @@
 'use_strict'
 
-/**
- * The CosmicLink class.
- */
-
 const helpers = require('./helpers')
 const action = require('./action')
 const event = require('./event')
