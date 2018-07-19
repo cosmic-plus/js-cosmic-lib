@@ -5,8 +5,7 @@ Before stable release (planned for this autumn):
 * Support SEP-0007
 * Implement on-chain signatures & transactions sharing
 * Implement cosmic link builder
-* Expose some of the underlying modules (resolve, format, specs, maybe convert)
-* Extensive documentation for developpers
+* Expose some of the underlying modules (resolve, format, maybe convert)
 
 Later:
 * Internationalization support
