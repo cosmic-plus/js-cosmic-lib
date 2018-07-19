@@ -7,26 +7,35 @@
 </head>
 
 <script>
-  var cosmicLink, pageBox, networkBox, userBox, signerBox, formatBoxes = []
+  var cosmicLink, pageBox, networkBox, userBox, signerBox, formatBoxes = [],
+      signButton, sendButton
 
   function init () {
+    // Grabbing the HTML elements for later use.
     pageBox = document.querySelector('#page')
     networkBox = document.querySelector('#network')
     userBox = document.querySelector('#user')
     signerBox = document.querySelector('#signer')
+    signButton = document.querySelector('#signButton')
+    sendButton = document.querySelector('#sendButton')
 
-    /// Default configuration
+    // Default configuration.
     cosmicLib.defaults.page = location.href.replace(/\?.*/,'')
     cosmicLib.defaults.network = 'test'
     cosmicLib.defaults.user = 'tips*cosmic.link'
 
+    // Setup format boxes auto-refresh.
     initBox('uri')
     initBox('query')
     initBox('json')
     initBox('xdr')
 
+    // This will trigger each time a new cosmicLink is parsed.
     cosmicLib.defaults.addFormatHandler('query', function (event) {
+      // The event may be outdated if triggered after cosmicLink have changed.
       if (cosmicLink !== event.cosmicLink) return
+
+      // Update navigator address and page/network/user fields.
       if (event.value) history.replaceState({}, '', event.value)
       pageBox.value = cosmicLink.page
       networkBox.value = cosmicLink.network
@@ -34,55 +43,86 @@
       else userBox.value = ''
     })
 
+    // This will trigger each time a new cosmicLink is parsed.
+    cosmicLib.defaults.addFormatHandler('transaction', function (event) {
+      // The event may be outdated if triggered after cosmicLink have changed.
+      if (cosmicLink !== event.cosmicLink) return
+
+      // Enable sign/send buttons when the transaction is valid.
+      if (event.value) enableButtons()
+    })
+
+    // Initially disable sign/send buttons.
+    disableButtons()
+
+    // Create the initial cosmicLink.
     cosmicLink = new CosmicLink(location.search || '?')
   }
 
   function initBox (format) {
     const box = document.querySelector('#' + format)
+    // Save HTML format boxes in an array for later use.
     formatBoxes.push(box)
 
+    // Parse a new cosmicLink each time a format box is changed.
     box.onchange = function () { refresh(box.value) }
 
     cosmicLib.defaults.addFormatHandler(format, function (event) {
+      // The event may be outdated if triggered after cosmicLink have changed.
       if (cosmicLink !== event.cosmicLink) return
-      if (event.value) box.value = event.value
+      // Display result or error.
+      if (event.value) { box.value = event.value; box.placeholder = '' }
       else if (event.error) box.placeholder = event.error.message
     })
   }
 
-  function clearBoxes () {
-    formatBoxes.forEach(function (box) {
-      box.value = ''
-      box.placeholder = 'Computing...'
-    })
-  }
-
+  // Re-parse cosmicLink with the last user input.
   function refresh (transaction) {
+    // Use an empty query if the box was empty.
     if (!transaction) transaction = location.search || '?'
+    // Reset the interface.
+    clearBoxes()
+    disableButtons()
+
+    // Create the new cosmicLink.
     const options = {
       page: pageBox.value,
       network: networkBox.value,
       user: userBox.value
     }
-    clearBoxes()
     cosmicLink = new CosmicLink(transaction, options)
   }
 
   function sign () {
+    // Get the signer (private key or preimage) from user input.
     var signer = signerBox.value
-    console.log(signer.substr(0,1))
+    // Ignore cases when there's no input in signer box.
+    if (!signer) return
+    // Transform secret seed into Stellar Keypair.
     if (signer.substr(0,1) === 'S') {
       var signer = StellarSdk.Keypair.fromSecret(signer)
     }
+    // Update the interface.
+    display('Signing...')
+    disableButtons()
+    // Sign.
     cosmicLink.sign(signer)
+      .then(function () { display('Done') })
+      .catch(display)
+      .finally(enableButtons)
   }
 
   function send () {
+    // Send.
     const promise = cosmicLink.send()
     display('Sending...')
-    promise.then(display).catch(display)
+    disableButtons()
+    promise.then(display).catch(display).finally(enableButtons)
   }
 
+  /** Helpers **/
+
+  // Display a message in the interface
   function display (response) {
     var box = document.querySelector('#message')
     if (response._links) {
@@ -91,10 +131,31 @@
       box.textContent = response
     }
   }
+
+  // Clear format boxes.
+  function clearBoxes () {
+    formatBoxes.forEach(function (box) {
+      box.value = ''
+      box.placeholder = 'Computing...'
+    })
+  }
+
+  // Disable sign/send buttons.
+  function disableButtons () {
+    signButton.disabled = true
+    sendButton.disabled = true
+  }
+
+  // Enable sign/send buttons.
+  function enableButtons () {
+    signButton.disabled = null
+    sendButton.disabled = null
+  }
 </script>
 
 <style>
 body {
+  font-family: "Trebuchet MS", Helvetica, sans-serif;
   width: 100%;
   font-size: 1.2em;
 }
@@ -156,7 +217,7 @@ input, textarea {
 
   <header>
     <h1>cosmic-lib demo page</h1>
-    <a href="https://github.com/MisterTicot/js-cosmic-lib-src/demo.html">
+    <a href="https://github.com/MisterTicot/js-cosmic-lib-src/blob/master/extra/demo.html">
       (Source code)</a>
   </header>
 
@@ -165,12 +226,15 @@ input, textarea {
   <main>
     <div class="column">
       <h2>Transaction</h2>
+      <!-- A HTML element with id="CL_htmlNode" will automatically contains
+           the last cosmicLink transaction description.
+      -->
       <div id="CL_htmlNode"></div>
       <h2>Sign & Send</h2>
       <form autocomplete="off">
         <input id="signer" type="text" placeholder="Private key or preimage">
-        <input type="button" value="Sign" onclick="sign()">
-        <input type="button" value="Send" onclick="send()">
+        <input id="signButton" type="button" value="Sign" onclick="sign()">
+        <input id="sendButton" type="button" value="Send" onclick="send()">
         <span id="message"></span>
       </form>
     </div>
@@ -200,6 +264,7 @@ input, textarea {
   <footer>
   </footer>
 
+  <!-- Load StellarSdk (dependency) and cosmicLib after the page content. -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/stellar-sdk/0.9.1/stellar-sdk.js"></script>
   <script>console.log(StellarSdk)</script>
   <script src="cosmic-lib.js"></script>

@@ -1,6 +1,6 @@
 'use_strict'
 
-const node = require('./node.js')
+const node = require('../node.js')
 
 const user = 'GBP7EQX652UPJJJRYFAPH64V2MHGUGFJNKJN7RNOPNSFIBH4BW6NSF45'
 const secret = 'SAZMGMO2DUBRGQIXNHIEBRLUQOPC7SYLABFMC55JZVPXMZPBRXLMVKKV'
@@ -267,6 +267,7 @@ function addStyle (string) {
 }
 
 addStyle(`
+  body { font-family: "Trebuchet MS", Helvetica, sans-serif; }
   nav { display: block; margin: auto; }
   nav a { display: inline-block; margin: 1em; }
   footer { text-align: right; }
