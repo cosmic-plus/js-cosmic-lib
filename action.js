@@ -15,52 +15,30 @@ const event = require('./event')
 
 /**
  * Sign a CosmicLink object using `...keypairs_or_preimage`.
- * Returns a promise that resolve to the signed transaction. The cosmic link data
- * are updated as well, so you don't necessarily need to await or make use of
- * this returned promise.
+ * Returns a promise that resolve to the signed transaction. The CosmicLink
+ * data are refreshed at promise resolution.
  *
  * @example
  * cosmicLink.sign(keypair1, keypair2)
- * cosmicLink.send()
- *   .then(console.log)
- *   .catch(console.error)
+ *  .then(function () { return cosmicLink.send() }
+ *  .then(console.log)
+ *  .catch(console.error)
  *
  * @alias CosmicLink#sign
  * @param {...Keypair|preimage} keypairs_or_preimage One or more keypair, or a
  *     preimage
  * @returns {Promise} Signed Transaction object
  */
-
 action.sign = async function (cosmicLink, ...keypairs_or_preimage) {
   if (cosmicLink.status) throw new Error("Can't sign invalid transaction")
-
-  let type, value
-
-  if (keypairs_or_preimage.length === 1 &&
-      typeof keypairs_or_preimage[0] === 'string'
-  ) {
-    type = 'preimage'
-    value = keypairs_or_preimage
-  } else {
-    type = 'keypair'
-    value = keypairs_or_preimage
-    value.forEach(entry => {
-      if (!entry.canSign) throw new Error('Invalid keypair')
-    })
-  }
-
-  const signingPromise = makeSigningPromise(cosmicLink, type, ...value)
-  parse.typeTowardAllUsingDelayed(cosmicLink, 'transaction', () => signingPromise)
-  parse.makeConverter(cosmicLink, 'xdr', 'query')
-  parse.makeConverter(cosmicLink, 'query', 'uri')
-  event.callFormatHandlers(cosmicLink)
-  await signingPromise
+  return makeSigningPromise(cosmicLink, ...keypairs_or_preimage)
 }
 
-async function makeSigningPromise (cosmicLink, type, ...value) {
+async function makeSigningPromise (cosmicLink, ...value) {
   const transaction = await cosmicLink.getTransaction()
+  let allFine = true
 
-  if (type === 'keypair') {
+  if (typeof value[0] !== 'string') {
     for (let index in value) {
       const keypair = value[index]
       const publicKey = keypair.publicKey()
@@ -68,6 +46,7 @@ async function makeSigningPromise (cosmicLink, type, ...value) {
       if (!await cosmicLink.hasSigner(publicKey)) {
         const short = helpers.shorter(publicKey)
         status.error(cosmicLink, 'Not a legit signer: ' + short)
+        allFine = false
         continue
       }
 
@@ -79,7 +58,8 @@ async function makeSigningPromise (cosmicLink, type, ...value) {
         console.log(error)
         const short = helpers.shorter(publicKey)
         status.error(cosmicLink, 'Failed to sign with key: ' + short)
-        return transaction
+        allFine = false
+        continue
       }
     }
   } else if (type === 'preimage') {
@@ -88,14 +68,22 @@ async function makeSigningPromise (cosmicLink, type, ...value) {
     } catch (error) {
       console.log(error)
       const short = helpers.shorter(value[0])
-      status.error(cosmicLink, 'Failed to sign with preimage: ' + short)
-      return transaction
+      status.error(cosmicLink, 'Failed to sign with preimage: ' + short, 'throw')
     }
   }
 
+  parse.typeTowardAll(cosmicLink, 'transaction', transaction)
+  parse.makeConverter(cosmicLink, 'xdr', 'query')
+  parse.makeConverter(cosmicLink, 'query', 'uri')
+
   cosmicLink.getSigners = helpers.delay(() => resolve.signers(cosmicLink))
-  format.signatures(cosmicLink)
-  return transaction
+
+  if (cosmicLink._signersNode) format.signatures(cosmicLink)
+
+  event.callFormatHandlers(cosmicLink)
+
+  if (!allFine) throw new Error('Some signers where invalid')
+  else return transaction
 }
 
 function hasSigned (transaction, keypair) {

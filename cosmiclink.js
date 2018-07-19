@@ -316,6 +316,8 @@ function initCosmicLink (cosmicLink, transaction, options = {}) {
 }
 
 function makeHtmlNodes (cosmicLink, htmlNode) {
+  if (!node) return
+
   if (htmlNode) {
     node.clear(htmlNode)
     htmlNode.className = 'CL_htmlNode'
