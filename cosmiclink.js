@@ -299,12 +299,12 @@ function initCosmicLink (cosmicLink, transaction, options = {}) {
    */
   cosmicLink.getSigners = helpers.delay(() => resolve.signers(cosmicLink))
 
-  parse.dispatch(cosmicLink, transaction, options)
-
   if (typeof document !== 'undefined') {
     let htmlNode = node.grab('#CL_htmlNode')
     if (htmlNode) makeHtmlNodes(cosmicLink, htmlNode)
   }
+
+  parse.dispatch(cosmicLink, transaction, options)
 
   if (cosmicLink._htmlNode) {
     cosmicLink.getTdesc()

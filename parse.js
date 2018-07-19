@@ -64,7 +64,7 @@ parse.dispatch = function (cosmicLink, value, options = {}) {
     (type === 'uri' || type === 'query' || type === 'xdrUri') &&
     value.match('&network=')
   ) {
-    cosmicLink.network = value.replace(/.*&network=/, '').replace(/&.*/, '')
+    cosmicLink._network = value.replace(/.*&network=/, '').replace(/&.*/, '')
   }
   parse.network(cosmicLink, cosmicLink.network)
 
