@@ -52,7 +52,7 @@ format.tdesc = async function (cosmicLink) {
     }
     format.signatures(cosmicLink)
   } catch (error) {
-    console.log(error)
+    console.error(error)
     status.error(cosmicLink, 'Unhandled formatting error')
   }
 }
@@ -284,7 +284,7 @@ async function resolveAddressAndUpdate (cosmicLink, address, addressNode) {
 
     addressNode.additionalEventData = { account: account }
   } catch (error) {
-    console.log(error)
+    console.error(error)
     addressNode.title = "Can't resolve address"
     node.appendClass(addressNode, 'CL_error')
 

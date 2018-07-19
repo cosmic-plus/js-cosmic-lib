@@ -55,7 +55,7 @@ async function makeSigningPromise (cosmicLink, ...value) {
       try {
         transaction.sign(keypair)
       } catch (error) {
-        console.log(error)
+        console.error(error)
         const short = helpers.shorter(publicKey)
         status.error(cosmicLink, 'Failed to sign with key: ' + short)
         allFine = false
@@ -66,7 +66,7 @@ async function makeSigningPromise (cosmicLink, ...value) {
     try {
       transaction.signHashX(value[0])
     } catch (error) {
-      console.log(error)
+      console.error(error)
       const short = helpers.shorter(value[0])
       status.error(cosmicLink, 'Failed to sign with preimage: ' + short, 'throw')
     }

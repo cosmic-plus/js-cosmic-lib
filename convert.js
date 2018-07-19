@@ -334,7 +334,7 @@ convert.xdrToTransaction = function (cosmicLink, xdr) {
   try {
     return new StellarSdk.Transaction(xdr)
   } catch (error) {
-    console.log(error)
+    console.error(error)
     status.fail(cosmicLink, 'Invalid XDR', 'throw')
   }
 }

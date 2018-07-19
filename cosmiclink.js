@@ -309,7 +309,7 @@ function initCosmicLink (cosmicLink, transaction, options = {}) {
   if (cosmicLink._htmlNode) {
     cosmicLink.getTdesc()
       .then(tdesc => {
-        try { format.tdesc(cosmicLink) } catch (error) { console.log(error) }
+        try { format.tdesc(cosmicLink) } catch (error) { console.error(error) }
       })
       .catch(() => {})
   }

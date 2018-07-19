@@ -106,14 +106,14 @@ async function addressResolver (cosmicLink, address) {
     if (alias) account.alias = alias
     return account
   } catch (error) {
-    console.log(error)
+    console.error(error)
     status.fail(cosmicLink, 'Unresolved address(es)')
     status.error(cosmicLink, "Can't resolve: " + helpers.shorter(address), 'throw')
   }
 }
 
 /**
- * Return the account object for `address` on `network`.
+ * Return the AccountResponse object for `address` on `network`.
  *
  * @param {CL}
  * @param {string} address A public key or a federated address
@@ -125,15 +125,18 @@ resolve.account = async function (cosmicLink, address, network) {
   const account = await resolve.address(cosmicLink, address)
   const publicKey = account.account_id
   try {
-    return server.loadAccount(publicKey)
+    const accountResponse = await server.loadAccount(publicKey)
+    return accountResponse
   } catch (error) {
-    console.log(error)
-    status.error(cosmicLink, `Can't find account`, 'throw')
+    console.error(error)
+    const short = helpers.shorter(address)
+    error.message = `Empty account: ${short}`
+    status.error(cosmicLink, `Empty account: ${short}`, 'throw')
   }
 }
 
 /**
- * Returns the source account object for `cosmicLink`
+ * Returns the source AccountResponse object for `cosmicLink`
  *
  * @param {CL}
  * @return {Object} The account response
@@ -141,9 +144,9 @@ resolve.account = async function (cosmicLink, address, network) {
 resolve.getSourceAccount = async function (cosmicLink) {
   const source = await cosmicLink.getSource()
   try {
-    return resolve.account(cosmicLink, source, cosmicLink.network)
+    const account = await resolve.account(cosmicLink, source, cosmicLink.network)
+    return account
   } catch (error) {
-    status.error(cosmicLink, `Can't find source account on ${cosmicLink.network} network`)
     status.fail(cosmicLink, 'Empty source account', 'throw')
   }
 }

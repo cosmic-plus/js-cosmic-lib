@@ -96,7 +96,7 @@ node.destroy = function (element) {
   try {
     element.innerHTML = ''
     if (element.parentNode) element.parentNode.removeChild(element)
-  } catch (error) { console.log(error) }
+  } catch (error) { console.error(error) }
 }
 
 /**

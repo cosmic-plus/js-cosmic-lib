@@ -221,7 +221,6 @@ async function appendCosmicLink (parent, url, options = {}) {
     await checkCosmicLink(cosmicLink, options)
     await tryCosmicLink(cosmicLink, options)
   } catch (error) {
-    console.log(error)
     cosmicLink.debugNode.style.display = 'block'
     node.append(cosmicLink.debugNode,
       node.create('div', '.debug_error', error)
