@@ -175,10 +175,10 @@ defaults.removeFormatHandler = function (format, callback) {
  */
 defaults.clickHandlers = {
   address: function (event) {
-    if (!event.account) return
+    if (!event.extra) return
     let message = ''
-    for (let field in event.account) {
-      message += `${field}:\n` + `${event.account[field]}\n\n`
+    for (let field in event.extra.account) {
+      message += `${field}:\n` + `${event.extra.account[field]}\n\n`
     }
     window.alert(message)
   },

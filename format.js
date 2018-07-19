@@ -207,10 +207,10 @@ format.field = function (cosmicLink, field, value) {
       field: field,
       fieldType: type,
       value: value,
-      node: fieldNode
+      node: fieldNode,
+      extra: clickableNode.clickEventData
     }
-    event.callClickHandler(cosmicLink, type,
-      Object.assign(eventObject, clickableNode.additionalEventData))
+    event.callClickHandler(cosmicLink, type, eventObject)
   }
   return fieldNode
 }
@@ -282,7 +282,7 @@ async function resolveAddressAndUpdate (cosmicLink, address, addressNode) {
     if (account.address) addressNode.textContent = account.address
     else if (account.alias) addressNode.textContent = account.alias
 
-    addressNode.additionalEventData = { account: account }
+    addressNode.clickEventData = { account: account }
   } catch (error) {
     console.error(error)
     addressNode.title = "Can't resolve address"
