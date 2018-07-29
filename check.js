@@ -156,7 +156,7 @@ check.signer = function (cosmicLink, signer) {
 }
 
 check.sequence = function (cosmicLink, sequence) {
-  check.integer(cosmicLink, sequence, 'sequence', 0)
+  check.number(cosmicLink, sequence, 'sequence', 0)
 }
 
 check.threshold = function (cosmicLink, threshold) {

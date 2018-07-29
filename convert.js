@@ -286,8 +286,8 @@ async function makeTransactionBuilder (cosmicLink, tdesc) {
 
   const loadedAccount = await cosmicLink.getSourceAccount()
   if (tdesc.sequence) {
-    const Constructor = loadedAccount._baseAccount.__proto__.constructor
-    const baseAccount = new Constructor(loadedAccount.id, tdesc.sequence - 1 + '')
+    const baseAccount = new StellarSdk.Account(loadedAccount.id, tdesc.sequence)
+    baseAccount.sequence = baseAccount.sequence.sub(1)
     loadedAccount._baseAccount = baseAccount
   }
   const builder = new StellarSdk.TransactionBuilder(loadedAccount, opts)
@@ -330,9 +330,11 @@ convert.transactionToXdr = function (cosmicLink, transaction) {
  * @param {XDR} xdr
  * @return {Transaction}
  */
-convert.xdrToTransaction = function (cosmicLink, xdr) {
+convert.xdrToTransaction = function (cosmicLink, xdr, options) {
   try {
-    return new StellarSdk.Transaction(xdr)
+    const transaction = new StellarSdk.Transaction(xdr)
+    if (options.stripSignatures) transaction.signatures = []
+    return transaction
   } catch (error) {
     console.error(error)
     status.fail(cosmicLink, 'Invalid XDR', 'throw')

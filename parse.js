@@ -73,8 +73,11 @@ parse.dispatch = function (cosmicLink, value, options = {}) {
 
   /// A transaction with sequence number uses xdrUri format.
   if (type === 'xdr' || type === 'transaction') {
-    if (options.stripSource || options.stripSequence || options.stripSignatures) {
+    if (options.stripSource || options.stripSequence) {
       typeTowardXdr(cosmicLink, 'json')
+    } else if (options.stripSignatures) {
+      if (type === 'transaction') value.signatures = []
+      if (type === 'xdr') typeTowardXdr(cosmicLink, 'transaction')
     }
     if (!options.stripSource && !options.stripSequence) {
       parse.makeConverter(cosmicLink, 'xdr', 'query', options)
