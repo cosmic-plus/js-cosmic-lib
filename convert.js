@@ -12,6 +12,7 @@ const decode = require('./decode')
 const resolve = require('./resolve')
 const prepare = require('./prepare')
 const encode = require('./encode')
+const helpers = require('./helpers')
 
 /** ****************************    URI -> XDR    ******************************/
 
@@ -293,16 +294,20 @@ async function makeTransactionBuilder (cosmicLink, tdesc) {
   const builder = new StellarSdk.TransactionBuilder(loadedAccount, opts)
 
   /// Check if memo is needed for destination account.
-  const operation = tdesc.operations[0]
-  if (operation.destination) {
-    const account = await resolve.address(cosmicLink, operation.destination)
-    if (account.memo) {
-      const memoType = account.memo_type
-      const memoValue = account.memo
-      if (tdesc.memo && (tdesc.memo.type !== memoType || tdesc.memo.value !== memoValue)) {
-        status.error(cosmicLink, 'Memo conflict', 'throw')
-      } else {
-        builder.addMemo(new StellarSdk.Memo(memoType, memoValue))
+  for (let index in tdesc.operations) {
+    const operation = tdesc.operations[index]
+    if (operation.destination) {
+      const account = await resolve.address(cosmicLink, operation.destination)
+      if (account.memo) {
+        const memoType = account.memo_type
+        const memoValue = account.memo
+        if (tdesc.memo && (tdesc.memo.type !== memoType || tdesc.memo.value !== memoValue)) {
+          const short = helpers.shorter(operation.destination)
+          status.error(cosmicLink, `Memo conflict: ${short} requires to set a memo`, 'throw')
+        } else {
+          tdesc.memo = { type: memoType, value: memoValue }
+          builder.addMemo(new StellarSdk.Memo(memoType, memoValue))
+        }
       }
     }
   }
