@@ -13,6 +13,8 @@ const parse = require('./parse')
 const format = require('./format')
 const event = require('./event')
 
+const StellarGuard = require('@stellarguard/sdk')
+
 /**
  * Sign a CosmicLink object using `...keypairs_or_preimage`.
  * Returns a promise that resolve to the signed transaction. The CosmicLink
@@ -118,7 +120,13 @@ function hasSigned (transaction, keypair) {
 action.send = async function (cosmicLink, server) {
   if (!server) server = cosmicLink.server
   const transaction = await cosmicLink.getTransaction()
-  const response = server.submitTransaction(transaction)
-  response.catch(console.log)
-  return response
+  const account = await cosmicLink.getSourceAccount()
+
+  if (StellarGuard.hasStellarGuard(account)) {
+    if (cosmicLink.network === 'public') StellarGuard.usePublicNetwork()
+    else StellarGuard.useTestNetwork()
+    return StellarGuard.submitTransaction(transaction)
+  } else {
+    return server.submitTransaction(transaction)
+  }
 }
