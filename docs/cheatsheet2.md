@@ -21,6 +21,9 @@ Optional: &source={address}
 ...?allowTrust&assetCode={string}&trustor={address}
 Optional: &authorize=false&source={address}
 
+...?bumpSequence&bumpTo={sequence}
+Optional: &source={address}
+
 ...?changeTrust&asset={assetCode:issuerAddress}
 Optional: &limit={integer}&source={address}
 

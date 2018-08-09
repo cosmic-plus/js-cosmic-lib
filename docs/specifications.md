@@ -132,6 +132,17 @@ Optional fields:
 * &authorize=false Revoke `trustor` permission to hold `assetCode`
 * &source={address}
 
+#### bumpSequence
+
+Set account sequence number to `bumpTo`.
+
+Mandatory fields:
+
+> ...?bumpSequence&bumpTo={sequenceNumber}
+
+Optional fields:
+
+* &source={address}
 
 #### changeTrust
 

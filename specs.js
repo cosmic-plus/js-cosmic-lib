@@ -20,6 +20,7 @@ specs.transactionOptionalFields = [
 specs.operationMandatoryFields = {
   accountMerge: ['destination'],
   allowTrust: ['assetCode', 'trustor'],
+  bumpSequence: ['bumpTo'],
   changeTrust: ['asset'],
   createAccount: ['destination', 'startingBalance'],
   createPassiveOffer: ['selling', 'buying', 'amount', 'price'],
@@ -37,6 +38,7 @@ specs.operationMandatoryFields = {
 specs.operationOptionalFields = {
   accountMerge: ['source'],
   allowTrust: ['authorize', 'source'],
+  bumpSequence: ['source'],
   changeTrust: ['limit', 'source'],
   createAccount: ['source'],
   createPassiveOffer: ['source'],
@@ -59,6 +61,7 @@ specs.fieldType = {
   assetCode: 'string',
   assetIssuer: 'address',
   authorize: 'boolean',
+  bumpTo: 'sequence',
   buying: 'asset',
   clearFlags: 'flags',
   destAsset: 'asset',

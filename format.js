@@ -113,6 +113,8 @@ function operationMeaning (odesc) {
       } else {
         return 'Deny usage of your asset {assetCode} to {trustor}'
       }
+    case 'bumpSequence':
+      return 'Set account sequence number to {bumpTo}'
     case 'changeTrust':
       if (odesc.limit === '0') {
         return 'Refuse asset {asset}'
