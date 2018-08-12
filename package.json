@@ -1,0 +1,50 @@
+{
+  "name": "cosmic-lib",
+  "version": "0.20.0",
+  "description": "A javaScript implementation of the Cosmic Link protocol",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "get": "git submodule update -i --recursive",
+    "format": "standard --fix 'src/**.js'",
+    "build-js": "webpack -p",
+    "build-css": "autoprefixer-cli -o web/cosmic-lib.css extra/cosmic-lib.css",
+    "build-doc": "jsdoc -c jsdoc.json -u howto",
+    "build-html": "cp -f extra/*.html web",
+    "build-misc": "cp AUTHORS LICENSE README.md package-lock.json web",
+    "build": "for i in js css doc html misc; do npm run build-$i || return; done",
+    "check": "npm run get && cp web/package-lock.json . && npm run ci && npm run build && cd web && git status",
+    "watch": "webpack -d --watch"
+  },
+  "keywords": [
+    "cryptocurrency",
+    "stellar",
+    "cosmic",
+    "link",
+    "library"
+  ],
+  "homepage": "https://github.com/MisterTicot/node-cosmic-lib",
+  "author": "Mister.Ticot",
+  "license": "MIT",
+  "repository": "github:MisterTicot/node-cosmic-lib",
+  "browserslist": "last 4 version, >0.1%",
+  "devDependencies": {
+    "autoprefixer": "^8.6.5",
+    "autoprefixer-cli": "^1.0.0",
+    "babel-loader": "^7.1.5",
+    "babel-plugin-transform-regenerator": "^6.26.0",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-preset-env": "^1.7.0",
+    "jsdoc": "^3.5.5",
+    "minami": "^1.2.3",
+    "postcss-loader": "^2.1.6",
+    "standard": "^11.0.1",
+    "style-loader": "^0.21.0",
+    "webpack": "^4.16.5",
+    "webpack-cli": "^2.1.5"
+  },
+  "dependencies": {
+    "@stellarguard/sdk": "^1.4.1",
+    "stellar-sdk": "^0.10.2"
+  }
+}

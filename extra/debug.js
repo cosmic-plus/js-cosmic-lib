@@ -1,6 +1,6 @@
 'use_strict'
 
-const node = require('../node.js')
+const node = require('../src/node.js')
 
 const user = 'GBP7EQX652UPJJJRYFAPH64V2MHGUGFJNKJN7RNOPNSFIBH4BW6NSF45'
 const secret = 'SAZMGMO2DUBRGQIXNHIEBRLUQOPC7SYLABFMC55JZVPXMZPBRXLMVKKV'

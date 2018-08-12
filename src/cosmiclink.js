@@ -38,7 +38,7 @@ if (typeof document !== 'undefined') {
  * @borrows module:defaults.addFormatHandler as CosmicLink#addFormatHandler
  * @borrows module:defaults.removeFormatHandler as CosmicLink#removeFormatHandler
  */
-export class CosmicLink {
+CosmicLink = class {
   /**
    * Create a new CosmicLink object. `transaction` can be one of the accepted
    * format: uri, query, json, tdesc, transaction or xdr.
@@ -335,3 +335,5 @@ function makeHtmlNodes (cosmicLink, htmlNode) {
   if (cosmicLink.getTdesc) format.tdesc(cosmicLink)
   status.populateHtmlNode(cosmicLink)
 }
+
+module.exports = CosmicLink

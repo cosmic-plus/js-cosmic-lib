@@ -4,12 +4,12 @@ require('./polyfill')
 
 if (typeof document !== 'undefined') {
   /// Web
-  require('./extra/cosmic-lib.css')
+  require('../extra/cosmic-lib.css')
 } else if (typeof StellarSdk === 'undefined') {
   /// Node
   global.StellarSdk = require('stellar-sdk')
 }
 
-exports.CosmicLink = require('./cosmiclink').CosmicLink
+exports.CosmicLink = require('./cosmiclink')
 exports.defaults = require('./defaults')
 exports.specs = require('./specs')

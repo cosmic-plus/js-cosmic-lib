@@ -1,0 +1,22 @@
+{
+  "source": {
+    "include": [
+      "src/cosmiclink.js", "src/specs.js", "src/defaults.js", "src/action.js"
+    ]
+  },
+  "opts": {
+    "destination": "./web/doc",
+    "encoding": "utf8",
+    "recurse": true,
+    "template": "node_modules/minami",
+    "readme": "README.md"
+  },
+  "plugins": [
+    "plugins/markdown"
+  ],
+  "templates": {
+    "default": {
+      "includeDate": false
+    }
+  }
+}
