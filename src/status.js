@@ -8,7 +8,7 @@
  */
 const status = exports
 
-const node = require('ticot-box/html')
+const html = require('ticot-box/html')
 
 /**
  * Set `cosmicLink` status as `status` and update statusNode.
@@ -26,7 +26,7 @@ status.update = function (cosmicLink, status) {
   if (cosmicLink) cosmicLink.status = status
 
   if (cosmicLink._statusNode) {
-    const title = node.grab('.CL_status', cosmicLink._statusNode)
+    const title = html.grab('.CL_status', cosmicLink._statusNode)
     title.textContent = status
   }
 }
@@ -43,7 +43,7 @@ status.update = function (cosmicLink, status) {
  */
 status.fail = function (cosmicLink, errorStatus, continuation) {
   status.update(cosmicLink, errorStatus)
-  if (cosmicLink._statusNode) node.appendClass(cosmicLink.statusNode, 'CL_error')
+  if (cosmicLink._statusNode) html.appendClass(cosmicLink.statusNode, 'CL_error')
   errorContinuation(errorStatus, continuation)
 }
 
@@ -65,9 +65,9 @@ status.error = function (cosmicLink, error, continuation) {
     cosmicLink.errors.push(error)
   }
   if (cosmicLink._statusNode) {
-    const errorsNode = node.grab('.CL_events', cosmicLink._statusNode)
-    const lineNode = node.create('li', '.CL_error', error)
-    node.append(errorsNode, lineNode)
+    const errorsNode = html.grab('.CL_events', cosmicLink._statusNode)
+    const lineNode = html.create('li', '.CL_error', error)
+    html.append(errorsNode, lineNode)
   }
 
   errorContinuation(error, continuation)
@@ -81,14 +81,14 @@ status.error = function (cosmicLink, error, continuation) {
  */
 status.populateHtmlNode = function (cosmicLink) {
   if (cosmicLink.status) {
-    const titleNode = node.grab('.CL_status', cosmicLink.statusNode)
+    const titleNode = html.grab('.CL_status', cosmicLink.statusNode)
     titleNode.textContent = cosmicLink.status
   }
   if (cosmicLink.errors) {
-    const errorsNode = node.grab('.CL_events', cosmicLink.statusNode)
+    const errorsNode = html.grab('.CL_events', cosmicLink.statusNode)
     for (let index in cosmicLink.errors) {
       const error = cosmicLink.errors[index]
-      node.append(errorsNode, node.create('li', '.CL_error', error))
+      html.append(errorsNode, html.create('li', '.CL_error', error))
     }
   }
 }

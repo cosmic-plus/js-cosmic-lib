@@ -1,6 +1,6 @@
 'use_strict'
 
-const node = require('ticot-box/html')
+const html = require('ticot-box/html')
 
 const user = 'GBP7EQX652UPJJJRYFAPH64V2MHGUGFJNKJN7RNOPNSFIBH4BW6NSF45'
 const secret = 'SAZMGMO2DUBRGQIXNHIEBRLUQOPC7SYLABFMC55JZVPXMZPBRXLMVKKV'
@@ -137,7 +137,7 @@ const tests = [
 cosmicLib.defaults.network = 'test'
 cosmicLib.defaults.user = user
 
-const mainNode = node.grab('main')
+const mainNode = html.grab('main')
 
 export async function debug () {
   makeNav()
@@ -150,7 +150,7 @@ export async function debug () {
 let summary = {}
 
 function makeNav () {
-  let navNode = node.grab('nav')
+  let navNode = html.grab('nav')
 
   let count = 0
   let urlNum = 0
@@ -159,9 +159,9 @@ function makeNav () {
     if (entry[0] === 'bigTitle') {
       if (count) summary[count].urlNum = urlNum
       count++
-      const entryNode = node.create('div', '.page')
+      const entryNode = html.create('div', '.page')
       summary[count] = { node: entryNode, tests: [] }
-      node.append(navNode, node.create('a',
+      html.append(navNode, html.create('a',
         { href: '#' + count, onclick: makePageSwitcher(count) },
         entry[1]
       ))
@@ -178,8 +178,8 @@ function makePageSwitcher (number) {
 
 function switchPage (number) {
   const section = summary[number]
-  node.clear(mainNode)
-  node.append(mainNode, section.node)
+  html.clear(mainNode)
+  html.append(mainNode, section.node)
   if (!section.status) runSection(number)
 }
 
@@ -200,23 +200,23 @@ async function runSection (number) {
 }
 
 function appendTitle (parent, title) {
-  let titleNode = node.create('h3', {}, title)
-  node.append(parent, titleNode, node.create('hr'))
+  let titleNode = html.create('h3', {}, title)
+  html.append(parent, titleNode, html.create('hr'))
 }
 
 async function appendCosmicLink (parent, url, options = {}) {
   const cosmicLink = new CosmicLink(url)
 
-  node.append(
+  html.append(
     parent,
-    node.create('input', { value: url}),
-    // ~ node.create('pre', {}, url),
+    html.create('input', { value: url}),
+    // ~ html.create('pre', {}, url),
     cosmicLink.htmlNode,
-    node.create('hr')
+    html.create('hr')
   )
 
-  cosmicLink.debugNode = node.create('div', '.CL_debug')
-  node.append(cosmicLink.htmlNode, cosmicLink.debugNode)
+  cosmicLink.debugNode = html.create('div', '.CL_debug')
+  html.append(cosmicLink.htmlNode, cosmicLink.debugNode)
 
   cosmicLink.debugNode.style.display = 'none'
   try {
@@ -224,33 +224,33 @@ async function appendCosmicLink (parent, url, options = {}) {
     await tryCosmicLink(cosmicLink, options)
   } catch (error) {
     cosmicLink.debugNode.style.display = 'block'
-    node.append(cosmicLink.debugNode,
-      node.create('div', '.debug_error', error)
+    html.append(cosmicLink.debugNode,
+      html.create('div', '.debug_error', error)
     )
   }
 }
 
 async function checkCosmicLink (cosmicLink, options) {
-  function append (...el) { node.append(cosmicLink.debugNode, ...el) }
+  function append (...el) { html.append(cosmicLink.debugNode, ...el) }
 
   const xdr = await cosmicLink.getXdr()
-  append(node.create('textarea', {}, xdr))
+  append(html.create('textarea', {}, xdr))
 
   const cLinkReverse = new CosmicLink(xdr, { stripSource: true })
   const json = await cLinkReverse.getJson()
-  append(node.create('pre', {}, json))
+  append(html.create('pre', {}, json))
   const uri2 = await cLinkReverse.getUri()
-  append(node.create('input', { value: uri2 }))
+  append(html.create('input', { value: uri2 }))
 
   const cLinkLoopback = new CosmicLink(uri2)
   const xdr2 = await cLinkLoopback.getXdr()
 
   if (xdr !== xdr2) {
-    append(node.create('textarea', {}, xdr2))
+    append(html.create('textarea', {}, xdr2))
     throw new Error('Loopback XDR differ from original')
   } else {
-    node.append(cosmicLink.htmlNode,
-      node.create('div', '.debug_done', 'Conversion check: ok'))
+    html.append(cosmicLink.htmlNode,
+      html.create('div', '.debug_done', 'Conversion check: ok'))
   }
 }
 
@@ -258,14 +258,14 @@ async function tryCosmicLink (cosmicLink, options) {
   if (!options.dontSign) await cosmicLink.sign(keypair)
   if (options.send) {
     await cosmicLink.send()
-    node.append(cosmicLink.htmlNode,
-      node.create('div', '.debug_done', 'Validated by network'))
+    html.append(cosmicLink.htmlNode,
+      html.create('div', '.debug_done', 'Validated by network'))
   }
 }
 
 function addStyle (string) {
-  const style = node.create('style', { type: 'text/css' }, string)
-  node.append(node.grab('head'), style)
+  const style = html.create('style', { type: 'text/css' }, string)
+  html.append(html.grab('head'), style)
 }
 
 addStyle(`

@@ -10,7 +10,7 @@ const aliases = require('./aliases')
 const event = require('./event')
 
 const helpers = require('ticot-box/misc')
-const node = require('ticot-box/html')
+const html = require('ticot-box/html')
 
 
 /**
@@ -185,7 +185,7 @@ defaults.clickHandlers = {
     window.alert(message)
   },
   asset: function (event) {
-    const issuerNode = node.grab('.CL_assetIssuer', event.node)
+    const issuerNode = html.grab('.CL_assetIssuer', event.node)
     if (issuerNode.style.display === 'inline') issuerNode.style.display = 'none'
     else issuerNode.style.display = 'inline'
   },

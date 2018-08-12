@@ -13,7 +13,7 @@ const specs = require('./specs')
 const status = require('./status')
 const resolve = require('./resolve')
 
-const node = require('ticot-box/html')
+const html = require('ticot-box/html')
 const helpers = require('ticot-box/misc')
 
 
@@ -27,20 +27,20 @@ const helpers = require('ticot-box/misc')
 format.tdesc = async function (cosmicLink) {
   const trNode = cosmicLink.transactionNode
   const tdesc = await cosmicLink.getTdesc()
-  node.clear(trNode)
+  html.clear(trNode)
 
   let infoNode
   specs.transactionOptionalFields.forEach(entry => {
     if (tdesc[entry]) {
-      if (!infoNode) infoNode = node.create('ul', '.CL_sideInfo')
-      const lineNode = node.create('li', {},
+      if (!infoNode) infoNode = html.create('ul', '.CL_sideInfo')
+      const lineNode = html.create('li', {},
         specs.fieldDesc[entry] + ': ',
         format.field(cosmicLink, entry, tdesc[entry])
       )
-      node.append(infoNode, lineNode)
+      html.append(infoNode, lineNode)
     }
   })
-  if (infoNode) node.append(trNode, infoNode)
+  if (infoNode) html.append(trNode, infoNode)
 
   /// Sort operations so that the ones with declared sources are at the end.
   /// (makes data presentation better)
@@ -50,7 +50,7 @@ format.tdesc = async function (cosmicLink) {
     for (let index in operations) {
       const operation = tdesc.operations[index]
       const opNode = format.operation(cosmicLink, operation)
-      node.append(trNode, opNode)
+      html.append(trNode, opNode)
     }
     format.signatures(cosmicLink)
   } catch (error) {
@@ -66,14 +66,14 @@ format.tdesc = async function (cosmicLink) {
  * @param {Object} odesc Operation in cosmic link JSON format
  */
 format.operation = function (cosmicLink, odesc) {
-  const opNode = node.create('div', '.CL_operation')
+  const opNode = html.create('div', '.CL_operation')
 
   if (odesc.source) {
-    node.appendClass(opNode, 'CL_sourcedOperation')
-    const sourceNode = node.create('div', '.CL_source', 'Source: ')
+    html.appendClass(opNode, 'CL_sourcedOperation')
+    const sourceNode = html.create('div', '.CL_source', 'Source: ')
     const addressNode = format.field(cosmicLink, 'source', odesc.source)
-    node.append(sourceNode, addressNode)
-    node.append(opNode, sourceNode)
+    html.append(sourceNode, addressNode)
+    html.append(opNode, sourceNode)
   }
 
   let meaning = operationMeaning(odesc)
@@ -83,15 +83,15 @@ format.operation = function (cosmicLink, odesc) {
       meaning = meaning.replace(/^[^}]*}/, '')
       if (query === 'newline') {
         if (meaning === '') break
-        node.append(opNode, node.create('br'))
+        html.append(opNode, html.create('br'))
       } else {
         const fieldNode = format.field(cosmicLink, query, odesc[query])
-        node.append(opNode, fieldNode)
+        html.append(opNode, fieldNode)
       }
     } else {
       const txt = meaning.replace(/{.*/, '')
       meaning = meaning.replace(/^[^{]*/, '')
-      node.append(opNode, txt)
+      html.append(opNode, txt)
     }
   }
   return opNode
@@ -203,7 +203,7 @@ format.field = function (cosmicLink, field, value) {
   fieldNode.className = 'CL_' + type
 
   let clickableNode = fieldNode
-  if (type === 'asset') clickableNode = node.grab('.CL_assetCode', fieldNode)
+  if (type === 'asset') clickableNode = html.grab('.CL_assetCode', fieldNode)
 
   clickableNode.onclick = function () {
     const eventObject = {
@@ -232,22 +232,22 @@ format.signatures = async function (cosmicLink) {
   if (signers.length < 2 && !tdesc.signatures) return
 
   const signersNode = cosmicLink.signersNode
-  node.clear(signersNode)
+  html.clear(signersNode)
 
-  const titleNode = node.create('span', '.CL_threshold', 'Signatures')
-  const listNode = node.create('ul', '.CL_signers')
-  node.append(cosmicLink.signersNode, titleNode, listNode)
+  const titleNode = html.create('span', '.CL_threshold', 'Signatures')
+  const listNode = html.create('ul', '.CL_signers')
+  html.append(cosmicLink.signersNode, titleNode, listNode)
 
   signers.forEach(entry => {
     const signerNode = format.signer(cosmicLink, entry)
-    const animation = node.create('span', '.CL_loadingAnim')
-    const lineNode = node.create('li', null, signerNode, animation)
+    const animation = html.create('span', '.CL_loadingAnim')
+    const lineNode = html.create('li', null, signerNode, animation)
     entry.node = lineNode
     entry.getSignature().then(signature => {
-      signature && node.appendClass(lineNode, 'CL_signed')
-      node.destroy(animation)
+      signature && html.appendClass(lineNode, 'CL_signed')
+      html.destroy(animation)
     })
-    node.append(listNode, lineNode)
+    html.append(listNode, lineNode)
   })
 }
 
@@ -258,16 +258,16 @@ format.string = function (cosmicLink, string) {
 }
 
 format.error = function (cosmicLink, error) {
-  const errorNode = node.create('span', '.CL_error', error.value)
+  const errorNode = html.create('span', '.CL_error', error.value)
   errorNode.title = 'Invalid value'
   return errorNode
 }
 
 format.address = function (cosmicLink, address) {
-  const addressNode = node.create('span',
+  const addressNode = html.create('span',
     { title: 'Resolving...', className: 'CL_address' },
     helpers.shorter(address),
-    node.create('span', '.CL_loadingAnim')
+    html.create('span', '.CL_loadingAnim')
   )
 
   resolveAddressAndUpdate(cosmicLink, address, addressNode)
@@ -290,7 +290,7 @@ async function resolveAddressAndUpdate (cosmicLink, address, addressNode) {
   } catch (error) {
     console.error(error)
     addressNode.title = "Can't resolve address"
-    node.appendClass(addressNode, 'CL_error')
+    html.appendClass(addressNode, 'CL_error')
 
     const parent = addressNode.parentNode
     if (parent.className === 'CL_assetIssuer') {
@@ -298,37 +298,37 @@ async function resolveAddressAndUpdate (cosmicLink, address, addressNode) {
     }
   }
 
-  const animation = node.grab('.CL_loadingAnim', addressNode)
-  if (animation) node.destroy(animation)
+  const animation = html.grab('.CL_loadingAnim', addressNode)
+  if (animation) html.destroy(animation)
   const grandpa = addressNode.parentNode.parentNode
   if (grandpa && grandpa.className === 'CL_asset') {
-    node.destroy(node.grab('.CL_loadingAnim', grandpa))
+    html.destroy(html.grab('.CL_loadingAnim', grandpa))
   }
 }
 
 format.asset = function (cosmicLink, asset) {
-  const codeNode = node.create('span', '.CL_assetCode', asset.code)
-  const issuerNode = node.create('span', '.CL_assetIssuer')
-  const assetNode = node.create('span', '.CL_asset', codeNode, issuerNode)
+  const codeNode = html.create('span', '.CL_assetCode', asset.code)
+  const issuerNode = html.create('span', '.CL_assetIssuer')
+  const assetNode = html.create('span', '.CL_asset', codeNode, issuerNode)
 
   if (asset.issuer) {
     codeNode.title = 'Issued by ' + asset.issuer
-    node.append(issuerNode, ' issued by ')
-    node.append(issuerNode, format.field(cosmicLink, 'assetIssuer', asset.issuer))
-    node.append(codeNode, node.create('span', '.CL_loadingAnim'))
+    html.append(issuerNode, ' issued by ')
+    html.append(issuerNode, format.field(cosmicLink, 'assetIssuer', asset.issuer))
+    html.append(codeNode, html.create('span', '.CL_loadingAnim'))
   } else {
     codeNode.title = 'Native asset'
-    node.append(issuerNode, ' native asset')
+    html.append(issuerNode, ' native asset')
   }
 
   return assetNode
 }
 
 format.assetsArray = function (cosmicLink, assetsArray) {
-  const assetsArrayNode = node.create('span')
+  const assetsArrayNode = html.create('span')
   for (let i = 0; i < assetsArray.length; i++) {
-    if (i !== 0) node.append(assetsArrayNode, ', ')
-    node.append(assetsArrayNode, format.asset(cosmicLink, assetsArray[i]))
+    if (i !== 0) html.append(assetsArrayNode, ', ')
+    html.append(assetsArrayNode, format.asset(cosmicLink, assetsArray[i]))
   }
 
   return assetsArrayNode
@@ -336,11 +336,11 @@ format.assetsArray = function (cosmicLink, assetsArray) {
 
 format.date = function (cosmicLink, timestamp) {
   const date = new Date(timestamp * 1000)
-  return node.create('span', {}, date.toLocaleString())
+  return html.create('span', {}, date.toLocaleString())
 }
 
 format.hash = function (cosmicLink, hash) {
-  return node.create('span', { title: hash }, helpers.shorter(hash))
+  return html.create('span', { title: hash }, helpers.shorter(hash))
 }
 
 format.flags = function (cosmicLink, flags) {
@@ -359,50 +359,50 @@ format.flags = function (cosmicLink, flags) {
     string = 'required' + string
   }
 
-  return node.create('span', {}, string)
+  return html.create('span', {}, string)
 }
 
 format.memo = function (cosmicLink, memo) {
-  const typeNode = node.create('span', '.CL_memoType', memo.type)
+  const typeNode = html.create('span', '.CL_memoType', memo.type)
   let valueNode
   if (memo.value.length > 30) {
     valueNode = format.field(cosmicLink, 'memoHash', memo.value)
-    node.appendClass(valueNode, '.CL_memoValue')
+    html.appendClass(valueNode, '.CL_memoValue')
   } else {
-    valueNode = node.create('span', '.CL_memoValue', memo.value)
+    valueNode = html.create('span', '.CL_memoValue', memo.value)
   }
-  return node.create('span', {}, '(', typeNode, ') ', valueNode)
+  return html.create('span', {}, '(', typeNode, ') ', valueNode)
 }
 
 format.price = function (cosmicLink, price) {
   if (typeof price === 'string') {
-    return node.create('span', {}, price)
+    return html.create('span', {}, price)
   } else {
-    return node.create('span', {}, price.n / price.d + '')
+    return html.create('span', {}, price.n / price.d + '')
   }
 }
 
 format.signer = function (cosmicLink, signer) {
-  const signerNode = node.create('span')
+  const signerNode = html.create('span')
   switch (signer.type) {
     case 'key':
-      node.append(signerNode, 'Account ')
-      node.append(signerNode, format.field(cosmicLink, 'signerAddress', signer.value))
+      html.append(signerNode, 'Account ')
+      html.append(signerNode, format.field(cosmicLink, 'signerAddress', signer.value))
       break
     case 'hash':
-      node.append(signerNode,
+      html.append(signerNode,
         'Key whose hash is ',
         format.field(cosmicLink, 'signerHash', signer.value)
       )
       break
     case 'tx':
-      node.append(signerNode,
+      html.append(signerNode,
         'Transaction ',
         format.field(cosmicLink, 'signerTx', signer.value)
       )
   }
   if (signer.weight > 1) {
-    node.append(signerNode, ' (weight: ' + signer.weight + ')')
+    html.append(signerNode, ' (weight: ' + signer.weight + ')')
   }
   return signerNode
 }

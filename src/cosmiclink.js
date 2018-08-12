@@ -12,9 +12,9 @@ const helpers = require('ticot-box/misc')
 const envIsBrowser = require('ticot-box/envIsBrowser')
 
 /// Web only
-let node, format
+let html, format
 if (envIsBrowser) {
-  node = require('ticot-box/html')
+  html = require('ticot-box/html')
   format = require('./format')
 }
 
@@ -299,7 +299,7 @@ function initCosmicLink (cosmicLink, transaction, options = {}) {
   cosmicLink.getSigners = helpers.delay(() => resolve.signers(cosmicLink))
 
   if (typeof document !== 'undefined') {
-    let htmlNode = node.grab('#CL_htmlNode')
+    let htmlNode = html.grab('#CL_htmlNode')
     if (htmlNode) makeHtmlNodes(cosmicLink, htmlNode)
   }
 
@@ -315,24 +315,24 @@ function initCosmicLink (cosmicLink, transaction, options = {}) {
 }
 
 function makeHtmlNodes (cosmicLink, htmlNode) {
-  if (!node) return
+  if (!html) return
 
   if (htmlNode) {
-    node.clear(htmlNode)
+    html.clear(htmlNode)
     htmlNode.className = 'CL_htmlNode'
-  } else htmlNode = node.create('div', '.CL_htmlNode')
+  } else htmlNode = html.create('div', '.CL_htmlNode')
   cosmicLink._htmlNode = htmlNode
 
   const nodes = ['_transactionNode', '_statusNode', '_signersNode']
   for (let index in nodes) {
     const name = nodes[index]
-    cosmicLink[name] = node.create('div', '.CL' + name)
-    node.append(htmlNode, cosmicLink[name])
+    cosmicLink[name] = html.create('div', '.CL' + name)
+    html.append(htmlNode, cosmicLink[name])
   }
 
-  node.append(cosmicLink._statusNode,
-    node.create('span', '.CL_status'),
-    node.create('ul', '.CL_events')
+  html.append(cosmicLink._statusNode,
+    html.create('span', '.CL_status'),
+    html.create('ul', '.CL_events')
   )
 
   if (cosmicLink.getTdesc) format.tdesc(cosmicLink)
