@@ -6,7 +6,7 @@
  */
 const event = exports
 
-const helpers = require('./helpers')
+const helpers = require('ticot-box/misc')
 
 
 /***** Click events *****/

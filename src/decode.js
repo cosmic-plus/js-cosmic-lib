@@ -11,10 +11,12 @@
  */
 const decode = exports
 
-const helpers = require('./helpers')
-const status = require('./status')
 const check = require('./check')
 const specs = require('./specs')
+const status = require('./status')
+
+const helpers = require('ticot-box/misc')
+
 
 /**
  * Decode `value` accordingly to `field` type.

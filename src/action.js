@@ -6,14 +6,15 @@
  */
 const action = exports
 
-const helpers = require('./helpers')
-const status = require('./status')
-const resolve = require('./resolve')
-const parse = require('./parse')
-const format = require('./format')
-const event = require('./event')
-
 const StellarGuard = require('@stellarguard/sdk')
+
+const event = require('./event')
+const format = require('./format')
+const parse = require('./parse')
+const resolve = require('./resolve')
+const status = require('./status')
+
+const helpers = require('ticot-box/misc')
 
 /**
  * Sign a CosmicLink object using `...keypairs_or_preimage`.

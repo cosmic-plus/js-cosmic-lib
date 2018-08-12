@@ -7,13 +7,15 @@
  */
 const format = exports
 
-const helpers = require('./helpers')
-const node = require('./node')
 const check = require('./check')
+const event = require('./event')
 const specs = require('./specs')
 const status = require('./status')
 const resolve = require('./resolve')
-const event = require('./event')
+
+const node = require('ticot-box/html')
+const helpers = require('ticot-box/misc')
+
 
 /**
  * Populate `cosmicLink.transactionNode` with a description of `transaction

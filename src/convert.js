@@ -6,13 +6,14 @@
  */
 const convert = exports
 
+const decode = require('./decode')
+const encode = require('./encode')
+const prepare = require('./prepare')
+const resolve = require('./resolve')
 const specs = require('./specs')
 const status = require('./status')
-const decode = require('./decode')
-const resolve = require('./resolve')
-const prepare = require('./prepare')
-const encode = require('./encode')
-const helpers = require('./helpers')
+
+const helpers = require('ticot-box/misc')
 
 /** ****************************    URI -> XDR    ******************************/
 

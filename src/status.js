@@ -8,7 +8,7 @@
  */
 const status = exports
 
-const node = require('./node')
+const node = require('ticot-box/html')
 
 /**
  * Set `cosmicLink` status as `status` and update statusNode.

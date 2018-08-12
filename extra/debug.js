@@ -1,6 +1,6 @@
 'use_strict'
 
-const node = require('../src/node.js')
+const node = require('ticot-box/html')
 
 const user = 'GBP7EQX652UPJJJRYFAPH64V2MHGUGFJNKJN7RNOPNSFIBH4BW6NSF45'
 const secret = 'SAZMGMO2DUBRGQIXNHIEBRLUQOPC7SYLABFMC55JZVPXMZPBRXLMVKKV'

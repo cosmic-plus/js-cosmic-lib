@@ -11,10 +11,11 @@
  */
 const parse = exports
 
-const helpers = require('./helpers')
 const convert = require('./convert')
-const status = require('./status')
 const event = require('./event')
+const status = require('./status')
+
+const helpers = require('ticot-box/misc')
 
 /**
  * Set `page` as the base URI for `cosmicLink`. Update the URI getter

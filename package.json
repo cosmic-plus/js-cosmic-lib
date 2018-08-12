@@ -45,6 +45,7 @@
   },
   "dependencies": {
     "@stellarguard/sdk": "^1.4.1",
-    "stellar-sdk": "^0.10.2"
+    "stellar-sdk": "^0.10.2",
+    "ticot-box": "^1.0.0"
   }
 }

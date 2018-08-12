@@ -7,8 +7,9 @@
  */
 const resolve = exports
 
-const helpers = require('./helpers')
 const status = require('./status')
+
+const helpers = require('ticot-box/misc')
 
 /**
  * Select the network to be used by `StellarSdk` as being `cosmicLink` current

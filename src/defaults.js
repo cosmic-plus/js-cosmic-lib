@@ -6,10 +6,12 @@
  */
 const defaults = exports
 
-const helpers = require('./helpers')
-const node = require('./node')
 const aliases = require('./aliases')
 const event = require('./event')
+
+const helpers = require('ticot-box/misc')
+const node = require('ticot-box/html')
+
 
 /**
  * The base URI to build cosmic links.

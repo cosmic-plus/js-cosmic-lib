@@ -1,12 +1,12 @@
 'use strict'
 
-require('./polyfill')
+const envIsBrowser = require('ticot-box/envIsBrowser')
+const envIsNode = require('ticot-box/envIsNode')
 
-if (typeof document !== 'undefined') {
-  /// Web
+if (envIsBrowser()) {
+  require('ticot-box/polyfill')
   require('../extra/cosmic-lib.css')
-} else if (typeof StellarSdk === 'undefined') {
-  /// Node
+} else if (envIsNode() && typeof StellarSdk === 'undefined') {
   global.StellarSdk = require('stellar-sdk')
 }
 

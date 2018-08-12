@@ -7,8 +7,8 @@
  */
 const prepare = exports
 
-const specs = require('./specs')
 const resolve = require('./resolve')
+const specs = require('./specs')
 const status = require('./status')
 
 /**

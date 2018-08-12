@@ -1,20 +1,23 @@
 'use_strict'
 
-const helpers = require('./helpers')
 const action = require('./action')
+const aliases = require('./aliases')
+const defaults = require('./defaults')
 const event = require('./event')
 const parse = require('./parse')
 const resolve = require('./resolve')
 const status = require('./status')
-const aliases = require('./aliases')
-const defaults = require('./defaults')
+
+const helpers = require('ticot-box/misc')
+const envIsBrowser = require('ticot-box/envIsBrowser')
 
 /// Web only
 let node, format
-if (typeof document !== 'undefined') {
-  node = require('./node')
+if (envIsBrowser) {
+  node = require('ticot-box/html')
   format = require('./format')
 }
+
 
 /**
  * @class CosmicLink
@@ -38,7 +41,7 @@ if (typeof document !== 'undefined') {
  * @borrows module:defaults.addFormatHandler as CosmicLink#addFormatHandler
  * @borrows module:defaults.removeFormatHandler as CosmicLink#removeFormatHandler
  */
-CosmicLink = class {
+const CosmicLink = class {
   /**
    * Create a new CosmicLink object. `transaction` can be one of the accepted
    * format: uri, query, json, tdesc, transaction or xdr.
