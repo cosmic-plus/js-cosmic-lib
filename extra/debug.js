@@ -47,6 +47,8 @@ const tests = [
   ['url', 'https://cosmic.link/?allowTrust&authorize=true&assetCode=DIA&trustor=' + account1],
   ['url', 'https://cosmic.link/?allowTrust&assetCode=DIA&trustor=' + account1],
   ['url', 'https://cosmic.link/?allowTrust&authorize=false&assetCode=DIA&trustor=' + account1],
+  ['title', 'Bump Sequence'],
+  ['url', 'https://cosmic.link/?bumpSequence&bumpTo=999999999'],
   ['title', 'Change trust'],
   ['url', 'https://cosmic.link/?changeTrust&asset=' + asset1],
   ['url', 'https://cosmic.link/?changeTrust&limit=0&asset=' + asset1],
