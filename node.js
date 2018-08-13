@@ -53,6 +53,11 @@ node.clear = function (element) {
  * @param
  * */
 node.copyContent = function (element) {
+  /// Don't copy complete box content twice / when user made a selection.
+  if (typeof element.selectionStart === 'number'
+    && element.selectionStart !== element.selectionEnd
+  ) { return }
+
   element.select()
   return document.execCommand('copy')
 }
