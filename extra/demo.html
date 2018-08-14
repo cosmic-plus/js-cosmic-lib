@@ -123,12 +123,17 @@
   /** Helpers **/
 
   // Display a message in the interface
-  function display (response) {
+  function display (message) {
     var box = document.querySelector('#message')
-    if (response._links) {
-      box.textContent = 'Success: ' + response._links.transaction.href
+    if (message._links) {
+      box.textContent = 'Success: ' + message._links.transaction.href
     } else {
-      box.textContent = response
+      box.textContent = message
+    }
+
+    if (message.response && message.response.data) {
+      const json = JSON.stringify(message.response.data.extras.result_codes, null, 2)
+      box.textContent += '\n' + json
     }
   }
 
@@ -235,7 +240,7 @@ input, textarea {
         <input id="signer" type="text" placeholder="Private key or preimage">
         <input id="signButton" type="button" value="Sign" onclick="sign()">
         <input id="sendButton" type="button" value="Send" onclick="send()">
-        <span id="message"></span>
+        <pre id="message"></pre>
       </form>
     </div>
     <div class="column">
