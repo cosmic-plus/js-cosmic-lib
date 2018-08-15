@@ -16,7 +16,6 @@ const resolve = require('./resolve')
 const html = require('ticot-box/html')
 const helpers = require('ticot-box/misc')
 
-
 /**
  * Populate `cosmicLink.transactionNode` with a description of `transaction
  * descriptor`.
@@ -229,26 +228,37 @@ format.field = function (cosmicLink, field, value) {
 format.signatures = async function (cosmicLink) {
   const signers = await cosmicLink.getSigners()
   const tdesc = await cosmicLink.getTdesc()
-  if (signers.length < 2 && !tdesc.signatures) return
+  if (signers.list.length < 2 && !tdesc.signatures) return
 
   const signersNode = cosmicLink.signersNode
   html.clear(signersNode)
 
-  const titleNode = html.create('span', '.CL_threshold', 'Signatures')
-  const listNode = html.create('ul', '.CL_signers')
-  html.append(cosmicLink.signersNode, titleNode, listNode)
-
-  signers.forEach(entry => {
-    const signerNode = format.signer(cosmicLink, entry)
-    const animation = html.create('span', '.CL_loadingAnim')
-    const lineNode = html.create('li', null, signerNode, animation)
-    entry.node = lineNode
-    entry.getSignature().then(signature => {
-      signature && html.appendClass(lineNode, 'CL_signed')
-      html.destroy(animation)
-    })
-    html.append(listNode, lineNode)
+  signers.sources.forEach(accountId => {
+    const div = makeAccountSignersNode(cosmicLink, accountId, signers)
+    html.append(signersNode, div)
   })
+}
+
+function makeAccountSignersNode (cosmicLink, accountId, signers) {
+  const accountSignersNode = html.create('div')
+
+  const title = 'Signers for ' + helpers.shorter(accountId)
+  const titleNode = html.create('span', '.CL_threshold', title)
+  const listNode = html.create('ul', '.CL_signers')
+  html.append(accountSignersNode, titleNode, listNode)
+
+  signers[accountId].forEach(signer => {
+    const signerNode = format.field(cosmicLink, 'signer', signer)
+    const lineNode = html.create('li', null, signerNode)
+    if (signers.hasSigned(signer.key)) {
+      html.appendClass(lineNode, 'CL_signed')
+      listNode.insertBefore(lineNode, listNode.firstChild)
+    } else {
+      html.append(listNode, lineNode)
+    }
+  })
+
+  return accountSignersNode
 }
 
 /******************************************************************************/
@@ -384,22 +394,14 @@ format.price = function (cosmicLink, price) {
 
 format.signer = function (cosmicLink, signer) {
   const signerNode = html.create('span')
-  switch (signer.type) {
-    case 'key':
-      html.append(signerNode, 'Account ')
-      html.append(signerNode, format.field(cosmicLink, 'signerAddress', signer.value))
-      break
-    case 'hash':
-      html.append(signerNode,
-        'Key whose hash is ',
-        format.field(cosmicLink, 'signerHash', signer.value)
-      )
-      break
-    case 'tx':
-      html.append(signerNode,
-        'Transaction ',
-        format.field(cosmicLink, 'signerTx', signer.value)
-      )
+  if (signer.type === 'key' || signer.type === 'ed25519_public_key') {
+    const value = signer.value || signer.key
+    html.append(signerNode, 'Account ', format.field(cosmicLink, 'signerAddress', value))
+  } else if (signer.type === 'hash' || signer.type === 'sha256_hash') {
+    const value = signer.value || StellarSdk.StrKey.decodeSha256Hash(signer.key).toString('hex')
+    html.append(signerNode, 'Key whose hash is ', format.field(cosmicLink, 'signerHash', value))
+  } else if (signer.type === 'tx') {
+    html.append(signerNode, 'Transaction ', format.field(cosmicLink, 'signerTx', signer.value))
   }
   if (signer.weight > 1) {
     html.append(signerNode, ' (weight: ' + signer.weight + ')')

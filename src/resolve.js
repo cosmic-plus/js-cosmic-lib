@@ -7,6 +7,7 @@
  */
 const resolve = exports
 
+const Signers = require('./signers')
 const status = require('./status')
 
 const helpers = require('ticot-box/misc')
@@ -122,7 +123,7 @@ async function addressResolver (cosmicLink, address) {
  * @return {Object} The account response
  */
 resolve.account = async function (cosmicLink, address, network) {
-  const server = resolve.network(cosmicLink, network)
+  const server = resolve.network(cosmicLink, network || cosmicLink.network)
   const account = await resolve.address(cosmicLink, address)
   const publicKey = account.account_id
   try {
@@ -152,113 +153,9 @@ resolve.getSourceAccount = async function (cosmicLink) {
   }
 }
 
-/**
- * Return the signers for the account at `address` on `network`.
- *
- * @param {CL}
- * @param {string} address Either a public key or a federated address
- * @param {string} network Either 'test' or 'public'
- * @return {Object} The signers object from the account response
- */
-resolve.accountSigners = async function (cosmicLink, address, network) {
-  const account = await resolve.account(cosmicLink, address, network)
-  return account.signers
-}
-
-/**
- * Return an array containing the legit signers for `cosmicLink` transaction.
- *
- * @param {CL}
- * @return {Array} Signers
- */
-resolve.signers = async function (cosmicLink) {
-  const tdesc = await cosmicLink.getTdesc()
-  const sources = await transactionSources(cosmicLink, tdesc)
-
-  const signers = []
-  for (let index in sources) {
-    const source = sources[index]
-    const account = await resolve.account(cosmicLink, source, cosmicLink.network)
-
-    for (let index in account.signers) {
-      const entry = account.signers[index]
-      const StrKey = StellarSdk.StrKey
-      const signer = { weight: entry.weight, value: entry.key }
-      signer.type = entry.type.replace(/^.*_/, '')
-      if (signer.type === 'hash') signer.value = StrKey.decodeSha256Hash(entry.key).toString('hex')
-      if (signer.type === 'tx') {
-        signer.value = StrKey.decodePreAuthTx(entry.key).toString('hex')
-      }
-      signer.getSignature = getSignature(cosmicLink, signer)
-      signers.push(signer)
-    }
-  }
-
-  return signers.sort((a, b) => b.weight - a.weight)
-}
-
-async function transactionSources (cosmicLink, tdesc) {
-  const sources = tdesc.operations.map(entry => entry.source)
-  sources.push(tdesc.source || cosmicLink.user)
-
-  let accounts = {}
-  for (let index in sources) {
-    const source = sources[index]
-    if (!source) continue
-    const account = await resolve.address(cosmicLink, source)
-    accounts[account.account_id] = account
-  }
-
-  return Object.keys(accounts)
-}
-
-function getSignature (cosmicLink, signer) {
-  return helpers.delay(async () => {
-    switch (signer.type) {
-      case 'tx':
-        try {
-          await resolve.transaction(cosmicLink, signer.value)
-          return true
-        } catch (error) {
-          return false
-        }
-      case 'hash': return false
-      case 'key':
-        const tdesc = await cosmicLink.getTdesc()
-        if (!tdesc.signatures) return false
-
-        const keypair = StellarSdk.Keypair.fromPublicKey(signer.value)
-        const hint = keypair.signatureHint().toString('base64')
-        return tdesc.signatures.find(entry => {
-          if (entry.hint === hint) return entry.signature
-        })
-    }
-  })
-}
-
-resolve.hasSigned = async function (cosmicLink, type, value) {
-  const signers = await cosmicLink.getSigners()
-  for (let index in signers) {
-    const signer = signers[index]
-    if (
-      signer.type === type &&
-      signer.value === value &&
-      await signer.getSignature()
-    ) {
-      return true
-    }
-  }
-  return false
-}
+resolve.signers = require('./signers')
 
 resolve.transaction = async function (cosmicLink, txHash) {
   const caller = cosmicLink.server.transactions()
   return caller.transaction(txHash).call()
 }
-
-// ~ async function getThreshold (cosmicLink) {
-// ~ const signers = await cosmicLink.getSigners()
-// ~ const max = signers.reduce((accum, entry) => accum + entry.weight)
-// ~ const current = signers.reduce((accum, entry) => accum + entry.signature ? entry.weight : 0)
-// ~ return { current: current, max: max, required: 0 }
-// ~ }

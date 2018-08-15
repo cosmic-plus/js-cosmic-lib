@@ -11,7 +11,6 @@ const StellarGuard = require('@stellarguard/sdk')
 const event = require('./event')
 const format = require('./format')
 const parse = require('./parse')
-const resolve = require('./resolve')
 const status = require('./status')
 
 const helpers = require('ticot-box/misc')
@@ -39,6 +38,7 @@ action.sign = async function (cosmicLink, ...keypairs_or_preimage) {
 
 async function makeSigningPromise (cosmicLink, ...value) {
   const transaction = await cosmicLink.getTransaction()
+  const signers = await cosmicLink.getSigners()
   let allFine = true
 
   if (typeof value[0] !== 'string') {
@@ -46,14 +46,14 @@ async function makeSigningPromise (cosmicLink, ...value) {
       const keypair = value[index]
       const publicKey = keypair.publicKey()
 
-      if (!await cosmicLink.hasSigner(publicKey)) {
+      if (!signers.hasSigner(publicKey)) {
         const short = helpers.shorter(publicKey)
         status.error(cosmicLink, 'Not a legit signer: ' + short)
         allFine = false
         continue
       }
 
-      if (hasSigned(transaction, keypair)) continue
+      if (signers.hasSigned(publicKey)) continue
 
       try {
         transaction.sign(keypair)
@@ -65,7 +65,7 @@ async function makeSigningPromise (cosmicLink, ...value) {
         continue
       }
     }
-  } else if (type === 'preimage') {
+  } else {
     try {
       transaction.signHashX(value[0])
     } catch (error) {
@@ -79,26 +79,12 @@ async function makeSigningPromise (cosmicLink, ...value) {
   parse.makeConverter(cosmicLink, 'xdr', 'query')
   parse.makeConverter(cosmicLink, 'query', 'uri')
 
-  cosmicLink.getSigners = helpers.delay(() => resolve.signers(cosmicLink))
-
   if (cosmicLink._signersNode) format.signatures(cosmicLink)
 
   event.callFormatHandlers(cosmicLink)
 
   if (!allFine) throw new Error('Some signers where invalid')
   else return transaction
-}
-
-function hasSigned (transaction, keypair) {
-  const keypairHint = keypair.signatureHint().toString('base64')
-  const signatures = transaction.signatures
-
-  for (let index in signatures) {
-    const hint = signatures[index].hint().toString('base64')
-    if (hint === keypairHint) return true
-  }
-
-  return false
 }
 
 /**

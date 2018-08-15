@@ -18,7 +18,6 @@ if (envIsBrowser) {
   format = require('./format')
 }
 
-
 /**
  * @class CosmicLink
  *
@@ -177,6 +176,16 @@ const CosmicLink = class {
     event.removeFormatHandler(this, format, callback)
   }
 
+  /**
+   * Returns the legit signers for this transaction.
+   *
+   * @returns {Promise}
+   */
+  async getSigners () {
+    const transaction = await this.getTransaction()
+    return resolve.signers(this, transaction)
+  }
+
   /// Datas
   /**
    * The base URI to use when converting to URI format.
@@ -287,16 +296,6 @@ function initCosmicLink (cosmicLink, transaction, options = {}) {
    * @return {Promise}
    */
   cosmicLink.getSourceAccount = helpers.delay(() => resolve.getSourceAccount(cosmicLink))
-
-  /**
-   * Returns the legit signers for this transaction.
-   *
-   * @name CosmicLink#getSigners
-   * @function
-   * @async
-   * @return {Promise}
-   */
-  cosmicLink.getSigners = helpers.delay(() => resolve.signers(cosmicLink))
 
   if (typeof document !== 'undefined') {
     let htmlNode = html.grab('#CL_htmlNode')
