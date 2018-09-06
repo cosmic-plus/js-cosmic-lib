@@ -2,9 +2,9 @@
 /**
  * Library-wide configuration.
  *
- * @exports defaults
+ * @exports config
  */
-const defaults = exports
+const config = exports
 
 const aliases = require('./aliases')
 const event = require('./event')
@@ -17,17 +17,17 @@ const html = require('ticot-box/html')
  * The base URI to build cosmic links.
  * @default 'https://cosmic.link/'
  */
-defaults.page = 'https://cosmic.link/'
+config.page = 'https://cosmic.link/'
 /**
  * The default fallback network.
  * @default 'public'
  */
-defaults.network = 'public'
+config.network = 'public'
 /**
  * The default fallback source address.
  * @default undefined
  */
-defaults.user = undefined
+config.user = undefined
 
 /**
  * Aliases for most known Stellar addresses. Aliases are used instead of
@@ -44,27 +44,27 @@ defaults.user = undefined
  * }
  * ```
  */
-defaults.aliases = aliases.all
+config.aliases = aliases.all
 
 /**
  * Add new aliases or replace existing ones.
  *
  * @param {Object} aliases An object such as `{ publicKey1: name1, ..., publicKeyN: nameN }`
  */
-defaults.addAliases = function (aliases) { aliases.add(defaults, aliases) }
+config.addAliases = function (aliases) { aliases.add(config, aliases) }
 
 /**
  * Remove aliases.
  *
  * @param {Array} array An array such as `[ publicKey1, ..., publicKeyN ]`
  */
-defaults.removeAliases = function (array) { aliases.remove(defaults, array) }
+config.removeAliases = function (array) { aliases.remove(config, array) }
 
 /**
  * Set the click handler for `fieldType` HTML elements as `callback`.
  *
  * @example
- * cosmicLib.defaults.setClickHandler('address', showAddressPopup)
+ * cosmicLib.config.setClickHandler('address', showAddressPopup)
  * @example
  * cosmicLink.setClickHandler('asset', showAssetBox)
  *
@@ -72,32 +72,32 @@ defaults.removeAliases = function (array) { aliases.remove(defaults, array) }
  *     `address`, `asset`, `hash`, ...
  * @param {function} callback A function that accept one `event` argument
  */
-defaults.setClickHandler = function (fieldType, callback) {
-  event.setClickHandler(defaults, fieldType, callback)
+config.setClickHandler = function (fieldType, callback) {
+  event.setClickHandler(config, fieldType, callback)
 }
 
 /**
  * Remove the current click handler for `fieldType`.
  *
  * @example
- * cosmicLib.defaults.clearClickHandler('address')
+ * cosmicLib.config.clearClickHandler('address')
  * @example
  * cosmicLink.clearClickHandler('asset')
  *
  * @param {string} fieldType Type of a transaction/operation field such as
  *     `address`, `asset`, `hash`, ...
  */
-defaults.clearClickHandler = function (fieldType) {
-  event.clearClickHandler(defaults, fieldType)
+config.clearClickHandler = function (fieldType) {
+  event.clearClickHandler(config, fieldType)
 }
 
 /**
- * The active format handlers. Can be defined globally (`cosmicLib.defaults.formathandlers`)
+ * The active format handlers. Can be defined globally (`cosmicLib.config.formathandlers`)
  * or for a particular CosmicLink object (`cosmicLink.formatHandlers`). Takes the
  * form:
  *
  * ```
- * cosmicLib.defaults.formatHandlers = {
+ * cosmicLib.config.formatHandlers = {
  *  format1: [ callback1, ..., callbackN ],
  *  ...
  *  formatN: [ callback1, ..., callbackN ]
@@ -106,7 +106,7 @@ defaults.clearClickHandler = function (fieldType) {
  *
  * @default {}
  */
-defaults.formatHandlers = {}
+config.formatHandlers = {}
 
 /**
  * Add the format handler `callback` for `format`. `callback` will be called
@@ -118,7 +118,7 @@ defaults.formatHandlers = {}
  * Where `value` is set only when the format conversion resolves, and where
  * `error` is set only when format conversion fails.
  *
- * Format handlers can be added either globally (`cosmicLib.defaults.addFormatHandler`)
+ * Format handlers can be added either globally (`cosmicLib.config.addFormatHandler`)
  * or to a specific cosmicLink object (`cosmicLink.addFormatHandler`). When
  * added to a specific cosmicLink object, `callback` is immediately called with
  * the current return value of `format`.
@@ -126,7 +126,7 @@ defaults.formatHandlers = {}
  * @example
  * // This will update the current page URL each time a CosmicLink is parsed
  *
- * cosmicLib.defaults.addFormatHandler('query', updateDocumentUrl)
+ * cosmicLib.config.addFormatHandler('query', updateDocumentUrl)
  *
  * function updateDocumentUrl (event) {
  *   if (event.value) history.replaceState({}, '', event.value)
@@ -135,31 +135,31 @@ defaults.formatHandlers = {}
  * @param {string} format Either `uri`, `query`, `tdesc`, `json`, `transaction` or `xdr`
  * @param {function} callback A function that accept one `event` argument
  */
-defaults.addFormatHandler = function (format, callback) {
-  event.addFormatHandler(defaults, format, callback)
+config.addFormatHandler = function (format, callback) {
+  event.addFormatHandler(config, format, callback)
 }
 
 /**
  * Remove format handler `callback` for `format`.
  *
  * @example
- * cosmicLib.defaults.removeFormatHandler('query', updateDocumentUrl)
+ * cosmicLib.config.removeFormatHandler('query', updateDocumentUrl)
  *
- * @alias module:defaults.removeFormatHandler
+ * @alias module:config.removeFormatHandler
  * @param {string} format Either `uri`, `query`, `tdesc`, `json`, `transaction` or `xdr`
  * @param {function} callback A function that accept one `event` argument
  */
-defaults.removeFormatHandler = function (format, callback) {
-  event.removeFormatHandler(defaults, format, callback)
+config.removeFormatHandler = function (format, callback) {
+  event.removeFormatHandler(config, format, callback)
 }
 
 /**
- * The active click handlers. Can be defined globally (`cosmicLib.defaults.clickhandlers`)
+ * The active click handlers. Can be defined globally (`cosmicLib.config.clickhandlers`)
  * or for a particular CosmicLink object (`cosmicLink.clickHandlers`). Takes the
  * form:
  *
  * ```
- * cosmicLib.defaults.clickHandlers = {
+ * cosmicLib.config.clickHandlers = {
  *   fieldType1: callback1,
  *   ...
  *   fieldTypeN: callbackN
@@ -175,7 +175,7 @@ defaults.removeFormatHandler = function (format, callback) {
  *     box to enter preimage signature when relevant'
  * ```
  */
-defaults.clickHandlers = {
+config.clickHandlers = {
   address: function (event) {
     if (!event.extra) return
     let message = ''

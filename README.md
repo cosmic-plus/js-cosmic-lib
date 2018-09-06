@@ -145,14 +145,14 @@ cosmicLink.getUri()
 
 ### Global configuration
 
-`cosmicLib.defaults` allow to define the default values used when creating
+`cosmicLib.config` allow to define the default values used when creating
 CosmicLink objects and using other cosmic-lib functions. This way, you won't
 need to provide the data each time you create a CosmicLink.
 
 ```
-cosmicLib.defaults.page = 'https://cosmic.link/'  // Base URI when generating links
-cosmicLib.defaults.network = 'test'               // 'public' by default
-cosmicLib.defaults.user = 'tips*cosmic.link'      // Undefined by default
+cosmicLib.config.page = 'https://cosmic.link/'  // Base URI when generating links
+cosmicLib.config.network = 'test'               // 'public' by default
+cosmicLib.config.user = 'tips*cosmic.link'      // Undefined by default
 ```
 
 

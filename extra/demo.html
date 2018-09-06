@@ -20,9 +20,9 @@
     sendButton = document.querySelector('#sendButton')
 
     // Default configuration.
-    cosmicLib.defaults.page = location.href.replace(/\?.*/,'')
-    cosmicLib.defaults.network = 'test'
-    cosmicLib.defaults.user = 'tips*cosmic.link'
+    cosmicLib.config.page = location.href.replace(/\?.*/,'')
+    cosmicLib.config.network = 'test'
+    cosmicLib.config.user = 'tips*cosmic.link'
 
     // Setup format boxes auto-refresh.
     initBox('uri')
@@ -31,7 +31,7 @@
     initBox('xdr')
 
     // This will trigger each time a new cosmicLink is parsed.
-    cosmicLib.defaults.addFormatHandler('query', function (event) {
+    cosmicLib.config.addFormatHandler('query', function (event) {
       // The event may be outdated if triggered after cosmicLink have changed.
       if (cosmicLink !== event.cosmicLink) return
 
@@ -44,7 +44,7 @@
     })
 
     // This will trigger each time a new cosmicLink is parsed.
-    cosmicLib.defaults.addFormatHandler('transaction', function (event) {
+    cosmicLib.config.addFormatHandler('transaction', function (event) {
       // The event may be outdated if triggered after cosmicLink have changed.
       if (cosmicLink !== event.cosmicLink) return
 
@@ -67,7 +67,7 @@
     // Parse a new cosmicLink each time a format box is changed.
     box.onchange = function () { refresh(box.value) }
 
-    cosmicLib.defaults.addFormatHandler(format, function (event) {
+    cosmicLib.config.addFormatHandler(format, function (event) {
       // The event may be outdated if triggered after cosmicLink have changed.
       if (cosmicLink !== event.cosmicLink) return
       // Display result or error.

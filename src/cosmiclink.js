@@ -2,7 +2,7 @@
 
 const action = require('./action')
 const aliases = require('./aliases')
-const defaults = require('./defaults')
+const config = require('./config')
 const event = require('./event')
 const parse = require('./parse')
 const resolve = require('./resolve')
@@ -30,15 +30,15 @@ if (env.isBrowser) {
  * This transaction descriptor can be written in its objectified form
  * (referred as **tdesc**) or stringified form (referred as **json**).
  *
- * @borrows module:defaults.aliases as CosmicLink#aliases
- * @borrows module:defaults.addAliases as CosmicLink#addAliases
- * @borrows module:defaults.removeAliases as CosmicLink#removeAliases
- * @borrows module:defaults.clickHandlers as CosmicLink#clickHandlers
- * @borrows module:defaults.setClickHandler as CosmicLink#setClickHandler
- * @borrows module:defaults.clearClickHandler as CosmicLink#clearClickHandler
- * @borrows module:defaults.formatHandlers as CosmicLink#formatHandlers
- * @borrows module:defaults.addFormatHandler as CosmicLink#addFormatHandler
- * @borrows module:defaults.removeFormatHandler as CosmicLink#removeFormatHandler
+ * @borrows module:config.aliases as CosmicLink#aliases
+ * @borrows module:config.addAliases as CosmicLink#addAliases
+ * @borrows module:config.removeAliases as CosmicLink#removeAliases
+ * @borrows module:config.clickHandlers as CosmicLink#clickHandlers
+ * @borrows module:config.setClickHandler as CosmicLink#setClickHandler
+ * @borrows module:config.clearClickHandler as CosmicLink#clearClickHandler
+ * @borrows module:config.formatHandlers as CosmicLink#formatHandlers
+ * @borrows module:config.addFormatHandler as CosmicLink#addFormatHandler
+ * @borrows module:config.removeFormatHandler as CosmicLink#removeFormatHandler
  */
 const CosmicLink = class {
   /**
@@ -269,19 +269,19 @@ const CosmicLink = class {
 }
 
 function initCosmicLink (cosmicLink, transaction, options = {}) {
-  cosmicLink._page = options.page || defaults.page
-  cosmicLink._user = options.user || defaults.user
+  cosmicLink._page = options.page || config.page
+  cosmicLink._user = options.user || config.user
   /// May be overwritten by parse.dispatch()
-  cosmicLink._network = options.network || defaults.network
+  cosmicLink._network = options.network || config.network
 
   cosmicLink.errors = undefined
   cosmicLink.status = undefined
 
-  cosmicLink.aliases = defaults.aliases
-  cosmicLink.clickHandlers = Object.assign({}, defaults.clickHandlers)
+  cosmicLink.aliases = config.aliases
+  cosmicLink.clickHandlers = Object.assign({}, config.clickHandlers)
   cosmicLink.formatHandlers = {}
-  for (let format in defaults.formatHandlers) {
-    const handlers = defaults.formatHandlers[format]
+  for (let format in config.formatHandlers) {
+    const handlers = config.formatHandlers[format]
     cosmicLink.formatHandlers[format] = handlers.slice(0)
   }
 

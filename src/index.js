@@ -10,5 +10,5 @@ if (env.isBrowser) {
 }
 
 exports.CosmicLink = require('./cosmiclink')
-exports.defaults = require('./defaults')
+exports.config = require('./config')
 exports.specs = require('./specs')
