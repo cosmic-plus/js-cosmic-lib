@@ -12,7 +12,6 @@ const event = require('./event')
 const helpers = require('ticot-box/misc')
 const html = require('ticot-box/html')
 
-
 /**
  * The base URI to build cosmic links.
  * @default 'https://cosmic.link/'
@@ -28,6 +27,42 @@ config.network = 'public'
  * @default undefined
  */
 config.user = undefined
+
+/**
+ * Networks setup.
+ *
+ * @private
+ */
+config.current = {
+  passphrase: {},
+  horizon: {},
+  server: {}
+}
+
+/**
+ * Set default `passphrase` and `horizon` url for network `name`.
+ *
+ * Adding custom network this way will enable the use of their name in cosmic
+ * queries (as in '&network=name'). However, please remind that this feature
+ * will works only on your side and could break compatibility with other
+ * services.
+ *
+ * @example
+ * cosmicLib.config.setupNetwork('public', 'https://my-own-horizon-instance.example.org')
+ * cosmicLib.config.setupNetwork('custom', 'https://custom-horizon.example.org', 'My Custom Passphrase')
+ *
+ * @param {string} name Network name (like 'public', 'test')
+ * @param {string} horizon Horizon URL
+ * @param {string} [passphrase] Network passphrase
+ */
+config.setupNetwork = function (name, horizon, passphrase) {
+  if (passphrase) config.current.passphrase[name] = passphrase
+  else passphrase = config.current.passphrase[name]
+  config.current.horizon[passphrase] = horizon
+}
+
+config.setupNetwork('public', 'https://horizon.stellar.org', StellarSdk.Networks.PUBLIC)
+config.setupNetwork('test', 'https://horizon-testnet.stellar.org', StellarSdk.Networks.TESTNET)
 
 /**
  * Aliases for most known Stellar addresses. Aliases are used instead of

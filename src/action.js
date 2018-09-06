@@ -34,6 +34,7 @@ const helpers = require('ticot-box/misc')
  */
 action.sign = async function (cosmicLink, ...keypairs_or_preimage) {
   if (cosmicLink.status) throw new Error("Can't sign invalid transaction")
+  cosmicLink.selectNetwork()
   return makeSigningPromise(cosmicLink, ...keypairs_or_preimage)
 }
 

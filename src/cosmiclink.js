@@ -153,7 +153,7 @@ const CosmicLink = class {
    *
    * @return {Server} A Stellar SDK Server object
    */
-  selectNetwork () { return resolve.network(this, this.network) }
+  selectNetwork () { return resolve.network(this) }
   sign (...keypairs_or_preimage) { return action.sign(this, ...keypairs_or_preimage) }
   send (server) { return action.send(this, server) }
 
@@ -277,6 +277,7 @@ function initCosmicLink (cosmicLink, transaction, options = {}) {
   cosmicLink.errors = undefined
   cosmicLink.status = undefined
 
+  cosmicLink.current = config.current
   cosmicLink.aliases = config.aliases
   cosmicLink.clickHandlers = Object.assign({}, config.clickHandlers)
   cosmicLink.formatHandlers = {}

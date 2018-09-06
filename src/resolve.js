@@ -14,25 +14,60 @@ const status = require('./status')
 const helpers = require('ticot-box/misc')
 
 /**
- * Select the network to be used by `StellarSdk` as being `cosmicLink` current
- * network.
+ * Returns the Server object for `horizon` if specified, else for `network`,
+ * else for `cosmicLib.config.network`.
  *
- * @param {CL}
+ * @param {string} [network] 'public', 'test' or a network passphrase
+ * @param {string} [horizon] A horizon URL
+ * @returns {Server} A StellarSdk Server object
  */
-resolve.network = function (cosmicLink, network) {
-  switch (network) {
-    case 'test':
-      StellarSdk.Network.useTestNetwork()
-      return testServer
-    case 'public':
-      StellarSdk.Network.usePublicNetwork()
-      return publicServer
-    default: throw new Error('Invalid network: ' + network)
+resolve.server = function (conf, network = conf.network, horizon = conf.horizon) {
+  const passphrase = networkPassphrase(conf, network)
+  if (!passphrase) throw new Error('No network selected.')
+  return getServer(conf, passphrase, horizon)
+}
+
+/**
+ * Switch to network `network` if it is given, else switch to
+ * `cosmicLib.config.network`.
+ *
+ * @param {string} [network] 'public', 'test' or a network passphrase
+ * @param {string} [horizon] A horizon instance URL
+ * @returns {Server} A StellarSdk Server object
+ */
+resolve.network = function (conf, network = conf.network, horizon = conf.horizon) {
+  const passphrase = networkPassphrase(conf, network)
+  if (passphrase !== networkPassphrase()) {
+    console.log('Switch to network: ' + network)
+    StellarSdk.Network.use(new StellarSdk.Network(passphrase))
   }
 }
 
-const testServer = new StellarSdk.Server('https://horizon-testnet.stellar.org')
-const publicServer = new StellarSdk.Server('https://horizon.stellar.org')
+/**
+ * Returns the passphrase for `network` if it is given, else or for the current
+ * network.
+ *
+ * @private
+ */
+function networkPassphrase (conf, network) {
+  if (network) {
+    return conf.current.passphrase[network] || network
+  } else {
+    const currentNetwork = StellarSdk.Network.current()
+    if (currentNetwork) return currentNetwork.networkPassphrase()
+  }
+}
+
+/**
+ * Returns the StellarSdk Server object for `horizon` if it is given, else
+ * returns the default StellarSdk Server object for network `passphrase`.
+ *
+ * @private
+ */
+function getServer (conf, passphrase, horizon = conf.current.horizon[passphrase]) {
+  if (!conf.current.server[horizon]) conf.current.server[horizon] = new StellarSdk.Server(horizon)
+  return conf.current.server[horizon]
+}
 
 /**
  * Configure for how much time the resolved addresses are kept in cache,
@@ -124,7 +159,7 @@ async function addressResolver (cosmicLink, address) {
  * @return {Object} The account response
  */
 resolve.account = async function (cosmicLink, address, network) {
-  const server = resolve.network(cosmicLink, network || cosmicLink.network)
+  const server = resolve.server(cosmicLink, network || cosmicLink.network)
   const account = await resolve.address(cosmicLink, address)
   const publicKey = account.account_id
   try {
