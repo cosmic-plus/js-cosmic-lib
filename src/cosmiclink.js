@@ -9,11 +9,11 @@ const resolve = require('./resolve')
 const status = require('./status')
 
 const helpers = require('ticot-box/misc')
-const envIsBrowser = require('ticot-box/envIsBrowser')
+const env = require('ticot-box/env')
 
 /// Web only
 let html, format
-if (envIsBrowser) {
+if (env.isBrowser) {
   html = require('ticot-box/html')
   format = require('./format')
 }
@@ -314,7 +314,7 @@ function initCosmicLink (cosmicLink, transaction, options = {}) {
 }
 
 function makeHtmlNodes (cosmicLink, htmlNode) {
-  if (!html) return
+  if (env.isNode) return
 
   if (htmlNode) {
     html.clear(htmlNode)
