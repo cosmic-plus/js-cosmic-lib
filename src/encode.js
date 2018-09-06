@@ -3,6 +3,7 @@
  * Contains the methods to encode values formatted in `transaction descriptor`
  * format into URI format.
  *
+ * @private
  * @exports encode
  */
 const encode = exports

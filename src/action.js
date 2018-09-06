@@ -3,6 +3,7 @@
  * Contains the action methods for CosmicLink.
  *
  * @private
+ * @exports action
  */
 const action = exports
 

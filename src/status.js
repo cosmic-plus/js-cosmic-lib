@@ -4,6 +4,7 @@
  * Contains the methods to update cosmic link status and HTML status node.
  * This is mostly about error handling.
  *
+ * @private
  * @exports status
  */
 const status = exports

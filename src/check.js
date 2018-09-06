@@ -8,6 +8,7 @@
  *
  * The check apply on values using the cosmic link JSON format.
  *
+ * @private
  * @exports check
  */
 const check = exports

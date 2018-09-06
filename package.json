@@ -9,7 +9,7 @@
     "format": "standard --fix 'src/**.js'",
     "build-js": "webpack -p",
     "build-css": "autoprefixer-cli -o web/cosmic-lib.css extra/cosmic-lib.css",
-    "build-doc": "jsdoc -c jsdoc.json -u howto",
+    "build-doc": "rm -rf web/doc; jsdoc -c jsdoc.json",
     "build-html": "cp -f extra/*.html web",
     "build-misc": "cp AUTHORS LICENSE README.md package-lock.json web",
     "build": "for i in js css doc html misc; do npm run build-$i || return; done",

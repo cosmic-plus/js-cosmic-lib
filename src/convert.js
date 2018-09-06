@@ -2,6 +2,7 @@
 /**
  * Contains the methods to convert transactions between various formats.
  *
+ * @private
  * @exports convert
  */
 const convert = exports

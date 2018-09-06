@@ -15,6 +15,7 @@
  * replacement for federated address as it would lead to security issues.
  *
  * @private
+ * @exports aliases
  */
 const aliases = exports
 

@@ -7,6 +7,7 @@
  * For each of those functions, any error is recorded in the `cosmicLink` object
  * and HTML nodes are updated accordingly.
  *
+ * @private
  * @exports decode
  */
 const decode = exports

@@ -3,6 +3,7 @@
  * Contains the methods to convert field values from CosmicLink's
  * `transaction descriptor` format to Stellar transaction object format.
  *
+ * @private
  * @exports prepare
  */
 const prepare = exports

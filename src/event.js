@@ -3,6 +3,7 @@
  * Contains the methods to trigger and handle events.
  *
  * @private
+ * @exports event
  */
 const event = exports
 

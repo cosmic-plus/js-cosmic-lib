@@ -3,6 +3,7 @@
  * Contains methods to format a `transaction descriptor` into CSS/HTML for
  * display in browser.
  *
+ * @private
  * @exports format
  */
 const format = exports

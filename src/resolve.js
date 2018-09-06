@@ -3,6 +3,7 @@
  * Contains functions that probe the blockchain or federation servers to collect
  * datas.
  *
+ * @private
  * @exports resolve
  */
 const resolve = exports
