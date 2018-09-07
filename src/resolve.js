@@ -98,7 +98,9 @@ async function addressResolver (conf, address) {
     if (!accountId) throw new Error('Unknow address')
     if (!account.memo_type) delete account.memo
     if (address !== accountId) account.address = address
-    if (conf.aliases) account.alias = conf.aliases[accountId]
+    if (conf.aliases && conf.aliases[accountId]) {
+      account.alias = conf.aliases[accountId]
+    }
     return account
   } catch (error) {
     console.error(error)

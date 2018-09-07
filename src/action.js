@@ -81,7 +81,10 @@ async function makeSigningPromise (cosmicLink, ...value) {
   parse.makeConverter(cosmicLink, 'xdr', 'query')
   parse.makeConverter(cosmicLink, 'query', 'uri')
 
-  if (cosmicLink._signersNode) format.signatures(cosmicLink)
+  if (cosmicLink._signersNode) {
+    const signersNode = format.signatures(cosmicLink, signers)
+    cosmicLink.htmlNode.replaceChild(signersNode, cosmicLink._signersNode)
+  }
 
   event.callFormatHandlers(cosmicLink)
 

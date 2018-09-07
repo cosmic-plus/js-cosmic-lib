@@ -301,19 +301,11 @@ function initCosmicLink (cosmicLink, transaction, options = {}) {
    */
   cosmicLink.getSourceAccount = helpers.delay(() => resolve.getSourceAccount(cosmicLink))
 
-  if (typeof document !== 'undefined') {
-    let htmlNode = html.grab('#CL_htmlNode')
-    if (htmlNode) makeHtmlNodes(cosmicLink, htmlNode)
-  }
-
   parse.dispatch(cosmicLink, transaction, options)
 
-  if (cosmicLink._htmlNode) {
-    cosmicLink.getTdesc()
-      .then(tdesc => {
-        try { format.tdesc(cosmicLink) } catch (error) { console.error(error) }
-      })
-      .catch(() => {})
+  if (env.isBrowser) {
+    let htmlNode = html.grab('#CL_htmlNode')
+    if (htmlNode) makeHtmlNodes(cosmicLink, htmlNode)
   }
 }
 
@@ -337,9 +329,12 @@ function makeHtmlNodes (cosmicLink, htmlNode) {
     html.create('span', '.CL_status'),
     html.create('ul', '.CL_events')
   )
-
-  if (cosmicLink.getTdesc) format.tdesc(cosmicLink)
   status.populateHtmlNode(cosmicLink)
+
+  cosmicLink.getTdesc().then(tdesc => {
+    const transactionNode = format.tdesc(cosmicLink, tdesc)
+    html.replace(cosmicLink._transactionNode, transactionNode)
+  })
 }
 
 module.exports = CosmicLink

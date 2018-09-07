@@ -212,10 +212,10 @@ config.removeFormatHandler = function (format, callback) {
  */
 config.clickHandlers = {
   address: function (event) {
-    if (!event.extra) return
+    if (!event.node.extra) return
     let message = ''
-    for (let field in event.extra.account) {
-      message += `${field}:\n` + `${event.extra.account[field]}\n\n`
+    for (let field in event.node.extra) {
+      message += `${field}:\n` + `${event.node.extra[field]}\n\n`
     }
     window.alert(message)
   },
