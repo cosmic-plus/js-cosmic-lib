@@ -274,7 +274,8 @@ function initCosmicLink (cosmicLink, transaction, options = {}) {
   /// May be overwritten by parse.dispatch()
   cosmicLink._network = options.network || config.network
 
-  cosmicLink.errors = undefined
+  /// Enable status reporting.
+  cosmicLink.errors = []
   cosmicLink.status = undefined
 
   /// Enable per CosmicLink destinations/accounts caching.

@@ -16,16 +16,15 @@ const status = require('./status')
  * Encode `value` into cosmic link query format and return
  * `&${field}=${encodedValue}`
  *
- * @param {CL}
  * @param {string} field
  * @param {*} value `value` should use cosmic link JSON format
  * @return {string}
  */
-encode.field = function (cosmicLink, field, value) {
+encode.field = function (conf, field, value) {
   const type = specs.fieldType[field]
-  if (!type) status.error(cosmicLink, 'Unknow field: ' + field, 'throw')
+  if (!type) status.error(conf, 'Unknow field: ' + field, 'throw')
   if (value === undefined) return ''
-  const encodedValue = encode.type(cosmicLink, type, value)
+  const encodedValue = encode.type(conf, type, value)
   if (encodedValue === '' && field !== 'homeDomain') return ''
   else return `&${field}=${encodedValue}`
 }
@@ -33,36 +32,35 @@ encode.field = function (cosmicLink, field, value) {
 /**
  * Encode `value` into cosmic link query format according to `type`.
  *
- * @param {CL}
  * @param {string} field
  * @param {*} value `value` should use cosmic link JSON format
  * @return {string}
  */
-encode.type = function (cosmicLink, type, value) {
-  check.type(cosmicLink, type)
+encode.type = function (conf, type, value) {
+  check.type(conf, type)
   if (value === undefined) return ''
   const encoder = encode[type]
   if (typeof value === 'string') value = encodeURIComponent(value)
-  if (encoder) value = encoder(cosmicLink, value)
+  if (encoder) value = encoder(conf, value)
   if (value === undefined) return ''
   else return value
 }
 
 /******************************************************************************/
 
-encode.asset = function (cosmicLink, asset) {
+encode.asset = function (conf, asset) {
   if (asset.issuer) return encodeURIComponent(asset.code) + ':' + encodeURIComponent(asset.issuer)
 }
 
-encode.assetsArray = function (cosmicLink, assetsArray) {
-  return assetsArray.map(asset => encode.asset(cosmicLink, asset)).toString()
+encode.assetsArray = function (conf, assetsArray) {
+  return assetsArray.map(asset => encode.asset(conf, asset)).toString()
 }
 
-encode.boolean = function (cosmicLink, boolean) {
+encode.boolean = function (conf, boolean) {
   if (boolean === 'false' || !boolean) return 'false'
 }
 
-encode.date = function (cosmicLink, timestamp) {
+encode.date = function (conf, timestamp) {
   const date = new Date(timestamp * 1000)
   const isoString = date.toISOString()
     .replace(/\.00.000/, '')
@@ -71,11 +69,11 @@ encode.date = function (cosmicLink, timestamp) {
   return isoString
 }
 
-encode.memo = function (cosmicLink, memo) {
+encode.memo = function (conf, memo) {
   if (memo.type === 'text') return encodeURIComponent(memo.value)
   else return memo.type + ':' + encodeURIComponent(memo.value)
 }
 
-encode.signer = function (cosmicLink, signer) {
+encode.signer = function (conf, signer) {
   return signer.weight + ':' + signer.type + ':' + signer.value
 }

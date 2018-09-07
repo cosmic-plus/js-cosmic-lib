@@ -21,7 +21,6 @@ const helpers = require('ticot-box/misc')
  * Set `page` as the base URI for `cosmicLink`. Update the URI getter
  * accordingly.
  *
- * @param {CL}
  * @param {string} page URI basename
  */
 parse.page = function (cosmicLink, page) {
@@ -33,7 +32,6 @@ parse.page = function (cosmicLink, page) {
 /**
  * Set `cosmicLink` `network`. Throw an error if `network` is not valid.
  *
- * @param {CL}
  * @param {string} network Either `public` or `test`
  */
 parse.network = function (cosmicLink, network) {
@@ -53,7 +51,6 @@ parse.network = function (cosmicLink, network) {
  * Setup the network, the format converters for cosmicLink and call the format
  * handlers.
  *
- * @param {CL}
  * @param {*} value A transaction in any format
  * @param {Object} options Same options as {@see CosmicLink#constructor}
  */
@@ -91,12 +88,6 @@ parse.dispatch = function (cosmicLink, value, options = {}) {
 
 /**
  * Returns `type` which is the format of transaction represented by `value`.
- *
- * @private
- * @param {string|Object} value Either a cosmic link, a query, a `transaction
- *     descriptor` formatted as object or JSON, a Stellar Transaction object or
- *     a Stellar transaction XDR.
- * @return {string} type Type of `value`
  */
 function guessType (value) {
   let type
@@ -168,7 +159,6 @@ typeParser.xdrUri = function (cosmicLink, xdrUri) {
  * Setup all formats getters for `cosmicLink` using entry point `value`, which
  * is a transaction formatted in `type`.
  *
- * @param {CL}
  * @param {string} type One of 'uri', 'query', 'json', 'tdesc', 'transaction' or
  *                      'xdr'
  * @param {*} value The value for `type`
@@ -190,7 +180,6 @@ parse.typeTowardAll = function (cosmicLink, type, value, ...options) {
  * we name `delayed` a function that returns a promise of the transaction
  * formatted in `type`.
  *
- * @param {CL}
  * @param {string} type One of 'uri', 'query', 'json', 'tdesc', 'transaction' or
  *                      'xdr'
  * @param {function} delayed A function that return a promise for `type`
@@ -211,11 +200,6 @@ parse.typeTowardAllUsingDelayed = function (cosmicLink, type, delayed, ...option
  * Setup format getters for `cosmicLink` starting from the one following `type`
  * until xdr. For example, if `type` is 'query', it will setup
  * `cosmicLink.getJson`, `cosmicLink.getTransaction` and `cosmicLink.getXdr`.
- *
- * @private
- * @param {CL}
- * @param {string} type One of 'uri', 'query', 'json', 'transaction'
- * @param {*} value The value of `type`
  */
 function typeTowardXdr (cosmicLink, type, ...options) {
   switch (type) {
@@ -232,10 +216,6 @@ function typeTowardXdr (cosmicLink, type, ...options) {
  * Setup format getters for `cosmicLink` starting from the one following `type`
  * until xdr. For example, if `type` is 'json', it will setup
  * `cosmicLink.getQuery` and `cosmicLink.getUri`.
- *
- * @private
- * @param {CL}
- * @param {string} type One of 'xdr', 'transaction', 'json', 'query'
  */
 function typeTowardUri (cosmicLink, type, ...options) {
   switch (type) {
@@ -256,7 +236,6 @@ function typeTowardUri (cosmicLink, type, ...options) {
  * This function uses existing conversion functions in 'convert' module.
  * i.e.: arbitrary conversion like from query to transaction won't do.
  *
- * @param {CL}
  * @param {string} from One of 'uri', 'query', 'json', 'tdesc', 'transaction' or
  *                      'xdr'
  * @param {string} to One of 'uri', 'query', 'json', 'tdesc', 'transaction' or

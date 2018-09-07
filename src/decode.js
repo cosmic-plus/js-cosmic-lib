@@ -4,7 +4,7 @@
  * from Stellar transaction format: it is simpler, allow for federated address
  * and can be stringified/parsed without loss of information.
  *
- * For each of those functions, any error is recorded in the `cosmicLink` object
+ * For each of those functions, any error is recorded in the `conf` object
  * and HTML nodes are updated accordingly.
  *
  * @private
@@ -22,14 +22,13 @@ const helpers = require('ticot-box/misc')
 /**
  * Decode `value` accordingly to `field` type.
  *
- * @param {cosmicLink} cosmicLink
  * @param {string} field
  * @param {string} value
  */
-decode.field = function (cosmicLink, field, value) {
+decode.field = function (conf, field, value) {
   const type = specs.fieldType[field]
   value = decodeURIComponent(value)
-  if (type) return decode.type(cosmicLink, type, value)
+  if (type) return decode.type(conf, type, value)
   /// This error will be handled latter in convert.queryToTdesc()
   else throw ''
 }
@@ -37,21 +36,20 @@ decode.field = function (cosmicLink, field, value) {
 /**
  * Decode `value` using the decoding function for `type`.
  *
- * @param {cosmicLink} cosmicLink
  * @param {string} type
  * @param {string} value
  */
-decode.type = function (cosmicLink, type, value) {
-  check.type(cosmicLink, type)
+decode.type = function (conf, type, value) {
+  check.type(conf, type)
   const decoder = decode[type]
-  if (decoder) value = decoder(cosmicLink, value)
-  check.type(cosmicLink, type, value)
+  if (decoder) value = decoder(conf, value)
+  check.type(conf, type, value)
   return value
 }
 
 /******************************************************************************/
 
-decode.asset = function (cosmicLink, asset) {
+decode.asset = function (conf, asset) {
   const assetLower = asset.toLowerCase()
   if (assetLower === 'xlm' || assetLower === 'native') {
     return { code: 'XLM' }
@@ -62,27 +60,27 @@ decode.asset = function (cosmicLink, asset) {
   }
 }
 
-decode.assetsArray = function (cosmicLink, assetsList) {
+decode.assetsArray = function (conf, assetsList) {
   const strArray = assetsList.split(',')
-  return strArray.map(entry => decode.asset(cosmicLink, entry))
+  return strArray.map(entry => decode.asset(conf, entry))
 }
 
-decode.boolean = function (cosmicLink, string) {
+decode.boolean = function (conf, string) {
   switch (string) {
     case 'true': return true
     case 'false': return false
   }
 }
 
-decode.date = function (cosmicLink, string) {
+decode.date = function (conf, string) {
   const timeStamp = Date.parse(string)
   if (isNaN(timeStamp)) {
-    status.error(cosmicLink, 'Invalid date (expecting ISO format): ' + string, 'throw')
+    status.error(conf, 'Invalid date (expecting ISO format): ' + string, 'throw')
   }
   return timeStamp / 1000
 }
 
-decode.memo = function (cosmicLink, memo) {
+decode.memo = function (conf, memo) {
   const type = memo.replace(/:.*/, '')
   const value = memo.replace(/^[^:]*:/, '')
   if (type === value) {
@@ -92,17 +90,17 @@ decode.memo = function (cosmicLink, memo) {
   }
 }
 
-decode.price = function (cosmicLink, price) {
+decode.price = function (conf, price) {
   const numerator = price.replace(/:.*/, '')
   const denominator = price.replace(/^[^:]*:/, '')
   if (numerator === denominator) return price
   else return { n: +numerator, d: +denominator }
 }
 
-decode.signer = function (cosmicLink, signer) {
+decode.signer = function (conf, signer) {
   const temp = signer.split(':')
   if (temp.length > 3) {
-    status.error(cosmicLink,
+    status.error(conf,
       'Invalid signer: ' + helpers.shorter(signer),
       'throw'
     )

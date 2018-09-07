@@ -12,61 +12,55 @@ const status = exports
 const html = require('ticot-box/html')
 
 /**
- * Set `cosmicLink` status as `status` and update statusNode.
+ * Set `conf` status as `status` and update statusNode.
  * All status are considered erroneous.
  * Error status should be recorded using the fail function bellow.
  * A valid cosmic link may have no status at all.
  * `status` changes are logged.
  *
- * @param {cosmicLink} cosmicLink
  * @param {string} status
  */
-status.update = function (cosmicLink, status) {
-  if (cosmicLink.status) return
+status.update = function (conf, status) {
+  if (conf.status || !conf.errors) return
   console.log('Set status: ' + status)
-  if (cosmicLink) cosmicLink.status = status
+  conf.status = status
 
-  if (cosmicLink._statusNode) {
-    const title = html.grab('.CL_status', cosmicLink._statusNode)
+  if (conf._statusNode) {
+    const title = html.grab('.CL_status', conf._statusNode)
     title.textContent = status
   }
 }
 
 /**
- * Set `cosmicLink` status as error status `status` and update statusNode.
+ * Set `conf` status as error status `status` and update statusNode.
  * This implies that the cosmic link or the underlying transaction is invalid.
  * Then, call `continuation` if any. `continuation` should be a either a
  * function or 'throw'.
  *
- * @param {cosmicLink} cosmicLink
  * @param {string} status
  * @param {function|'throw'} [continuation]
  */
-status.fail = function (cosmicLink, errorStatus, continuation) {
-  status.update(cosmicLink, errorStatus)
-  if (cosmicLink._statusNode) html.appendClass(cosmicLink.statusNode, 'CL_error')
+status.fail = function (conf, errorStatus, continuation) {
+  status.update(conf, errorStatus)
+  if (conf._statusNode) html.appendClass(conf.statusNode, 'CL_error')
   errorContinuation(errorStatus, continuation)
 }
 
 /**
- * Append `error` to `cosmicLink`.errors and to the HTML display.
+ * Append `error` to `conf`.errors and to the HTML display.
  * Then, call `continuation` if any. `continuation` should be a either a
  * function or 'throw'.
  * `error`s are logged.
  *
- * @param {cosmicLink} cosmicLink
  * @param {string} error
  * @param {procedure|'throw'} [continuation]
  */
-status.error = function (cosmicLink, error, continuation) {
+status.error = function (conf, error, continuation) {
   console.log(error)
 
-  if (cosmicLink) {
-    if (!cosmicLink.errors) cosmicLink.errors = []
-    cosmicLink.errors.push(error)
-  }
-  if (cosmicLink._statusNode) {
-    const errorsNode = html.grab('.CL_events', cosmicLink._statusNode)
+  if (conf.errors) conf.errors.push(error)
+  if (conf._statusNode) {
+    const errorsNode = html.grab('.CL_events', conf._statusNode)
     const lineNode = html.create('li', '.CL_error', error)
     html.append(errorsNode, lineNode)
   }
@@ -75,20 +69,18 @@ status.error = function (cosmicLink, error, continuation) {
 }
 
 /**
- * Populate `cosmicLink.statusNode` with status anderrors from
- * `cosmicLink.errors`.
- *
- * @param {CL}
+ * Populate `conf.statusNode` with status anderrors from
+ * `conf.errors`.
  */
-status.populateHtmlNode = function (cosmicLink) {
-  if (cosmicLink.status) {
-    const titleNode = html.grab('.CL_status', cosmicLink.statusNode)
-    titleNode.textContent = cosmicLink.status
+status.populateHtmlNode = function (conf) {
+  if (conf.status) {
+    const titleNode = html.grab('.CL_status', conf.statusNode)
+    titleNode.textContent = conf.status
   }
-  if (cosmicLink.errors) {
-    const errorsNode = html.grab('.CL_events', cosmicLink.statusNode)
-    for (let index in cosmicLink.errors) {
-      const error = cosmicLink.errors[index]
+  if (conf.errors) {
+    const errorsNode = html.grab('.CL_events', conf.statusNode)
+    for (let index in conf.errors) {
+      const error = conf.errors[index]
       html.append(errorsNode, html.create('li', '.CL_error', error))
     }
   }
@@ -98,10 +90,6 @@ status.populateHtmlNode = function (cosmicLink) {
  * If `continuation` is a function, call it with `error` as argument.
  * If `continuation` equal 'throw', throw a new error with *error as message.
  * If `continuation` is undefined, do nothing.
- *
- * @private
- * @param {string} error
- * @param {function|'throw'} [continuation]
  */
 function errorContinuation (error, continuation) {
   if (continuation) {

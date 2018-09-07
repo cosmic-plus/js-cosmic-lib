@@ -20,23 +20,21 @@
 const aliases = exports
 
 /**
- * Append `aliases` to `cosmicLink.aliases`.
+ * Append `aliases` to `conf.aliases`.
  *
- * @param {CL}
  * @param {Object} aliases
  */
-aliases.add = function (cosmicLink, aliases) {
-  cosmicLink.aliases = Object.assign(cosmicLink.aliases, aliases)
+aliases.add = function (conf, aliases) {
+  conf.aliases = Object.assign(conf.aliases, aliases)
 }
 
 /**
- * Remove `publicKeys` from `cosmicLink.aliases`.
+ * Remove `publicKeys` from `conf.aliases`.
  *
- * @param {CL}
  * @param {Array} publicKeys An array of public keys
  */
-aliases.remove = function (cosmicLink, publicKeys) {
-  publicKeys.forEach(entry => delete cosmicLink.aliases[entry])
+aliases.remove = function (conf, publicKeys) {
+  publicKeys.forEach(entry => delete conf.aliases[entry])
 }
 
 /**

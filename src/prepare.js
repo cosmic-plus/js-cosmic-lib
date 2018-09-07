@@ -15,64 +15,62 @@ const status = require('./status')
 /**
  * Prepare `value` accordingly to `field` type.
  *
- * @param {cosmicLink} cosmicLink
  * @param {string} field
  * @param {any} value
  */
-prepare.field = async function (cosmicLink, field, value) {
+prepare.field = async function (conf, field, value) {
   const type = specs.fieldType[field]
-  if (type) return await prepare.type(cosmicLink, type, value)
-  else status.error(cosmicLink, 'Unknow field: ' + field, 'throw')
+  if (type) return await prepare.type(conf, type, value)
+  else status.error(conf, 'Unknow field: ' + field, 'throw')
 }
 
 /**
  * Prepare `value` using the preparing function for `type`.
  *
- * @param {cosmicLink} cosmicLink
  * @param {string} type
  * @param {any} value
  */
-prepare.type = async function (cosmicLink, type, value) {
+prepare.type = async function (conf, type, value) {
   const preparer = exports[type]
-  if (preparer) return await preparer(cosmicLink, value)
+  if (preparer) return await preparer(conf, value)
   else return value
 }
 
 /******************************************************************************/
 
-prepare.address = async function (cosmicLink, address) {
-  const account = await resolve.address(cosmicLink, address)
+prepare.address = async function (conf, address) {
+  const account = await resolve.address(conf, address)
   return account.account_id
 }
 
-prepare.asset = async function (cosmicLink, asset) {
+prepare.asset = async function (conf, asset) {
   if (asset.issuer) {
-    const publicKey = await prepare.address(cosmicLink, asset.issuer)
+    const publicKey = await prepare.address(conf, asset.issuer)
     return new StellarSdk.Asset(asset.code, publicKey)
   } else {
     return StellarSdk.Asset.native()
   }
 }
 
-prepare.assetsArray = async function (cosmicLink, assetsArray) {
+prepare.assetsArray = async function (conf, assetsArray) {
   let path = []
   for (let index in assetsArray) {
     const string = assetsArray[index]
-    const preparedAsset = await prepare.asset(cosmicLink, string)
+    const preparedAsset = await prepare.asset(conf, string)
     path.push(preparedAsset)
   }
   return path
 }
 
-prepare.memo = function (cosmicLink, memo) {
+prepare.memo = function (conf, memo) {
   return new StellarSdk.Memo(memo.type, memo.value)
 }
 
-prepare.signer = async function (cosmicLink, signer) {
+prepare.signer = async function (conf, signer) {
   let preparedSigner = { weight: signer.weight }
   switch (signer.type) {
     case 'key':
-      const publicKey = await prepare.address(cosmicLink, signer.value)
+      const publicKey = await prepare.address(conf, signer.value)
       preparedSigner.ed25519PublicKey = publicKey
       break
     case 'hash':

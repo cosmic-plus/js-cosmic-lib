@@ -12,16 +12,16 @@ const helpers = require('ticot-box/misc')
 
 /***** Click events *****/
 
-event.setClickHandler = function (cosmicLink, fieldType, callback) {
-  cosmicLink.clickHandlers[fieldType] = callback
+event.setClickHandler = function (conf, fieldType, callback) {
+  conf.clickHandlers[fieldType] = callback
 }
 
-event.clearClickHandler = function (cosmicLink, fieldType) {
-  cosmicLink.clickHandlers[fieldType] = undefined
+event.clearClickHandler = function (conf, fieldType) {
+  conf.clickHandlers[fieldType] = undefined
 }
 
-event.callClickHandler = function (cosmicLink, fieldType, eventObject) {
-  const handler = cosmicLink.clickHandlers[fieldType]
+event.callClickHandler = function (conf, fieldType, eventObject) {
+  const handler = conf.clickHandlers[fieldType]
   if (handler) handler(eventObject)
 }
 
@@ -30,16 +30,16 @@ event.callClickHandler = function (cosmicLink, fieldType, eventObject) {
 
 const allFormats = ['uri', 'query', 'tdesc', 'json', 'transaction', 'xdr']
 
-event.addFormatHandler = function (cosmicLink, format, callback) {
-  const handlers = cosmicLink.formatHandlers
+event.addFormatHandler = function (conf, format, callback) {
+  const handlers = conf.formatHandlers
   if (!handlers[format]) handlers[format] = []
   handlers[format].push(callback)
 
-  handleFormat(cosmicLink, format, [callback])
+  handleFormat(conf, format, [callback])
 }
 
-event.removeFormatHandler = function (cosmicLink, format, callback) {
-  const handlers = cosmicLink.formatHandlers
+event.removeFormatHandler = function (conf, format, callback) {
+  const handlers = conf.formatHandlers
   if (!handlers[format]) return
 
   handlers[format] = handlers[format].filter(entry => entry !== callback)
