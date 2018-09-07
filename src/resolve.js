@@ -8,7 +8,6 @@
  */
 const resolve = exports
 
-const Signers = require('./signers')
 const status = require('./status')
 
 const helpers = require('ticot-box/misc')
@@ -70,106 +69,72 @@ function getServer (conf, passphrase, horizon = conf.current.horizon[passphrase]
 }
 
 /**
- * Configure for how much time the resolved addresses are kept in cache,
- * in seconds. The default is set to 5 minutes to avoid resolving to an outdated
- * address.
+ * Returns the federation server response for `address`.
  *
- * @const
+ * @async
+ * @param {string} address A Stellar public key or a federated address
+ * @return {Promise} Resolve to federation server response
  */
-resolve.accountCacheExpiration = 5 * 60
+resolve.address = function (conf, address) {
+  const cache = conf.cache
+  if (cache && cache.destination && cache.destination[address]) {
+    return cache.destination[address]
+  }
 
-/**
- * Contains promise of previously fetched accounts.
- *
- * @private
- * @type {Object}
- */
-const accountCache = {}
-
-/**
- * Cache `promise` resolving to `address`'s account for `accountCacheExpiration`
- * seconds.
- *
- * @private
- * @param {string} address
- * @param {Promise} promise
- */
-async function cacheAccount (address, promise) {
-  accountCache[address] = promise
-  await helpers.timeout(resolve.accountCacheExpiration * 1000)
-  delete accountCache[address]
-}
-
-/**
- * Return a promise that resolve to `address` account object, as defined in
- * JavaScript Stellar SDK API reference. `address` can be either a Stellar public
- * key or a federated address (account*example.org).
- * Returned results are cached and re-usable.
- *
- * In case of error, change `cosmicLink` status accordingly.
- *
- * @param {cosmicLink} cosmicLink
- * @param {string} address
- * @return {Promise} Resolve to `address` account object
- */
-resolve.address = function (cosmicLink, address) {
-  if (accountCache[address]) return accountCache[address]
-  const promise = addressResolver(cosmicLink, address)
-  cacheAccount(address, promise)
+  const promise = addressResolver(conf, address)
+  if (cache && cache.destination) cache.destination[address] = promise
   return promise
 }
 
-/**
- * Helper for the previous resolve.address function.
- * Resolve to an account object for `address` or write error/status in
- * `cosmicLink`.
- *
- * @private
- * @param {cosmicLink} cosmicLink
- * @param {string} address
- */
-async function addressResolver (cosmicLink, address) {
+async function addressResolver (conf, address) {
   if (address.length !== 56 && !address.match(/.*\*.*\..*/)) {
-    status.fail(cosmicLink, 'Invalid address(es)')
-    status.error(cosmicLink, 'Invalid address: ' + helpers.shorter(address), 'throw')
+    status.fail(conf, 'Invalid address(es)')
+    status.error(conf, 'Invalid address: ' + helpers.shorter(address), 'throw')
   }
 
   try {
     const account = await StellarSdk.FederationServer.resolve(address)
-    const publicKey = account.account_id
-    if (!publicKey) throw new Error('Empty account')
-    if (!account.memo_type && account.memo !== undefined) delete account.memo
-    if (address !== publicKey) account.address = address
-    const alias = cosmicLink.aliases[publicKey]
-    if (alias) account.alias = alias
+    const accountId = account.account_id
+    if (!accountId) throw new Error('Unknow address')
+    if (!account.memo_type) delete account.memo
+    if (address !== accountId) account.address = address
+    if (conf.aliases) account.alias = conf.aliases[accountId]
     return account
   } catch (error) {
     console.error(error)
-    status.fail(cosmicLink, 'Unresolved address(es)')
-    status.error(cosmicLink, "Can't resolve: " + helpers.shorter(address), 'throw')
+    status.fail(conf, 'Unresolved address(es)')
+    status.error(conf, "Can't resolve: " + helpers.shorter(address), 'throw')
   }
 }
 
 /**
- * Return the AccountResponse object for `address` on `network`.
+ * Returns the AccountResponse object for `address`.
  *
- * @param {CL}
  * @param {string} address A public key or a federated address
- * @param {string} network Either 'test' or 'public'
- * @return {Object} The account response
+ * @return {Object} The AccountResponse
  */
-resolve.account = async function (cosmicLink, address, network) {
-  const server = resolve.server(cosmicLink, network || cosmicLink.network)
-  const account = await resolve.address(cosmicLink, address)
-  const publicKey = account.account_id
+resolve.account = async function (conf, address) {
+  const account = await resolve.address(conf, address)
+  const accountId = account.account_id
+  const cache = conf.cache
+  if (cache && cache.account && cache.account[accountId]) {
+    return cache.account[accountId]
+  }
+
+  const promise = accountResolver(conf, accountId)
+  if (cache && cache.account) cache.account[accountId] = promise
+  return promise
+}
+
+async function accountResolver (conf, accountId) {
+  const server = resolve.server(conf)
   try {
-    const accountResponse = await server.loadAccount(publicKey)
+    const accountResponse = await server.loadAccount(accountId)
     return accountResponse
   } catch (error) {
     console.error(error)
-    const short = helpers.shorter(address)
-    error.message = `Empty account: ${short}`
-    status.error(cosmicLink, `Empty account: ${short}`, 'throw')
+    const short = helpers.shorter(accountId)
+    status.error(conf, `Empty account: ${short}`, 'throw')
   }
 }
 
@@ -182,7 +147,7 @@ resolve.account = async function (cosmicLink, address, network) {
 resolve.getSourceAccount = async function (cosmicLink) {
   const source = await cosmicLink.getSource()
   try {
-    const account = await resolve.account(cosmicLink, source, cosmicLink.network)
+    const account = await resolve.account(cosmicLink, source)
     return account
   } catch (error) {
     status.fail(cosmicLink, 'Empty source account', 'throw')
@@ -191,7 +156,7 @@ resolve.getSourceAccount = async function (cosmicLink) {
 
 resolve.signers = require('./signers')
 
-resolve.transaction = async function (cosmicLink, txHash) {
-  const caller = cosmicLink.server.transactions()
-  return caller.transaction(txHash).call()
+resolve.transaction = async function (conf, txHash) {
+  const callBuilder = resolve.server(conf).transactions()
+  return callBuilder.transaction(txHash).call()
 }

@@ -80,7 +80,7 @@ const resolveSigners = async function (conf, transaction) {
   for (let index in signers.sources) {
     const accountId = signers.sources[index]
     if (!signers[accountId]) {
-      const account = await resolveAndCacheAccount(signers, accountId)
+      const account = await resolve.account(signers._conf, accountId)
       signers[accountId] = account.signers.filter(signerIsNotPreauthTx)
     }
   }
@@ -90,13 +90,6 @@ const resolveSigners = async function (conf, transaction) {
 
 function signerIsNotPreauthTx (signer) {
   return signer.type !== 'preauth_tx'
-}
-
-function resolveAndCacheAccount (signers, accountId) {
-  if (!signers.accounts[accountId]) {
-    signers.accounts[accountId] = resolve.account(signers._conf, accountId)
-  }
-  return signers.accounts[accountId]
 }
 
 module.exports = resolveSigners

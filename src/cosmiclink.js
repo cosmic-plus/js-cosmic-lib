@@ -277,6 +277,9 @@ function initCosmicLink (cosmicLink, transaction, options = {}) {
   cosmicLink.errors = undefined
   cosmicLink.status = undefined
 
+  /// Enable per CosmicLink destinations/accounts caching.
+  cosmicLink.cache = { destination: {}, account: {} }
+
   cosmicLink.current = config.current
   cosmicLink.aliases = config.aliases
   cosmicLink.clickHandlers = Object.assign({}, config.clickHandlers)
