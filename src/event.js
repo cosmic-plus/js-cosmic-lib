@@ -7,10 +7,7 @@
  */
 const event = exports
 
-const helpers = require('ticot-box/misc')
-
-
-/***** Click events *****/
+/** *** Click events *****/
 
 event.setClickHandler = function (conf, fieldType, callback) {
   conf.clickHandlers[fieldType] = callback
@@ -25,17 +22,14 @@ event.callClickHandler = function (conf, fieldType, eventObject) {
   if (handler) handler(eventObject)
 }
 
+/** *** Format events *****/
 
-/***** Format events *****/
-
-const allFormats = ['uri', 'query', 'tdesc', 'json', 'transaction', 'xdr']
+const allFormats = ['any', 'uri', 'query', 'tdesc', 'json', 'transaction', 'xdr']
 
 event.addFormatHandler = function (conf, format, callback) {
   const handlers = conf.formatHandlers
   if (!handlers[format]) handlers[format] = []
   handlers[format].push(callback)
-
-  handleFormat(conf, format, [callback])
 }
 
 event.removeFormatHandler = function (conf, format, callback) {
@@ -45,24 +39,14 @@ event.removeFormatHandler = function (conf, format, callback) {
   handlers[format] = handlers[format].filter(entry => entry !== callback)
 }
 
-event.callFormatHandlers = function (cosmicLink, ...formats) {
-  if (!formats.length) formats = allFormats
+event.callFormatHandlers = function (cosmicLink, formats = allFormats) {
   const handlers = cosmicLink.formatHandlers
-
   formats.forEach(entry => {
     if (handlers[entry]) handleFormat(cosmicLink, entry, handlers[entry])
   })
 }
 
 function handleFormat (cosmicLink, format, handlers) {
-  const getter = cosmicLink['get' + helpers.capitalize(format)]
-  if (!getter) return
-
-  getter().then(value => {
-    const event = { cosmicLink: cosmicLink, value: value }
-    handlers.forEach(callback => callback(event))
-  }).catch(error => {
-    const event = { cosmicLink: cosmicLink, error: error }
-    handlers.forEach(callback => callback(event))
-  })
+  if (format !== 'any' && !cosmicLink[format] && !cosmicLink.status) return
+  handlers.forEach(callback => callback(cosmicLink))
 }

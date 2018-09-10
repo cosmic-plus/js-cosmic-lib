@@ -9,12 +9,61 @@ const action = exports
 
 const StellarGuard = require('@stellarguard/sdk')
 
+const convert = require('./convert')
+const config = require('./config')
 const event = require('./event')
 const format = require('./format')
-const parse = require('./parse')
+const resolve = require('./resolve')
 const status = require('./status')
 
 const helpers = require('ticot-box/misc')
+
+/**
+ * Lock a CosmicLink to a network, a primary source a sequence numbre. It is
+ * required in order to generate the CosmicLink's {@link Transaction} and
+ * {@link XDR} objects, to sign() and to send() the transaction.
+ *
+ * Note that in some cases `network`, `source` and/or `sequence` may be specified
+ * into the cosmic query in which case they takes precedence.
+ *
+ * @alias CosmicLink#lock
+ * @param {Object} options
+ * @param {string} options.source An account ID or a federated address
+ * @param {string} options.network Either `public`, `test` or a network passphrase
+ */
+action.lock = async function (cosmicLink, options = {}) {
+  if (cosmicLink.status) {
+    event.callFormatHandlers(cosmicLink, ['transaction', 'xdr'])
+    throw new Error('Invalid transaction')
+  }
+
+  if (cosmicLink.locker) {
+    throw new Error('CosmicLink is already locked.')
+  }
+
+  cosmicLink.locker = {
+    source: cosmicLink.tdesc.source || options.source || config.source,
+    network: cosmicLink.tdesc.network || options.network || config.network
+  }
+
+  /// Preserve the underlying tdesc object.
+  cosmicLink._tdesc = Object.assign({}, cosmicLink.tdesc, cosmicLink.locker)
+  delete cosmicLink._query
+  delete cosmicLink._json
+
+  if (!cosmicLink._transaction) {
+    cosmicLink._transaction = await convert.tdescToTransaction(cosmicLink, cosmicLink.tdesc)
+    cosmicLink.signers = await resolve.signers(cosmicLink, cosmicLink.transaction)
+    delete cosmicLink._tdesc
+    delete cosmicLink._json
+    event.callFormatHandlers(cosmicLink)
+  } else {
+    cosmicLink.signers = await resolve.signers(cosmicLink, cosmicLink.transaction)
+    event.callFormatHandlers(cosmicLink, ['uri', 'query', 'tdesc', 'json'])
+  }
+
+  return cosmicLink
+}
 
 /**
  * Sign a CosmicLink object using `...keypairs_or_preimage`.
@@ -28,34 +77,30 @@ const helpers = require('ticot-box/misc')
  *  .catch(console.error)
  *
  * @alias CosmicLink#sign
- * @param {...Keypair|preimage} keypairs_or_preimage One or more keypair, or a
+ * @param {...Keypair|preimage} keypairsOrPreimage One or more keypair, or a
  *     preimage
  * @returns {Promise} Signed Transaction object
  */
-action.sign = async function (cosmicLink, ...keypairs_or_preimage) {
-  if (cosmicLink.status) throw new Error("Can't sign invalid transaction")
-  cosmicLink.selectNetwork()
-  return makeSigningPromise(cosmicLink, ...keypairs_or_preimage)
-}
+action.sign = async function (cosmicLink, ...keypairsOrPreimage) {
+  if (!cosmicLink.locker) throw new Error('cosmicLink is not locked.')
+  resolve.network(cosmicLink)
 
-async function makeSigningPromise (cosmicLink, ...value) {
-  const transaction = await cosmicLink.getTransaction()
-  const signers = await cosmicLink.getSigners()
+  const transaction = cosmicLink.transaction
   let allFine = true
 
-  if (typeof value[0] !== 'string') {
-    for (let index in value) {
-      const keypair = value[index]
+  if (typeof keypairsOrPreimage[0] !== 'string') {
+    for (let index in keypairsOrPreimage) {
+      const keypair = keypairsOrPreimage[index]
       const publicKey = keypair.publicKey()
 
-      if (!signers.hasSigner(publicKey)) {
+      if (!cosmicLink.signers.hasSigner(publicKey)) {
         const short = helpers.shorter(publicKey)
         status.error(cosmicLink, 'Not a legit signer: ' + short)
         allFine = false
         continue
       }
 
-      if (signers.hasSigned(publicKey)) continue
+      if (cosmicLink.signers.hasSigned(publicKey)) continue
 
       try {
         transaction.sign(keypair)
@@ -69,34 +114,33 @@ async function makeSigningPromise (cosmicLink, ...value) {
     }
   } else {
     try {
-      transaction.signHashX(value[0])
+      transaction.signHashX(keypairsOrPreimage[0])
     } catch (error) {
       console.error(error)
-      const short = helpers.shorter(value[0])
+      const short = helpers.shorter(keypairsOrPreimage[0])
       status.error(cosmicLink, 'Failed to sign with preimage: ' + short, 'throw')
     }
   }
 
-  parse.typeTowardAll(cosmicLink, 'transaction', transaction)
-  parse.makeConverter(cosmicLink, 'xdr', 'query')
-  parse.makeConverter(cosmicLink, 'query', 'uri')
+  /// Update other formats.
+  ['_query', '_xdr', '_sep7'].forEach(format => delete cosmicLink[format])
+  event.callFormatHandlers(cosmicLink, ['uri', 'query', 'transaction', 'xdr', 'sep7'])
 
   if (cosmicLink._signersNode) {
-    const signersNode = format.signatures(cosmicLink, signers)
+    const signersNode = format.signatures(cosmicLink, cosmicLink.signers)
     cosmicLink.htmlNode.replaceChild(signersNode, cosmicLink._signersNode)
+    cosmicLink._signersNode = signersNode
   }
-
-  event.callFormatHandlers(cosmicLink)
 
   if (!allFine) throw new Error('Some signers where invalid')
   else return transaction
 }
 
 /**
- * Send CosmicLink transaction to `server`, or to `cosmicLink.server`. It should
- * have been signed beforehand to be validated.
+ * Send CosmicLink transaction to `horizon`, or to `cosmicLink.horizon`. It should
+ * have been locked and signed beforehand to be validated.
  *
- * Returns a promise that resolve with horizon server response when transaction
+ * Returns a promise that resolve to horizon server response when transaction
  * is accepted, or that reject to horizon server response if transaction is
  * rejected.
  *
@@ -106,19 +150,19 @@ async function makeSigningPromise (cosmicLink, ...value) {
  *   .catch(console.error)
  *
  * @alias CosmicLink#send
- * @param {Server} [server=cosmicLink.server] A Stellar SDK [Server]{@link https://stellar.github.io/js-stellar-sdk/Server.html} object
+ * @param {horizon} [horizon=cosmicLink.horizon] An horizon node URL
  * @return {Promise} The server response
  */
-action.send = async function (cosmicLink, server) {
-  if (!server) server = cosmicLink.server
-  const transaction = await cosmicLink.getTransaction()
-  const account = await cosmicLink.getSourceAccount()
+action.send = async function (cosmicLink, horizon = cosmicLink.horizon) {
+  if (!cosmicLink.locker) throw new Error('cosmicLink is not locked.')
+  const server = resolve.server(cosmicLink, horizon)
+  const account = await resolve.account(cosmicLink, cosmicLink.source)
 
   if (StellarGuard.hasStellarGuard(account)) {
     if (cosmicLink.network === 'public') StellarGuard.usePublicNetwork()
     else StellarGuard.useTestNetwork()
-    return StellarGuard.submitTransaction(transaction)
+    return StellarGuard.submitTransaction(cosmicLink.transaction)
   } else {
-    return server.submitTransaction(transaction)
+    return server.submitTransaction(cosmicLink.transaction)
   }
 }

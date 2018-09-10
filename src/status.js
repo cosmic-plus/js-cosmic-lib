@@ -21,7 +21,7 @@ const html = require('ticot-box/html')
  * @param {string} status
  */
 status.update = function (conf, status) {
-  if (conf.status || !conf.errors) return
+  if (conf.status) return
   console.log('Set status: ' + status)
   conf.status = status
 
@@ -58,7 +58,8 @@ status.fail = function (conf, errorStatus, continuation) {
 status.error = function (conf, error, continuation) {
   console.log(error)
 
-  if (conf.errors) conf.errors.push(error)
+  if (!conf.errors) conf.errors = []
+  conf.errors.push(error)
   if (conf._statusNode) {
     const errorsNode = html.grab('.CL_events', conf._statusNode)
     const lineNode = html.create('li', '.CL_error', error)

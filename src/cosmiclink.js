@@ -1,14 +1,12 @@
 'use_strict'
 
 const action = require('./action')
-const aliases = require('./aliases')
 const config = require('./config')
-const event = require('./event')
+const convert = require('./convert')
 const parse = require('./parse')
 const resolve = require('./resolve')
 const status = require('./status')
 
-const helpers = require('ticot-box/misc')
 const env = require('ticot-box/env')
 
 /// Web only
@@ -29,18 +27,8 @@ if (env.isBrowser) {
  * simplified format used is `js-cosmic-lib` to represent Stellar transaction.
  * This transaction descriptor can be written in its objectified form
  * (referred as **tdesc**) or stringified form (referred as **json**).
- *
- * @borrows module:config.aliases as CosmicLink#aliases
- * @borrows module:config.addAliases as CosmicLink#addAliases
- * @borrows module:config.removeAliases as CosmicLink#removeAliases
- * @borrows module:config.clickHandlers as CosmicLink#clickHandlers
- * @borrows module:config.setClickHandler as CosmicLink#setClickHandler
- * @borrows module:config.clearClickHandler as CosmicLink#clearClickHandler
- * @borrows module:config.formatHandlers as CosmicLink#formatHandlers
- * @borrows module:config.addFormatHandler as CosmicLink#addFormatHandler
- * @borrows module:config.removeFormatHandler as CosmicLink#removeFormatHandler
  */
-const CosmicLink = class {
+const CosmicLink = class CosmicLink {
   /**
    * Create a new CosmicLink object. `transaction` can be one of the accepted
    * format: uri, query, json, tdesc, transaction or xdr.
@@ -107,43 +95,79 @@ const CosmicLink = class {
     initCosmicLink(this, transaction, options)
   }
 
+  /// Formats
   /**
-   * Return the source address of the current transaction.
-   *
-   * @return {string} Federated address or account ID
+   * CosmicLink's URI.
    */
-  async getSource () {
-    const tdesc = await this.getTdesc()
-    if (tdesc.source) return tdesc.source
-    else if (this.user) return this.user
-    else throw new Error('No source defined for this transaction')
+  get uri () {
+    return this.page + this.query
   }
 
   /**
-   * Check if `value` is a legit signer for this transaction.
-   *
-   * @param {string} value An account ID, a txhash or a preimage
-   * @param {string} [type='key'] The signer type. Could be either `key`, `tx`
-   *     or `hash`.
-   * @return {Promise} A promise of a boolean telling if yes or no the signer is
-   *     legit.
+   * CosmicLink's query.
    */
-  async hasSigner (value, type = 'key') {
-    const signers = await this.getSigners()
-    return signers.find(entry => entry.value === value && entry.type === type)
+  get query () {
+    if (!this._query) {
+      if (this.xdr) this._query = convert.xdrToQuery(this, this.xdr)
+      else if (this.tdesc) this._query = convert.tdescToQuery(this, this.tdesc)
+      else return undefined
+    }
+    return this._query
   }
 
   /**
-   * Check if `value` has already signed the transaction.
-   *
-   * @param {string} value An account ID, a txhash or a preimage
-   * @param {string} [type='key'] The signer type. Could be either `key`, `tx`
-   *     or `hash`.
-   * @return {Promise} A promise of a boolean telling if yes or no the `value`
-   *     has already signed
+   * CosmicLink's tdesc (stands for *Transaction Descriptor*). This is the
+   * internal representation this library uses to manipulate transactions.
    */
-  async hasSigned (value, type = 'key') {
-    return await resolve.hasSigned(this, type, value)
+  get tdesc () {
+    if (!this._tdesc) {
+      if (this.transaction) this._tdesc = convert.transactionToTdesc(this, this.transaction)
+      else return undefined
+    }
+    return this._tdesc
+  }
+
+  /**
+   * CosmicLink's stringified [*Transaction Descriptor*]{@link CosmicLink#tdesc}.
+   */
+  get json () {
+    if (!this._json) this._json = convert.tdescToJson(this, this.tdesc)
+    return this._json
+  }
+
+  /**
+   * CosmicLink's {@link Transaction}.
+   */
+  get transaction () {
+    return this._transaction
+  }
+
+  /**
+   * CosmicLink's {@link XDR}.
+   */
+  get xdr () {
+    if (!this._xdr) {
+      if (!this.transaction) return undefined
+      this._xdr = convert.transactionToXdr(this, this.transaction)
+    }
+    return this._xdr
+  }
+
+  /// Data
+  /**
+   * CosmicLink's {@link Transaction} main source.
+   */
+  get source () {
+    if (this.locker) return this.locker.source
+    else if (this.tdesc) return this.tdesc.source
+  }
+
+  /**
+   * The network on which CosmicLink is valid.
+   */
+  get network () {
+    if (this.locker) return this.locker.network
+    else if (this.tdesc) return this.tdesc.network
   }
 
   /// Actions
@@ -154,65 +178,9 @@ const CosmicLink = class {
    * @return {Server} A Stellar SDK Server object
    */
   selectNetwork () { return resolve.network(this) }
+  lock (options) { return action.lock(this, options) }
   sign (...keypairs_or_preimage) { return action.sign(this, ...keypairs_or_preimage) }
   send (server) { return action.send(this, server) }
-
-  /// Aliases
-  addAliases (aliasesArg) { aliases.add(this, aliasesArg) }
-  removeAliases (array) { aliases.remove(this, aliases) }
-
-  /// Handlers
-  setClickHandler (fieldType, callback) {
-    event.setClickHandler(this, fieldType, callback)
-  }
-  clearClickHandler (fieldType) {
-    event.clearClickHandler(this, fieldType)
-  }
-
-  addFormatHandler (format, callback) {
-    event.addFormatHandler(this, format, callback)
-  }
-  removeFormatHandler (format, callback) {
-    event.removeFormatHandler(this, format, callback)
-  }
-
-  /**
-   * Returns the legit signers for this transaction.
-   *
-   * @returns {Promise}
-   */
-  async getSigners () {
-    const transaction = await this.getTransaction()
-    return resolve.signers(this, transaction)
-  }
-
-  /// Datas
-  /**
-   * The base URI to use when converting to URI format.
-   *
-   * @alias CosmicLink.page
-   */
-  get page () { return this._page }
-  set page (uri) { parse.page(this, uri) }
-
-  /**
-   * The network in use for this cosmic link.
-   *
-   * @alias CosmicLink.network
-   */
-  get network () { return this._network }
-  set network (network) { throw new Error('network is read-only') }
-
-  /**
-   * The fallback user configured for this cosmic link. It doesn't always match
-   * the transaction source, as the query may enforce another source. See
-   * {@link CosmicLink#getSource} for a method that reliably returns the source
-   * address.
-   *
-   * @alias CosmicLink.user
-   */
-  get user () { return this._user }
-  set user (user) { throw new Error('user is read-only') }
 
   /**
    * The HTML DOM node that displays a description of the current transaction.
@@ -223,8 +191,6 @@ const CosmicLink = class {
    * If HTML your page contains an element with `id="CL_htmlNode"`, this node
    * will automatically be used as the htmlNode of any CosmicLink you create.
    * This implies you should have onle one living at a time.
-   *
-   * @alias CosmicLink.htmlNode
    */
   get htmlNode () {
     if (!this._htmlNode) makeHtmlNodes(this)
@@ -234,8 +200,6 @@ const CosmicLink = class {
 
   /**
    * The HTML element that contains a description of the current transaction.
-   *
-   * @alias CosmicLink.transactionNode
    */
   get transactionNode () {
     this.htmlNode
@@ -246,8 +210,6 @@ const CosmicLink = class {
   /**
    * The HTML node that contains a description of any error that may have
    * happened with this cosmic link.
-   *
-   * @alias CosmicLink.statusNode
    */
   get statusNode () {
     this.htmlNode
@@ -258,8 +220,6 @@ const CosmicLink = class {
   /**
    * The HTML node that contains a list of missing/available signatures. Please
    * note that it doesn't shows when there's only one signer.
-   *
-   * @alias CosmicLink.signersNode
    */
   get signersNode () {
     this.htmlNode
@@ -268,58 +228,51 @@ const CosmicLink = class {
   set signersNode (value) { this._signersNode = value }
 }
 
+/**
+ * Initialize or reset a CosmicLink.
+ *
+ * @private
+ */
 function initCosmicLink (cosmicLink, transaction, options = {}) {
-  cosmicLink._page = options.page || config.page
-  cosmicLink._user = options.user || config.user
-  /// May be overwritten by parse.dispatch()
-  cosmicLink._network = options.network || config.network
+  /// Reset object in case of reparse.
+  ['query', 'tdesc', 'json', 'transaction', 'xdr'].forEach(type => delete cosmicLink['_' + type])
 
-  /// Enable status reporting.
-  cosmicLink.errors = []
-  cosmicLink.status = undefined
+  cosmicLink.page = cosmicLink.page || options.page || config.page
 
   /// Enable per CosmicLink destinations/accounts caching.
-  cosmicLink.cache = { destination: {}, account: {} }
-
-  cosmicLink.current = config.current
-  cosmicLink.aliases = config.aliases
-  cosmicLink.clickHandlers = Object.assign({}, config.clickHandlers)
-  cosmicLink.formatHandlers = {}
-  for (let format in config.formatHandlers) {
-    const handlers = config.formatHandlers[format]
-    cosmicLink.formatHandlers[format] = handlers.slice(0)
-  }
-
-  /**
-   * Returns a promise of the transaction source
-   * [Account]{@link https://www.stellar.org/developers/guides/concepts/accounts.html}
-   * object from the current ledger.
-   *
-   * @alias CosmicLink#getSourceAccount
-   * @function
-   * @async
-   * @return {Promise}
-   */
-  cosmicLink.getSourceAccount = helpers.delay(() => resolve.getSourceAccount(cosmicLink))
+  cosmicLink.cache = cosmicLink.cache || { destination: {}, account: {} }
 
   parse.dispatch(cosmicLink, transaction, options)
 
   if (env.isBrowser) {
-    let htmlNode = html.grab('#CL_htmlNode')
-    if (htmlNode) makeHtmlNodes(cosmicLink, htmlNode)
+    if (!cosmicLink._htmlNode) cosmicLink._htmlNode = html.grab('#CL_htmlNode')
+    if (cosmicLink._htmlNode) makeHtmlNodes(cosmicLink)
   }
 }
 
-function makeHtmlNodes (cosmicLink, htmlNode) {
-  if (env.isNode) return
+/**
+ * Initialize CosmicLink html nodes.
+ *
+ * @private
+ */
+function makeHtmlNodes (cosmicLink) {
+  let htmlNode = cosmicLink._htmlNode
 
   if (htmlNode) {
     html.clear(htmlNode)
     htmlNode.className = 'CL_htmlNode'
-  } else htmlNode = html.create('div', '.CL_htmlNode')
-  cosmicLink._htmlNode = htmlNode
+  } else {
+    htmlNode = html.create('div', '.CL_htmlNode')
+    cosmicLink._htmlNode = htmlNode
+  }
 
-  const nodes = ['_transactionNode', '_statusNode', '_signersNode']
+  if (cosmicLink.tdesc) {
+    const transactionNode = format.tdesc(cosmicLink, cosmicLink.tdesc)
+    cosmicLink._transactionNode = transactionNode
+    html.append(htmlNode, transactionNode)
+  }
+
+  const nodes = ['_statusNode', '_signersNode']
   for (let index in nodes) {
     const name = nodes[index]
     cosmicLink[name] = html.create('div', '.CL' + name)
@@ -331,11 +284,7 @@ function makeHtmlNodes (cosmicLink, htmlNode) {
     html.create('ul', '.CL_events')
   )
   status.populateHtmlNode(cosmicLink)
-
-  cosmicLink.getTdesc().then(tdesc => {
-    const transactionNode = format.tdesc(cosmicLink, tdesc)
-    html.replace(cosmicLink._transactionNode, transactionNode)
-  })
 }
 
+CosmicLink.prototype.__proto__ = config
 module.exports = CosmicLink

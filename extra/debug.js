@@ -2,7 +2,7 @@
 
 const html = require('ticot-box/html')
 
-const user = 'GBP7EQX652UPJJJRYFAPH64V2MHGUGFJNKJN7RNOPNSFIBH4BW6NSF45'
+const source = 'GBP7EQX652UPJJJRYFAPH64V2MHGUGFJNKJN7RNOPNSFIBH4BW6NSF45'
 const secret = 'SAZMGMO2DUBRGQIXNHIEBRLUQOPC7SYLABFMC55JZVPXMZPBRXLMVKKV'
 const keypair = StellarSdk.Keypair.fromSecret(secret)
 const account1 = 'GBWYUHFOHJECKDLFNCPGPVU6XRDJIBT5BYF6VXZEDHWVQRCR4HZVCGPU'
@@ -135,7 +135,7 @@ const tests = [
 ]
 
 cosmicLib.config.network = 'test'
-cosmicLib.config.user = user
+cosmicLib.config.source = source
 
 const mainNode = html.grab('main')
 
@@ -209,7 +209,7 @@ async function appendCosmicLink (parent, url, options = {}) {
 
   html.append(
     parent,
-    html.create('input', { value: url}),
+    html.create('input', { value: url }),
     // ~ html.create('pre', {}, url),
     cosmicLink.htmlNode,
     html.create('hr')
@@ -223,6 +223,7 @@ async function appendCosmicLink (parent, url, options = {}) {
     await checkCosmicLink(cosmicLink, options)
     await tryCosmicLink(cosmicLink, options)
   } catch (error) {
+    console.error(error)
     cosmicLink.debugNode.style.display = 'block'
     html.append(cosmicLink.debugNode,
       html.create('div', '.debug_error', error)
@@ -233,20 +234,18 @@ async function appendCosmicLink (parent, url, options = {}) {
 async function checkCosmicLink (cosmicLink, options) {
   function append (...el) { html.append(cosmicLink.debugNode, ...el) }
 
-  const xdr = await cosmicLink.getXdr()
-  append(html.create('textarea', {}, xdr))
+  await cosmicLink.lock()
+  append(html.create('textarea', {}, cosmicLink.xdr))
 
-  const cLinkReverse = new CosmicLink(xdr, { stripSource: true })
-  const json = await cLinkReverse.getJson()
-  append(html.create('pre', {}, json))
-  const uri2 = await cLinkReverse.getUri()
-  append(html.create('input', { value: uri2 }))
+  const cLinkReverse = new CosmicLink(cosmicLink.xdr, { stripSource: true })
+  append(html.create('pre', {}, cLinkReverse.json))
+  append(html.create('input', { value: cLinkReverse.uri }))
 
-  const cLinkLoopback = new CosmicLink(uri2)
-  const xdr2 = await cLinkLoopback.getXdr()
+  const cLinkLoopback = new CosmicLink(cLinkReverse.uri)
+  await cLinkLoopback.lock()
 
-  if (xdr !== xdr2) {
-    append(html.create('textarea', {}, xdr2))
+  if (cosmicLink.xdr !== cLinkLoopback.xdr) {
+    append(html.create('textarea', {}, cLinkLoopback.xdr))
     throw new Error('Loopback XDR differ from original')
   } else {
     html.append(cosmicLink.htmlNode,

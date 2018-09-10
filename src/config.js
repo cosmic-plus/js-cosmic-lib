@@ -23,10 +23,15 @@ config.page = 'https://cosmic.link/'
  */
 config.network = 'public'
 /**
+ * The default horizon node URL. Will guess it from `config.network` if undefined.
+ * @default undefined
+ */
+config.horizon = undefined
+/**
  * The default fallback source address.
  * @default undefined
  */
-config.user = undefined
+config.source = undefined
 
 /**
  * Networks setup.

@@ -10,7 +10,6 @@ const format = exports
 
 const event = require('./event')
 const specs = require('./specs')
-const status = require('./status')
 const resolve = require('./resolve')
 
 const html = require('ticot-box/html')
@@ -50,7 +49,6 @@ format.tdesc = function (conf, tdesc) {
     }
   } catch (error) {
     console.error(error)
-    status.error(conf, 'Unhandled formatting error')
   }
 
   return trNode

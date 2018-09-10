@@ -140,22 +140,6 @@ async function accountResolver (conf, accountId) {
   }
 }
 
-/**
- * Returns the source AccountResponse object for `cosmicLink`
- *
- * @param {CL}
- * @return {Object} The account response
- */
-resolve.getSourceAccount = async function (cosmicLink) {
-  const source = await cosmicLink.getSource()
-  try {
-    const account = await resolve.account(cosmicLink, source)
-    return account
-  } catch (error) {
-    status.fail(cosmicLink, 'Empty source account', 'throw')
-  }
-}
-
 resolve.signers = require('./signers')
 
 resolve.transaction = async function (conf, txHash) {

@@ -7,90 +7,70 @@
 </head>
 
 <script>
-  var cosmicLink, pageBox, networkBox, userBox, signerBox, formatBoxes = [],
-      signButton, sendButton
+  var cosmicLink, pageBox, networkBox, sourceBox, signerBox, formatBoxes = [],
+      signButton, sendButton, formats = ['uri', 'query', 'json', 'xdr']
 
   function init () {
     // Grabbing the HTML elements for later use.
     pageBox = document.querySelector('#page')
     networkBox = document.querySelector('#network')
-    userBox = document.querySelector('#user')
+    sourceBox = document.querySelector('#source')
     signerBox = document.querySelector('#signer')
     signButton = document.querySelector('#signButton')
     sendButton = document.querySelector('#sendButton')
 
     // Default configuration.
-    cosmicLib.config.page = location.href.replace(/\?.*/,'')
-    cosmicLib.config.network = 'test'
-    cosmicLib.config.user = 'tips*cosmic.link'
+    cosmicLib.config.page = pageBox.value = location.href.replace(/\?.*/,'')
+    cosmicLib.config.network = networkBox.value = 'test'
+    cosmicLib.config.source = sourceBox.value = 'tips*cosmic.link'
 
-    // Setup format boxes auto-refresh.
-    initBox('uri')
-    initBox('query')
-    initBox('json')
-    initBox('xdr')
-
-    // This will trigger each time a new cosmicLink is parsed.
-    cosmicLib.config.addFormatHandler('query', function (event) {
-      // The event may be outdated if triggered after cosmicLink have changed.
-      if (cosmicLink !== event.cosmicLink) return
-
-      // Update navigator address and page/network/user fields.
-      if (event.value) history.replaceState({}, '', event.value)
-      pageBox.value = cosmicLink.page
-      networkBox.value = cosmicLink.network
-      if (cosmicLink.user) userBox.value = cosmicLink.user
-      else userBox.value = ''
-    })
-
-    // This will trigger each time a new cosmicLink is parsed.
-    cosmicLib.config.addFormatHandler('transaction', function (event) {
-      // The event may be outdated if triggered after cosmicLink have changed.
-      if (cosmicLink !== event.cosmicLink) return
-
-      // Enable sign/send buttons when the transaction is valid.
-      if (event.value) enableButtons()
-    })
-
-    // Initially disable sign/send buttons.
-    disableButtons()
+    // Setup format boxes.
+    formats.forEach(format => initBox(format))
 
     // Create the initial cosmicLink.
-    cosmicLink = new CosmicLink(location.search || '?')
+    refresh()
   }
 
   function initBox (format) {
     const box = document.querySelector('#' + format)
-    // Save HTML format boxes in an array for later use.
-    formatBoxes.push(box)
+
+    // Save HTML format boxes for later use.
+    formatBoxes[format] = box
 
     // Parse a new cosmicLink each time a format box is changed.
     box.onchange = function () { refresh(box.value) }
-
-    cosmicLib.config.addFormatHandler(format, function (event) {
-      // The event may be outdated if triggered after cosmicLink have changed.
-      if (cosmicLink !== event.cosmicLink) return
-      // Display result or error.
-      if (event.value) { box.value = event.value; box.placeholder = '' }
-      else if (event.error) box.placeholder = event.error.message
-    })
   }
 
-  // Re-parse cosmicLink with the last user input.
+  // Parse cosmicLink.
   function refresh (transaction) {
-    // Use an empty query if the box was empty.
+    // Use an empty query if none is provided.
     if (!transaction) transaction = location.search || '?'
+
+    // Save needed values.
+    const page = pageBox.value, network = networkBox.value, source = sourceBox.value
+
     // Reset the interface.
     clearBoxes()
     disableButtons()
 
     // Create the new cosmicLink.
-    const options = {
-      page: pageBox.value,
-      network: networkBox.value,
-      user: userBox.value
-    }
-    cosmicLink = new CosmicLink(transaction, options)
+    cosmicLink = new CosmicLink(transaction, { page: page })
+
+    // Refresh edition boxes.
+    pageBox.value = cosmicLink.page || pageBox.value || cosmicLib.config.page
+    networkBox.value = cosmicLink.network || networkBox.value || cosmicLib.config.network
+    sourceBox.value = cosmicLink.source || sourceBox.value || cosmicLib.config.source
+    refreshFormatBoxes()
+
+    // Lock cosmicLink.
+    cosmicLink.lock({ network: network, source: source })
+      .then(function(obj) {
+        // cosmicLink may have changed by the time lock() resolves.
+        if (obj !== cosmicLink) return
+
+        refreshFormatBoxes(['xdr'])
+        enableButtons()
+      })
   }
 
   function sign () {
@@ -107,7 +87,10 @@
     disableButtons()
     // Sign.
     cosmicLink.sign(signer)
-      .then(function () { display('Done') })
+      .then(function () {
+        display('Done')
+        refreshFormatBoxes()
+      })
       .catch(display)
       .finally(enableButtons)
   }
@@ -139,9 +122,19 @@
 
   // Clear format boxes.
   function clearBoxes () {
-    formatBoxes.forEach(function (box) {
-      box.value = ''
-      box.placeholder = 'Computing...'
+    for (let format in formatBoxes) {
+      formatBoxes[format].value = ''
+      formatBoxes[format].placeholder = 'Computing...'
+    }
+  }
+
+  // Update format boxes content.
+  function refreshFormatBoxes (boxes = ['uri', 'query', 'json', 'xdr']) {
+    boxes.forEach(format => {
+      const box = formatBoxes[format]
+      if (format === 'query') history.replaceState({}, '', cosmicLink[format])
+      if (cosmicLink[format]) box.value = cosmicLink[format]
+      else if (cosmicLink.errors) box.placeholder = cosmicLink.status
     })
   }
 
@@ -250,8 +243,8 @@ input, textarea {
         <input id="page" type="text" onchange="refresh()">
         <label for="network">Network:</label>
         <input id="network" type="text" onchange="refresh()">
-        <label for="user">User:</label>
-        <input id="user" type="text" onchange="refresh()">
+        <label for="source">Source:</label>
+        <input id="source" type="text" onchange="refresh()">
         <label for="uri">Link:</label>
         <input id="uri" type="text" placeholder="URI">
         <label for="query">Query:</label>

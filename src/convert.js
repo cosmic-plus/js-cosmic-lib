@@ -37,12 +37,12 @@ convert.uriToQuery = function (conf, uri) {
  * @param {string} query
  * @return {Object} tdesc
  */
-convert.queryToJson = function (conf, query) {
-  if (query.length < 2) status.fail(conf, 'Empty query', 'throw')
+convert.queryToTdesc = function (conf, query) {
+  if (!query.length) return status.fail('No query')
 
-  const tdesc = {}
   const odesc = []
-  let isValid = true
+  const tdesc = { operations: odesc }
+  if (query === '?') return tdesc
 
   let operation = query.substr(1).replace(/&.*/, '')
   const queries = query.substr(operation.length + 2).split('&')
@@ -51,7 +51,11 @@ convert.queryToJson = function (conf, query) {
     mode = 'transaction'
   } else {
     odesc.unshift({ type: mode })
-    checkOperationType(conf, operation)
+    try {
+      checkOperationType(conf, operation)
+    } catch (error) {
+      odesc[0].error = 'Unknow operation'
+    }
   }
 
   for (let index in queries) {
@@ -93,7 +97,6 @@ convert.queryToJson = function (conf, query) {
       /// This line catch program error for debugging purpose.
       if (!conf.errors) status.error(conf, error)
       const errorObject = { error: error, value: value }
-      isValid = false
 
       if (operation === 'transaction') {
         tdesc[field] = errorObject
@@ -109,6 +112,7 @@ convert.queryToJson = function (conf, query) {
 
   for (let index in odesc) {
     const operation = odesc[index]
+    if (operation.error) continue
 
     switch (operation.type) {
       case 'allowTrust':
@@ -136,20 +140,18 @@ convert.queryToJson = function (conf, query) {
     mandatoryFields.forEach(field => {
       if (operation[field] === undefined) {
         status.error(conf, 'Missing mandatory field: ' + field)
-        isValid = false
       }
     })
     for (let field in operation) {
       if (!isOperationField(operation.type, field)) {
         status.error(conf, 'Invalid field: ' + field)
-        isValid = false
       }
     }
   }
 
   tdesc.operations = odesc.reverse()
-  if (!isValid) status.fail(conf, 'Invalid query')
-  return convert.tdescToJson(conf, tdesc)
+  if (conf.errors) status.fail(conf, 'Invalid query')
+  return tdesc
 }
 
 const XLM = StellarSdk.Asset.native()
@@ -203,14 +205,13 @@ convert.tdescToJson = function (conf, tdesc) {
 }
 
 /**
- * Returns the Stellar `transaction` corresponding to `json`.
+ * Returns the Stellar `transaction` corresponding to `tdesc`.
  *
  * @param {Object} json Json CosmicLink format.
  * @return {Transaction}
  */
-convert.jsonToTransaction = async function (conf, json) {
+convert.tdescToTransaction = async function (conf, tdesc) {
   if (conf.status) throw new Error(conf.status)
-  const tdesc = convert.jsonToTdesc(conf, json)
 
   try {
     const builder = await makeTransactionBuilder(conf, tdesc)
@@ -221,6 +222,7 @@ convert.jsonToTransaction = async function (conf, json) {
     }
     return builder.build()
   } catch (error) {
+    console.error(error)
     if (!conf.errors) status.error(conf, error)
     if (!conf.status) status.fail(conf, "Can't build transaction", 'throw')
     else throw error
@@ -246,22 +248,22 @@ async function odescToOperation (conf, odesc) {
  * Returns a TransactionBuilder for `transaction descriptor`.
  */
 async function makeTransactionBuilder (conf, tdesc) {
-  let opts = {}
-  if (tdesc.fee) opts.fee = tdesc.fee
-  if (tdesc.memo) opts.memo = prepare.memo(conf, tdesc.memo)
+  let txOpts = {}
+  if (tdesc.fee) txOpts.fee = tdesc.fee
+  if (tdesc.memo) txOpts.memo = prepare.memo(conf, tdesc.memo)
   if (tdesc.minTime || tdesc.maxTime) {
-    opts.timebounds = { minTime: 0, maxTime: 0 }
-    if (tdesc.minTime) opts.timebounds.minTime = tdesc.minTime
-    if (tdesc.maxTime) opts.timebounds.maxTime = tdesc.maxTime
+    txOpts.timebounds = { minTime: 0, maxTime: 0 }
+    if (tdesc.minTime) txOpts.timebounds.minTime = tdesc.minTime
+    if (tdesc.maxTime) txOpts.timebounds.maxTime = tdesc.maxTime
   }
 
-  const loadedAccount = await conf.getSourceAccount()
+  const loadedAccount = await resolve.account(conf, tdesc.source)
   if (tdesc.sequence) {
     const baseAccount = new StellarSdk.Account(loadedAccount.id, tdesc.sequence)
     baseAccount.sequence = baseAccount.sequence.sub(1)
     loadedAccount._baseAccount = baseAccount
   }
-  const builder = new StellarSdk.TransactionBuilder(loadedAccount, opts)
+  const builder = new StellarSdk.TransactionBuilder(loadedAccount, txOpts)
 
   /// Check if memo is needed for destination account.
   for (let index in tdesc.operations) {
@@ -303,7 +305,7 @@ convert.transactionToXdr = function (conf, transaction) {
  * @param {XDR} xdr
  * @return {Transaction}
  */
-convert.xdrToTransaction = function (conf, xdr, options) {
+convert.xdrToTransaction = function (conf, xdr, options = {}) {
   try {
     const transaction = new StellarSdk.Transaction(xdr)
     if (options.stripSignatures) transaction.signatures = []
@@ -327,7 +329,7 @@ convert.xdrToQuery = function (conf, xdr, options = {}) {
 }
 
 /**
- * Return the `transaction descriptor` JSON equivalent to Stellar `Transaction`
+ * Return the `transaction descriptor` equivalent to Stellar `Transaction`
  * object.
  *
  * Set options.stripSource to true for a transaction that is account-agnostic,
@@ -339,35 +341,18 @@ convert.xdrToQuery = function (conf, xdr, options = {}) {
  *
  * @param {Transaction} transaction
  * @param {Object} options
- * @return {JSON} transaction descriptor JSON
+ * @return {tdesc} transaction descriptor
  */
-convert.transactionToJson = function (conf, transaction, options = {}) {
+convert.transactionToTdesc = function (conf, transaction, options = {}) {
   const copy = JSON.parse(JSON.stringify(transaction))
-
   delete copy.tx
-
-  if (!conf.user) conf._user = copy.source
 
   if (options.stripSource) {
     delete copy.source
-    delete copy.signatures
     delete copy.sequence
   }
-  if (options.stripSequence) {
-    delete copy.sequence
-    delete copy.signatures
-  }
-  if (options.stripSignatures) delete copy.signatures
-
-  if (copy.signatures) {
-    copy.signatures = transaction.signatures.map(entry => {
-      return {
-        hint: entry.hint().toString('base64'),
-        signature: entry.signature().toString('base64')
-      }
-    })
-    if (copy.signatures.length === 0) delete copy.signatures
-  }
+  if (options.stripSequence) delete copy.sequence
+  delete copy.signatures
 
   if (copy.fee === 100 * copy.operations.length) delete copy.fee
   if (copy._memo._switch.name !== 'memoNone') {
@@ -423,7 +408,7 @@ convert.transactionToJson = function (conf, transaction, options = {}) {
 
   if (options.network !== undefined) copy.network = options.network
 
-  return JSON.stringify(copy, null, 2)
+  return copy
 }
 
 /**
@@ -442,9 +427,7 @@ convert.jsonToTdesc = function (conf, json) {
  * @param {Object} tdesc Transaction descriptor
  * @return {string} query
  */
-convert.jsonToQuery = function (conf, json) {
-  const tdesc = convert.jsonToTdesc(conf, json)
-
+convert.tdescToQuery = function (conf, tdesc) {
   let query = '?'
   if (tdesc.operations.length === 1) query += tdesc.operations[0].type
   else query += 'transaction'

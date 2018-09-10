@@ -14,7 +14,8 @@
     "build-misc": "cp AUTHORS LICENSE README.md package-lock.json web",
     "build": "for i in js css doc html misc; do npm run build-$i || return; done",
     "check": "npm run get && cp web/package-lock.json . && npm run ci && npm run build && cd web && git status",
-    "watch": "webpack -d --watch"
+    "watch": "webpack -d --watch",
+    "serve": "npm run watch & cd web && live-server --no-browser"
   },
   "keywords": [
     "cryptocurrency",
@@ -36,6 +37,7 @@
     "babel-plugin-transform-runtime": "^6.23.0",
     "babel-preset-env": "^1.7.0",
     "jsdoc": "^3.5.5",
+    "live-server": "^1.2.0",
     "minami": "^1.2.3",
     "postcss-loader": "^2.1.6",
     "standard": "^11.0.1",

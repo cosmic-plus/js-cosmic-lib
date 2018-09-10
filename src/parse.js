@@ -15,74 +15,36 @@ const convert = require('./convert')
 const event = require('./event')
 const status = require('./status')
 
-const helpers = require('ticot-box/misc')
-
 /**
- * Set `page` as the base URI for `cosmicLink`. Update the URI getter
- * accordingly.
+ * Sets cosmicLink page as the base path of `uri`.
  *
  * @param {string} page URI basename
  */
-parse.page = function (cosmicLink, page) {
-  cosmicLink._page = encodeURI(page)
-  parse.makeConverter(cosmicLink, 'query', 'uri')
-  event.callFormatHandlers(cosmicLink, 'uri')
+parse.page = function (cosmicLink, uri) {
+  const page = uri.split('?')[0]
+  if (page) cosmicLink.page = encodeURI(page)
 }
 
 /**
- * Set `cosmicLink` `network`. Throw an error if `network` is not valid.
- *
- * @param {string} network Either `public` or `test`
- */
-parse.network = function (cosmicLink, network) {
-  cosmicLink._network = network
-  if (network === 'test') {
-    cosmicLink.server = new StellarSdk.Server('https://horizon-testnet.stellar.org')
-  } else if (network === 'public') {
-    cosmicLink.server = new StellarSdk.Server('https://horizon.stellar.org')
-  } else {
-    cosmicLink.server = null
-    status.fail(cosmicLink, 'Invalid network')
-    status.error(cosmicLink, 'Invalid network: ' + network, 'throw')
-  }
-}
-
-/**
- * Setup the network, the format converters for cosmicLink and call the format
- * handlers.
+ * Call the right functions to setup cosmicLink depending on `options` and
+ * `value` type.
  *
  * @param {*} value A transaction in any format
  * @param {Object} options Same options as {@see CosmicLink#constructor}
  */
 parse.dispatch = function (cosmicLink, value, options = {}) {
   const type = guessType(value)
-  const parser = typeParser[type]
 
-  if (
-    (type === 'uri' || type === 'query' || type === 'xdrUri') &&
-    value.match('&network=')
-  ) {
-    cosmicLink._network = value.replace(/.*&network=/, '').replace(/&.*/, '')
-  }
-  parse.network(cosmicLink, cosmicLink.network)
-
-  if (parser) parser(cosmicLink, value, options)
-  else parse.typeTowardAll(cosmicLink, type, value, options)
-
-  /// A transaction with sequence number uses xdrUri format.
-  if (type === 'xdr' || type === 'transaction') {
-    if (options.stripSource || options.stripSequence) {
-      typeTowardXdr(cosmicLink, 'json')
-    } else if (options.stripSignatures) {
-      if (type === 'transaction') value.signatures = []
-      if (type === 'xdr') typeTowardXdr(cosmicLink, 'transaction')
-    }
-    if (!options.stripSource && !options.stripSequence) {
-      parse.makeConverter(cosmicLink, 'xdr', 'query', options)
-      parse.makeConverter(cosmicLink, 'query', 'uri')
-    }
+  try {
+    if (type === 'xdrUri') parseXdrUri(cosmicLink, value, options)
+    else setTdesc(cosmicLink, type, value, options)
+  } catch (error) {
+    console.error(error)
+    status.error(cosmicLink, error.message)
+    if (!cosmicLink.status) status.fail(cosmicLink, 'Invalid ' + type)
   }
 
+  if (options.page) parse.page(cosmicLink, options.page)
   event.callFormatHandlers(cosmicLink)
 }
 
@@ -106,29 +68,15 @@ function guessType (value) {
 }
 
 /**
- * Per-type customization of the generic parsing process.
- *
- * @private
- * @namespace
+ * Initialize cosmicLink using `xdrUri`.
  */
-const typeParser = {}
-
-typeParser.uri = function (cosmicLink, uri) {
-  const page = uri.split('?')[0]
-  const query = convert.uriToQuery(cosmicLink, uri)
-  cosmicLink._page = encodeURI(page)
-  parse.typeTowardAll(cosmicLink, 'query', query)
-}
-
-typeParser.xdrUri = function (cosmicLink, xdrUri) {
-  const page = xdrUri.split('?')[0]
-  if (page) cosmicLink._page = encodeURI(page)
+function parseXdrUri (cosmicLink, xdrUri, options) {
+  parse.page(cosmicLink, xdrUri)
 
   const query = convert.uriToQuery(cosmicLink, xdrUri)
   const temp = query.split('&')
   const xdr = temp[0].substr(5)
 
-  let options = {}
   temp.slice(1).forEach(entry => {
     let field = entry.replace(/=.*$/, '')
     let value = entry.substr(field.length + 1)
@@ -152,150 +100,36 @@ typeParser.xdrUri = function (cosmicLink, xdrUri) {
     }
   })
 
-  parse.dispatch(cosmicLink, xdr, options)
+  setTdesc(cosmicLink, 'xdr', xdr, options)
 }
 
 /**
- * Setup all formats getters for `cosmicLink` using entry point `value`, which
- * is a transaction formatted in `type`.
- *
- * @param {string} type One of 'uri', 'query', 'json', 'tdesc', 'transaction' or
- *                      'xdr'
- * @param {*} value The value for `type`
+ * Set cosmicLink_tdesc from format `type`. From there, the CosmicLink methods
+ * can lazy-evaluate any requested format.
  */
-parse.typeTowardAll = function (cosmicLink, type, value, ...options) {
-  if (type === 'tdesc') {
-    type = 'json'
-    value = convert.tdescToJson(cosmicLink, value, ...options)
-  }
+function setTdesc (cosmicLink, type, value, options) {
+  if (value !== 'uri') cosmicLink['_' + type] = value
 
-  parse.typeTowardAllUsingDelayed(cosmicLink,
-    type,
-    helpers.delay(() => value),
-    ...options)
-}
-
-/**
- * Setup all formats getters for `cosmicLink` using entry point `delayed`. Here
- * we name `delayed` a function that returns a promise of the transaction
- * formatted in `type`.
- *
- * @param {string} type One of 'uri', 'query', 'json', 'tdesc', 'transaction' or
- *                      'xdr'
- * @param {function} delayed A function that return a promise for `type`
- */
-parse.typeTowardAllUsingDelayed = function (cosmicLink, type, delayed, ...options) {
-  const getter = 'get' + helpers.capitalize(type)
-  cosmicLink[getter] = delayed
-
-  if (type !== 'xdr') typeTowardXdr(cosmicLink, type, ...options)
-  if (type !== 'uri') typeTowardUri(cosmicLink, type, ...options)
-  cosmicLink.getTdesc = async () => {
-    const json = await cosmicLink.getJson()
-    return convert.jsonToTdesc(cosmicLink, json)
-  }
-}
-
-/**
- * Setup format getters for `cosmicLink` starting from the one following `type`
- * until xdr. For example, if `type` is 'query', it will setup
- * `cosmicLink.getJson`, `cosmicLink.getTransaction` and `cosmicLink.getXdr`.
- */
-function typeTowardXdr (cosmicLink, type, ...options) {
   switch (type) {
-    case 'uri': parse.makeConverter(cosmicLink, 'uri', 'query', ...options)
-    case 'query': parse.makeConverter(cosmicLink, 'query', 'json', ...options)
-    case 'json': parse.makeConverter(cosmicLink, 'json', 'transaction', ...options)
-    case 'transaction': parse.makeConverter(cosmicLink, 'transaction', 'xdr', ...options)
+    case 'uri':
+      parse.page(cosmicLink, value)
+      cosmicLink._query = convert.uriToQuery(cosmicLink, value, options)
+    case 'query':
+      cosmicLink._tdesc = convert.queryToTdesc(cosmicLink, cosmicLink.query, options)
       break
-    default: throw new Error('Invalid type: ' + type)
-  }
-}
-
-/**
- * Setup format getters for `cosmicLink` starting from the one following `type`
- * until xdr. For example, if `type` is 'json', it will setup
- * `cosmicLink.getQuery` and `cosmicLink.getUri`.
- */
-function typeTowardUri (cosmicLink, type, ...options) {
-  switch (type) {
-    case 'xdr': parse.makeConverter(cosmicLink, 'xdr', 'transaction', ...options)
-    case 'transaction': parse.makeConverter(cosmicLink, 'transaction', 'json', ...options)
-    case 'json': parse.makeConverter(cosmicLink, 'json', 'query', ...options)
-    case 'query': parse.makeConverter(cosmicLink, 'query', 'uri', ...options)
+    case 'json':
+      cosmicLink._tdesc = convert.jsonToTdesc(cosmicLink, cosmicLink.json)
       break
-    default: throw new Error('Invalid type: ' + type)
+    case 'xdr':
+      cosmicLink._transaction = convert.xdrToTransaction(cosmicLink, cosmicLink.xdr, options)
+    case 'transaction':
+      cosmicLink._tdesc = convert.transactionToTdesc(cosmicLink, cosmicLink.transaction, options)
+      if (options.stripSource || options.stripSequence) {
+        delete cosmicLink._xdr
+        delete cosmicLink._transaction
+      } else {
+        if (options.stripSignatures) cosmicLink.transaction.signatures = []
+        delete cosmicLink._xdr
+      }
   }
-}
-
-/**
- * Setup format getter get`to` for `cosmicLink` using `from`. In other words,
- * if `from` is 'uri' and `to` is 'query', it will setup `cosmicLink.getQuery`
- * to be computed from uri.
- *
- * This function uses existing conversion functions in 'convert' module.
- * i.e.: arbitrary conversion like from query to transaction won't do.
- *
- * @param {string} from One of 'uri', 'query', 'json', 'tdesc', 'transaction' or
- *                      'xdr'
- * @param {string} to One of 'uri', 'query', 'json', 'tdesc', 'transaction' or
- *                    'xdr'
- */
-parse.makeConverter = function (cosmicLink, from, to, ...options) {
-  /**
-   * @name CosmicLink#getUri
-   * @function
-   * @desc Returns a promise that resolves to the current transaction in URI format.
-   * @async
-   * @return {Promise}
-   */
-
-  /**
-   * @name CosmicLink#getQuery
-   * @function
-   * @desc Returns a promise that resolves to the current transaction in query format.
-   * @async
-   * @return {Promise}
-   */
-
-  /**
-   * @name CosmicLink#getJson
-   * @function
-   * @desc Returns a promise that resolves to the current transaction in json format.
-   * @async
-   * @return {Promise}
-   */
-
-  /**
-   * @name CosmicLink#getTdesc
-   * @function
-   * @desc Returns a promise that resolves to the current transaction in tdesc format.
-   * @async
-   * @return {Promise}
-   */
-
-  /**
-   * @name CosmicLink#getTransaction
-   * @function
-   * @desc Returns a promise that resolves to the current transaction in Transaction format.
-   * @async
-   * @return {Promise}
-   */
-
-  /**
-   * @name CosmicLink#getXdr
-   * @function
-   * @desc Returns a promise that resolves to the current transaction in XDR format.
-   * @async
-   * @return {Promise}
-   */
-  const getFrom = 'get' + helpers.capitalize(from)
-  const getTo = 'get' + helpers.capitalize(to)
-  const converter = from + 'To' + helpers.capitalize(to)
-
-  const getter = cosmicLink[getFrom]
-  cosmicLink[getTo] = helpers.delay(async () => {
-    const value = await getter()
-    return convert[converter](cosmicLink, value, ...options)
-  })
 }
