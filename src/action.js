@@ -83,7 +83,7 @@ action.lock = async function (cosmicLink, options = {}) {
  */
 action.sign = async function (cosmicLink, ...keypairsOrPreimage) {
   if (!cosmicLink.locker) throw new Error('cosmicLink is not locked.')
-  resolve.network(cosmicLink)
+  resolve.useNetwork(cosmicLink)
 
   const transaction = cosmicLink.transaction
   let allFine = true

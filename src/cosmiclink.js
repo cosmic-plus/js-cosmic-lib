@@ -177,7 +177,7 @@ const CosmicLink = class CosmicLink {
    *
    * @return {Server} A Stellar SDK Server object
    */
-  selectNetwork () { return resolve.network(this) }
+  selectNetwork () { return resolve.useNetwork(this) }
   lock (options) { return action.lock(this, options) }
   sign (...keypairs_or_preimage) { return action.sign(this, ...keypairs_or_preimage) }
   send (server) { return action.send(this, server) }

@@ -21,51 +21,57 @@ const helpers = require('ticot-box/misc')
  * @returns {Server} A StellarSdk Server object
  */
 resolve.server = function (conf, network = conf.network, horizon = conf.horizon) {
-  const passphrase = networkPassphrase(conf, network)
-  if (!passphrase) throw new Error('No network selected.')
-  return getServer(conf, passphrase, horizon)
+  if (!horizon) {
+    const passphrase = resolve.networkPassphrase(conf, network)
+    if (!passphrase) throw new Error('No network selected.')
+    horizon = conf.current.horizon[passphrase]
+    if (!horizon) throw new Error('No horizon node defined for selected network.')
+  }
+  if (!conf.current.server[horizon]) conf.current.server[horizon] = new StellarSdk.Server(horizon)
+  return conf.current.server[horizon]
 }
 
 /**
  * Switch to network `network` if it is given, else switch to
- * `cosmicLib.config.network`.
+ * `cosmicLib.config.network`. If an `horizon` URL is given, sets it as the
+ * default horizon node for `network`.
  *
  * @param {string} [network] 'public', 'test' or a network passphrase
  * @param {string} [horizon] A horizon instance URL
  * @returns {Server} A StellarSdk Server object
  */
-resolve.network = function (conf, network = conf.network, horizon = conf.horizon) {
-  const passphrase = networkPassphrase(conf, network)
-  if (passphrase !== networkPassphrase()) {
+resolve.useNetwork = function (conf, network = conf.network, horizon) {
+  const passphrase = resolve.networkPassphrase(conf, network)
+  const currentPassphrase = resolve.networkPassphrase()
+  if (passphrase !== currentPassphrase) {
     console.log('Switch to network: ' + network)
     StellarSdk.Network.use(new StellarSdk.Network(passphrase))
   }
+  if (horizon) conf.current.horizon[passphrase] = horizon
 }
 
 /**
- * Returns the passphrase for `network` if it is given, else or for the current
- * network.
+ * Returns the default Horizon node URL, or the Horizon node URL for `network`
+ * if provided.
  *
- * @private
+ * @param {string} [network] A network name or passphrase.
  */
-function networkPassphrase (conf, network) {
+resolve.horizon = function (conf, network = conf.network) {
+  const passphrase = resolve.networkPassphrase(conf, network)
+  return conf.current.horizon[passphrase]
+}
+
+/**
+ * Returns the passphrase for `network` if it is given, else or for the default
+ * network.
+ */
+resolve.networkPassphrase = function (conf = {}, network = conf.network) {
   if (network) {
     return conf.current.passphrase[network] || network
   } else {
     const currentNetwork = StellarSdk.Network.current()
     if (currentNetwork) return currentNetwork.networkPassphrase()
   }
-}
-
-/**
- * Returns the StellarSdk Server object for `horizon` if it is given, else
- * returns the default StellarSdk Server object for network `passphrase`.
- *
- * @private
- */
-function getServer (conf, passphrase, horizon = conf.current.horizon[passphrase]) {
-  if (!conf.current.server[horizon]) conf.current.server[horizon] = new StellarSdk.Server(horizon)
-  return conf.current.server[horizon]
 }
 
 /**

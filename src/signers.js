@@ -48,7 +48,7 @@ const Signers = class Signers {
   hasSigned (accountId) {
     if (accountId.substr(0, 1) === 'G') {
       const keypair = StellarSdk.Keypair.fromPublicKey(accountId)
-      resolve.network(this._conf)
+      resolve.useNetwork(this._conf)
       const txHash = this._transaction.hash()
       return !!this.signatures.find(entry => keypair.verify(txHash, entry.signature()))
     }
