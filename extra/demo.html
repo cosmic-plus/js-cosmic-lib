@@ -8,7 +8,7 @@
 
 <script>
   var cosmicLink, pageBox, networkBox, sourceBox, signerBox, formatBoxes = [],
-      signButton, sendButton, formats = ['uri', 'query', 'json', 'xdr']
+      signButton, sendButton, formats = ['uri', 'query', 'json', 'xdr', 'sep7']
 
   function init () {
     // Grabbing the HTML elements for later use.
@@ -68,7 +68,7 @@
         // cosmicLink may have changed by the time lock() resolves.
         if (obj !== cosmicLink) return
 
-        refreshFormatBoxes(['xdr'])
+        refreshFormatBoxes(['xdr', 'sep7'])
         enableButtons()
       })
   }
@@ -129,7 +129,7 @@
   }
 
   // Update format boxes content.
-  function refreshFormatBoxes (boxes = ['uri', 'query', 'json', 'xdr']) {
+  function refreshFormatBoxes (boxes = formats) {
     boxes.forEach(format => {
       const box = formatBoxes[format]
       if (format === 'query') history.replaceState({}, '', cosmicLink[format])
@@ -253,6 +253,8 @@ input, textarea {
         <textarea id="json" rows=8 placeholder="JSON"></textarea>
         <label for="xdr">XDR:</label>
         <textarea id="xdr" rows=3 placeholder="XDR"></textarea>
+        <label for="sep7">SEP-0007:</label>
+        <input id="sep7" type="text" placeholder="SEP-0007">
       </form>
     </div>
   </main>

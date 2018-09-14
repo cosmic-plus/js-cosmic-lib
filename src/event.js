@@ -24,7 +24,7 @@ event.callClickHandler = function (conf, fieldType, eventObject) {
 
 /** *** Format events *****/
 
-const allFormats = ['any', 'uri', 'query', 'tdesc', 'json', 'transaction', 'xdr']
+const allFormats = ['any', 'uri', 'query', 'tdesc', 'json', 'transaction', 'xdr', 'sep7']
 
 event.addFormatHandler = function (conf, format, callback) {
   const handlers = conf.formatHandlers

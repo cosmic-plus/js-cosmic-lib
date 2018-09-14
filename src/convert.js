@@ -257,22 +257,17 @@ async function makeTransactionBuilder (conf, tdesc) {
     if (tdesc.maxTime) txOpts.timebounds.maxTime = tdesc.maxTime
   }
 
-  const loadedAccount = await resolve.account(conf, tdesc.source)
-  if (tdesc.sequence) {
-    const baseAccount = new StellarSdk.Account(loadedAccount.id, tdesc.sequence)
-    baseAccount.sequence = baseAccount.sequence.sub(1)
-    loadedAccount._baseAccount = baseAccount
-  }
-  const builder = new StellarSdk.TransactionBuilder(loadedAccount, txOpts)
+  const sourceAccount = await getMainSourceAccount(conf, tdesc)
+  const builder = new StellarSdk.TransactionBuilder(sourceAccount, txOpts)
 
   /// Check if memo is needed for destination account.
   for (let index in tdesc.operations) {
     const operation = tdesc.operations[index]
     if (operation.destination) {
-      const account = await resolve.address(conf, operation.destination)
-      if (account.memo) {
-        const memoType = account.memo_type
-        const memoValue = account.memo
+      const destination = await resolve.address(conf, operation.destination)
+      if (destination.memo) {
+        const memoType = destination.memo_type
+        const memoValue = destination.memo
         if (tdesc.memo && (tdesc.memo.type !== memoType || tdesc.memo.value !== memoValue)) {
           const short = helpers.shorter(operation.destination)
           status.error(conf, `Memo conflict: ${short} requires to set a memo`, 'throw')
@@ -288,6 +283,24 @@ async function makeTransactionBuilder (conf, tdesc) {
 }
 
 /**
+ * Fetch the main source account for `tdesc` or return a neutral account.
+ */
+async function getMainSourceAccount (conf, tdesc) {
+  const source = tdesc.source || conf.source
+  if (!source) {
+    return new StellarSdk.Account(specs.neutralAccountId, '0')
+  } else {
+    const account = await resolve.account(conf, source)
+    if (tdesc.sequence) {
+      const baseAccount = new StellarSdk.Account(source, tdesc.sequence)
+      baseAccount.sequence = baseAccount.sequence.sub(1)
+      account._baseAccount = baseAccount
+    }
+    return account
+  }
+}
+
+/**
  * Return the XDR of `transaction`.
  *
  * @param {Transaction} transaction
@@ -295,6 +308,22 @@ async function makeTransactionBuilder (conf, tdesc) {
  */
 convert.transactionToXdr = function (conf, transaction) {
   return transaction.toEnvelope().toXDR('base64')
+}
+
+/**
+ * Returns the SEP-0007 representation for `xdr`.
+ *
+ * @param {XDR} xdr Transaction envelope XDR.
+ * @return {string} SEP-0007 encoded url.
+ */
+convert.xdrToSep7 = function (conf, xdr) {
+  let sep7 = 'web+stellar:tx?xdr='
+  sep7 += encodeURIComponent(xdr)
+  const passphrase = resolve.networkPassphrase(conf)
+  if (passphrase !== StellarSdk.Networks.PUBLIC) {
+    sep7 += '&network_passphrase=' + encodeURIComponent(passphrase)
+  }
+  return sep7
 }
 
 /** ****************************    XDR -> URI    ******************************/
@@ -346,6 +375,9 @@ convert.xdrToQuery = function (conf, xdr, options = {}) {
 convert.transactionToTdesc = function (conf, transaction, options = {}) {
   const copy = JSON.parse(JSON.stringify(transaction))
   delete copy.tx
+
+  if (copy.source === specs.neutralAccountId) options.stripSource = true
+  if (copy.sequence === '0') options.stripSequence = true
 
   if (options.stripSource) {
     delete copy.source

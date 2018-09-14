@@ -153,6 +153,17 @@ const CosmicLink = class CosmicLink {
     return this._xdr
   }
 
+  /**
+   * CosmicLink's SEP-0007.
+   */
+  get sep7 () {
+    if (!this._sep7) {
+      if (!this.xdr) return undefined
+      this._sep7 = convert.xdrToSep7(this, this.xdr)
+    }
+    return this._sep7
+  }
+
   /// Data
   /**
    * CosmicLink's {@link Transaction} main source.

@@ -123,3 +123,29 @@ for (let field in specs.fieldType) {
   const type = specs.fieldType[field]
   specs.types.find(entry => entry === type) || specs.types.push(type)
 }
+
+/**
+ * A neutral account ID meant to be replaced before signing & sending the
+ * transaction.
+ * @static
+ */
+specs.neutralAccountId = 'GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWHF'
+
+/**
+ * The mandatory fields for each SEP-0007 operation.
+ */
+specs.sep7MandatoryFields = {
+  tx: [ 'xdr' ],
+  pay: [ 'destination' ]
+}
+
+/**
+ * The optional fields for each SEP-0007 operation.
+ */
+specs.sep7OptionalFields = {
+  tx: [ 'callback', 'pubkey', 'network_passphrase', 'origin_domain', 'signature' ],
+  pay: [ 'amount', 'asset_code', 'asset_issuer', 'memo', 'memo_type', 'callback',
+    'network_passphrase', 'origin_domain', 'signature' ]
+}
+
+specs.sep7IgnoredFields = [ 'callback', 'pubkey', 'origin_domain', 'signature' ]

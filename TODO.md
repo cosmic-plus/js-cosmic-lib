@@ -1,7 +1,6 @@
 Before stable release (planned for this autumn):
 * Have a native english speaker check all the texts
 * Support DKIF
-* Support SEP-0007
 * Implement on-chain signatures & transactions sharing
 * Implement cosmic link builder
 * Expose some of the underlying modules (resolve, format, maybe convert)

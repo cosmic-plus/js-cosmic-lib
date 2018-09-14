@@ -13,6 +13,7 @@ const parse = exports
 
 const convert = require('./convert')
 const event = require('./event')
+const specs = require('./specs')
 const status = require('./status')
 
 /**
@@ -37,6 +38,7 @@ parse.dispatch = function (cosmicLink, value, options = {}) {
 
   try {
     if (type === 'xdrUri') parseXdrUri(cosmicLink, value, options)
+    else if (type === 'sep7') parseSep7(cosmicLink, value, options)
     else setTdesc(cosmicLink, type, value, options)
   } catch (error) {
     console.error(error)
@@ -55,7 +57,8 @@ function guessType (value) {
   let type
   if (typeof value === 'string') {
     const query = convert.uriToQuery('', value)
-    if (query && query.substr(0, 5) === '?xdr=') type = 'xdrUri'
+    if (value.substr(0, 12) === 'web+stellar:') type = 'sep7'
+    else if (query && query.substr(0, 5) === '?xdr=') type = 'xdrUri'
     else if (value.substr(0, 1) === '?') type = 'query'
     else if (value.substr(0, 1) === '{') type = 'json'
     else if (value.match(/^[a-zA-Z0-9+-=/]+$/)) type = 'xdr'
@@ -104,6 +107,49 @@ function parseXdrUri (cosmicLink, xdrUri, options) {
 }
 
 /**
+ * Initialize cosmicLink using `sep7`.
+ */
+function parseSep7 (cosmicLink, sep7, options = {}) {
+  if (sep7.substr(12, 4) === 'pay?') {
+    throw new Error("SEP-0007 'pay' operation is not currently supported.")
+  } else if (sep7.substr(12, 3) !== 'tx?') {
+    throw new Error('Invalid SEP-0007 link.')
+  }
+
+  const query = convert.uriToQuery(cosmicLink, sep7)
+  const params = query.substr(1).split('&')
+  if (!options.network) options.network = 'public'
+  let xdr
+
+  params.forEach(entry => {
+    const field = entry.replace(/=.*$/, '')
+    const value = entry.substr(field.length + 1)
+
+    if (!isValidSep7Field('tx', field)) {
+      throw new Error('Invalid SEP-0007 field: ' + field)
+    }
+
+    if (isIgnoredSep7Field(field)) {
+      console.warn('Ignored SEP-0007 field: ' + field)
+    }
+
+    if (field === 'xdr') xdr = decodeURIComponent(value)
+    if (field === 'network_passphrase') options.network = decodeURIComponent(value)
+  })
+
+  setTdesc(cosmicLink, 'xdr', xdr, options)
+}
+
+function isValidSep7Field (sep7Op, field) {
+  return specs.sep7MandatoryFields[sep7Op].find(name => name === field) ||
+    specs.sep7OptionalFields[sep7Op].find(name => name === field)
+}
+
+function isIgnoredSep7Field (field) {
+  return specs.sep7IgnoredFields.find(name => name === field)
+}
+
+/**
  * Set cosmicLink_tdesc from format `type`. From there, the CosmicLink methods
  * can lazy-evaluate any requested format.
  */
@@ -120,6 +166,8 @@ function setTdesc (cosmicLink, type, value, options) {
     case 'json':
       cosmicLink._tdesc = convert.jsonToTdesc(cosmicLink, cosmicLink.json)
       break
+    case 'sep7':
+      cosmicLink._xdr = convert.sep7ToXdr(cosmicLink, cosmicLink.sep7)
     case 'xdr':
       cosmicLink._transaction = convert.xdrToTransaction(cosmicLink, cosmicLink.xdr, options)
     case 'transaction':
