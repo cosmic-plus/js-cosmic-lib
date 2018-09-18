@@ -41,6 +41,18 @@ action.lock = async function (cosmicLink, options = {}) {
     throw new Error('CosmicLink is already locked.')
   }
 
+  try {
+    await applyLock(cosmicLink, options)
+  } catch (error) {
+    console.log(error)
+    if (!cosmicLink.errors) status.errors(cosmicLink, error.message)
+    status.fail(cosmicLink, "Can't build transaction", 'throw')
+  }
+
+  return cosmicLink
+}
+
+async function applyLock (cosmicLink, options) {
   cosmicLink.locker = {
     source: cosmicLink.tdesc.source || options.source || config.source,
     network: cosmicLink.tdesc.network || options.network || config.network
@@ -61,8 +73,6 @@ action.lock = async function (cosmicLink, options = {}) {
     cosmicLink.signers = await resolve.signers(cosmicLink, cosmicLink.transaction)
     event.callFormatHandlers(cosmicLink, ['uri', 'query', 'tdesc', 'json'])
   }
-
-  return cosmicLink
 }
 
 /**
