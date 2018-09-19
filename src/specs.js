@@ -15,17 +15,25 @@ specs.transactionOptionalFields = [
 ]
 
 /**
+ * @param {string} field
+ * @return {boolean}
+ */
+specs.isTransactionField = function (field) {
+  return specs.transactionOptionalFields.find(name => name === field)
+}
+
+/**
  * Operation mandatory fields.
  */
 specs.operationMandatoryFields = {
   accountMerge: ['destination'],
-  allowTrust: ['assetCode', 'trustor'],
+  allowTrust: ['authorize', 'assetCode', 'trustor'],
   bumpSequence: ['bumpTo'],
   changeTrust: ['asset'],
   createAccount: ['destination', 'startingBalance'],
   createPassiveOffer: ['selling', 'buying', 'amount', 'price'],
   inflation: [],
-  manageData: ['name'],
+  manageData: ['name', 'value'],
   manageOffer: ['selling', 'buying', 'amount', 'price'],
   pathPayment: ['sendAsset', 'sendMax', 'destination', 'destAsset', 'destAmount'],
   payment: ['asset', 'destination', 'amount'],
@@ -37,19 +45,37 @@ specs.operationMandatoryFields = {
  */
 specs.operationOptionalFields = {
   accountMerge: ['source'],
-  allowTrust: ['authorize', 'source'],
+  allowTrust: ['source'],
   bumpSequence: ['source'],
   changeTrust: ['limit', 'source'],
   createAccount: ['source'],
   createPassiveOffer: ['source'],
   inflation: ['source'],
-  manageData: ['value', 'source'],
+  manageData: ['source'],
   manageOffer: ['offerId', 'source'],
   pathPayment: ['path', 'source'],
   payment: ['source'],
   setOptions: ['inflationDest', 'clearFlags', 'setFlags', 'masterWeight',
     'lowThreshold', 'medThreshold', 'highThreshold', 'signer', 'homeDomain',
     'source']
+}
+
+/**
+ * Operations fields
+ */
+specs.operationFields = {}
+for (let field in specs.operationMandatoryFields) {
+  specs.operationFields[field] = specs.operationMandatoryFields[field]
+    .concat(specs.operationOptionalFields[field])
+}
+
+/**
+ * @param {string} type Operation type
+ * @param {string} field
+ * @return {boolean}
+ */
+specs.isOperationField = function (operation, field) {
+  return specs.operationFields[operation].find(name => name === field)
 }
 
 /**
@@ -98,7 +124,7 @@ specs.fieldType = {
   source: 'address',
   startingBalance: 'amount',
   trustor: 'address',
-  value: 'string'
+  value: 'buffer'
 }
 
 /**

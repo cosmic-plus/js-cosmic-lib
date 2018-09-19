@@ -8,6 +8,10 @@
  */
 const resolve = exports
 
+const helpers = require('@cosmic-plus/jsutils/misc')
+const StellarSdk = require('@cosmic-plus/base/stellar-sdk')
+
+const specs = require('./specs')
 const status = require('./status')
 
 const helpers = require('ticot-box/misc')
@@ -93,11 +97,6 @@ resolve.address = function (conf, address) {
 }
 
 async function addressResolver (conf, address) {
-  if (address.length !== 56 && !address.match(/.*\*.*\..*/)) {
-    status.fail(conf, 'Invalid address(es)')
-    status.error(conf, 'Invalid address: ' + helpers.shorter(address), 'throw')
-  }
-
   try {
     const account = await StellarSdk.FederationServer.resolve(address)
     const accountId = account.account_id
@@ -143,6 +142,27 @@ async function accountResolver (conf, accountId) {
     console.error(error)
     const short = helpers.shorter(accountId)
     status.error(conf, `Empty account: ${short}`, 'throw')
+  }
+}
+
+resolve.txSource = async function (conf, address, sequence) {
+  if (!address) {
+    const neutralAccount = new StellarSdk.Account(specs.neutralAccountId, '0')
+    neutralAccount.signers = [ specs.neutralAccountId ]
+    if (conf.cache && conf.cache.account) {
+      conf.cache.account[specs.neutralAccountId] = neutralAccount
+    }
+    return neutralAccount
+  } else {
+    const destination = await resolve.address(conf, address)
+    if (destination.memo) status.error(conf, 'Invalid transaction source address (requires a memo)', 'throw')
+    const account = await resolve.account(conf, destination.account_id)
+    if (sequence) {
+      const baseAccount = new StellarSdk.Account(account.id, sequence)
+      baseAccount.sequence = baseAccount.sequence.sub(1)
+      account._baseAccount = baseAccount
+    }
+    return account
   }
 }
 

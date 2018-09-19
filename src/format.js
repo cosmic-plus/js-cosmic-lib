@@ -262,9 +262,10 @@ process.string = function (conf, string) {
   return document.createTextNode(string)
 }
 
-process.error = function (conf, error) {
-  const errorNode = html.create('span', '.CL_error', error.value)
-  errorNode.title = 'Invalid value'
+process.error = function (conf, errDesc) {
+  const errorNode = html.create('span', '.CL_error')
+  errorNode.textContent = errDesc.value === '' ? '(undefined)' : errDesc.value
+  errorNode.title = errDesc.error.message
   return errorNode
 }
 
@@ -339,9 +340,8 @@ process.assetsArray = function (conf, assetsArray) {
   return assetsArrayNode
 }
 
-process.date = function (conf, timestamp) {
-  const date = new Date(timestamp * 1000)
-  return html.create('span', {}, date.toLocaleString())
+process.date = function (conf, date) {
+  return html.create('span', {}, new Date(date).toLocaleString())
 }
 
 process.hash = function (conf, hash) {

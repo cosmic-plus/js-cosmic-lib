@@ -17,125 +17,125 @@ const asset4 = 'XRP:GBXRPL45NPHCVMFFAYZVUVFFVKSIZ362ZXFP7I2ETNQ3QKZMFLPRDTD5'
 const shasum = '4a3ec3730504983f960fb2df35a1d68d640ff55d151fa3128ca0fc707f86882e'
 const txsum = '3389e9f0f1a65f19736cacf544c2e825313e8447f569233bb8db39aa607c1234'
 const id = '18446744073709551615'
-const xdr = 'AAAAAPNZplGf6IuHluM86bq4GjGnQOoy5+cL4BlCi8fjUaOvAAAAZACL7QgAAAABAAAAAAAAAAAAAAABAAAAAAAAAAkAAAAAAAAAAeNRo68AAABAruAWxO6KiC3Q3K+icSYVrKgrseIh3190V1+82d0CA90ycZ/hjxgqXufv00WStBfRP85fRHDzCwdzPNvy6GeRDQ=='
+const xdr = 'AAAAAPNZplGf6IuHluM86bq4GjGnQOoy5+cL4BlCi8fjUaOvAAAAZACL7QgAAAADAAAAAAAAAAAAAAABAAAAAAAAAAkAAAAAAAAAAeNRo68AAABAruAWxO6KiC3Q3K+icSYVrKgrseIh3190V1+82d0CA90ycZ/hjxgqXufv00WStBfRP85fRHDzCwdzPNvy6GeRDQ=='
 
 const invalidKey = 'GBP7EQX652UPJJJRYFAPH64V2MHGUGFJNKJN7RNOPNSFIBH4BW6NSF54'
 
 const tests = [
   /** * Transaction fields ***/
   ['bigTitle', 'Transaction fields'],
-  ['url', 'https://cosmic.link/?inflation&network=test'],
-  ['url', 'https://cosmic.link/?inflation&source=' + accountMultiSig,
-    { dontSign: 1 }],
-  ['url', 'https://cosmic.link/?inflation&fee=500'],
-  ['url', 'https://cosmic.link/?manageData&name=test&value=true&minTime=2017-12-12&maxTime=2018-12-12',
+  ['query', '?inflation&network=test'],
+  ['query', '?inflation&source=' + accountMultiSig, { dontSign: 1 }],
+  ['query', '?inflation&fee=500'],
+  ['query', '?manageData&minTime=2017-12-12&maxTime=2018-12-12&name=test&value=true',
     {send: 1}],
-  ['url', 'https://cosmic.link/?manageData&name=test&value=true&minTime=2017-12-12T06:05Z',
+  ['query', '?manageData&minTime=2017-12-12T06:05&name=test&value=true',
     {send: 1}],
-  ['url', 'https://cosmic.link/?manageData&name=test&value=true&maxTime=2018-12-12T06:05+01:30',
-    {send: 1}],
-  ['url', 'https://cosmic.link/?inflation&memo=text:Hello_world!'],
-  ['url', 'https://cosmic.link/?inflation&memo=id:' + id],
-  ['url', 'https://cosmic.link/?inflation&memo=hash:' + shasum],
-  ['url', 'https://cosmic.link/?inflation&memo=return:' + shasum],
+  ['query', '?manageData&maxTime=2018-12-12T06:05+01:30&name=test&value=true',
+    {loopbackQuery: '?manageData&maxTime=2018-12-12T04:35&name=test&value=true',
+      send: 1}],
+  ['query', '?inflation&memo=Hello_world!'],
+  ['query', '?inflation&memo=id:' + id],
+  ['query', '?inflation&memo=hash:' + shasum],
+  ['query', '?inflation&memo=return:' + shasum],
 
   /** * Stellar operations ***/
   ['bigTitle', 'Operations'],
   ['title', 'Account merge'],
-  ['url', 'https://cosmic.link/?accountMerge&destination=' + account1],
+  ['query', '?accountMerge&destination=' + account1],
   ['title', 'Allow trust'],
-  ['url', 'https://cosmic.link/?allowTrust&authorize=true&assetCode=DIA&trustor=' + account1],
-  ['url', 'https://cosmic.link/?allowTrust&assetCode=DIA&trustor=' + account1],
-  ['url', 'https://cosmic.link/?allowTrust&authorize=false&assetCode=DIA&trustor=' + account1],
+  ['query', '?allowTrust&trustor=' + account1 + '&assetCode=DIA&authorize=true',
+    { loopbackQuery: '?allowTrust&trustor=GBWYUHFOHJECKDLFNCPGPVU6XRDJIBT5BYF6VXZEDHWVQRCR4HZVCGPU&assetCode=DIA' }],
+  ['query', '?allowTrust&trustor=' + account1 + '&assetCode=DIA'],
+  ['query', '?allowTrust&trustor=' + account1 + '&assetCode=DIA&authorize=false'],
   ['title', 'Bump Sequence'],
-  ['url', 'https://cosmic.link/?bumpSequence&bumpTo=999999999'],
+  ['query', '?bumpSequence&bumpTo=999999999'],
   ['title', 'Change trust'],
-  ['url', 'https://cosmic.link/?changeTrust&asset=' + asset1],
-  ['url', 'https://cosmic.link/?changeTrust&limit=0&asset=' + asset1],
-  ['url', 'https://cosmic.link/?changeTrust&limit=1000&asset=' + asset1],
+  ['query', '?changeTrust&asset=' + asset1],
+  ['query', '?changeTrust&asset=' + asset1 + '&limit=0'],
+  ['query', '?changeTrust&asset=' + asset1 + '&limit=1000'],
   ['title', 'Create account'],
-  ['url', 'https://cosmic.link/?createAccount&destination=' + account1 + '&startingBalance=220'],
+  ['query', '?createAccount&destination=' + account1 + '&startingBalance=220'],
   ['title', 'Create passive offer'],
-  ['url', 'https://cosmic.link/?createPassiveOffer&buying=' + asset1 + '&selling=' + asset2 + '&amount=10&price=50'],
-  ['url', 'https://cosmic.link/?createPassiveOffer&buying=' + asset1 + '&selling=' + asset2 + '&amount=10&price=50:1'],
-  ['url', 'https://cosmic.link/?createPassiveOffer&buying=' + asset1 + '&amount=100&price=10'],
-  ['url', 'https://cosmic.link/?createPassiveOffer&selling=' + asset1 + '&amount=100&price=0.1'],
+  ['query', '?createPassiveOffer&selling=' + asset2 + '&buying=' + asset1 + '&amount=10&price=50'],
+  ['query', '?createPassiveOffer&buying=' + asset1 + '&amount=100&price=10'],
+  ['query', '?createPassiveOffer&selling=' + asset1 + '&amount=100&price=0.1'],
   ['title', 'Inflation'],
-  ['url', 'https://cosmic.link/?inflation'],
+  ['query', '?inflation'],
   ['title', 'Manage data'],
-  ['url', 'https://cosmic.link/?manageData&name=mail&value=someone@example.org'],
-  ['url', 'https://cosmic.link/?manageData&name=address'],
+  ['query', '?manageData&name=mail&value=someone%40example.org'],
+  ['query', '?manageData&name=address'],
   ['title', 'Manage offer'],
-  ['url', 'https://cosmic.link/?manageOffer&selling=' + asset1 + '&buying=' + asset2 + '&amount=500&price=1:50'],
-  ['url', 'https://cosmic.link/?manageOffer&buying=' + asset1 + '&selling=' + asset2 + '&amount=500&price=1:25&offerId=12345'],
-  ['url', 'https://cosmic.link/?manageOffer&selling=' + asset1 + '&amount=10&price=0.1'],
+  ['query', '?manageOffer&selling=' + asset1 + '&buying=' + asset2 + '&amount=500&price=1:50',
+    { loopbackQuery: '?manageOffer&selling=ETH:GBDEVU63Y6NTHJQQZIKVTC23NWLQVP3WJ2RI2OTSJTNYOIGICST6DUXR&buying=CNY:admin*ripplefox.com&amount=500&price=0.02' }],
+  ['query', '?manageOffer&selling=' + asset2 + '&buying=' + asset1 + '&amount=500&price=1:25&offerId=12345',
+    { loopbackQuery: '?manageOffer&selling=CNY:admin*ripplefox.com&buying=ETH:GBDEVU63Y6NTHJQQZIKVTC23NWLQVP3WJ2RI2OTSJTNYOIGICST6DUXR&amount=500&price=0.04&offerId=12345' }],
+  ['query', '?manageOffer&selling=' + asset1 + '&amount=10&price=0.1'],
   ['title', 'Path Payment'],
-  ['url', 'https://cosmic.link/?pathPayment&sendAsset=' + asset1 + '&sendMax=20&destination=' + account1 + '&destAsset=' + asset2 + '&destAmount=200'],
-  ['url', 'https://cosmic.link/?pathPayment&sendAsset=' + asset1 + '&sendMax=20&destination=' + account1 + '&destAmount=500&path=' + asset2 + ',' + asset3 + ',' + asset4],
+  ['query', '?pathPayment&sendAsset=' + asset1 + '&sendMax=20&destination=' + account1 + '&destAsset=' + asset2 + '&destAmount=200'],
+  ['query', '?pathPayment&sendAsset=' + asset1 + '&sendMax=20&destination=' + account1 + '&destAmount=500&path=' + asset2 + ',' + asset3 + ',' + asset4],
   ['title', 'Payment'],
-  ['url', 'https://cosmic.link/?payment&destination=' + account1 + '&amount=20&asset=' + asset1],
-  ['url', 'https://cosmic.link/?payment&destination=' + account1 + '&amount=0.001'],
+  ['query', '?payment&destination=' + account1 + '&asset=' + asset1 + '&amount=20'],
+  ['query', '?payment&destination=' + account1 + '&amount=0.001'],
   ['title', 'setOptions'],
-  ['url', 'https://cosmic.link/?setOptions'],
-  ['url', 'https://cosmic.link/?setOptions&inflationDest=' + account1],
-  ['url', 'https://cosmic.link/?setOptions&clearFlags=3'],
-  ['url', 'https://cosmic.link/?setOptions&setFlags=4'],
-  ['url', 'https://cosmic.link/?setOptions&clearFlags=4&setFlags=3'],
-  ['url', 'https://cosmic.link/?setOptions&masterWeight=10'],
-  ['url', 'https://cosmic.link/?setOptions&lowThreshold=1&medThreshold=5&highThreshold=8'],
-  ['url', 'https://cosmic.link/?setOptions&signer=1:key:' + account1],
-  ['url', 'https://cosmic.link/?setOptions&signer=0:key:' + account1],
-  ['url', 'https://cosmic.link/?setOptions&signer=1:hash:' + shasum],
-  ['url', 'https://cosmic.link/?setOptions&signer=0:hash:' + shasum],
-  ['url', 'https://cosmic.link/?setOptions&signer=1:tx:' + txsum],
-  ['url', 'https://cosmic.link/?setOptions&signer=0:tx:' + txsum],
-  ['url', 'https://cosmic.link/?setOptions&homeDomain=cosmic.link'],
-  ['url', 'https://cosmic.link/?setOptions&homeDomain='],
+  ['query', '?setOptions'],
+  ['query', '?setOptions&inflationDest=' + account1],
+  ['query', '?setOptions&clearFlags=3'],
+  ['query', '?setOptions&setFlags=4'],
+  ['query', '?setOptions&clearFlags=4&setFlags=3'],
+  ['query', '?setOptions&masterWeight=10'],
+  ['query', '?setOptions&lowThreshold=1&medThreshold=5&highThreshold=8'],
+  ['query', '?setOptions&signer=1:key:' + account1],
+  ['query', '?setOptions&signer=0:key:' + account1],
+  ['query', '?setOptions&signer=1:hash:' + shasum],
+  ['query', '?setOptions&signer=0:hash:' + shasum],
+  ['query', '?setOptions&signer=1:tx:' + txsum],
+  ['query', '?setOptions&signer=0:tx:' + txsum],
+  ['query', '?setOptions&homeDomain=cosmic.link'],
+  ['query', '?setOptions&homeDomain='],
 
   /** * XDR conversion **/
   ['bigTitle', 'XDR conversion'],
-  ['url', 'https://cosmic.link/?xdr=' + xdr, { dontSign: 1 }],
-  ['url', 'https://cosmic.link/?xdr=' + xdr + '&stripSource&network=test',
-    { dontSign: 1 }],
-  ['url', 'https://cosmic.link/?xdr=' + xdr + '&stripSequence',
-    { dontSign: 1 }],
-  ['url', 'https://cosmic.link/?xdr=' + xdr + '&stripSignatures',
-    { dontSign: 1 }],
+  ['query', '?xdr=' + xdr, { dontSign: 1 }],
+  ['query', '?xdr=' + xdr + '&stripSource&network=test', { dontSign: 1 }],
+  ['query', '?xdr=' + xdr + '&stripSequence', { dontSign: 1 }],
+  ['query', '?xdr=' + xdr + '&stripSignatures', { dontSign: 1,
+    loopbackQuery: '?inflation&source=GDZVTJSRT7UIXB4W4M6OTOVYDIY2OQHKGLT6OC7ADFBIXR7DKGR27C63'}],
 
   /** * Sending tests ***/
   ['bigTitle', 'Sending tests'],
-  ['url', 'stellar://?manageData&name=name&value=Mister.Ticot',
+  ['query', 'stellar://?manageData&name=name&value=Mister.Ticot', {send: 1}],
+  ['query', "?manageData&name=planet&value=alert('pluton')", {send: 1}],
+  ['query', '?manageData&name=other&value=spaces%20and%20UTF8%20%7B%C3%B0%E2%80%A6%C3%B0%7D',
     {send: 1}],
-  ['url', "https://cosmic.link/?manageData&name=planet&value=alert('pluton')",
-    {send: 1}],
-  ['url', 'https://cosmic.link/?manageData&name=other&value=spaces%20and%20UTF8%20%7B%C3%B0%E2%80%A6%C3%B0%7D',
-    {send: 1}],
-  ['url', 'https://cosmic.link/?setOptions&homeDomain=cosmic.link',
-    {send: 1}],
-  ['url', 'https://cosmic.link/?payment&amount=0.00001&destination=' + account1,
-    {send: 1}],
+  ['query', '?setOptions&homeDomain=cosmic.link', {send: 1}],
+  ['query', '?payment&destination=' + account1 + '&amount=0.00001', {send: 1}],
 
   /** * Error handling ***/
   ['bigTitle', 'Error handling'],
   ['title', 'Unknow operation'],
-  ['url', 'https://cosmic.link/?something'],
+  ['query', '?something'],
   ['title', 'Unknow field'],
-  ['url', 'https://cosmic.link/?inflation&weird=true'],
+  ['query', '?inflation&weird=true'],
   ['title', 'Empty field'],
-  ['url', 'https://cosmic.link/?manageData&name='],
+  ['query', '?manageData&name='],
   ['title', 'Wrong address'],
-  ['url', 'https://cosmic.link/?payment&amount=1&destination=nobody*example.org'],
-  ['url', 'https://cosmic.link/?payment&amount=1&destination=weird'],
-  ['url', 'https://cosmic.link/?payment&amount=1&destination=' + invalidKey],
-  ['url', 'https://cosmic.link/?inflation&source=nobody*example.org'],
-  ['url', 'https://cosmic.link/?inflation&source=weird'],
-  ['url', 'https://cosmic.link/?inflation&source=' + invalidKey],
+  ['query', '?payment&amount=1&destination=nobody*example.org'],
+  ['query', '?payment&amount=1&destination=weird'],
+  ['query', '?payment&amount=1&destination=' + invalidKey],
+  ['query', '?inflation&source=nobody*example.org'],
+  ['query', '?inflation&source=weird'],
+  ['query', '?inflation&source=' + invalidKey],
   ['title', 'Wrong amount'],
-  ['url', 'https://cosmic.link/?payment&amount=abc&destination=' + account1]
+  ['query', '?payment&amount=abc&destination=' + account1]
 ]
 
 cosmicLib.config.network = 'test'
 cosmicLib.config.source = source
+
+/*******************************************************************************
+ * Page Layout
+ */
 
 const mainNode = html.grab('main')
 
@@ -153,11 +153,11 @@ function makeNav () {
   let navNode = html.grab('nav')
 
   let count = 0
-  let urlNum = 0
+  let queryNum = 0
 
   tests.forEach(entry => {
     if (entry[0] === 'bigTitle') {
-      if (count) summary[count].urlNum = urlNum
+      if (count) summary[count].queryNum = queryNum
       count++
       const entryNode = html.create('div', '.page')
       summary[count] = { node: entryNode, tests: [] }
@@ -166,7 +166,7 @@ function makeNav () {
         entry[1]
       ))
     } else {
-      if (entry[0] === 'url') urlNum++
+      if (entry[0] === 'query') queryNum++
       summary[count].tests.push(entry)
     }
   })
@@ -192,7 +192,7 @@ async function runSection (number) {
       case 'title':
         appendTitle(section.node, entry[1])
         break
-      case 'url':
+      case 'query':
         await appendCosmicLink(section.node, entry[1], entry[2])
     }
   }
@@ -204,13 +204,16 @@ function appendTitle (parent, title) {
   html.append(parent, titleNode, html.create('hr'))
 }
 
-async function appendCosmicLink (parent, url, options = {}) {
-  const cosmicLink = new CosmicLink(url)
+/*******************************************************************************
+ * Cosmic link tests.
+ */
+
+async function appendCosmicLink (parent, query, options = {}) {
+  const cosmicLink = new CosmicLink(query)
 
   html.append(
     parent,
-    html.create('input', { value: url }),
-    // ~ html.create('pre', {}, url),
+    html.create('input', { value: query }),
     cosmicLink.htmlNode,
     html.create('hr')
   )
@@ -218,49 +221,109 @@ async function appendCosmicLink (parent, url, options = {}) {
   cosmicLink.debugNode = html.create('div', '.CL_debug')
   html.append(cosmicLink.htmlNode, cosmicLink.debugNode)
 
-  cosmicLink.debugNode.style.display = 'none'
   try {
+    if (cosmicLink.status) throw new Error(cosmicLink.status)
     await checkCosmicLink(cosmicLink, options)
     await tryCosmicLink(cosmicLink, options)
   } catch (error) {
     console.error(error)
-    cosmicLink.debugNode.style.display = 'block'
-    html.append(cosmicLink.debugNode,
-      html.create('div', '.debug_error', error)
-    )
+    html.append(cosmicLink.debugNode, html.create('div', '.debug_error', error))
+    if (cosmicLink.json) {
+      html.append(cosmicLink.debugNode, html.create('textarea', '.json', cosmicLink.json))
+    }
   }
 }
 
+/**
+ * Run conversion tests.
+ */
 async function checkCosmicLink (cosmicLink, options) {
   function append (...el) { html.append(cosmicLink.debugNode, ...el) }
 
+  let conversionCheck = true
+  const initialQuery = cosmicLink.query
+
+  const json = testJsonConsistency(cosmicLink.json)
+  if (json) {
+    conversionCheck = false
+    append(html.create('span', '.debug_error', 'Inconsistent JSON conversion'))
+    append(html.create('textarea', '.json', cosmicLink.json))
+    append(html.create('textarea', '.json', json))
+  }
+
+  const linkOpts = {}
+  if (!cosmicLink.tdesc.sequence) linkOpts.stripSequence = true
+  if (!cosmicLink.tdesc.source) linkOpts.stripSource = true
+  if (cosmicLink.tdesc.network) linkOpts.network = cosmicLink.tdesc.network
+
   await cosmicLink.lock()
-  append(html.create('textarea', {}, cosmicLink.xdr))
 
-  const cLinkReverse = new CosmicLink(cosmicLink.xdr, { stripSource: true })
-  append(html.create('pre', {}, cLinkReverse.json))
-  append(html.create('input', { value: cLinkReverse.uri }))
+  const query = testQueryConsistency(cosmicLink, initialQuery, linkOpts, options.loopbackQuery)
+  if (query) {
+    conversionCheck = false
+    append(html.create('span', '.debug_error', 'Inconsistent Query conversion'))
+    append(html.create('textarea', null, initialQuery))
+    append(html.create('textarea', null, query))
+  }
 
-  const cLinkLoopback = new CosmicLink(cLinkReverse.uri)
-  await cLinkLoopback.lock()
+  const xdr = await testXdrConsistency(cosmicLink.xdr, linkOpts)
+  if (xdr) {
+    conversionCheck = false
+    append(html.create('span', '.debug_error', 'Inconsistent XDR conversion'))
+    append(html.create('textarea', null, cosmicLink.xdr))
+    append(html.create('textarea', null, xdr))
+  }
 
-  if (cosmicLink.xdr !== cLinkLoopback.xdr) {
-    append(html.create('textarea', {}, cLinkLoopback.xdr))
-    throw new Error('Loopback XDR differ from original')
-  } else {
-    html.append(cosmicLink.htmlNode,
-      html.create('div', '.debug_done', 'Conversion check: ok'))
+  if (conversionCheck) {
+    const msg = html.create('span', '.debug_done', 'Conversion check: ok')
+    html.append(cosmicLink.htmlNode, msg)
   }
 }
 
+/**
+ * Test if JSON is constistent over JSON -> query -> JSON conversion.
+ */
+function testJsonConsistency (json) {
+  const query = new CosmicLink(json).query
+  const loopback = new CosmicLink(query)
+  if (json !== loopback.json) return loopback.json
+}
+
+/**
+ * Test if Query is consistent over query -> XDR -> query.
+ * The tested queries are ordered in a way that prevent false negative.
+ */
+function testQueryConsistency (cosmicLink, query, options = {}, expectedLoopback) {
+  const loopback = new CosmicLink(cosmicLink.xdr, options)
+  loopback._query = loopback.query.replace('GAREELUB43IRHWEASCFBLKHURCGMHE5IF6XSE7EXDLACYHGRHM43RFOX', 'admin*ripplefox.com')
+  if (!expectedLoopback) expectedLoopback = query
+  if (expectedLoopback !== loopback.query) return loopback.query
+}
+
+/**
+ * Test if XDR is consistent over XDR -> query -> XDR conversion.
+ */
+async function testXdrConsistency (xdr, options = {}) {
+  const query = new CosmicLink(xdr, options).query
+  const loopback = await new CosmicLink(query).lock()
+  if (xdr !== loopback.xdr) return loopback.xdr
+}
+
+/**
+ * Test sign & send if requested in options.
+ */
 async function tryCosmicLink (cosmicLink, options) {
-  if (!options.dontSign) await cosmicLink.sign(keypair)
+  if (!options.dontSign) cosmicLink.sign(keypair)
   if (options.send) {
     await cosmicLink.send()
-    html.append(cosmicLink.htmlNode,
-      html.create('div', '.debug_done', 'Validated by network'))
+    const msg = html.create('div', '.debug_done', 'Validated by network')
+    html.append(cosmicLink.htmlNode, msg)
   }
 }
+
+/*******************************************************************************
+ * Page styling
+ */
 
 function addStyle (string) {
   const style = html.create('style', { type: 'text/css' }, string)
@@ -272,8 +335,10 @@ addStyle(`
   nav { display: block; margin: auto; }
   nav a { display: inline-block; margin: 1em; }
   footer { text-align: right; }
+  hr { margin: 1em; background: black; }
   input { width: 100%; }
-  textarea { width: 100%; rows: 3; }
+  textarea { width: 100%; height: 5em; }
+  .json { height: 10em; }
   .debug_done { color: mediumseagreen; }
   .debug_error { color: tomato; }
 `)

@@ -12,8 +12,88 @@
  */
 const check = exports
 
+const helpers = require('@cosmic-plus/jsutils/misc')
+
 const specs = require('./specs')
 const status = require('./status')
+
+check.tdesc = function (conf, tdesc) {
+  for (let field in tdesc) {
+    try {
+      check.txField(conf, field, tdesc[field])
+    } catch (error) {
+      tdesc[field] = errDesc(error, tdesc[field])
+    }
+  }
+
+  if (tdesc.operations.length > 100) {
+    status.error(conf, 'Too much operations (max 100)')
+  }
+
+  tdesc.operations.forEach(odesc => {
+    try { check.odesc(conf, odesc) } catch (e) {}
+  })
+
+  if (conf.errors) {
+    const error = new Error('Invalid tdesc')
+    error.tdesc = tdesc
+    throw error
+  }
+}
+
+check.odesc = function (conf, odesc) {
+  try {
+    check.operationType(conf, odesc.type)
+  } catch (error) {
+    odesc.type = errDesc(error, odesc.type)
+  }
+
+  for (let field in odesc) {
+    try {
+      check.operationField(conf, odesc.type, field, odesc[field])
+    } catch (error) {
+      odesc[field] = errDesc(error, odesc[field])
+    }
+  }
+
+  specs.operationMandatoryFields[odesc.type].forEach(field => {
+    if (odesc[field] === undefined) {
+      const error = new Error('Missing mandatory field: ' + field)
+      odesc[field] = errDesc(error)
+      status.error(conf, error.message)
+    }
+  })
+
+  if (conf.errors) throw new Error('Invalid odesc')
+}
+
+check.txField = function (conf, field, value) {
+  if (field === 'operations') return
+  if (!specs.transactionOptionalFields.find(name => name === field)) {
+    status.error(conf, 'Invalid transaction field: ' + field, 'throw')
+  }
+  check.field(conf, field, value)
+}
+
+check.operationType = function (conf, type) {
+  if (!specs.operationMandatoryFields[type]) {
+    status.error(conf, 'Invalid operation: ' + type, 'throw')
+  }
+}
+
+check.operationField = function (conf, operation, field, value) {
+  if (field === 'type') return
+  if (!specs.isOperationField(operation, field)) {
+    status.error(conf, `Invalid field for ${operation}: ${field}`, 'throw')
+  }
+  check.field(conf, field, value)
+}
+
+function errDesc (error, value = '') {
+  return { error: error, value: value }
+}
+
+/******************************************************************************/
 
 /**
  * Check that `field` is a valid transaction/operation field. If `value` is
@@ -24,6 +104,10 @@ const status = require('./status')
  * @param {string} [value]
  */
 check.field = function (conf, field, value) {
+  if ((value === '' || value === undefined) && field !== 'homeDomain') {
+    status.error(conf, `Missing value for field: ${field}`, 'throw')
+  }
+
   const type = specs.fieldType[field]
   if (!type) status.error(conf, 'Unknow field: ' + field, 'throw')
   if (value) check.type(conf, type, value)
@@ -41,11 +125,7 @@ check.type = function (conf, type, value) {
   if (!specs.types.find(entry => entry === type)) {
     throw new Error('Invalid type: ' + type)
   }
-  if (value) {
-    check.type(conf, type)
-    const checker = check[type]
-    if (checker) checker(conf, value)
-  }
+  return check[type](conf, value)
 }
 
 /**
@@ -59,7 +139,7 @@ check.type = function (conf, type, value) {
  * @param {number|string} [min]
  * @param {number|string} [max]
  */
-check.number = function (conf, value, type = 'number', min, max) {
+check.number = function (conf, value, type = 'number', min, max = 'unlimited') {
   const num = +value
   if (isNaN(num)) {
     status.error(conf,
@@ -94,6 +174,16 @@ check.integer = function (conf, value, type = 'integer', min, max) {
 
 /******************************************************************************/
 
+check.amount = function (conf, amount) {
+  check.number(conf, amount, 'amount')
+}
+
+check.address = function (conf, address) {
+  if (address.length !== 56 && !address.match(/.*\*.*\..*/)) {
+    status.error(conf, 'Invalid address: ' + helpers.shorter(address), 'throw')
+  }
+}
+
 check.asset = function (conf, asset) {
   const code = asset.code.toLowerCase()
   if (!asset.issuer && code !== 'xlm' && code !== 'native') {
@@ -104,13 +194,14 @@ check.asset = function (conf, asset) {
 check.assetsArray = function (conf, assetsArray) {
   let isValid = true
   for (let index in assetsArray) {
-    try { check.asset(conf, assetsArray[index]) } catch (error) { isValid = false }
+    try {
+      check.asset(conf, assetsArray[index])
+    } catch (error) {
+      console.log(error)
+      isValid = false
+    }
   }
   if (!isValid) throw new Error('Invalid assets array')
-}
-
-check.amount = function (conf, amount) {
-  check.number(conf, amount, 'amount')
 }
 
 check.boolean = function (conf, boolean) {
@@ -119,8 +210,20 @@ check.boolean = function (conf, boolean) {
   }
 }
 
+check.date = function (conf, date) {
+  if (isNaN(Date.parse(date))) {
+    status.error(conf, 'Invalid date: ' + date, 'throw')
+  }
+}
+
 check.flags = function (conf, flags) {
   check.integer(conf, flags, 'flags', 0, 7)
+}
+
+check.hash = function (conf, hash) {
+  if (hash.length !== 64 || !hash.match(/[0-9a-f]*/)) {
+    status.error(conf, 'Invalid hash:' + hash, 'throw')
+  }
 }
 
 check.price = function (conf, price) {
@@ -129,22 +232,22 @@ check.price = function (conf, price) {
       check.price(null, price.n)
       check.price(null, price.d)
     } catch (error) {
-      status.error(conf, 'Invalid price', 'throw')
+      status.error(conf, 'Invalid price: ' + price, 'throw')
     }
   } else {
-    check.number(conf, price, 0)
+    check.number(conf, price, 'price', 0)
   }
 }
 
 check.signer = function (conf, signer) {
   check.weight(conf, signer.weight)
   switch (signer.type) {
-    case 'key': break
+    case 'key':
+      check.address(conf, signer.value)
+      break
     case 'hash':
     case 'tx':
-      if (signer.value.length !== 64 || !signer.value.match(/[0-9a-f]*/)) {
-        status.error(conf, 'Invalid hash (expecting sha256sum)', 'throw')
-      }
+      check.hash(conf, signer.value)
       break
     default:
       status.error(conf, 'Invalid signer type: ' + signer.type, 'throw')
@@ -162,3 +265,13 @@ check.threshold = function (conf, threshold) {
 check.weight = function (conf, weight) {
   check.integer(conf, weight, 'weight', 0, 255)
 }
+
+/******************************************************************************/
+
+/**
+ * Provide dummy aliases for every other type for convenience & backward
+ * compatibility.
+ */
+specs.types.forEach(type => {
+  if (!exports[type]) exports[type] = (conf, value) => value
+})

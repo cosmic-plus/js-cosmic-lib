@@ -11,8 +11,10 @@
  */
 const parse = exports
 
+const check = require('./check')
 const convert = require('./convert')
 const event = require('./event')
+const expand = require('./expand')
 const specs = require('./specs')
 const status = require('./status')
 
@@ -33,17 +35,17 @@ parse.page = function (cosmicLink, uri) {
  * @param {*} value A transaction in any format
  * @param {Object} options Same options as {@see CosmicLink#constructor}
  */
-parse.dispatch = function (cosmicLink, value, options = {}) {
+parse.dispatch = function (cosmicLink, value = '?', options = {}) {
   const type = guessType(value)
 
   try {
-    if (type === 'xdrUri') parseXdrUri(cosmicLink, value, options)
-    else if (type === 'sep7') parseSep7(cosmicLink, value, options)
+    if (parseFmt[type]) parseFmt[type](cosmicLink, value, options)
     else setTdesc(cosmicLink, type, value, options)
   } catch (error) {
     console.error(error)
-    status.error(cosmicLink, error.message)
-    if (!cosmicLink.status) status.fail(cosmicLink, 'Invalid ' + type)
+    status.fail(cosmicLink, 'Invalid ' + type)
+    if (!cosmicLink.errors) status.error(cosmicLink, error.message)
+    if (error.tdesc) cosmicLink._tdesc = error.tdesc
   }
 
   if (options.page) parse.page(cosmicLink, options.page)
@@ -70,16 +72,21 @@ function guessType (value) {
   return type
 }
 
+/******************************************************************************/
+
+const parseFmt = {}
+
 /**
  * Initialize cosmicLink using `xdrUri`.
  */
-function parseXdrUri (cosmicLink, xdrUri, options) {
+parseFmt.xdrUri = function (cosmicLink, xdrUri, options) {
   parse.page(cosmicLink, xdrUri)
 
   const query = convert.uriToQuery(cosmicLink, xdrUri)
   const temp = query.split('&')
   const xdr = temp[0].substr(5)
 
+  options.network = 'public'
   temp.slice(1).forEach(entry => {
     let field = entry.replace(/=.*$/, '')
     let value = entry.substr(field.length + 1)
@@ -109,7 +116,7 @@ function parseXdrUri (cosmicLink, xdrUri, options) {
 /**
  * Initialize cosmicLink using `sep7`.
  */
-function parseSep7 (cosmicLink, sep7, options = {}) {
+parseFmt.sep7 = function (cosmicLink, sep7, options = {}) {
   if (sep7.substr(12, 4) === 'pay?') {
     throw new Error("SEP-0007 'pay' operation is not currently supported.")
   } else if (sep7.substr(12, 3) !== 'tx?') {
@@ -149,12 +156,14 @@ function isIgnoredSep7Field (field) {
   return specs.sep7IgnoredFields.find(name => name === field)
 }
 
+/******************************************************************************/
+
 /**
  * Set cosmicLink_tdesc from format `type`. From there, the CosmicLink methods
  * can lazy-evaluate any requested format.
  */
 function setTdesc (cosmicLink, type, value, options) {
-  if (value !== 'uri') cosmicLink['_' + type] = value
+  if (type !== 'uri') cosmicLink['_' + type] = value
 
   switch (type) {
     case 'uri':
@@ -164,7 +173,11 @@ function setTdesc (cosmicLink, type, value, options) {
       cosmicLink._tdesc = convert.queryToTdesc(cosmicLink, cosmicLink.query, options)
       break
     case 'json':
-      cosmicLink._tdesc = convert.jsonToTdesc(cosmicLink, cosmicLink.json)
+      value = convert.jsonToTdesc(cosmicLink, value)
+    case 'tdesc':
+      cosmicLink._tdesc = expand.tdesc(cosmicLink, value)
+      delete cosmicLink._json
+      check.tdesc(cosmicLink, cosmicLink.tdesc)
       break
     case 'sep7':
       cosmicLink._xdr = convert.sep7ToXdr(cosmicLink, cosmicLink.sep7)
@@ -176,8 +189,10 @@ function setTdesc (cosmicLink, type, value, options) {
         delete cosmicLink._xdr
         delete cosmicLink._transaction
       } else {
-        if (options.stripSignatures) cosmicLink.transaction.signatures = []
-        delete cosmicLink._xdr
+        if (options.stripSignatures) {
+          cosmicLink.transaction.signatures = []
+          delete cosmicLink._xdr
+        }
       }
   }
 }

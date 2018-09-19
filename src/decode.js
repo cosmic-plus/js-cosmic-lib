@@ -13,11 +13,56 @@
 const decode = exports
 
 const check = require('./check')
+const normalize = require('./normalize')
 const specs = require('./specs')
 const status = require('./status')
 
-const helpers = require('ticot-box/misc')
+decode.query = function (conf, query = '?') {
+  if (query.substr(0, 1) !== '?') status.fail(conf, 'Invalid query', 'throw')
 
+  const operations = []
+  const tdesc = {}
+
+  let command = query.substr(1).replace(/&.*/, '')
+  const params = query.substr(command.length + 2).split('&')
+  if (command && command !== 'transaction') operations.push({ type: command })
+
+  for (let index in params) {
+    const param = params[index].split('=', 2)
+    const field = param[0]
+    if (!field) continue
+
+    if (field === 'operation') {
+      operations.push({ type: param[1] })
+      command = 'operation'
+      continue
+    }
+
+    const value = decode.field(conf, field, param[1])
+
+    /// Multi-operation link.
+    if (command === 'transaction') {
+      tdesc[field] = value
+    } else if (command === 'operation') {
+      operations[operations.length - 1][field] = value
+    /// One-operation link.
+    } else {
+      if (specs.isTransactionField(field)) {
+        tdesc[field] = value
+      } else {
+        operations[0][field] = value
+      }
+    }
+  }
+
+  tdesc.operations = operations
+  normalize.tdesc(conf, tdesc)
+  tdesc.operations.forEach(odesc => normalize.odesc(conf, odesc))
+  check.tdesc(conf, tdesc)
+  return tdesc
+}
+
+/******************************************************************************/
 
 /**
  * Decode `value` accordingly to `field` type.
@@ -27,10 +72,8 @@ const helpers = require('ticot-box/misc')
  */
 decode.field = function (conf, field, value) {
   const type = specs.fieldType[field]
-  value = decodeURIComponent(value)
   if (type) return decode.type(conf, type, value)
-  /// This error will be handled latter in convert.queryToTdesc()
-  else throw ''
+  else throw new Error(`Invalid field: ${field}`)
 }
 
 /**
@@ -40,16 +83,19 @@ decode.field = function (conf, field, value) {
  * @param {string} value
  */
 decode.type = function (conf, type, value) {
-  check.type(conf, type)
-  const decoder = decode[type]
-  if (decoder) value = decoder(conf, value)
-  check.type(conf, type, value)
-  return value
+  if (value) {
+    value = decodeURIComponent(value)
+    return process[type] ? process[type](conf, value) : value
+  } else {
+    return ''
+  }
 }
 
 /******************************************************************************/
 
-decode.asset = function (conf, asset) {
+const process = {}
+
+process.asset = function (conf, asset) {
   const assetLower = asset.toLowerCase()
   if (assetLower === 'xlm' || assetLower === 'native') {
     return { code: 'XLM' }
@@ -60,27 +106,25 @@ decode.asset = function (conf, asset) {
   }
 }
 
-decode.assetsArray = function (conf, assetsList) {
+process.assetsArray = function (conf, assetsList) {
   const strArray = assetsList.split(',')
   return strArray.map(entry => decode.asset(conf, entry))
 }
 
-decode.boolean = function (conf, string) {
+process.boolean = function (conf, string) {
   switch (string) {
     case 'true': return true
     case 'false': return false
   }
 }
 
-decode.date = function (conf, string) {
-  const timeStamp = Date.parse(string)
-  if (isNaN(timeStamp)) {
-    status.error(conf, 'Invalid date (expecting ISO format): ' + string, 'throw')
-  }
-  return timeStamp / 1000
+process.date = function (conf, string) {
+  /// Use UTC timezone by default.
+  if (string.match(/T[^+]*[0-9]$/)) string += 'Z'
+  return new Date(string).toISOString()
 }
 
-decode.memo = function (conf, memo) {
+process.memo = function (conf, memo) {
   const type = memo.replace(/:.*/, '')
   const value = memo.replace(/^[^:]*:/, '')
   if (type === value) {
@@ -90,21 +134,25 @@ decode.memo = function (conf, memo) {
   }
 }
 
-decode.price = function (conf, price) {
+process.price = function (conf, price) {
   const numerator = price.replace(/:.*/, '')
   const denominator = price.replace(/^[^:]*:/, '')
   if (numerator === denominator) return price
   else return { n: +numerator, d: +denominator }
 }
 
-decode.signer = function (conf, signer) {
+process.signer = function (conf, signer) {
   const temp = signer.split(':')
-  if (temp.length > 3) {
-    status.error(conf,
-      'Invalid signer: ' + helpers.shorter(signer),
-      'throw'
-    )
-  }
   const object = { weight: temp[0], type: temp[1], value: temp[2] }
   return object
 }
+
+/******************************************************************************/
+
+/**
+ * Provide dummy aliases for every other type for convenience & backward
+ * compatibility.
+ */
+specs.types.forEach(type => {
+  exports[type] = (conf, value) => decode.type(conf, type, value)
+})

@@ -108,7 +108,7 @@ const CosmicLink = class CosmicLink {
    */
   get query () {
     if (!this._query) {
-      if (this.xdr) this._query = convert.xdrToQuery(this, this.xdr)
+      if (this.xdr) this._query = convert.xdrToQuery(this, this.xdr, { network: this.network })
       else if (this.tdesc) this._query = convert.tdescToQuery(this, this.tdesc)
       else return undefined
     }

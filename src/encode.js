@@ -8,9 +8,35 @@
  */
 const encode = exports
 
-const check = require('./check')
 const specs = require('./specs')
-const status = require('./status')
+
+encode.query = function (conf, tdesc) {
+  if (conf.errors) return undefined
+
+  let command
+  if (!tdesc.operations.length || tdesc.operations.length > 1 || tdesc.operations[0].source) {
+    command = 'transaction'
+  } else {
+    command = tdesc.operations[0].type
+  }
+  let query = '?' + command
+
+  specs.transactionOptionalFields.forEach(field => {
+    if (tdesc[field] !== undefined) query += encode.field(conf, field, tdesc[field])
+  })
+
+  tdesc.operations.forEach(odesc => {
+    if (command === 'transaction') query += '&operation=' + odesc.type
+    for (let field in odesc) {
+      if (field === 'type') continue
+      query += encode.field(conf, field, odesc[field])
+    }
+  })
+
+  return query
+}
+
+/******************************************************************************/
 
 /**
  * Encode `value` into cosmic link query format and return
@@ -22,8 +48,8 @@ const status = require('./status')
  */
 encode.field = function (conf, field, value) {
   const type = specs.fieldType[field]
-  if (!type) status.error(conf, 'Unknow field: ' + field, 'throw')
-  if (value === undefined) return ''
+  if (!type) throw new Error(`Invalid field: ${field}`)
+
   const encodedValue = encode.type(conf, type, value)
   if (encodedValue === '' && field !== 'homeDomain') return ''
   else return `&${field}=${encodedValue}`
@@ -37,43 +63,59 @@ encode.field = function (conf, field, value) {
  * @return {string}
  */
 encode.type = function (conf, type, value) {
-  check.type(conf, type)
   if (value === undefined) return ''
-  const encoder = encode[type]
-  if (typeof value === 'string') value = encodeURIComponent(value)
-  if (encoder) value = encoder(conf, value)
-  if (value === undefined) return ''
-  else return value
+
+  const encodedValue = process[type] ? process[type](conf, value) : value
+  if (encodedValue === undefined) return ''
+  else return encodedValue
 }
 
 /******************************************************************************/
 
-encode.asset = function (conf, asset) {
+const process = {}
+
+process.asset = function (conf, asset) {
   if (asset.issuer) return encodeURIComponent(asset.code) + ':' + encodeURIComponent(asset.issuer)
 }
 
-encode.assetsArray = function (conf, assetsArray) {
+process.assetsArray = function (conf, assetsArray) {
   return assetsArray.map(asset => encode.asset(conf, asset)).toString()
 }
 
-encode.boolean = function (conf, boolean) {
-  if (boolean === 'false' || !boolean) return 'false'
+process.boolean = function (conf, boolean) {
+  if (boolean === false) return 'false'
 }
 
-encode.date = function (conf, timestamp) {
-  const date = new Date(timestamp * 1000)
-  const isoString = date.toISOString()
-    .replace(/\.00.000/, '')
-    .replace(/\.000/, '')
-    .replace(/T00:00:00Z/, '')
-  return isoString
+process.buffer = function (conf, buffer) {
+  if (buffer) return encodeURIComponent(buffer)
 }
 
-encode.memo = function (conf, memo) {
+process.date = function (conf, date) {
+  return date.replace(/Z$/, '')
+}
+
+process.memo = function (conf, memo) {
   if (memo.type === 'text') return encodeURIComponent(memo.value)
   else return memo.type + ':' + encodeURIComponent(memo.value)
 }
 
-encode.signer = function (conf, signer) {
+process.price = function (conf, price) {
+  if (typeof price === 'string') return price
+  else return price.n + ':' + price.d
+}
+
+process.signer = function (conf, signer) {
   return signer.weight + ':' + signer.type + ':' + signer.value
 }
+
+process.string = encode.buffer
+
+/******************************************************************************/
+
+/**
+ * Provide dummy aliases for every other type for convenience & backward
+ * compatibility.
+ */
+specs.types.forEach(type => {
+  exports[type] = (conf, value) => encode.type(conf, type, value)
+})
