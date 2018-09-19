@@ -7,6 +7,7 @@
  */
 const action = exports
 
+const helpers = require('@cosmic-plus/jsutils/misc')
 const StellarGuard = require('@stellarguard/sdk')
 
 const convert = require('./convert')
@@ -16,7 +17,6 @@ const format = require('./format')
 const resolve = require('./resolve')
 const status = require('./status')
 
-const helpers = require('ticot-box/misc')
 
 /**
  * Lock a CosmicLink to a network, a primary source a sequence numbre. It is

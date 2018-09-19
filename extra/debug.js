@@ -1,6 +1,6 @@
 'use_strict'
 
-const html = require('ticot-box/html')
+const html = require('@cosmic-plus/jsutils/html')
 
 const source = 'GBP7EQX652UPJJJRYFAPH64V2MHGUGFJNKJN7RNOPNSFIBH4BW6NSF45'
 const secret = 'SAZMGMO2DUBRGQIXNHIEBRLUQOPC7SYLABFMC55JZVPXMZPBRXLMVKKV'

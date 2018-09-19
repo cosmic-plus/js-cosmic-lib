@@ -9,7 +9,7 @@
  */
 const status = exports
 
-const html = require('ticot-box/html')
+const html = require('@cosmic-plus/jsutils/html')
 
 /**
  * Set `conf` status as `status` and update statusNode.

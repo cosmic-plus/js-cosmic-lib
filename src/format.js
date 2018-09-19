@@ -8,12 +8,14 @@
  */
 const format = exports
 
+const helpers = require('@cosmic-plus/jsutils/misc')
+const html = require('@cosmic-plus/jsutils/html')
+const StellarSdk = require('@cosmic-plus/base/stellar-sdk')
+
 const event = require('./event')
 const specs = require('./specs')
 const resolve = require('./resolve')
 
-const html = require('ticot-box/html')
-const helpers = require('ticot-box/misc')
 
 /**
  * Returns an HTML div describing `tdesc`.

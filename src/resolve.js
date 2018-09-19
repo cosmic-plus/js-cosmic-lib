@@ -14,7 +14,6 @@ const StellarSdk = require('@cosmic-plus/base/stellar-sdk')
 const specs = require('./specs')
 const status = require('./status')
 
-const helpers = require('ticot-box/misc')
 
 /**
  * Returns the Server object for `horizon` if specified, else for `network`,

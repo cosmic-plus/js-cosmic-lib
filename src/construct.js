@@ -8,11 +8,12 @@
  */
 const construct = exports
 
+const helpers = require('@cosmic-plus/jsutils/misc')
+const StellarSdk = require('@cosmic-plus/base/stellar-sdk')
+
 const resolve = require('./resolve')
 const specs = require('./specs')
 const status = require('./status')
-
-const helpers = require('ticot-box/misc')
 
 /**
  * Returns the StellarSdk Transaction built from tdesc.

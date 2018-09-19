@@ -1,5 +1,7 @@
 'use_strict'
 
+const env = require('@cosmic-plus/jsutils/env')
+
 const action = require('./action')
 const config = require('./config')
 const convert = require('./convert')
@@ -7,12 +9,10 @@ const parse = require('./parse')
 const resolve = require('./resolve')
 const status = require('./status')
 
-const env = require('ticot-box/env')
-
 /// Web only
 let html, format
 if (env.isBrowser) {
-  html = require('ticot-box/html')
+  html = require('@cosmic-plus/jsutils/html')
   format = require('./format')
 }
 

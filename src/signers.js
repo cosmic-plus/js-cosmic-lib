@@ -8,7 +8,7 @@
  */
 const resolve = require('./resolve')
 
-const helpers = require('ticot-box/misc')
+const helpers = require('@cosmic-plus/jsutils/misc')
 
 const Signers = class Signers {
   constructor (conf, transaction) {

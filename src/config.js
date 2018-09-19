@@ -6,11 +6,13 @@
  */
 const config = exports
 
+const helpers = require('@cosmic-plus/jsutils/misc')
+const html = require('@cosmic-plus/jsutils/html')
+const StellarSdk = require('@cosmic-plus/base/stellar-sdk')
+
 const aliases = require('./aliases')
 const event = require('./event')
 
-const helpers = require('ticot-box/misc')
-const html = require('ticot-box/html')
 
 /**
  * The base URI to build cosmic links.

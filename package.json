@@ -46,8 +46,8 @@
     "webpack-cli": "^2.1.5"
   },
   "dependencies": {
-    "@stellarguard/sdk": "^1.4.1",
-    "stellar-sdk": "^0.10.2",
-    "ticot-box": "^1.0.0"
+    "@cosmic-plus/base": "^1.0.2",
+    "@cosmic-plus/jsutils": "^1.0.0",
+    "@stellarguard/sdk": "^1.4.1"
   }
 }
