@@ -45,7 +45,7 @@ action.lock = async function (cosmicLink, options = {}) {
     await applyLock(cosmicLink, options)
   } catch (error) {
     console.log(error)
-    if (!cosmicLink.errors) status.errors(cosmicLink, error.message)
+    if (!cosmicLink.errors) status.error(cosmicLink, error.message)
     status.fail(cosmicLink, "Can't build transaction", 'throw')
   }
 
@@ -67,7 +67,6 @@ async function applyLock (cosmicLink, options) {
     cosmicLink._transaction = await convert.tdescToTransaction(cosmicLink, cosmicLink.tdesc)
     cosmicLink.signers = await resolve.signers(cosmicLink, cosmicLink.transaction)
     delete cosmicLink._tdesc
-    delete cosmicLink._json
     event.callFormatHandlers(cosmicLink)
   } else {
     cosmicLink.signers = await resolve.signers(cosmicLink, cosmicLink.transaction)

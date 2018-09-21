@@ -100,7 +100,7 @@ const CosmicLink = class CosmicLink {
    * CosmicLink's URI.
    */
   get uri () {
-    return this.page + this.query
+    if (this.query) return this.page + this.query
   }
 
   /**
