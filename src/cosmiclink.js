@@ -181,6 +181,90 @@ const CosmicLink = class CosmicLink {
     else if (this.tdesc) return this.tdesc.network
   }
 
+  /// Editor
+  /**
+   * Add/remove transaction fields and reparse the CosmicLink. `object` should
+   * follow the Tdesc format, but fields can be written using query or StellarSdk
+   * format as well.
+   *
+   * @example
+   * cosmicLink.setTxFields({ minTime: '2018-10', maxTime: '2019-01' })
+   *
+   * @example
+   * cosmicLink.setTxFields({ minTime: null, maxTime: null })
+   *
+   * @example
+   * cosmicLink.setTxFields({ memo: 'Bonjour!' })
+   *
+   * @param {Object} object Transaction fields definition. Fields can be either
+   *   written using the JSON format or the query format
+   * @return {CosmicLink}
+   */
+  setTxFields (object) {
+    checkLock(this)
+    this.parse(Object.assign(this.tdesc, object))
+    return this
+  }
+
+  /**
+   * Add a new operation to CosmicLink. `params` should follow the Tdesc format,
+   * but fields can be written using query or StellarSdk format as well.
+   *
+   * @example
+   * cosmicLink.addOperation('payment', { destination: 'tips*cosmic.link', amount: 20 })
+   *
+   * @example
+   * cosmicLink.addOperation('changeTrust', { asset: 'CNY:admin*ripplefox' })
+   *
+   * @example
+   * cosmicLink.addOperation('changeTrust', { asset: { code: 'CNY', issuer: 'admin*ripplefox } })
+   *
+   * @example
+   * cosmicLink.addOperation('changeTrust', { asset: new StellarSdk.Asset('CNY', ...) })
+   *
+   * @param string type The operation type.
+   * @param {Object} params The operation parameters.
+   * @return {CosmicLink}
+   */
+  addOperation (type, params) {
+    checkLock(this)
+    const odesc = Object.assign({ type: type }, params)
+    this.tdesc.operations.push(odesc)
+    this.parse(this.tdesc)
+    return this
+  }
+
+  /**
+   * Set/remove one of the CosmicLink operations. `params` should follow the
+   * Tdesc format, but fields can be written using query or StellarSdk format
+   * as well. If `type` is set to `null`, the operation at `index` is deleted.
+   *
+   * @example
+   * cosmicLink.setOperation(1, 'setOptions', { homeDomain: 'example.org' })
+   *
+   * @example
+   * cosmicLink.setOperation(2, null)
+   *
+   * @param {integer} index The operation index.
+   * @param {type} type  The operation type.
+   * @param {params} params The operation parameters.
+   * @return {CosmicLink}
+   */
+  setOperation (index, type, params) {
+    checkLock(this)
+    if (!this.tdesc.operations[index]) {
+      throw new Error(`Operation ${index} doesn't exists`)
+    }
+
+    if (type === null) {
+      this.tdesc.operations.splice(index, 1)
+    } else {
+      this.tdesc.operations[index] = Object.assign({ type: type }, params)
+      this.parse(this.tdesc)
+    }
+    return this
+  }
+
   /// Actions
   /**
    * Select the network in use in this cosmic link. Returns the corresponding
@@ -295,6 +379,13 @@ function makeHtmlNodes (cosmicLink) {
     html.create('ul', '.CL_events')
   )
   status.populateHtmlNode(cosmicLink)
+}
+
+/**
+ * Throw an error if CosmicLink is locked.
+ */
+function checkLock (cosmicLink) {
+  if (cosmicLink.locker) throw new Error('Cosmic link is locked.')
 }
 
 CosmicLink.prototype.__proto__ = config
