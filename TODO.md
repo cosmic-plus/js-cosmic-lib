@@ -2,7 +2,7 @@ Before stable release (planned for this autumn):
 * Have a native english speaker check all the texts
 * Support DKIF
 * Implement on-chain signatures & transactions sharing
-* Expose some of the underlying modules (resolve, format, maybe convert)
+* Expose some of the underlying modules (format, maybe convert)
 
 Later:
 * Internationalization support
