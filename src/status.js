@@ -58,7 +58,7 @@ status.fail = function (conf, errorStatus, continuation) {
 status.error = function (conf, error, continuation) {
   console.log(error)
 
-  if (!conf.errors) conf.errors = []
+  if (conf.errors === false) conf.errors = []
   conf.errors.push(error)
   if (conf._statusNode) {
     const errorsNode = html.grab('.CL_events', conf._statusNode)

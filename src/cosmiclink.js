@@ -329,13 +329,19 @@ const CosmicLink = class CosmicLink {
  * @private
  */
 function initCosmicLink (cosmicLink, transaction, options = {}) {
+  checkLock(cosmicLink)
+
   /// Reset object in case of reparse.
-  ['query', 'tdesc', 'json', 'transaction', 'xdr'].forEach(type => delete cosmicLink['_' + type])
+  formatsFields.forEach(type => delete cosmicLink[type])
 
   cosmicLink.page = cosmicLink.page || options.page || config.page
 
   /// Enable per CosmicLink destinations/accounts caching.
-  cosmicLink.cache = cosmicLink.cache || { destination: {}, account: {} }
+  cosmicLink.cache = { destination: {}, account: {} }
+
+  /// Reset status & enable error tracking
+  cosmicLink.status = undefined
+  cosmicLink.errors = false
 
   parse.dispatch(cosmicLink, transaction, options)
 
@@ -344,6 +350,7 @@ function initCosmicLink (cosmicLink, transaction, options = {}) {
     if (cosmicLink._htmlNode) makeHtmlNodes(cosmicLink)
   }
 }
+const formatsFields = ['_query', '_tdesc', '_json', '_transaction', '_xdr']
 
 /**
  * Initialize CosmicLink html nodes.
@@ -383,6 +390,7 @@ function makeHtmlNodes (cosmicLink) {
 
 /**
  * Throw an error if CosmicLink is locked.
+ * @private
  */
 function checkLock (cosmicLink) {
   if (cosmicLink.locker) throw new Error('Cosmic link is locked.')

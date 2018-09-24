@@ -91,9 +91,9 @@ config.aliases = aliases.all
 /**
  * Add new aliases or replace existing ones.
  *
- * @param {Object} aliases An object such as `{ publicKey1: name1, ..., publicKeyN: nameN }`
+ * @param {Object} definitions An object such as `{ publicKey1: name1, ..., publicKeyN: nameN }`
  */
-config.addAliases = function (aliases) { aliases.add(config, aliases) }
+config.addAliases = function (definitions) { aliases.add(config, definitions) }
 
 /**
  * Remove aliases.

@@ -49,6 +49,8 @@ action.lock = async function (cosmicLink, options = {}) {
     status.fail(cosmicLink, "Can't build transaction", 'throw')
   }
 
+  updateSignersNode(cosmicLink)
+
   return cosmicLink
 }
 
@@ -135,14 +137,18 @@ action.sign = async function (cosmicLink, ...keypairsOrPreimage) {
   ['_query', '_xdr', '_sep7'].forEach(format => delete cosmicLink[format])
   event.callFormatHandlers(cosmicLink, ['uri', 'query', 'transaction', 'xdr', 'sep7'])
 
+  updateSignersNode(cosmicLink)
+
+  if (!allFine) throw new Error('Some signers where invalid')
+  else return transaction
+}
+
+function updateSignersNode (cosmicLink) {
   if (cosmicLink._signersNode) {
     const signersNode = format.signatures(cosmicLink, cosmicLink.signers)
     cosmicLink.htmlNode.replaceChild(signersNode, cosmicLink._signersNode)
     cosmicLink._signersNode = signersNode
   }
-
-  if (!allFine) throw new Error('Some signers where invalid')
-  else return transaction
 }
 
 /**
