@@ -3,10 +3,7 @@
 const env = require('@cosmic-plus/jsutils/env')
 const helpers = require('@cosmic-plus/jsutils/misc')
 
-if (env.isBrowser) {
-  require('@cosmic-plus/jsutils/polyfill')
-  require('../extra/cosmic-lib.css')
-}
+if (env.isBrowser) require('@cosmic-plus/jsutils/polyfill')
 
 /**
  * Automatically pass `config` to `module` functions as first argument.
@@ -62,5 +59,6 @@ exports.withConfig = function (params) {
 
 const config = exports.config = require('./config')
 exports.CosmicLink = require('./cosmiclink')
+exports.load = exposeModule(config, require('./load'))
 exports.resolve = exposeModule(config, require('./resolve'))
 exports.specs = require('./specs')

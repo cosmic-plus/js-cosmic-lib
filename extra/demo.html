@@ -10,6 +10,11 @@
   var cosmicLink, pageBox, networkBox, sourceBox, signerBox, formatBoxes = [],
       signButton, sendButton, formats = ['uri', 'query', 'json', 'xdr', 'sep7']
 
+  function preinit () {
+    // Asynchronous CSS loading.
+    cosmicLib.load.css('cosmic-lib.css').then(init)
+  }
+
   function init () {
     // Grabbing the HTML elements for later use.
     pageBox = document.querySelector('#page')
@@ -211,7 +216,7 @@ input, textarea {
 
 </style>
 
-<body id="body" onload="init()">
+<body id="body" onload="preinit()">
 
   <header>
     <h1>cosmic-lib demo page</h1>
