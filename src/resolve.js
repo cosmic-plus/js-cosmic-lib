@@ -107,8 +107,8 @@ async function addressResolver (conf, address) {
     return account
   } catch (error) {
     console.error(error)
-    status.fail(conf, 'Unresolved address(es)')
-    status.error(conf, "Can't resolve: " + helpers.shorter(address), 'throw')
+    status.error(conf, "Can't resolve: " + helpers.shorter(address))
+    status.fail(conf, 'Unresolved address', 'throw')
   }
 }
 
@@ -138,8 +138,7 @@ async function accountResolver (conf, accountId) {
     return accountResponse
   } catch (error) {
     console.error(error)
-    const short = helpers.shorter(accountId)
-    status.error(conf, `Empty account: ${short}`, 'throw')
+    status.error(conf, 'Empty account: ' + helpers.shorter(accountId), 'throw')
   }
 }
 

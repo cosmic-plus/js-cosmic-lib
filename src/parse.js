@@ -42,9 +42,11 @@ parse.dispatch = function (cosmicLink, value = '?', options = {}) {
     if (parseFmt[type]) parseFmt[type](cosmicLink, value, options)
     else setTdesc(cosmicLink, type, value, options)
   } catch (error) {
-    console.error(error)
+    if (!cosmicLink.errors) {
+      console.error(error)
+      status.error(cosmicLink, error.message)
+    }
     status.fail(cosmicLink, 'Invalid ' + type)
-    if (!cosmicLink.errors) status.error(cosmicLink, error.message)
     if (error.tdesc) cosmicLink._tdesc = error.tdesc
   }
 
@@ -105,8 +107,8 @@ parseFmt.xdrUri = function (cosmicLink, xdrUri, options) {
         options.network = value
         break
       default:
-        status.fail(cosmicLink, 'Invalid query')
         status.error(cosmicLink, 'Unknow option: ' + entry)
+        status.fail(cosmicLink, 'Invalid query')
     }
   })
 

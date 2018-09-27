@@ -17,7 +17,6 @@ const format = require('./format')
 const resolve = require('./resolve')
 const status = require('./status')
 
-
 /**
  * Lock a CosmicLink to a network, a primary source a sequence numbre. It is
  * required in order to generate the CosmicLink's {@link Transaction} and
@@ -34,7 +33,7 @@ const status = require('./status')
 action.lock = async function (cosmicLink, options = {}) {
   if (cosmicLink.status) {
     event.callFormatHandlers(cosmicLink, ['transaction', 'xdr'])
-    throw new Error('Invalid transaction')
+    throw new Error(cosmicLink.status)
   }
 
   if (cosmicLink.locker) {
@@ -44,9 +43,11 @@ action.lock = async function (cosmicLink, options = {}) {
   try {
     await applyLock(cosmicLink, options)
   } catch (error) {
-    console.log(error)
-    if (!cosmicLink.errors) status.error(cosmicLink, error.message)
-    status.fail(cosmicLink, "Can't build transaction", 'throw')
+    if (!cosmicLink.errors) {
+      console.error(error)
+      status.error(cosmicLink, error.message)
+    }
+    status.fail(cosmicLink, 'Transaction build failed', 'throw')
   }
 
   updateSignersNode(cosmicLink)

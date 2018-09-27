@@ -72,8 +72,7 @@ decode.query = function (conf, query = '?') {
  */
 decode.field = function (conf, field, value) {
   const type = specs.fieldType[field]
-  if (type) return decode.type(conf, type, value)
-  else throw new Error(`Invalid field: ${field}`)
+  return type ? decode.type(conf, type, value) : value
 }
 
 /**

@@ -296,7 +296,6 @@ async function resolveAddressAndUpdate (conf, address, addressNode) {
 
     addressNode.extra = account
   } catch (error) {
-    console.error(error)
     addressNode.title = "Can't resolve address"
     html.appendClass(addressNode, 'CL_error')
 

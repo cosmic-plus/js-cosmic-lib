@@ -33,9 +33,11 @@ construct.transaction = async function (conf, tdesc) {
     }
     return txBuilder.build()
   } catch (error) {
-    console.error(error)
-    if (!conf.errors) status.error(conf, error.message)
-    if (!conf.status) status.fail(conf, "Can't build transaction", 'throw')
+    if (!conf.errors) {
+      console.error(error)
+      status.error(conf, error.message)
+    }
+    if (!conf.status) status.fail(conf, 'Transaction build failed', 'throw')
     else throw error
   }
 }

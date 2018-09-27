@@ -333,15 +333,11 @@ function initCosmicLink (cosmicLink, transaction, options = {}) {
 
   /// Reset object in case of reparse.
   formatsFields.forEach(type => delete cosmicLink[type])
-
   cosmicLink.page = cosmicLink.page || options.page || config.page
+  status.init(cosmicLink)
 
   /// Enable per CosmicLink destinations/accounts caching.
   cosmicLink.cache = { destination: {}, account: {} }
-
-  /// Reset status & enable error tracking
-  cosmicLink.status = undefined
-  cosmicLink.errors = false
 
   parse.dispatch(cosmicLink, transaction, options)
 
