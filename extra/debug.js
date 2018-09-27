@@ -214,12 +214,12 @@ async function appendCosmicLink (parent, query, options = {}) {
   html.append(
     parent,
     html.create('input', { value: query }),
-    cosmicLink.htmlNode,
+    cosmicLink.htmlDescription,
     html.create('hr')
   )
 
   cosmicLink.debugNode = html.create('div', '.CL_debug')
-  html.append(cosmicLink.htmlNode, cosmicLink.debugNode)
+  html.append(cosmicLink.htmlDescription, cosmicLink.debugNode)
 
   try {
     if (cosmicLink.status) throw new Error(cosmicLink.status)
@@ -276,7 +276,7 @@ async function checkCosmicLink (cosmicLink, options) {
 
   if (conversionCheck) {
     const msg = html.create('span', '.debug_done', 'Conversion check: ok')
-    html.append(cosmicLink.htmlNode, msg)
+    html.append(cosmicLink.htmlDescription, msg)
   }
 }
 
@@ -317,7 +317,7 @@ async function tryCosmicLink (cosmicLink, options) {
   if (options.send) {
     await cosmicLink.send()
     const msg = html.create('div', '.debug_done', 'Validated by network')
-    html.append(cosmicLink.htmlNode, msg)
+    html.append(cosmicLink.htmlDescription, msg)
   }
 }
 

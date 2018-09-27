@@ -50,7 +50,7 @@ status.update = function (conf, status) {
  */
 status.fail = function (conf, errorStatus, continuation) {
   status.update(conf, errorStatus)
-  if (conf._statusNode) html.appendClass(conf.statusNode, 'CL_error')
+  if (conf._statusNode) html.appendClass(conf._statusNode, 'CL_error')
   errorContinuation(errorStatus, continuation)
 }
 
@@ -71,8 +71,8 @@ status.error = function (conf, error, continuation) {
     conf.errors.push(error)
 
     if (conf._statusNode) {
-      const errorsNode = html.grab('.CL_events', conf._statusNode)
-      const lineNode = html.create('li', '.CL_error', error)
+      const errorsNode = html.grab('.CL_errors', conf._statusNode)
+      const lineNode = html.create('li', null, error)
       html.append(errorsNode, lineNode)
     }
   }
@@ -81,20 +81,28 @@ status.error = function (conf, error, continuation) {
 }
 
 /**
- * Populate `conf.statusNode` with status anderrors from `conf.errors`.
+ * Create & return an HTML element that displays `conf` status and eventual
+ * errors.
+ *
+ * @return {htmlElement}
  */
-status.populateHtmlNode = function (conf) {
-  if (conf.status) {
-    const titleNode = html.grab('.CL_status', conf.statusNode)
-    titleNode.textContent = conf.status
-  }
+status.makeHtmlNode = function (conf) {
+  const statusNode = html.create('div', '.CL_statusNode')
+
+  const statusLine = html.create('span', '.CL_status')
+  html.append(statusNode, statusLine)
+  if (conf.status) statusLine.textContent = conf.status
+
+  const errorsNode = html.create('ul', '.CL_errors')
+  html.append(statusNode, errorsNode)
   if (conf.errors) {
-    const errorsNode = html.grab('.CL_events', conf.statusNode)
-    for (let index in conf.errors) {
-      const error = conf.errors[index]
-      html.append(errorsNode, html.create('li', '.CL_error', error))
-    }
+    conf.errors.forEach(error => {
+      const errorLine = html.create('li', null, error)
+      html.append(errorsNode, errorLine)
+    })
   }
+
+  return statusNode
 }
 
 /**

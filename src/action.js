@@ -147,7 +147,7 @@ action.sign = async function (cosmicLink, ...keypairsOrPreimage) {
 function updateSignersNode (cosmicLink) {
   if (cosmicLink._signersNode) {
     const signersNode = format.signatures(cosmicLink, cosmicLink.signers)
-    cosmicLink.htmlNode.replaceChild(signersNode, cosmicLink._signersNode)
+    cosmicLink.htmlDescription.replaceChild(signersNode, cosmicLink._signersNode)
     cosmicLink._signersNode = signersNode
   }
 }

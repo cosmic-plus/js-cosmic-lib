@@ -1,6 +1,7 @@
 'use_strict'
 
 const env = require('@cosmic-plus/jsutils/env')
+const helpers = require('@cosmic-plus/jsutils/misc')
 
 const action = require('./action')
 const config = require('./config')
@@ -287,40 +288,21 @@ const CosmicLink = class CosmicLink {
    * will automatically be used as the htmlNode of any CosmicLink you create.
    * This implies you should have onle one living at a time.
    */
+  get htmlDescription () {
+    if (!this._htmlDescription) makeHtmlDescription(this)
+    return this._htmlDescription
+  }
+
+  /// Leave undocumented for now.
+  get transactionNode () { return html.grab('.CL_transactionNode', this.htmlDescription) }
+  get statusNode () { return html.grab('.CL_statusNode', this.htmlDescription) }
+  get signersNode () { return html.grab('.CL_signersNode', this.htmlDescription) }
+
+  /// Backward compatibility (2018-09 -> 2019-03).
   get htmlNode () {
-    if (!this._htmlNode) makeHtmlNodes(this)
-    return this._htmlNode
+    helpers.deprecated('2019-03', 'cosmicLink.htmlNode', 'cosmicLink.htmlDescription')
+    return this.htmlDescription
   }
-  set htmlNode (value) { this._htmlNode = value }
-
-  /**
-   * The HTML element that contains a description of the current transaction.
-   */
-  get transactionNode () {
-    this.htmlNode
-    return this._transactionNode
-  }
-  set transactionNode (value) { this._transactionNode = value }
-
-  /**
-   * The HTML node that contains a description of any error that may have
-   * happened with this cosmic link.
-   */
-  get statusNode () {
-    this.htmlNode
-    return this._statusNode
-  }
-  set statusNode (value) { this._statusNode = value }
-
-  /**
-   * The HTML node that contains a list of missing/available signatures. Please
-   * note that it doesn't shows when there's only one signer.
-   */
-  get signersNode () {
-    this.htmlNode
-    return this._signersNode
-  }
-  set signersNode (value) { this._signersNode = value }
 }
 
 /**
@@ -342,8 +324,16 @@ function initCosmicLink (cosmicLink, transaction, options = {}) {
   parse.dispatch(cosmicLink, transaction, options)
 
   if (env.isBrowser) {
-    if (!cosmicLink._htmlNode) cosmicLink._htmlNode = html.grab('#CL_htmlNode')
-    if (cosmicLink._htmlNode) makeHtmlNodes(cosmicLink)
+    if (!cosmicLink._htmlDescription) {
+      /// #CL_htmlNode: Backward compatibility (2018-09 -> 2019-03).
+      cosmicLink._htmlDescription = html.grab('#cosmiclink_description') || html.grab('#CL_htmlNode')
+    }
+    if (cosmicLink._htmlDescription) {
+      if (cosmicLink.htmlDescription.id === 'CL_htmlNode') {
+        helpers.deprecated('2019-03', 'id="CL_htmlNode"', 'id="cosmiclink_description"')
+      }
+      makeHtmlDescription(cosmicLink)
+    }
   }
 }
 const formatsFields = ['_query', '_tdesc', '_json', '_transaction', '_xdr']
@@ -353,35 +343,23 @@ const formatsFields = ['_query', '_tdesc', '_json', '_transaction', '_xdr']
  *
  * @private
  */
-function makeHtmlNodes (cosmicLink) {
-  let htmlNode = cosmicLink._htmlNode
+function makeHtmlDescription (cosmicLink) {
+  let htmlDescription = cosmicLink._htmlDescription
 
-  if (htmlNode) {
-    html.clear(htmlNode)
-    htmlNode.className = 'CL_htmlNode'
+  if (htmlDescription) {
+    html.clear(htmlDescription)
+    htmlDescription.className = 'cosmiclink_description'
   } else {
-    htmlNode = html.create('div', '.CL_htmlNode')
-    cosmicLink._htmlNode = htmlNode
+    htmlDescription = html.create('div', '.cosmiclink_description')
+    cosmicLink._htmlDescription = htmlDescription
   }
 
-  if (cosmicLink.tdesc) {
-    const transactionNode = format.tdesc(cosmicLink, cosmicLink.tdesc)
-    cosmicLink._transactionNode = transactionNode
-    html.append(htmlNode, transactionNode)
-  }
+  cosmicLink._transactionNode = format.tdesc(cosmicLink, cosmicLink.tdesc)
+  cosmicLink._statusNode = status.makeHtmlNode(cosmicLink)
+  cosmicLink._signersNode = html.create('div', '.CL_signersNode')
 
-  const nodes = ['_statusNode', '_signersNode']
-  for (let index in nodes) {
-    const name = nodes[index]
-    cosmicLink[name] = html.create('div', '.CL' + name)
-    html.append(htmlNode, cosmicLink[name])
-  }
-
-  html.append(cosmicLink._statusNode,
-    html.create('span', '.CL_status'),
-    html.create('ul', '.CL_events')
-  )
-  status.populateHtmlNode(cosmicLink)
+  html.append(htmlDescription,
+    cosmicLink._transactionNode, cosmicLink._statusNode, cosmicLink._signersNode)
 }
 
 /**

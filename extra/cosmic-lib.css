@@ -1,7 +1,6 @@
 /* cosmiclib styling */
 
-
-.CL_assetCode,
+.CL_asset .CL_assetCode,
 .CL_address
 {
     display: inline-block;
@@ -13,7 +12,7 @@
     color: #4C4C4C;
 }
 
-.CL_assetCode:hover,
+.CL_asset .CL_assetCode:hover,
 .CL_address:hover
 {
     cursor: pointer;
@@ -25,11 +24,6 @@
     background-color: ghostwhite;
     border-left: 0;
     border-right: 0;
-}
-
-.CL_assetIssuer
-{
-    display: none;
 }
 
 .CL_hash:hover
@@ -48,7 +42,7 @@
     color: black;
 }
 
-.CL_error
+.CL_error, .CL_errors li
 {
     border: 0.1em solid tomato;
     border-radius: 0.2em;
@@ -64,17 +58,13 @@
     margin: 0.5em 0;
 }
 
-.CL_transactionNode ul.CL_sideInfo,
-.CL_source
+.CL_transactionNode .CL_sideInfo
 {
     border-left: 0.2em solid lightgrey;
     padding-left: 0.2em;
     margin: 0;
     list-style-type: none;
     list-style-position: inside;
-/*
-    font-size: 0.9em;
-*/
 }
 
 .CL_operation
@@ -109,13 +99,13 @@
     font-stretch: condensed;
 }
 
-.CL_statusNode.CL_error
+.CL_statusNode
 {
     background-color: white;
     border: none;
 }
 
-.CL_events,
+.CL_errors,
 .CL_signers
 {
     list-style-type: none;
@@ -125,7 +115,7 @@
     margin: 0;
 }
 
-.CL_events li,
+.CL_errors li,
 .CL_signers li
 {
     margin:0 ;
@@ -134,14 +124,13 @@
     border-radius: 0;
 }
 
-.CL_events li.CL_done,
 .CL_signers li.CL_signed
 {
     border-left: 0.3em solid mediumseagreen;
 
 }
 
-.CL_events li.CL_error
+.CL_errors li
 {
     border-left: 0.3em solid tomato;
 }
