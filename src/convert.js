@@ -55,12 +55,7 @@ convert.xdrToTransaction = function (conf, xdr, options = {}) {
 
 convert.xdrToQuery = function (conf, xdr, options = {}) {
   let query = '?xdr=' + xdr
-  if (options.network) {
-    const passphrase = resolve.networkPassphrase(conf, options.network)
-    if (passphrase !== StellarSdk.Networks.PUBLIC) {
-      query += '&network=' + encodeURIComponent(options.network)
-    }
-  }
+  if (options.network) query += '&network=' + encodeURIComponent(options.network)
   return query
 }
 

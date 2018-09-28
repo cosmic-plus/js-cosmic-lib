@@ -88,7 +88,6 @@ parseFmt.xdrUri = function (cosmicLink, xdrUri, options) {
   const temp = query.split('&')
   const xdr = temp[0].substr(5)
 
-  options.network = 'public'
   temp.slice(1).forEach(entry => {
     let field = entry.replace(/=.*$/, '')
     let value = entry.substr(field.length + 1)
