@@ -217,27 +217,4 @@ config.removeFormatHandler = function (format, callback) {
  *     box to enter preimage signature when relevant'
  * ```
  */
-config.clickHandlers = {
-  address: function (event) {
-    if (!event.node.extra) return
-    let message = ''
-    for (let field in event.node.extra) {
-      message += `${field}:\n` + `${event.node.extra[field]}\n\n`
-    }
-    window.alert(message)
-  },
-  asset: function (event) {
-    const issuerNode = html.grab('.CL_assetIssuer', event.node)
-    if (issuerNode.style.display === 'inline') issuerNode.style.display = 'none'
-    else issuerNode.style.display = 'inline'
-  },
-  hash: function (event) {
-    const grandma = event.node.parentNode.parentNode.parentNode
-    if (grandma.className === 'CL_signers') {
-      const preimage = prompt('Please enter preimage:')
-      if (preimage) event.cosmicLink.sign(preimage)
-    } else {
-      helpers.copy(event.value)
-    }
-  }
-}
+config.clickHandlers = event.defaultClickHandlers

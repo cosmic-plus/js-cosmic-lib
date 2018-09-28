@@ -16,7 +16,6 @@ const event = require('./event')
 const specs = require('./specs')
 const resolve = require('./resolve')
 
-
 /**
  * Returns an HTML div describing `tdesc`.
  *
@@ -67,8 +66,8 @@ format.odesc = function (conf, odesc) {
 
   if (odesc.source) {
     html.appendClass(opNode, 'CL_sourcedOperation')
-    const sourceNode = html.create('div', '.CL_source', 'Source: ')
-    const addressNode = format.source(conf, odesc.source)
+    const sourceNode = html.create('div', '.CL_sideInfo', 'Source: ')
+    const addressNode = format.address(conf, odesc.source)
     html.append(sourceNode, addressNode)
     html.append(opNode, sourceNode)
   }
@@ -179,38 +178,6 @@ function operationMeaning (odesc) {
 }
 
 /**
- * Returns an HTML div describing `field` `value`.
- *
- * @param {string} field The field name of `value` as defined in `spec.js`.
- * @param {*} value The value of `field`.
- * @return {HTLMElement} `field` `value` HTML description
- */
-format.field = function (conf, field, value) {
-  let type = specs.fieldType[field]
-  if (!type) throw new Error('Unknow field: ' + field)
-
-  if (typeof value === 'object' && value.error) type = 'error'
-  const formatter = process[type] || process.string
-  const fieldNode = formatter(conf, value)
-  fieldNode.className = 'CL_' + type
-
-  let clickableNode = fieldNode
-  if (type === 'asset') clickableNode = html.grab('.CL_assetCode', fieldNode)
-
-  const eventObject = {
-    conf: conf,
-    field: field,
-    fieldType: type,
-    value: value,
-    node: fieldNode
-  }
-  if (conf.constructor.name === 'CosmicLink') eventObject.cosmicLink = conf
-  clickableNode.onclick = () => event.callClickHandler(conf, type, eventObject)
-
-  return fieldNode
-}
-
-/**
  * Returns an HTML div describing `signers`.
  *
  * @param {Object} signers Signers object as returned by @see{resolve.signers}.
@@ -218,11 +185,13 @@ format.field = function (conf, field, value) {
  */
 format.signatures = function (conf, signers) {
   const signersNode = html.create('div', '.CL_signersNode')
-  if (signers.list.length < 2 && !signers.signatures) return signersNode
+  if (signers.list.length < 2 && !signers.signatures.length) return signersNode
 
   signers.sources.forEach(accountId => {
-    const div = makeAccountSignersNode(conf, accountId, signers)
-    html.append(signersNode, div)
+    if (accountId !== specs.neutralAccountId) {
+      const div = makeAccountSignersNode(conf, accountId, signers)
+      html.append(signersNode, div)
+    }
   })
 
   return signersNode
@@ -252,16 +221,52 @@ function makeAccountSignersNode (conf, accountId, signers) {
 
 /******************************************************************************/
 
-for (let field in specs.fieldType) {
-  format[field] = (conf, value) => format.field(conf, field, value)
+/**
+ * Returns an HTML div describing `field` `value`.
+ *
+ * @param {string} field The field name of `value` as defined in `spec.js`.
+ * @param {*} value The value of `field`.
+ * @return {HTLMElement} `field` `value` HTML description
+ */
+format.field = function (conf, field, value) {
+  const type = specs.fieldType[field]
+  if (!type) throw new Error('Unknow field: ' + field)
+
+  const domNode = format.type(conf, type, value)
+  domNode.field = field
+  if (field !== type) html.appendClass(domNode, 'CL_' + field)
+
+  return domNode
 }
+
+format.type = function (conf, type, value) {
+  if (typeof value === 'object' && value.error) type = 'error'
+  const formatter = process[type] || process.string
+  const domNode = formatter(conf, value)
+  domNode.className = 'CL_' + type
+
+  const eventObject = {
+    conf: conf,
+    type: type,
+    value: value,
+    domNode: domNode
+  }
+  if (conf.constructor.name === 'CosmicLink') eventObject.cosmicLink = conf
+  domNode.onclick = () => event.callClickHandler(conf, type, eventObject)
+  return domNode
+}
+
+/// Provide a format method for each data type.
+specs.types.forEach(type => {
+  format[type] = (conf, value) => format.type(conf, type, value)
+})
 
 /******************************************************************************/
 
 const process = {}
 
 process.string = function (conf, string) {
-  return document.createTextNode(string)
+  return html.create('span', null, string)
 }
 
 process.error = function (conf, errDesc) {
@@ -273,7 +278,7 @@ process.error = function (conf, errDesc) {
 
 process.address = function (conf, address) {
   const addressNode = html.create('span',
-    { title: 'Resolving...', className: 'CL_address' },
+    { title: 'Resolving...' },
     helpers.shorter(address),
     html.create('span', '.CL_loadingAnim')
   )
@@ -300,7 +305,7 @@ async function resolveAddressAndUpdate (conf, address, addressNode) {
     html.appendClass(addressNode, 'CL_error')
 
     const parent = addressNode.parentNode
-    if (parent.className === 'CL_assetIssuer') {
+    if (parent.classList.contains('CL_assetIssuer')) {
       parent.style.display = 'inline'
     }
   }
@@ -308,24 +313,29 @@ async function resolveAddressAndUpdate (conf, address, addressNode) {
   const animation = html.grab('.CL_loadingAnim', addressNode)
   if (animation) html.destroy(animation)
   const grandpa = addressNode.parentNode.parentNode
-  if (grandpa && grandpa.className === 'CL_asset') {
+  if (grandpa && grandpa.classList.contains('CL_asset')) {
     html.destroy(html.grab('.CL_loadingAnim', grandpa))
   }
 }
 
 process.asset = function (conf, asset) {
-  const codeNode = html.create('span', '.CL_assetCode', asset.code)
-  const issuerNode = html.create('span', '.CL_assetIssuer')
-  const assetNode = html.create('span', '.CL_asset', codeNode, issuerNode)
+  const codeNode = format.field(conf, 'assetCode', asset.code)
+  const issuerNode = html.create('span', null, ' issued by ')
+  const assetNode = html.create('span', null, codeNode, issuerNode)
+  issuerNode.style.display = 'none'
 
   if (asset.issuer) {
     codeNode.title = 'Issued by ' + asset.issuer
-    html.append(issuerNode, ' issued by ')
-    html.append(issuerNode, format.assetIssuer(conf, asset.issuer))
+    html.append(issuerNode, format.field(conf, 'assetIssuer', asset.issuer))
     html.append(codeNode, html.create('span', '.CL_loadingAnim'))
   } else {
     codeNode.title = 'Native asset'
     html.append(issuerNode, ' native asset')
+  }
+
+  codeNode.onclick = () => {
+    if (issuerNode.style.display === 'inline') issuerNode.style.display = 'none'
+    else issuerNode.style.display = 'inline'
   }
 
   return assetNode
@@ -369,14 +379,14 @@ process.flags = function (conf, flags) {
 }
 
 process.memo = function (conf, memo) {
-  const typeNode = html.create('span', '.CL_memoType', memo.type)
+  const typeNode = format.field(conf, 'memoType', memo.type)
   let valueNode
-  if (memo.value.length > 30) {
-    valueNode = format.memoHash(conf, memo.value)
-    html.appendClass(valueNode, '.CL_memoValue')
+  if (memo.type === 'hash' || memo.type === 'rethash') {
+    valueNode = format.hash(conf, memo.value)
   } else {
-    valueNode = html.create('span', '.CL_memoValue', memo.value)
+    valueNode = format.string(conf, memo.value)
   }
+  html.appendClass(valueNode, '.CL_string')
   return html.create('span', {}, '(', typeNode, ') ', valueNode)
 }
 
@@ -392,15 +402,16 @@ process.signer = function (conf, signer) {
   const signerNode = html.create('span')
   if (signer.type === 'key' || signer.type === 'ed25519_public_key') {
     const value = signer.value || signer.key
-    html.append(signerNode, 'Account ', format.signerAddress(conf, value))
+    html.append(signerNode, 'Account ', format.address(conf, value))
   } else if (signer.type === 'hash' || signer.type === 'sha256_hash') {
     const value = signer.value || StellarSdk.StrKey.decodeSha256Hash(signer.key).toString('hex')
-    html.append(signerNode, 'Key whose hash is ', format.signerHash(conf, value))
+    html.append(signerNode, 'Key whose hash is ', format.hash(conf, value))
   } else if (signer.type === 'tx') {
-    html.append(signerNode, 'Transaction ', format.signerTx(conf, signer.value))
+    html.append(signerNode, 'Transaction ', format.hash(conf, signer.value))
   }
   if (signer.weight > 1) {
-    html.append(signerNode, ' (weight: ' + signer.weight + ')')
+    const weightNode = format.weight(conf, signer.weight)
+    html.append(signerNode, ' (weight: ', weightNode, ')')
   }
   return signerNode
 }
