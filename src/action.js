@@ -12,7 +12,6 @@ const StellarGuard = require('@stellarguard/sdk')
 
 const convert = require('./convert')
 const config = require('./config')
-const event = require('./event')
 const format = require('./format')
 const resolve = require('./resolve')
 const status = require('./status')
@@ -31,14 +30,8 @@ const status = require('./status')
  * @param {string} options.network Either `public`, `test` or a network passphrase
  */
 action.lock = async function (cosmicLink, options = {}) {
-  if (cosmicLink.status) {
-    event.callFormatHandlers(cosmicLink, ['transaction', 'xdr'])
-    throw new Error(cosmicLink.status)
-  }
-
-  if (cosmicLink.locker) {
-    throw new Error('CosmicLink is already locked.')
-  }
+  if (cosmicLink.status) throw new Error(cosmicLink.status)
+  if (cosmicLink.locker) throw new Error('CosmicLink is already locked.')
 
   try {
     await applyLock(cosmicLink, options)
@@ -68,13 +61,9 @@ async function applyLock (cosmicLink, options) {
 
   if (!cosmicLink._transaction) {
     cosmicLink._transaction = await convert.tdescToTransaction(cosmicLink, cosmicLink.tdesc)
-    cosmicLink.signers = await resolve.signers(cosmicLink, cosmicLink.transaction)
     delete cosmicLink._tdesc
-    event.callFormatHandlers(cosmicLink)
-  } else {
-    cosmicLink.signers = await resolve.signers(cosmicLink, cosmicLink.transaction)
-    event.callFormatHandlers(cosmicLink, ['uri', 'query', 'tdesc', 'json'])
   }
+  cosmicLink.signers = await resolve.signers(cosmicLink, cosmicLink.transaction)
 }
 
 /**
@@ -136,8 +125,6 @@ action.sign = async function (cosmicLink, ...keypairsOrPreimage) {
 
   /// Update other formats.
   ['_query', '_xdr', '_sep7'].forEach(format => delete cosmicLink[format])
-  event.callFormatHandlers(cosmicLink, ['uri', 'query', 'transaction', 'xdr', 'sep7'])
-
   updateSignersNode(cosmicLink)
 
   if (!allFine) throw new Error('Some signers where invalid')

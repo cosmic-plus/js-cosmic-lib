@@ -45,32 +45,3 @@ event.defaultClickHandlers = {
     }
   }
 }
-
-/** *** Format events *****/
-
-const allFormats = ['any', 'uri', 'query', 'tdesc', 'json', 'transaction', 'xdr', 'sep7']
-
-event.addFormatHandler = function (conf, format, callback) {
-  const handlers = conf.formatHandlers
-  if (!handlers[format]) handlers[format] = []
-  handlers[format].push(callback)
-}
-
-event.removeFormatHandler = function (conf, format, callback) {
-  const handlers = conf.formatHandlers
-  if (!handlers[format]) return
-
-  handlers[format] = handlers[format].filter(entry => entry !== callback)
-}
-
-event.callFormatHandlers = function (cosmicLink, formats = allFormats) {
-  const handlers = cosmicLink.formatHandlers
-  formats.forEach(entry => {
-    if (handlers[entry]) handleFormat(cosmicLink, entry, handlers[entry])
-  })
-}
-
-function handleFormat (cosmicLink, format, handlers) {
-  if (format !== 'any' && !cosmicLink[format] && !cosmicLink.status) return
-  handlers.forEach(callback => callback(cosmicLink))
-}

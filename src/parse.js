@@ -13,7 +13,6 @@ const parse = exports
 
 const check = require('./check')
 const convert = require('./convert')
-const event = require('./event')
 const expand = require('./expand')
 const specs = require('./specs')
 const status = require('./status')
@@ -51,7 +50,6 @@ parse.dispatch = function (cosmicLink, value = '?', options = {}) {
   }
 
   if (options.page) parse.page(cosmicLink, options.page)
-  event.callFormatHandlers(cosmicLink)
 }
 
 /**

@@ -6,13 +6,10 @@
  */
 const config = exports
 
-const helpers = require('@cosmic-plus/jsutils/misc')
-const html = require('@cosmic-plus/jsutils/html')
 const StellarSdk = require('@cosmic-plus/base/stellar-sdk')
 
 const aliases = require('./aliases')
 const event = require('./event')
-
 
 /**
  * The base URI to build cosmic links.
@@ -131,68 +128,6 @@ config.setClickHandler = function (fieldType, callback) {
  */
 config.clearClickHandler = function (fieldType) {
   event.clearClickHandler(config, fieldType)
-}
-
-/**
- * The active format handlers. Can be defined globally (`cosmicLib.config.formathandlers`)
- * or for a particular CosmicLink object (`cosmicLink.formatHandlers`). Takes the
- * form:
- *
- * ```
- * cosmicLib.config.formatHandlers = {
- *  format1: [ callback1, ..., callbackN ],
- *  ...
- *  formatN: [ callback1, ..., callbackN ]
- * }
- * ```
- *
- * @default {}
- */
-config.formatHandlers = {}
-
-/**
- * Add the format handler `callback` for `format`. `callback` will be called
- * each time a cosmicLink object sets a value for `format`, including at creation
- * time. `callback` will receive an event such as:
- *
- * > event = { cosmicLink: ..., value: ..., error: ... }
- *
- * Where `value` is set only when the format conversion resolves, and where
- * `error` is set only when format conversion fails.
- *
- * Format handlers can be added either globally (`cosmicLib.config.addFormatHandler`)
- * or to a specific cosmicLink object (`cosmicLink.addFormatHandler`). When
- * added to a specific cosmicLink object, `callback` is immediately called with
- * the current return value of `format`.
- *
- * @example
- * // This will update the current page URL each time a CosmicLink is parsed
- *
- * cosmicLib.config.addFormatHandler('query', updateDocumentUrl)
- *
- * function updateDocumentUrl (event) {
- *   if (event.value) history.replaceState({}, '', event.value)
- * }
- *
- * @param {string} format Either `uri`, `query`, `tdesc`, `json`, `transaction` or `xdr`
- * @param {function} callback A function that accept one `event` argument
- */
-config.addFormatHandler = function (format, callback) {
-  event.addFormatHandler(config, format, callback)
-}
-
-/**
- * Remove format handler `callback` for `format`.
- *
- * @example
- * cosmicLib.config.removeFormatHandler('query', updateDocumentUrl)
- *
- * @alias module:config.removeFormatHandler
- * @param {string} format Either `uri`, `query`, `tdesc`, `json`, `transaction` or `xdr`
- * @param {function} callback A function that accept one `event` argument
- */
-config.removeFormatHandler = function (format, callback) {
-  event.removeFormatHandler(config, format, callback)
 }
 
 /**
