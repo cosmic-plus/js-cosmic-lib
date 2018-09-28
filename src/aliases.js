@@ -20,16 +20,28 @@
 const aliases = exports
 
 /**
- * Append `aliases` to `conf.aliases`.
+ * Add new aliases or replace existing ones.
  *
- * @param {Object} aliases
+ * @example
+ * cosmicLib.config.addAliases({
+ *   'GCKA6K5PCQ6PNF5RQBF7PQDJWRHO6UOGFMRLK3DYHDOI244V47XKQ4GP': 'smartlands.io',
+ *   'GBVOL67TMUQBGL4TZYNMY3ZQ5WGQYFPFD5VJRWXR72VA33VFNL225PL5': 'stellarport.io'
+ * })
+ *
+ * @param {Object} aliases An object such as `{ publicKey1: name1, ..., publicKeyN: nameN }`
  */
 aliases.add = function (conf, aliases) {
   conf.aliases = Object.assign(conf.aliases, aliases)
 }
 
 /**
- * Remove `publicKeys` from `conf.aliases`.
+ * Remove `publicKeys` from `cosmicLib.config.aliases`.
+ *
+ * @example
+ * cosmicLib.config.removeAliases([
+ *  'GCKA6K5PCQ6PNF5RQBF7PQDJWRHO6UOGFMRLK3DYHDOI244V47XKQ4GP',
+ *  'GBVOL67TMUQBGL4TZYNMY3ZQ5WGQYFPFD5VJRWXR72VA33VFNL225PL5',
+ * ])
  *
  * @param {Array} publicKeys An array of public keys
  */
@@ -91,7 +103,7 @@ aliases.anchors = {
   'GDXTJEK4JZNSTNQAWA53RZNS2GIKTDRPEUWDXELFMKU52XNECNVDVXDI': 'vcbear.net',
   'GCNHYZLBCSVZHSQJ2DOIBHYBF4J24DJYGS5QKURX4AGSLBK6SDJOYWIN': 'winsome.gift',
   'GBZ35ZJRIKJGYH5PBKLKOZ5L6EXCNTO7BKIL7DAVVDFQ2ODJEEHHJXIM': 'ximcoin.com',
-  'GAO4DADCRAHA35GD6J3KUNOB5ELZE5D6CGPSJX2WBMEQV7R2M4PGKJL5': 'xirkle.com',
+  'GAO4DADCRAHA35GD6J3KUNOB5ELZE5D6CGPSJX2WBMEQV7R2M4PGKJL5': 'xirkle.com'
 }
 
 aliases.destinations = {
@@ -121,10 +133,10 @@ aliases.destinations = {
   'GCVHEKSRASJBD6O2Z532LWH4N2ZLCBVDLLTLKSYCSMBLOYTNMEEGUARD': 'Stellar Guard',
   'GDCHDRSDOBRMSUDKRE2C4U4KDLNEATJPIHHR2ORFL5BSD56G4DQXL4VW': 'StellarTerm Inflation',
   'GCEGERI7COJYNNID6CYSKS5DPPLGCCLPTOSCDD2LG5SJIVWM5ISUPERI': 'Superlumen Issuer',
-  'GBZ35ZJRIKJGYH5PBKLKOZ5L6EXCNTO7BKIL7DAVVDFQ2ODJEEHHJXIM': 'XIM',
+  'GBZ35ZJRIKJGYH5PBKLKOZ5L6EXCNTO7BKIL7DAVVDFQ2ODJEEHHJXIM': 'XIM'
 }
 
 /**
- * Concatenated aliases.
+ * Aliases for widely-known Stellar addresses.
  */
 aliases.all = Object.assign({}, aliases.anchors, aliases.destinations)

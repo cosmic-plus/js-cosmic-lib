@@ -2,6 +2,14 @@
 /**
  * Library-wide configuration.
  *
+ * @borrows module:aliases.all as aliases
+ * @borrows module:aliases.add as setAliases
+ * @borrows module:aliases.remove as removeAliases
+ *
+ * @borrows module:event.defaultClickHandlers as clickHandlers
+ * @borrows module:event.setClickHandler as setClickHandler
+ * @borrows module:event.clearClickHandler as clearClickHandler
+ *
  * @exports config
  */
 const config = exports
@@ -21,11 +29,6 @@ config.page = 'https://cosmic.link/'
  * @default 'public'
  */
 config.network = 'public'
-/**
- * The default horizon node URL. Will guess it from `config.network` if undefined.
- * @default undefined
- */
-config.horizon = undefined
 /**
  * The default fallback source address.
  * @default undefined
@@ -68,88 +71,10 @@ config.setupNetwork = function (name, horizon, passphrase) {
 config.setupNetwork('public', 'https://horizon.stellar.org', StellarSdk.Networks.PUBLIC)
 config.setupNetwork('test', 'https://horizon-testnet.stellar.org', StellarSdk.Networks.TESTNET)
 
-/**
- * Aliases for most known Stellar addresses. Aliases are used instead of
- * public keys when displaying addresses. This is purely for conveniency: they
- * are not a way of tying an account to an address as federated addresses are.
- * The aliases object is formed as follow:
- *
- * ```
- * {
- *   'publicKey1': 'name1',
- *   'publicKey2': 'name2',
- *    ...
- *   'publicKeyN': 'nameN'
- * }
- * ```
- */
 config.aliases = aliases.all
+config.addAliases = (definitions) => aliases.add(config, definitions)
+config.removeAliases = (array) => aliases.remove(config, array)
 
-/**
- * Add new aliases or replace existing ones.
- *
- * @param {Object} definitions An object such as `{ publicKey1: name1, ..., publicKeyN: nameN }`
- */
-config.addAliases = function (definitions) { aliases.add(config, definitions) }
-
-/**
- * Remove aliases.
- *
- * @param {Array} array An array such as `[ publicKey1, ..., publicKeyN ]`
- */
-config.removeAliases = function (array) { aliases.remove(config, array) }
-
-/**
- * Set the click handler for `fieldType` HTML elements as `callback`.
- *
- * @example
- * cosmicLib.config.setClickHandler('address', showAddressPopup)
- * @example
- * cosmicLink.setClickHandler('asset', showAssetBox)
- *
- * @param {string} fieldType Type of a transaction/operation field such as
- *     `address`, `asset`, `hash`, ...
- * @param {function} callback A function that accept one `event` argument
- */
-config.setClickHandler = function (fieldType, callback) {
-  event.setClickHandler(config, fieldType, callback)
-}
-
-/**
- * Remove the current click handler for `fieldType`.
- *
- * @example
- * cosmicLib.config.clearClickHandler('address')
- * @example
- * cosmicLink.clearClickHandler('asset')
- *
- * @param {string} fieldType Type of a transaction/operation field such as
- *     `address`, `asset`, `hash`, ...
- */
-config.clearClickHandler = function (fieldType) {
-  event.clearClickHandler(config, fieldType)
-}
-
-/**
- * The active click handlers. Can be defined globally (`cosmicLib.config.clickhandlers`)
- * or for a particular CosmicLink object (`cosmicLink.clickHandlers`). Takes the
- * form:
- *
- * ```
- * cosmicLib.config.clickHandlers = {
- *   fieldType1: callback1,
- *   ...
- *   fieldTypeN: callbackN
- * }
- * ```
- *
- * Thoses click handlers are set by default:
- *
- * ```
- *  address: 'A prompt that show the address',
- *  asset: 'A function that show the asset issuer',
- *  hash: 'A function that copy the hash into the clipboard or show a prompt
- *     box to enter preimage signature when relevant'
- * ```
- */
 config.clickHandlers = event.defaultClickHandlers
+config.setClickHandler = (fieldType, callback) => event.setClickHandler(config, fieldType, callback)
+config.clearClickHandler = (fieldType) => event.clearClickHandler(config, fieldType)
