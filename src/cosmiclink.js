@@ -284,7 +284,7 @@ const CosmicLink = class CosmicLink {
    * and {@link CosmicLink#signersNode}. Please note that thoses nodes are only
    * available in browser environment (i.e: not in node.js).
    *
-   * If HTML your page contains an element with `id="CL_htmlNode"`, this node
+   * If HTML your page contains an element with `id="cosmiclink_description"`, this node
    * will automatically be used as the htmlNode of any CosmicLink you create.
    * This implies you should have onle one living at a time.
    */
@@ -294,9 +294,9 @@ const CosmicLink = class CosmicLink {
   }
 
   /// Leave undocumented for now.
-  get transactionNode () { return html.grab('.CL_transactionNode', this.htmlDescription) }
-  get statusNode () { return html.grab('.CL_statusNode', this.htmlDescription) }
-  get signersNode () { return html.grab('.CL_signersNode', this.htmlDescription) }
+  get transactionNode () { return html.grab('.cosmiclib_transactionNode', this.htmlDescription) }
+  get statusNode () { return html.grab('.cosmiclib_statusNode', this.htmlDescription) }
+  get signersNode () { return html.grab('.cosmiclib_signersNode', this.htmlDescription) }
 
   /// Backward compatibility (2018-09 -> 2019-03).
   get htmlNode () {
@@ -325,12 +325,12 @@ function initCosmicLink (cosmicLink, transaction, options = {}) {
 
   if (env.isBrowser) {
     if (!cosmicLink._htmlDescription) {
-      /// #CL_htmlNode: Backward compatibility (2018-09 -> 2019-03).
+      /// #cosmiclib_htmlNode: Backward compatibility (2018-09 -> 2019-03).
       cosmicLink._htmlDescription = html.grab('#cosmiclink_description') || html.grab('#CL_htmlNode')
     }
     if (cosmicLink._htmlDescription) {
-      if (cosmicLink.htmlDescription.id === 'CL_htmlNode') {
-        helpers.deprecated('2019-03', 'id="CL_htmlNode"', 'id="cosmiclink_description"')
+      if (cosmicLink.htmlDescription.id === '#CL_htmlNode') {
+        helpers.deprecated('2019-03', 'id="#CL_htmlNode"', 'id="cosmiclink_description"')
       }
       makeHtmlDescription(cosmicLink)
     }
@@ -356,7 +356,7 @@ function makeHtmlDescription (cosmicLink) {
 
   cosmicLink._transactionNode = format.tdesc(cosmicLink, cosmicLink.tdesc)
   cosmicLink._statusNode = status.makeHtmlNode(cosmicLink)
-  cosmicLink._signersNode = html.create('div', '.CL_signersNode')
+  cosmicLink._signersNode = html.create('div', '.cosmiclib_signersNode')
 
   html.append(htmlDescription,
     cosmicLink._transactionNode, cosmicLink._statusNode, cosmicLink._signersNode)

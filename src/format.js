@@ -23,12 +23,12 @@ const resolve = require('./resolve')
  * @return {HTMLElement} Transaction HTML description.
  */
 format.tdesc = function (conf, tdesc) {
-  const trNode = html.create('div', '.CL_transactionNode')
+  const trNode = html.create('div', '.cosmiclib_transactionNode')
 
   let infoNode
   specs.transactionOptionalFields.forEach(entry => {
     if (tdesc[entry]) {
-      if (!infoNode) infoNode = html.create('ul', '.CL_sideInfo')
+      if (!infoNode) infoNode = html.create('ul', '.cosmiclib_sideInfo')
       const lineNode = html.create('li', {},
         specs.fieldDesc[entry] + ': ',
         format.field(conf, entry, tdesc[entry])
@@ -62,11 +62,11 @@ format.tdesc = function (conf, tdesc) {
  * @return {HTMLElement} Operation HTML description.
  */
 format.odesc = function (conf, odesc) {
-  const opNode = html.create('div', '.CL_operation')
+  const opNode = html.create('div', '.cosmiclib_operation')
 
   if (odesc.source) {
-    html.appendClass(opNode, 'CL_sourcedOperation')
-    const sourceNode = html.create('div', '.CL_sideInfo', 'Source: ')
+    html.appendClass(opNode, 'cosmiclib_sourcedOperation')
+    const sourceNode = html.create('div', '.cosmiclib_sideInfo', 'Source: ')
     const addressNode = format.address(conf, odesc.source)
     html.append(sourceNode, addressNode)
     html.append(opNode, sourceNode)
@@ -189,7 +189,7 @@ function operationMeaning (odesc) {
  * @return {HTMLElement} Signers HTML description
  */
 format.signatures = function (conf, signers) {
-  const signersNode = html.create('div', '.CL_signersNode')
+  const signersNode = html.create('div', '.cosmiclib_signersNode')
   if (signers.list.length < 2 && !signers.signatures.length) return signersNode
 
   signers.sources.forEach(accountId => {
@@ -206,15 +206,15 @@ function makeAccountSignersNode (conf, accountId, signers) {
   const accountSignersNode = html.create('div')
 
   const title = 'Signers for ' + helpers.shorter(accountId)
-  const titleNode = html.create('span', '.CL_threshold', title)
-  const listNode = html.create('ul', '.CL_signers')
+  const titleNode = html.create('span', '.cosmiclib_threshold', title)
+  const listNode = html.create('ul', '.cosmiclib_signers')
   html.append(accountSignersNode, titleNode, listNode)
 
   signers[accountId].forEach(signer => {
     const signerNode = format.signer(conf, signer)
     const lineNode = html.create('li', null, signerNode)
     if (signers.hasSigned(signer.key)) {
-      html.appendClass(lineNode, 'CL_signed')
+      html.appendClass(lineNode, 'cosmiclib_signed')
       listNode.insertBefore(lineNode, listNode.firstChild)
     } else {
       html.append(listNode, lineNode)
@@ -239,7 +239,7 @@ format.field = function (conf, field, value) {
 
   const domNode = format.type(conf, type, value)
   domNode.field = field
-  if (field !== type) html.appendClass(domNode, 'CL_' + field)
+  if (field !== type) html.appendClass(domNode, 'cosmiclib_' + field)
 
   return domNode
 }
@@ -248,7 +248,7 @@ format.type = function (conf, type, value) {
   if (typeof value === 'object' && value.error) type = 'error'
   const formatter = process[type] || process.string
   const domNode = formatter(conf, value)
-  domNode.className = 'CL_' + type
+  domNode.className = 'cosmiclib_' + type
 
   const eventObject = {
     conf: conf,
@@ -275,7 +275,7 @@ process.string = function (conf, string) {
 }
 
 process.error = function (conf, errDesc) {
-  const errorNode = html.create('span', '.CL_error')
+  const errorNode = html.create('span', '.cosmiclib_error')
   errorNode.textContent = errDesc.value === '' ? '(undefined)' : errDesc.value
   errorNode.title = errDesc.error.message
   return errorNode
@@ -285,7 +285,7 @@ process.address = function (conf, address) {
   const addressNode = html.create('span',
     { title: 'Resolving...' },
     helpers.shorter(address),
-    html.create('span', '.CL_loadingAnim')
+    html.create('span', '.cosmiclib_loadingAnim')
   )
 
   resolveAddressAndUpdate(conf, address, addressNode)
@@ -307,19 +307,19 @@ async function resolveAddressAndUpdate (conf, address, addressNode) {
     addressNode.extra = account
   } catch (error) {
     addressNode.title = "Can't resolve address"
-    html.appendClass(addressNode, 'CL_error')
+    html.appendClass(addressNode, 'cosmiclib_error')
 
     const parent = addressNode.parentNode
-    if (parent.classList.contains('CL_assetIssuer')) {
+    if (parent.classList.contains('cosmiclib_assetIssuer')) {
       parent.style.display = 'inline'
     }
   }
 
-  const animation = html.grab('.CL_loadingAnim', addressNode)
+  const animation = html.grab('.cosmiclib_loadingAnim', addressNode)
   if (animation) html.destroy(animation)
   const grandpa = addressNode.parentNode.parentNode
-  if (grandpa && grandpa.classList.contains('CL_asset')) {
-    html.destroy(html.grab('.CL_loadingAnim', grandpa))
+  if (grandpa && grandpa.classList.contains('cosmiclib_asset')) {
+    html.destroy(html.grab('.cosmiclib_loadingAnim', grandpa))
   }
 }
 
@@ -332,7 +332,7 @@ process.asset = function (conf, asset) {
   if (asset.issuer) {
     codeNode.title = 'Issued by ' + asset.issuer
     html.append(issuerNode, format.field(conf, 'assetIssuer', asset.issuer))
-    html.append(codeNode, html.create('span', '.CL_loadingAnim'))
+    html.append(codeNode, html.create('span', '.cosmiclib_loadingAnim'))
   } else {
     codeNode.title = 'Native asset'
     html.append(issuerNode, ' native asset')

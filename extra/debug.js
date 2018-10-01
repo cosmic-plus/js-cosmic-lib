@@ -218,7 +218,7 @@ async function appendCosmicLink (parent, query, options = {}) {
     html.create('hr')
   )
 
-  cosmicLink.debugNode = html.create('div', '.CL_debug')
+  cosmicLink.debugNode = html.create('div', '.cosmiclib_debug')
   html.append(cosmicLink.htmlDescription, cosmicLink.debugNode)
 
   try {

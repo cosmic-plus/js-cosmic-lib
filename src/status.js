@@ -34,7 +34,7 @@ status.update = function (conf, status) {
   conf.status = status
 
   if (conf._statusNode) {
-    const title = html.grab('.CL_status', conf._statusNode)
+    const title = html.grab('.cosmiclib_status', conf._statusNode)
     title.textContent = status
   }
 }
@@ -50,7 +50,7 @@ status.update = function (conf, status) {
  */
 status.fail = function (conf, errorStatus, continuation) {
   status.update(conf, errorStatus)
-  if (conf._statusNode) html.appendClass(conf._statusNode, 'CL_error')
+  if (conf._statusNode) html.appendClass(conf._statusNode, 'cosmiclib_error')
   errorContinuation(errorStatus, continuation)
 }
 
@@ -71,7 +71,7 @@ status.error = function (conf, error, continuation) {
     conf.errors.push(error)
 
     if (conf._statusNode) {
-      const errorsNode = html.grab('.CL_errors', conf._statusNode)
+      const errorsNode = html.grab('.cosmiclib_errors', conf._statusNode)
       const lineNode = html.create('li', null, error)
       html.append(errorsNode, lineNode)
     }
@@ -87,13 +87,13 @@ status.error = function (conf, error, continuation) {
  * @return {htmlElement}
  */
 status.makeHtmlNode = function (conf) {
-  const statusNode = html.create('div', '.CL_statusNode')
+  const statusNode = html.create('div', '.cosmiclib_statusNode')
 
-  const statusLine = html.create('span', '.CL_status')
+  const statusLine = html.create('span', '.cosmiclib_status')
   html.append(statusNode, statusLine)
   if (conf.status) statusLine.textContent = conf.status
 
-  const errorsNode = html.create('ul', '.CL_errors')
+  const errorsNode = html.create('ul', '.cosmiclib_errors')
   html.append(statusNode, errorsNode)
   if (conf.errors) {
     conf.errors.forEach(error => {

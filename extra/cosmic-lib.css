@@ -1,7 +1,7 @@
 /* cosmiclib styling */
 
-.CL_asset .CL_assetCode,
-.CL_address
+.cosmiclib_asset .cosmiclib_assetCode,
+.cosmiclib_address
 {
     display: inline-block;
     margin: 0.1em;
@@ -12,29 +12,29 @@
     color: #4C4C4C;
 }
 
-.CL_asset .CL_assetCode:hover,
-.CL_address:hover
+.cosmiclib_asset .cosmiclib_assetCode:hover,
+.cosmiclib_address:hover
 {
     cursor: pointer;
     background-color: lightgrey;
 }
 
-.CL_asset
+.cosmiclib_asset
 {
     background-color: ghostwhite;
     border-left: 0;
     border-right: 0;
 }
 
-.CL_hash:hover,
-.CL_id:hover
+.cosmiclib_hash:hover,
+.cosmiclib_id:hover
 {
     background-color: ghostwhite;
     cursor: pointer;
 }
 
-.CL_done,
-.CL_signed
+.cosmiclib_done,
+.cosmiclib_signed
 {
     border: 0.1em solid mediumseagreen;
     border-radius: 0.2em;
@@ -43,7 +43,7 @@
     color: black;
 }
 
-.CL_error, .CL_errors li
+.cosmiclib_error, .cosmiclib_errors li
 {
     border: 0.1em solid tomato;
     border-radius: 0.2em;
@@ -54,12 +54,12 @@
 
 /*** Transaction node styling ***/
 
-.CL_transactionNode
+.cosmiclib_transactionNode
 {
     margin: 0.5em 0;
 }
 
-.CL_transactionNode .CL_sideInfo
+.cosmiclib_transactionNode .cosmiclib_sideInfo
 {
     border-left: 0.2em solid lightgrey;
     padding-left: 0.2em;
@@ -68,12 +68,12 @@
     list-style-position: inside;
 }
 
-.CL_operation
+.cosmiclib_operation
 {
     margin: 0.5em 0;
 }
 
-.CL_sourcedOperation
+.cosmiclib_sourcedOperation
 {
     border-left: 0.2em solid lightgrey;
     padding-left: 0.2em;
@@ -83,15 +83,15 @@
 
 /*** Status/Signers node styling ***/
 
-.CL_statusNode,
-.CL_signersNode
+.cosmiclib_statusNode,
+.cosmiclib_signersNode
 {
     margin: 0.5em;
     padding: 0;
 }
 
-.CL_status,
-.CL_threshold
+.cosmiclib_status,
+.cosmiclib_threshold
 {
     margin: 0;
     font-size: 0.85em;
@@ -100,14 +100,14 @@
     font-stretch: condensed;
 }
 
-.CL_statusNode
+.cosmiclib_statusNode
 {
     background-color: white;
     border: none;
 }
 
-.CL_errors,
-.CL_signers
+.cosmiclib_errors,
+.cosmiclib_signers
 {
     list-style-type: none;
     list-style-position: inside;
@@ -116,8 +116,8 @@
     margin: 0;
 }
 
-.CL_errors li,
-.CL_signers li
+.cosmiclib_errors li,
+.cosmiclib_signers li
 {
     margin:0 ;
     border-width: 0;
@@ -125,20 +125,20 @@
     border-radius: 0;
 }
 
-.CL_signers li.CL_signed
+.cosmiclib_signers li.cosmiclib_signed
 {
     border-left: 0.3em solid mediumseagreen;
 
 }
 
-.CL_errors li
+.cosmiclib_errors li
 {
     border-left: 0.3em solid tomato;
 }
 
 /* Loading animation */
 
-.CL_loadingAnim {
+.cosmiclib_loadingAnim {
     display: inline-block;
     width: 0.7em;
     height: 0.7em;
@@ -147,10 +147,10 @@
     border-top-color: rgba(105,105,105,0.4);
     border-bottom-color: rgba(105,105,105,0.4);
     border-radius: 50%;
-    animation: CL_spin 1s linear infinite;
+    animation: cosmiclib_spin 1s linear infinite;
 }
 
-@keyframes CL_spin {
+@keyframes cosmiclib_spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }

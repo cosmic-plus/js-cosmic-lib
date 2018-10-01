@@ -75,7 +75,7 @@ event.defaultClickHandlers = {
   },
   hash: function (event) {
     const grandma = event.domNode.parentNode.parentNode.parentNode
-    if (grandma.classList.contains('CL_signers')) {
+    if (grandma.classList.contains('cosmiclib_signers')) {
       const preimage = prompt('Please enter preimage:')
       if (preimage) event.cosmicLink.sign(preimage)
     } else {
