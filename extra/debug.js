@@ -272,6 +272,8 @@ async function checkCosmicLink (cosmicLink, options) {
     append(html.create('span', '.debug_error', 'Inconsistent XDR conversion'))
     append(html.create('textarea', null, cosmicLink.xdr))
     append(html.create('textarea', null, xdr))
+  } else {
+    append(html.create('textarea', null, cosmicLink.xdr))
   }
 
   if (conversionCheck) {
