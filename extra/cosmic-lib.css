@@ -26,7 +26,8 @@
     border-right: 0;
 }
 
-.CL_hash:hover
+.CL_hash:hover,
+.CL_id:hover
 {
     background-color: ghostwhite;
     cursor: pointer;

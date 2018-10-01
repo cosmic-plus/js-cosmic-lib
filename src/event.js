@@ -81,5 +81,6 @@ event.defaultClickHandlers = {
     } else {
       helpers.copy(event.value)
     }
-  }
+  },
+  id: helpers.copy
 }

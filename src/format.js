@@ -165,8 +165,13 @@ function operationMeaning (odesc) {
         if (odesc[field]) msg += 'Set ' + field + ' at: {' + field + '}{newline}'
       })
       if (odesc.signer) {
-        if (odesc.signer.weight === '0') msg += 'Remove signer: {signer}{newline}'
-        else msg += 'Set signer: {signer}{newline}'
+        if (odesc.signer.type === 'tx') {
+          if (odesc.signer.weight === '0') msg += 'Remove pre-signed {signer}{newline}'
+          else msg += 'Pre-sign {signer}{newline}'
+        } else {
+          if (odesc.signer.weight === '0') msg += 'Remove signer: {signer}{newline}'
+          else msg += 'Set signer: {signer}{newline}'
+        }
       }
       if (odesc.homeDomain) msg += 'Set home domain: {homeDomain}{newline}'
       if (odesc.homeDomain === '') msg += 'Unset home domain'
@@ -359,6 +364,8 @@ process.hash = function (conf, hash) {
   return html.create('span', { title: hash }, helpers.shorter(hash))
 }
 
+process.id = process.hash
+
 process.flags = function (conf, flags) {
   let string = ''
   if (flags >= 4) {
@@ -381,12 +388,19 @@ process.flags = function (conf, flags) {
 process.memo = function (conf, memo) {
   const typeNode = format.field(conf, 'memoType', memo.type)
   let valueNode
-  if (memo.type === 'hash' || memo.type === 'rethash') {
-    valueNode = format.hash(conf, memo.value)
-  } else {
-    valueNode = format.string(conf, memo.value)
+  switch (memo.type) {
+    case 'text':
+      valueNode = format.field(conf, 'memoText', memo.value)
+      break
+    case 'id':
+      valueNode = format.field(conf, 'memoId', memo.value)
+      break
+    case 'hash':
+      valueNode = format.field(conf, 'memoHash', memo.value)
+      break
+    case 'return':
+      valueNode = format.field(conf, 'memoReturn', memo.value)
   }
-  html.appendClass(valueNode, '.CL_string')
   return html.create('span', {}, '(', typeNode, ') ', valueNode)
 }
 
@@ -400,14 +414,21 @@ process.price = function (conf, price) {
 
 process.signer = function (conf, signer) {
   const signerNode = html.create('span')
-  if (signer.type === 'key' || signer.type === 'ed25519_public_key') {
-    const value = signer.value || signer.key
-    html.append(signerNode, 'Account ', format.address(conf, value))
-  } else if (signer.type === 'hash' || signer.type === 'sha256_hash') {
-    const value = signer.value || StellarSdk.StrKey.decodeSha256Hash(signer.key).toString('hex')
-    html.append(signerNode, 'Key whose hash is ', format.hash(conf, value))
-  } else if (signer.type === 'tx') {
-    html.append(signerNode, 'Transaction ', format.hash(conf, signer.value))
+  switch (signer.type) {
+    case 'key':
+    case 'ed25519_public_key':
+      const value1 = signer.value || signer.key
+      html.append(signerNode, 'Account ', format.field(conf, 'signerKey', value1))
+      break
+    case 'tx':
+      const value2 = signer.value || signer.key
+      html.append(signerNode, 'transaction ', format.field(conf, 'signerTx', value2))
+      break
+    case 'hash':
+    case 'sha256hash':
+      const value3 = signer.value || StellarSdk.StrKey.decodeSha256Hash(signer.key).toString('hex')
+      html.append(signerNode, 'key whose hash is ', format.field(conf, 'signerHash', value3))
+      break
   }
   if (signer.weight > 1) {
     const weightNode = format.weight(conf, signer.weight)
