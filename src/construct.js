@@ -72,7 +72,7 @@ async function makeTransactionBuilder (conf, tdesc) {
     if (tdesc.maxTime) txOpts.timebounds.maxTime = construct.date(conf, tdesc.maxTime)
   }
 
-  const sourceAccount = await resolve.txSource(conf, tdesc.source, tdesc.sequence)
+  const sourceAccount = await resolve.txSourceAccount(conf, tdesc.source, tdesc.sequence)
   const builder = new StellarSdk.TransactionBuilder(sourceAccount, txOpts)
 
   /// Check if memo is needed for destination account.

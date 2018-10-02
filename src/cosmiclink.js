@@ -303,6 +303,15 @@ const CosmicLink = class CosmicLink {
     helpers.deprecated('2019-03', 'cosmicLink.htmlNode', 'cosmicLink.htmlDescription')
     return this.htmlDescription
   }
+
+  hasSigned (accountId) {
+    helpers.deprecated('2019-03', 'cosmicLink.hasSigned', 'cosmicLink.transaction.hasSigned')
+    return this.transaction.hasSigned(accountId)
+  }
+  hasSigner (accountId) {
+    helpers.deprecated('2019-03', 'cosmicLink.hasSigner', 'cosmicLink.transaction.hasSigner')
+    return this.transaction.hasSigner(accountId)
+  }
 }
 
 /**

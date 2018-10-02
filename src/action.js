@@ -14,6 +14,7 @@ const convert = require('./convert')
 const config = require('./config')
 const format = require('./format')
 const resolve = require('./resolve')
+const signersUtils = require('./signers-utils')
 const status = require('./status')
 
 /**
@@ -63,7 +64,9 @@ async function applyLock (cosmicLink, options) {
     cosmicLink._transaction = await convert.tdescToTransaction(cosmicLink, cosmicLink.tdesc)
     delete cosmicLink._tdesc
   }
-  cosmicLink.signers = await resolve.signers(cosmicLink, cosmicLink.transaction)
+
+  delete cosmicLink._transaction._cosmicplus
+  await signersUtils.extends(cosmicLink, cosmicLink._transaction)
 }
 
 /**
@@ -94,14 +97,14 @@ action.sign = async function (cosmicLink, ...keypairsOrPreimage) {
       const keypair = keypairsOrPreimage[index]
       const publicKey = keypair.publicKey()
 
-      if (!cosmicLink.signers.hasSigner(publicKey)) {
+      if (!cosmicLink.transaction.hasSigner(publicKey)) {
         const short = helpers.shorter(publicKey)
         status.error(cosmicLink, 'Not a legit signer: ' + short)
         allFine = false
         continue
       }
 
-      if (cosmicLink.signers.hasSigned(publicKey)) continue
+      if (cosmicLink.transaction.hasSigned(publicKey)) continue
 
       try {
         transaction.sign(keypair)
@@ -133,7 +136,7 @@ action.sign = async function (cosmicLink, ...keypairsOrPreimage) {
 
 function updateSignersNode (cosmicLink) {
   if (cosmicLink._signersNode) {
-    const signersNode = format.signatures(cosmicLink, cosmicLink.signers)
+    const signersNode = format.signatures(cosmicLink, cosmicLink._transaction)
     cosmicLink.htmlDescription.replaceChild(signersNode, cosmicLink._signersNode)
     cosmicLink._signersNode = signersNode
   }

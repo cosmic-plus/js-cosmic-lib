@@ -13,8 +13,9 @@ const html = require('@cosmic-plus/jsutils/html')
 const StellarSdk = require('@cosmic-plus/base/stellar-sdk')
 
 const event = require('./event')
-const specs = require('./specs')
 const resolve = require('./resolve')
+const signersUtils = require('./signers-utils')
+const specs = require('./specs')
 
 /**
  * Returns an HTML div describing `tdesc`.
@@ -188,21 +189,24 @@ function operationMeaning (odesc) {
  * @param {Object} signers Signers object as returned by @see{resolve.signers}.
  * @return {HTMLElement} Signers HTML description
  */
-format.signatures = function (conf, signers) {
+format.signatures = function (conf, transaction) {
   const signersNode = html.create('div', '.cosmiclib_signersNode')
-  if (signers.list.length < 2 && !signers.signatures.length) return signersNode
 
-  signers.sources.forEach(accountId => {
-    if (accountId !== specs.neutralAccountId) {
-      const div = makeAccountSignersNode(conf, accountId, signers)
-      html.append(signersNode, div)
-    }
+  signersUtils.for(conf, transaction).then(utils => {
+    if (utils.signersList.length < 2 && !utils.signatures.length) return
+
+    utils.sources.forEach(accountId => {
+      if (accountId !== specs.neutralAccountId) {
+        const div = makeAccountSignersNode(conf, utils, accountId)
+        html.append(signersNode, div)
+      }
+    })
   })
 
   return signersNode
 }
 
-function makeAccountSignersNode (conf, accountId, signers) {
+function makeAccountSignersNode (conf, utils, accountId) {
   const accountSignersNode = html.create('div')
 
   const title = 'Signers for ' + helpers.shorter(accountId)
@@ -210,10 +214,10 @@ function makeAccountSignersNode (conf, accountId, signers) {
   const listNode = html.create('ul', '.cosmiclib_signers')
   html.append(accountSignersNode, titleNode, listNode)
 
-  signers[accountId].forEach(signer => {
+  utils.signers[accountId].forEach(signer => {
     const signerNode = format.signer(conf, signer)
     const lineNode = html.create('li', null, signerNode)
-    if (signers.hasSigned(signer.key)) {
+    if (utils.hasSigned(signer.key)) {
       html.appendClass(lineNode, 'cosmiclib_signed')
       listNode.insertBefore(lineNode, listNode.firstChild)
     } else {
