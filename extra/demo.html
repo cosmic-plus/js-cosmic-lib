@@ -229,7 +229,7 @@ input, textarea {
   <main>
     <div class="column">
       <h2>Transaction</h2>
-      <!-- A HTML element with id="cosmiclink_description" will automatically
+      <!-- An HTML element with id="cosmiclink_description" will automatically
            contains the last cosmicLink transaction description.
       -->
       <div id="cosmiclink_description"></div>
@@ -242,7 +242,10 @@ input, textarea {
       </form>
     </div>
     <div class="column">
-      <h2>Edit</h2>
+      <!-- An HTML element with id="cosmiclink" will automatically points to
+           the last cosmicLink URI
+      -->
+      <h2>Edit (<a id="cosmiclink" title="Open page">go</a>)</h2>
       <form autocomplete="off">
         <label for="page">Page:</label>
         <input id="page" type="text" onchange="refresh()">

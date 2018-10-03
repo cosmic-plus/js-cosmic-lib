@@ -333,6 +333,7 @@ function initCosmicLink (cosmicLink, transaction, options = {}) {
   parse.dispatch(cosmicLink, transaction, options)
 
   if (env.isBrowser) {
+    makeHtmlLink(cosmicLink)
     if (!cosmicLink._htmlDescription) {
       /// #cosmiclib_htmlNode: Backward compatibility (2018-09 -> 2019-03).
       cosmicLink._htmlDescription = html.grab('#cosmiclink_description') || html.grab('#CL_htmlNode')
@@ -353,6 +354,7 @@ const formatsFields = ['_query', '_tdesc', '_json', '_transaction', '_xdr']
  * @private
  */
 function makeHtmlDescription (cosmicLink) {
+  if (env.isNode) return
   let htmlDescription = cosmicLink._htmlDescription
 
   if (htmlDescription) {
@@ -369,6 +371,23 @@ function makeHtmlDescription (cosmicLink) {
 
   html.append(htmlDescription,
     cosmicLink._transactionNode, cosmicLink._statusNode, cosmicLink._signersNode)
+}
+
+/**
+ * Make the HTML link.
+ * @private
+ */
+function makeHtmlLink (cosmicLink) {
+  if (env.isNode) return
+
+  const htmlLink = html.grab('#cosmiclink') || html.create('a')
+  htmlLink.className = '.cosmiclink'
+  htmlLink.href = cosmicLink.uri
+  if (!htmlLink.title) htmlLink.title = 'Sign transaction'
+  if (!htmlLink.textContent) htmlLink.textContent = 'CosmicLink'
+
+  cosmicLink._htmlLink = htmlLink
+  return htmlLink
 }
 
 /**
