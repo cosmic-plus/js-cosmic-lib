@@ -1,18 +1,6 @@
 'use_strict'
 /**
- * Aliases handlers & most known Stellar addresses. Aliases are put together as
- * an `Object` in the form:
- * ```
- * {
- *   'publicKey1': 'name1',
- *   'publicKey2': 'name2',
- *    ...
- *   'publicKeyN': 'nameN'
- * }
- * ```
- *
- * Aliases are only used as a displaying sugar and can't be used as a
- * replacement for federated address as it would lead to security issues.
+ * Aliases handlers & most known Stellar addresses.
  *
  * @private
  * @exports aliases
@@ -20,7 +8,7 @@
 const aliases = exports
 
 /**
- * Add new aliases or replace existing ones.
+ * Add new **aliases** or replace existing ones.
  *
  * @example
  * cosmicLib.config.addAliases({
@@ -35,7 +23,7 @@ aliases.add = function (conf, aliases) {
 }
 
 /**
- * Remove `publicKeys` from `cosmicLib.config.aliases`.
+ * Remove **publicKeys** from aliases list.
  *
  * @example
  * cosmicLib.config.removeAliases([
@@ -137,6 +125,18 @@ aliases.destinations = {
 }
 
 /**
- * Aliases for widely-known Stellar addresses.
+ * Aliases handlers & most known Stellar addresses. Aliases takes the form:
+ *
+ * ```js
+ * {
+ *   'publicKey1': 'name1',
+ *   'publicKey2': 'name2',
+ *    ...
+ *   'publicKeyN': 'nameN'
+ * }
+ * ```
+ *
+ * Aliases are only used as a displaying sugar and can't be used as a
+ * replacement for federated address as it would lead to security issues.
  */
 aliases.all = Object.assign({}, aliases.anchors, aliases.destinations)

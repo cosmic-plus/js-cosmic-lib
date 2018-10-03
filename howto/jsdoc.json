@@ -1,11 +1,11 @@
 {
-	"specs-query": {
-		"title": "Specs: Query"
+	"10-specs-query": {
+		"title": "Query specifications"
 	},
-	"cheatsheet-cosmiclink": {
-		"title": "Cheatsheet: CosmicLink"
+	"20-cheatsheet-query": {
+		"title": "Query cheatsheet"
 	},
-	"cheatsheet-query": {
-		"title": "Cheatsheet: Query"
+	"30-emitting": {
+		"title": "Emitting CosmicLinks without this library"
 	}
 }

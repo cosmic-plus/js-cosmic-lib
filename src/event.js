@@ -12,7 +12,7 @@ const helpers = require('@cosmic-plus/jsutils/misc')
 /** *** Click events *****/
 
 /**
- * Set the click handler for `type` HTML elements as `callback`.
+ * Set the click handler for **type** HTML elements as **callback**.
  *
  * @example
  * cosmicLib.config.setClickHandler('address', showAddressPopup)
@@ -26,7 +26,7 @@ event.setClickHandler = function (conf, type, callback) {
 }
 
 /**
- * Remove the current click handler for `type`.
+ * Remove the current click handler for **type**.
  *
  * @example
  * cosmicLib.config.clearClickHandler('address')
@@ -58,10 +58,10 @@ event.callClickHandler = function (conf, type, event) {
  *
  * Thoses click handlers are set by default:
  *
- * ```
- *  address: 'A prompt that show the address',
- *  hash: 'A function that copy the hash into the clipboard or show a prompt
- *     box to enter preimage signature when relevant'
+ * * **address**: A prompt that shows the address details
+ * * **id**: A function that copy the id into the clipboard
+ * * **hash**: A function that copy the hash into the clipboard or show a prompt
+ *   for preimage signature when relevant
  * ```
  */
 event.defaultClickHandlers = {

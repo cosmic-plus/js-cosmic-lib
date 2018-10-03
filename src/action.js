@@ -18,17 +18,25 @@ const signersUtils = require('./signers-utils')
 const status = require('./status')
 
 /**
- * Lock a CosmicLink to a network, a primary source a sequence numbre. It is
- * required in order to generate the CosmicLink's {@link Transaction} and
- * {@link XDR} objects, to sign() and to send() the transaction.
+ * Lock a CosmicLink to a network/source pair. The actual values for this pair
+ * are defined by the transaction itself, or at parsing time for Transaction &
+ * XDR formats, or by this lock method, or by the global configuration.
  *
- * Note that in some cases `network`, `source` and/or `sequence` may be specified
- * into the cosmic query in which case they takes precedence.
+ * Locking is an asynchronous operation and resolves the transaction's federated
+ * addresses if any. It also fetchs required accounts data to handle the
+ * transaction signers properly. For this reason, it is mandatory before
+ * signing and sending a transaction to the blockchain.
+ *
+ * @example
+ * const cosmicLink = new CosmicLink({ memo: 'Demo', network: 'test' })
+ * await cosmicLink.lock({ network: 'public' })
+ * console.log(cosmicLink.network)   // => 'test'
  *
  * @alias CosmicLink#lock
- * @param {Object} options
- * @param {string} options.source An account ID or a federated address
- * @param {string} options.network Either `public`, `test` or a network passphrase
+ * @async
+ * @param {Object} [options]
+ * @param {string} options.network The fallback network in case transaction doesn't provides one.
+ * @param {string} options.source The fallback address in case transaction doesn't provides one.
  */
 action.lock = async function (cosmicLink, options = {}) {
   if (cosmicLink.status) throw new Error(cosmicLink.status)
@@ -50,6 +58,12 @@ action.lock = async function (cosmicLink, options = {}) {
 }
 
 async function applyLock (cosmicLink, options) {
+  /**
+   * The locker property tells that a CosmicLink have been locked, and exposes
+   * the network & source values to which it have been locked.
+   *
+   * @alias CosmicLink#locker
+   */
   cosmicLink.locker = {
     source: cosmicLink.tdesc.source || options.source || config.source,
     network: cosmicLink.tdesc.network || options.network || config.network
@@ -70,20 +84,12 @@ async function applyLock (cosmicLink, options) {
 }
 
 /**
- * Sign a CosmicLink object using `...keypairs_or_preimage`.
- * Returns a promise that resolve to the signed transaction. The CosmicLink
- * data are refreshed at promise resolution.
- *
- * @example
- * cosmicLink.sign(keypair1, keypair2)
- *  .then(function () { return cosmicLink.send() }
- *  .then(console.log)
- *  .catch(console.error)
+ * Sign CosmicLink's Transaction with **keypairs_or_preimage** and update the
+ * other formats accordingly. Only legit signers are allowed to sign, and a
+ * CosmicLink have to be [locked]{@link CosmicLink#lock} before signing.
  *
  * @alias CosmicLink#sign
- * @param {...Keypair|preimage} keypairsOrPreimage One or more keypair, or a
- *     preimage
- * @returns {Promise} Signed Transaction object
+ * @param {...Keypair|Buffer|string} ...keypairs_or_preimage
  */
 action.sign = async function (cosmicLink, ...keypairsOrPreimage) {
   if (!cosmicLink.locker) throw new Error('cosmicLink is not locked.')
@@ -143,12 +149,11 @@ function updateSignersNode (cosmicLink) {
 }
 
 /**
- * Send CosmicLink transaction to `horizon`, or to `cosmicLink.horizon`. It should
- * have been locked and signed beforehand to be validated.
+ * Send CosmicLink's transaction to a blockchain validator, or to
+ * [StellarGuard]{@link https://stellarguard.me} when relevant. A
+ * CosmicLink have to be [locked]{@link CosmicLink#lock} before sending.
  *
- * Returns a promise that resolve to horizon server response when transaction
- * is accepted, or that reject to horizon server response if transaction is
- * rejected.
+ * Returns a promise that resolve/reject to the horizon server response.
  *
  * @example
  * cosmicLink.send()
@@ -156,8 +161,8 @@ function updateSignersNode (cosmicLink) {
  *   .catch(console.error)
  *
  * @alias CosmicLink#send
- * @param {horizon} [horizon=cosmicLink.horizon] An horizon node URL
- * @return {Promise} The server response
+ * @param {horizon} [horizon] An horizon node URL
+ * @return {Object} The server response
  */
 action.send = async function (cosmicLink, horizon = cosmicLink.horizon) {
   if (!cosmicLink.locker) throw new Error('cosmicLink is not locked.')

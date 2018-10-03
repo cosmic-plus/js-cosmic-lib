@@ -28,11 +28,12 @@ function exposeModule (config, module) {
 
 /**
  * Create a clone of the library with an alternative config object derived from
- * `params`. Fields which are not defined in `params` stay in sync with parent
+ * **params**. Fields which are not defined in **params** stay in sync with parent
  * configuration.
  *
  * @example
- * const testnet = cosmicLib.withConfig({ network: 'test })
+ * const testnet = cosmicLib.withConfig({ network: 'test' })
+ * const account = await testnet.resolve.account('tips*cosmic.link')
  *
  * @params {Object} params Alternative configuration
  * @return {Object} A clone of cosmicLib

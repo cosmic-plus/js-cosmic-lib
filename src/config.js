@@ -3,7 +3,7 @@
  * Library-wide configuration.
  *
  * @borrows module:aliases.all as aliases
- * @borrows module:aliases.add as setAliases
+ * @borrows module:aliases.add as addAliases
  * @borrows module:aliases.remove as removeAliases
  *
  * @borrows module:event.defaultClickHandlers as clickHandlers
@@ -47,10 +47,10 @@ config.current = {
 }
 
 /**
- * Set default `passphrase` and `horizon` url for network `name`.
+ * Set default **passphrase** and **horizon** URL for network **name**.
  *
  * Adding custom network this way will enable the use of their name in cosmic
- * queries (as in '&network=name'). However, please remind that this feature
+ * queries (as in `&network=name`). However, please remind that this feature
  * will works only on your side and could break compatibility with other
  * services.
  *

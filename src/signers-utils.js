@@ -16,7 +16,7 @@ const helpers = require('@cosmic-plus/jsutils/misc')
 const StellarSdk = require('@cosmic-plus/base/stellar-sdk')
 
 /**
- * SignersUtils is a toolbox that aims to ease the handling of
+ * **SignersUtils** is a toolbox that aims to ease the handling of
  * multisignature transactions. The idea behind it is to fetch all required
  * data once and to cache the responses into the transaction. Then, all
  * the utilities can function in a synchronous (immediate) manner.
@@ -30,22 +30,23 @@ const StellarSdk = require('@cosmic-plus/base/stellar-sdk')
  * why none of the provided methods take a transaction as parameter.
  *
  * >
- * | **Members**                                                                 | **Methods**
+ * | Members                                                                     | Methods
  * |-----------------------------------------------------------------------------|-------------
  * | [sources]{@link SignersUtils#sources}: Array of transaction sources         | [hasSigner]{@link SignersUtils#hasSigner}: Test if a key is a legit signer for transaction
  * | [signers]{@link SignersUtils#signers}: Table of transaction signers         | [hasSigned]{@link SignersUtils#hasSigned}: Test if a key has signed transaction
  * | [signersList]{@link SignersUtils#signersList}: Array of transaction signers |
  *
  * @example
- * const cosmiclink = new CosmicLink({ memo: 'Donation', maxDate: 2019 })
+ * const cosmicLink = new CosmicLink({ memo: 'Donation', maxDate: 2019 })
  *  .addOperation('payment', { destination: 'tips*cosmic.link', amount: 10 })
  *
- * await cosmiclink.lock({ network: 'test', source: 'myaddress*example.org' })
+ * await cosmicLink.lock({ network: 'test', source: 'myaddress*example.org' })
  *
- * console.log(cosmiclink.transaction.signers)
- * console.log(cosmiclink.transaction.hasSigner(GB...DXEZ))
+ * console.log(cosmicLink.transaction.signers)
+ * console.log(cosmicLink.transaction.hasSigner(GB...DXEZ))
  *
  * @alias SignersUtils
+ * @namespace
  */
 class SignersUtils {
   static async resolve (conf, transaction, extendFlag) {
@@ -56,22 +57,22 @@ class SignersUtils {
       extra.cache.txHash = transaction.hash()
       const utils = new SignersUtils(extra, transaction)
       /**
-     * A list of the sources involved in the transaction.
-     * @alias SignersUtils#sources
-     * @type {Array}
-     */
+       * A list of the sources involved in the transaction.
+       * @alias SignersUtils#sources
+       * @type {Array}
+       */
       utils.sources = await resolve.txSources(extra, transaction)
       /**
-     * A table of the signers for each transaction source.
-     * @alias SignersUtils#signers
-     * @type {Object}
-     */
+       * A table of the signers for each transaction source.
+       * @alias SignersUtils#signers
+       * @type {Object}
+       */
       utils.signers = await resolve.txSigners(extra, transaction)
       /**
-     * A list of the legit signers for the transaction.
-     * @alias SignersUtils#signersList
-     * @type {Array}
-     */
+       * A list of the legit signers for the transaction.
+       * @alias SignersUtils#signersList
+       * @type {Array}
+       */
       utils.signersList = await resolve.txSignersList(extra, transaction)
       Object.assign(utils, utilities)
       extra.cache.signersUtils = utils
@@ -96,7 +97,7 @@ class SignersUtils {
 const utilities = {}
 
 /**
- * Tests if `accountId` is a legit signer for the transaction.
+ * Tests if **accountId** is a legit signer for the transaction.
  *
  * @example
  * if (transaction.hasSigner(GB...DEZX)) console.log('Legit signer')
@@ -110,7 +111,7 @@ utilities.hasSigner = function (accountId) {
 }
 
 /**
- * Tests if `accountId` has signed the transaction.
+ * Tests if **accountId** has signed the transaction.
  *
  * @example
  * if (transaction.hasSigned(GB...DEZX)) console.log('Has signed')

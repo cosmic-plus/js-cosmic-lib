@@ -10,8 +10,8 @@ const dom = require('@cosmic-plus/jsutils/dom')
 const html = require('@cosmic-plus/jsutils/html')
 
 /**
- * Load cosmic-lib CSS from `href` or from default origin. All subsequent calls
- * will refer to the original request.
+ * Load cosmic-lib CSS from **href** or from default origin. All subsequent
+ * calls will refer to the original request.
  *
  * @example
  * /// Preload at the start of your script:
@@ -31,7 +31,7 @@ load.styles = async function (conf, href = 'https://cosmic.plus/cosmic-lib/cosmi
 }
 
 /**
- * Load a CSS from `href`.
+ * Load a CSS from **href**.
  *
  * @example
  * /// Preload at script initialization:

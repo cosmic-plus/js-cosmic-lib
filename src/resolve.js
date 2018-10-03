@@ -14,8 +14,9 @@ const specs = require('./specs')
 const status = require('./status')
 
 /**
- * Returns the Server object for `horizon` if specified, else for `network`,
- * else for `cosmicLib.config.network`.
+ * Returns the
+ * [Server]{@link https://stellar.github.io/js-stellar-sdk/Server.html} object
+ * for **horizon**, or for **network**, or for the current network.
  *
  * @param {string} [network] 'public', 'test' or a network passphrase
  * @param {string} [horizon] A horizon URL
@@ -33,8 +34,7 @@ resolve.server = function (conf, network = conf.network, horizon = conf.horizon)
 }
 
 /**
- * Switch to network `network` if it is given, else switch to
- * `cosmicLib.config.network`.
+ * Switch to the current network, or to **network** if provided.
  *
  * @param {string} [network] 'public', 'test' or a network passphrase
  * @returns {Server} A StellarSdk Server object
@@ -49,7 +49,7 @@ resolve.useNetwork = function (conf, network = conf.network) {
 }
 
 /**
- * Returns the default Horizon node URL, or the Horizon node URL for `network`
+ * Returns the curent Horizon node URL, or the Horizon node URL for **network**
  * if provided.
  *
  * @param {string} [network] A network name or passphrase.
@@ -60,8 +60,8 @@ resolve.horizon = function (conf, network = conf.network) {
 }
 
 /**
- * Returns the passphrase for `network` if it is given, else or for the default
- * network.
+ * Returns the current network passphrase, or the passphrase for **network** is
+ * provided.
  */
 resolve.networkPassphrase = function (conf = {}, network = conf.network) {
   if (network) {
@@ -73,11 +73,13 @@ resolve.networkPassphrase = function (conf = {}, network = conf.network) {
 }
 
 /**
- * Returns the federation server response for `address`.
+ * Returns the federation server
+ * [Account]{@link https://stellar.github.io/js-stellar-sdk/Account.html}
+ * for **address**.
  *
  * @async
  * @param {string} address A Stellar public key or a federated address
- * @return {Promise} Resolve to federation server response
+ * @return {} Resolve to federation server response
  */
 resolve.address = function (conf, address) {
   const cache = conf.cache
@@ -107,7 +109,9 @@ async function addressResolver (conf, address) {
 }
 
 /**
- * Returns the AccountResponse object for `address`.
+ * Returns the
+ * [AccountResponse]{@link https://stellar.github.io/js-stellar-sdk/AccountResponse.html}
+ * object for **address**.
  *
  * @param {string} address A public key or a federated address
  * @return {Object} The AccountResponse
@@ -139,8 +143,7 @@ async function accountResolver (conf, accountId, quietFlag) {
 }
 
 /**
- * Returns `true` if `address` doesn't exist on the blockchain, `false`
- * otherwise.
+ * Returns `true` if **address** account is empty, `false` otherwise.
  *
  * @async
  * @param {string} address Public key or federated address
@@ -151,8 +154,8 @@ resolve.isAccountEmpty = function (conf, address) {
 }
 
 /**
- * Returns the account object for transaction source `address`, with sequence
- * set at `sequence` if provided. If `address` is not provided, return the
+ * Returns the account object for transaction source **address`** with sequence
+ * set at **sequence** if provided. If **address** is not provided, returns the
  * neutral account object instead (as in SEP-0007 specifications).
  *
  * @param {string} [address]
@@ -181,7 +184,7 @@ resolve.txSourceAccount = async function (conf, address, sequence) {
 }
 
 /**
- * Return an array of all source accounts involved in `transaction`.
+ * Returns the array of all source accounts ID involved in **transaction**.
  *
  * @param {Transaction} transaction
  * @return {Array}
@@ -235,7 +238,7 @@ resolve.txSigners = async function (conf, transaction) {
 }
 
 /**
- * Returns an Array containing the keys for all legit signers for `transaction`.
+ * Returns an Array containing the keys for all legit signers of **transaction**.
  *
  * @param {Transaction} transaction
  * @return {Array}
@@ -260,7 +263,7 @@ function signersTableToSignersList (signersTable) {
 }
 
 /**
- * Add an extra field to `object` that embed cache and local configuration.
+ * Add an extra field to **object** that embed cache and local configuration.
  *
  * @private
  */
