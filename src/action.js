@@ -7,12 +7,13 @@
  */
 const action = exports
 
+const env = require('@cosmic-plus/jsutils/env')
 const helpers = require('@cosmic-plus/jsutils/misc')
 const StellarGuard = require('@stellarguard/sdk')
 
 const convert = require('./convert')
 const config = require('./config')
-const format = require('./format')
+const format = env.isBrowser && require('./format')
 const resolve = require('./resolve')
 const signersUtils = require('./signers-utils')
 const status = require('./status')

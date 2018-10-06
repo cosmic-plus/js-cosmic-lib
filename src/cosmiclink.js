@@ -193,7 +193,7 @@ class CosmicLink {
    */
   get tdesc () {
     if (!this._tdesc) {
-      if (this.transaction) this._tdesc = convert.transactionToTdesc(this, this.transaction)
+      if (this.transaction) this._tdesc = convert.transactionToTdesc(this, this.transaction, this.locker)
       else return undefined
     }
     return this._tdesc
@@ -523,7 +523,8 @@ function makeHtmlLink (cosmicLink) {
 
   const htmlLink = html.grab('#cosmiclink') || html.create('a')
   htmlLink.className = '.cosmiclink'
-  htmlLink.href = cosmicLink.uri
+  htmlLink.href = cosmicLink.page
+  htmlLink.onclick = () => htmlLink.href = cosmicLink.uri
   if (!htmlLink.title) htmlLink.title = 'Sign transaction'
   if (!htmlLink.textContent) htmlLink.textContent = 'CosmicLink'
 

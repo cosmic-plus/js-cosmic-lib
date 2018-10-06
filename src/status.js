@@ -10,7 +10,8 @@
  */
 const status = exports
 
-const html = require('@cosmic-plus/jsutils/html')
+const env = require('@cosmic-plus/jsutils/env')
+const html = env.isBrowser && require('@cosmic-plus/jsutils/html')
 
 /**
  * Initialize `conf.status` & `conf.errors`.

@@ -17,7 +17,7 @@ const asset4 = 'XRP:GBXRPL45NPHCVMFFAYZVUVFFVKSIZ362ZXFP7I2ETNQ3QKZMFLPRDTD5'
 const shasum = '4a3ec3730504983f960fb2df35a1d68d640ff55d151fa3128ca0fc707f86882e'
 const txsum = '3389e9f0f1a65f19736cacf544c2e825313e8447f569233bb8db39aa607c1234'
 const id = '18446744073709551615'
-const xdr = 'AAAAAPNZplGf6IuHluM86bq4GjGnQOoy5+cL4BlCi8fjUaOvAAAAZACL7QgAAAADAAAAAAAAAAAAAAABAAAAAAAAAAkAAAAAAAAAAeNRo68AAABAruAWxO6KiC3Q3K+icSYVrKgrseIh3190V1+82d0CA90ycZ/hjxgqXufv00WStBfRP85fRHDzCwdzPNvy6GeRDQ=='
+const xdr = 'AAAAAEmlgXsVQpGcRhn0YhhktsW/7+GHTAhucc06I5zDTRQdAAAAZAAB7x0AAAACAAAAAAAAAAAAAAABAAAAAAAAAAUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=='
 
 const invalidKey = 'GBP7EQX652UPJJJRYFAPH64V2MHGUGFJNKJN7RNOPNSFIBH4BW6NSF54'
 
@@ -100,7 +100,7 @@ const tests = [
   ['query', '?xdr=' + xdr + '&stripSource&network=test', { dontSign: 1 }],
   ['query', '?xdr=' + xdr + '&stripSequence', { dontSign: 1 }],
   ['query', '?xdr=' + xdr + '&stripSignatures', { dontSign: 1,
-    loopbackQuery: '?inflation&source=GDZVTJSRT7UIXB4W4M6OTOVYDIY2OQHKGLT6OC7ADFBIXR7DKGR27C63'}],
+    loopbackQuery: '?setOptions&source=GBE2LAL3CVBJDHCGDH2GEGDEW3C3737BQ5GAQ3TRZU5CHHGDJUKB2K4B'}],
 
   /** * Sending tests ***/
   ['bigTitle', 'Sending tests'],

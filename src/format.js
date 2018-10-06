@@ -25,6 +25,7 @@ const specs = require('./specs')
  */
 format.tdesc = function (conf, tdesc) {
   const trNode = html.create('div', '.cosmiclib_transactionNode')
+  if (!tdesc) return trNode
 
   let infoNode
   specs.transactionOptionalFields.forEach(entry => {
@@ -275,6 +276,7 @@ specs.types.forEach(type => {
 const process = {}
 
 process.string = function (conf, string) {
+  if (typeof string !== 'string') string = string + ''
   return html.create('span', null, string)
 }
 

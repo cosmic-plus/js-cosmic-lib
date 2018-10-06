@@ -187,11 +187,9 @@ function setTdesc (cosmicLink, type, value, options) {
       if (options.stripSource || options.stripSequence) {
         delete cosmicLink._xdr
         delete cosmicLink._transaction
-      } else {
-        if (options.stripSignatures) {
-          cosmicLink.transaction.signatures = []
-          delete cosmicLink._xdr
-        }
+      } else if (options.stripSignatures) {
+        cosmicLink.transaction.signatures = []
+        delete cosmicLink._xdr
       }
   }
 }
