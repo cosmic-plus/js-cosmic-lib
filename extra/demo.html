@@ -8,7 +8,8 @@
 
 <script>
   var cosmicLink, pageBox, networkBox, sourceBox, signerBox, formatBoxes = [],
-      signButton, sendButton, formats = ['uri', 'query', 'json', 'xdr', 'sep7']
+      lockButton, signButton, sendButton,
+      formats = ['uri', 'query', 'json', 'xdr', 'sep7']
 
   function preinit () {
     // Asynchronous CSS loading.
@@ -21,13 +22,14 @@
     networkBox = document.querySelector('#network')
     sourceBox = document.querySelector('#source')
     signerBox = document.querySelector('#signer')
+    lockButton = document.querySelector('#lockButton')
     signButton = document.querySelector('#signButton')
     sendButton = document.querySelector('#sendButton')
 
     // Default configuration.
-    cosmicLib.config.page = pageBox.value = location.href.replace(/\?.*/,'')
+    cosmicLib.config.page = pageBox.value = 'https://cosmic.link'
     cosmicLib.config.network = networkBox.value = 'test'
-    cosmicLib.config.source = sourceBox.value = 'tips*cosmic.link'
+    cosmicLib.config.source = sourceBox.value = ''
 
     // Setup format boxes.
     formats.forEach(format => initBox(format))
@@ -51,29 +53,32 @@
     // Use an empty query if none is provided.
     if (!transaction) transaction = location.search || '?'
 
-    // Save needed values.
-    const page = pageBox.value, network = networkBox.value, source = sourceBox.value
-
     // Reset the interface.
     clearBoxes()
     disableButtons()
+    lockButton.disabled = false
 
     // Create the new cosmicLink.
-    cosmicLink = new CosmicLink(transaction, { page: page })
+    cosmicLink = new CosmicLink(transaction, { page: pageBox.value })
 
     // Refresh edition boxes.
     pageBox.value = cosmicLink.page || pageBox.value || cosmicLib.config.page
     networkBox.value = cosmicLink.network || networkBox.value || cosmicLib.config.network
     sourceBox.value = cosmicLink.source || sourceBox.value || cosmicLib.config.source
     refreshFormatBoxes()
+  }
 
-    // Lock cosmicLink.
-    cosmicLink.lock({ network: network, source: source })
-      .then(function(obj) {
+  // Compute XDR and update boxes accordingly.
+  function lock () {
+    formatBoxes.xdr.placeholder = 'Computing...'
+    formatBoxes.uri.placeholder = 'Computing...'
+
+    cosmicLink.lock({ network: networkBox.value, source: sourceBox.value })
+      .then(function (obj) {
         // cosmicLink may have changed by the time lock() resolves.
         if (obj !== cosmicLink) return
-
-        refreshFormatBoxes(['xdr', 'sep7'])
+      
+        refreshFormatBoxes()
         enableButtons()
       })
   }
@@ -129,7 +134,7 @@
   function clearBoxes () {
     for (let format in formatBoxes) {
       formatBoxes[format].value = ''
-      formatBoxes[format].placeholder = 'Computing...'
+      formatBoxes[format].placeholder = format
     }
   }
 
@@ -153,6 +158,7 @@
   function enableButtons () {
     signButton.disabled = null
     sendButton.disabled = null
+    lockButton.disabled = true
   }
 </script>
 
@@ -245,7 +251,7 @@ input, textarea {
       <!-- An HTML element with id="cosmiclink" will automatically points to
            the last cosmicLink URI
       -->
-      <h2>Edit (<a id="cosmiclink" title="Open page">go</a>)</h2>
+      <h2>Edit (<a id="cosmiclink" title="Open page" target="_blank" rel="noopener">go</a>)</h2>
       <form autocomplete="off">
         <label for="page">Page:</label>
         <input id="page" type="text" onchange="refresh()">
@@ -259,6 +265,8 @@ input, textarea {
         <input id="query" type="text" placeholder="Query">
         <label for="json">JSON:</label>
         <textarea id="json" rows=8 placeholder="JSON"></textarea>
+        <label for="lockButton">Lock:</label>
+        <input id="lockButton" type="button" value="Compute XDR" onclick="lock()">
         <label for="xdr">XDR:</label>
         <textarea id="xdr" rows=3 placeholder="XDR"></textarea>
         <label for="sep7">SEP-0007:</label>
