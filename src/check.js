@@ -104,7 +104,7 @@ function errDesc (error, value = '') {
  * @param {string} [value]
  */
 check.field = function (conf, field, value) {
-  if ((value === '' || value === undefined) && field !== 'homeDomain') {
+  if (value === '' && field !== 'homeDomain' && field !== 'value') {
     status.error(conf, `Missing value for field: ${field}`, 'throw')
   }
 

@@ -27,7 +27,6 @@ const specs = require('./specs')
 expand.tdesc = function (conf, tdesc) {
   for (let field in tdesc) {
     if (field === 'operations') continue
-    else if (tdesc[field] === null) delete tdesc[field]
     else tdesc[field] = expand.field(conf, field, tdesc[field])
   }
   if (tdesc.operations) tdesc.operations.forEach(odesc => expand.odesc(conf, odesc))
@@ -46,7 +45,6 @@ expand.tdesc = function (conf, tdesc) {
 expand.odesc = function (conf, odesc) {
   for (let field in odesc) {
     if (field === 'type') continue
-    else if (odesc[field] === null) delete odesc[field]
     else odesc[field] = expand.field(conf, field, odesc[field])
   }
   normalize.odesc(conf, odesc)
@@ -74,6 +72,7 @@ expand.field = function (conf, field, value) {
  * @param {string} value
  */
 expand.type = function (conf, type, value) {
+  if (value === null || value === undefined) return value
   if (typeof value === 'number') value = value + ''
   return expand[type] ? expand[type](conf, value) : value + ''
 }

@@ -13,6 +13,7 @@ const StellarSdk = require('@cosmic-plus/base/stellar-sdk')
  * Setup the default values for `tdesc`.
  */
 normalize.tdesc = function (conf, tdesc) {
+  removeEmptyFields(tdesc)
   if (!tdesc.operations) tdesc.operations = []
 
   if (tdesc.fee === 100 * tdesc.operations.length) delete tdesc.fee
@@ -36,6 +37,7 @@ normalize.date = function (conf, date) {
  * but required by StellarSdk.
  */
 normalize.odesc = function (conf, odesc) {
+  removeEmptyFields(odesc)
   /// No limit = maximum limit.
   if (odesc.limit === '922337203685.4775807') delete odesc.limit
   /// New offer.
@@ -59,7 +61,7 @@ normalize.odesc = function (conf, odesc) {
     }
     case 'manageData':
       /// Delete data entry.
-      if (!odesc.value) odesc.value = null
+      if (!odesc.value) odesc.value = ''
       break
     case 'pathPayment':
       /// XLM as default asset.
@@ -74,3 +76,9 @@ normalize.odesc = function (conf, odesc) {
 }
 
 const XLM = StellarSdk.Asset.native()
+
+function removeEmptyFields (object) {
+  for (let field in object) {
+    if (object[field] === null || object[field] === undefined) delete object[field]
+  }
+}

@@ -37,7 +37,18 @@ destruct.transaction = function (conf, tx, options = {}) {
   }
   tdesc.fee = tx.fee
 
-  tdesc.operations = tx.operations.map(op => destruct.operation(conf, op))
+  /// Work around a bug in stellar-sdk 0.11
+  /// https://github.com/stellar/js-stellar-sdk/issues/204
+  tdesc.operations = []
+  for (let index in tx.operations) {
+    const op = tx.operations[index]
+    if (op.homeDomain === null) {
+      const optree = tx.tx._attributes.operations[index]
+      op.homeDomain = optree._attributes.body._value._attributes.homeDomain
+    }
+    tdesc.operations[index] = destruct.operation(conf, op)
+  }
+  // tdesc.operations = tx.operations.map(op => destruct.operation(conf, op))
 
   normalize.tdesc(conf, tdesc)
   return tdesc
@@ -53,8 +64,7 @@ destruct.operation = function (conf, op) {
   const odesc = {}
 
   for (let field in op) {
-    if (op[field] === undefined) delete op[field]
-    else if (field === 'type') odesc.type = op.type
+    if (field === 'type') odesc.type = op.type
     else if (field === 'line') odesc.asset = op.line
     else odesc[field] = destruct.field(conf, field, op[field])
   }
@@ -84,7 +94,8 @@ destruct.field = function (conf, field, value) {
  * @param {any} value
  */
 destruct.type = function (conf, type, value) {
-  return destruct[type](conf, value)
+  if (value === null || value === undefined) return value
+  else return destruct[type](conf, value)
 }
 
 /******************************************************************************/
