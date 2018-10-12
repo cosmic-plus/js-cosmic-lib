@@ -62,7 +62,7 @@ In your HTML pages:
 ### Web
 
 ```HTML
-  <script src="https://unpkg.com/stellar-sdk/dist/stellar-sdk.min.js"></script>
+  <script src="https://cosmic.plus/stellar-sdk/stellar-sdk.min.js"></script>
   <script src="https://cosmic.plus/cosmic-lib/cosmic-lib.js"></script>
 ```
 
@@ -73,27 +73,34 @@ libraries.
 
 ### Create a CosmicLink
 
-#### From a New Transaction
+#### New Transaction
 
 The transaction builder is similar to the one provided by StellarSdk.
 Additionaly, it accepts federated addresses and offer syntactic sugar for
 memos, dates and assets.
 
 ```js
-const cosmicLink = new CosmicLink({ memo: 'Demo', maxTime: '2019-01', network: 'test', ...moreTxFields })
-  .addOperation('payment', { destination: 'tips*cosmic.link', amount: 10:  })
-  .addOperation('changeTrust', { asset: 'CNY:admin*ripplefox.com' })
+const cosmicLink = new CosmicLink({ network: 'test', memo: 'Demo', maxTime: '2019-01' })
+  .addOperation('payment', { destination: 'tips*cosmic.link', amount: 10 }) // XLM is implied
+  .addOperation('changeTrust', { asset: 'CNY:admin*ripplefox.com' }) // Max limit is implied
   .addOperation(...)
 ```
 
 #### From an Existing Transaction
 
-* From a StellarSdk Transaction: `new CosmicLink(transaction, { network: 'public'|'test'|passphrase })`
-* From an XDR: `new CosmicLink(xdr, { network: 'public'|'test'|passphrase })`
-* From a CosmicLink URI/query/JSON: `new CosmicLink(uri|query|json)`
+* From a StellarSdk Transaction: `new CosmicLink(transaction, { network: 'public'|'test' })`
+* From an XDR: `new CosmicLink(xdr, { network: 'public'|'test' })`
+* From a CosmicLink URI/query: `new CosmicLink(uri|query)`
 * From a SEP-0007 link: `new CosmicLink(sep7)`
 
 ### Edit a CosmicLink
+
+* Change transaction fields: `cosmicLink.setTxFields(parameters)`
+* Add operation: `cosmicLink.addOperation(name, parameters)`
+* Set operation: `cosmicLink.setOperation(index, name, parameters)`
+* Remove operation: `cosmicLink.setOperation(index, null)`
+
+**Example:**
 
 ```js
 cosmicLink.setTxFields({ memo: 'newMemo', source: null, sequence: null })
@@ -104,30 +111,34 @@ cosmicLink.setTxFields({ memo: 'newMemo', source: null, sequence: null })
 
 ### Get the Link
 
-* Get the HTML link: `cosmicLink.htmlLink`
+* Get the HTML link element: `cosmicLink.htmlLink`
 * Get the URI: `cosmicLink.uri`
 * Get the query: `cosmicLink.query`
 
-If your webpage contains a link HTML element with `id="cosmicLink"`, it will
+If your webpage contains an HTML link element with `id="cosmiclink"`, it will
 automatically get updated with the latest CosmicLink URI.
 
 ### Display the Transaction
 
-You'll probably want to load the StyleSheet for cosmic-lib first: `await
-cosmicLib.load.styles([URL])`. Then, you can get the HTML description from:
-`cosmicLink.htmlDescription`
+You'll probably want to load the StyleSheet for cosmic-lib first:
 
-If your webpage contains an HTML element with `id="cosmicLink_description"`, it
+```js
+await cosmicLib.load.styles()
+```
+Then, you can get the HTML description elememt at: `cosmicLink.htmlDescription`.
+
+If your webpage contains an HTML element with `id="cosmiclink_description"`, it
 will automatically get updated with the latest CosmicLink description.
 
 
-### Convert to other formats
+### Formats conversion
 
 ```js
 console.log(cosmicLink.json)
 console.log(cosmicLink.tdesc) // The most convenient format to manipulate transactions
 
-await cosmicLink.lock({ network: ..., source: ...}) // Lock CosmicLink to a network & a source account
+// Lock CosmicLink to a network & a source account to compute its Transaction & XDR.
+await cosmicLink.lock({ network: ..., source: ...})
 console.log(cosmicLink.transaction)
 console.log(cosmicLink.xdr)
 console.log(cosmicLink.sep7)
@@ -139,7 +150,8 @@ don't need to use `cosmicLink.lock()` for conversion purpose.
 ### Sign & Send the Transaction
 
 ```js
-await cosmicLink.lock({ network: ..., source: ...}) // Lock CosmicLink to a network & a source account
+// Lock CosmicLink to a network & a source account to fetch signers data.
+await cosmicLink.lock({ network: ..., source: ...})
 cosmicLink.sign(...keypair|preimage)
 await cosmicLink.send()
 ```
@@ -172,7 +184,6 @@ cosmic-lib exposes part of its underlying code as additional modules.
 * Get the Server object for a network `cosmicLib.resolve.server('public'|'test'|passphrase)`
 * Resolve a federated address: `await cosmicLib.resolve.address('tips*cosmic.link')`
 * Resolve an account: `await cosmicLib.resolve.account('tips*cosmic.link')`
-* Resolve transaction signers: `await cosmicLib.resolve.txSigners(transaction)`
 * Resolve transaction signers list: `await cosmicLib.resolve.txSignersList(transaction)`
 
 ### Signers Utils
@@ -196,13 +207,13 @@ cosmic-lib packs more that showed in this brief presentation. Please take a
 look at the manual:
 
  * [Complete documentation](https://cosmic.plus/cosmic-lib/doc/CosmicLink.html)
- * [Cosmic queries specification](https://cosmic.plus/cosmic-lib/doc/tutorial-10-specifications.html)
- * [Cosmic queries cheatsheet](https://cosmic.plus/cosmic-lib/doc/tutorial-20-cheatsheet2.html)
+ * [Cosmic queries specification](https://cosmic.plus/cosmic-lib/doc/tutorial-10-specs-query.html)
+ * [Cosmic queries cheatsheet](https://cosmic.plus/cosmic-lib/doc/tutorial-20-cheatsheet-query.html)
  * [Emitting CosmicLinks without this library](https://cosmic.plus/cosmic-lib/doc/tutorial-30-emitting.html)
 
 ### Support
 
-* [Galactic Talk](https://galactictalk.org/d/1519-release-js-cosmic-lib-beta-1-stellar-transactions-into-url-and-qr)
+* [Galactic Talk](https://galactictalk.org/d/1701-release-cosmic-lib-beta-2)
 * [Telegram](https://t.me/cosmiclink)
 * [Stellar Slack](https://slack.stellar.org/): @Mister.Ticot
 
