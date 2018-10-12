@@ -1,12 +1,12 @@
 # cosmic-lib
 
-cosmic-lib is a JavaScript implementation of the **CosmicLink protocol** that 
+cosmic-lib is a JavaScript implementation of the **CosmicLink protocol** that
 comes with a few useful additional tools.
 
 ## What are CosmicLinks?
 
-CosmicLinks are normal URL or URI that contains a Stellar transaction encoded 
-in their query. It allows to pass Stellar transaction to **any webpage** or 
+CosmicLinks are normal URL or URI that contains a Stellar transaction encoded
+in their query. It allows to pass Stellar transaction to **any webpage** or
 **any software**. Here's an example on the https://cosmic.link website:
 
 > <https://cosmic.link/?payment&amount=100&destination=tips*cosmic.link>
@@ -19,17 +19,17 @@ It can be used to pass transaction XDR as well:
 
 > [https://cosmic.link/?xdr=AAAA...AA==&network=public](https://cosmic.link/?xdr=AAAAAL2ef/Z7FpGtgUvkKaEg3uvy9IH+T9chWSUhQILKTk/NAAAAZAEMX34AAAADAAAAAAAAAAAAAAABAAAAAAAAAAUAAAABAAAAAIQ/AS7GRUBBd96ykumKKUFE92+oiwRuJ7KXuvPwwTQWAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==&network=public)
 
-While the **https://cosmic.link** website provides a convenient way to share 
-transactions over social medias, emails and static documents, any 
-wallet/service can issue or accept CosmicLinks. One big advantage of using 
-queries is that they can be used to pass transactions without having to rely on 
+While the **https://cosmic.link** website provides a convenient way to share
+transactions over social medias, emails and static documents, any
+wallet/service can issue or accept CosmicLinks. One big advantage of using
+queries is that they can be used to pass transactions without having to rely on
 any particular service.
 
-This is a generalization of tools like Metamask for Ethereum, as it allows any 
-service to communicate with any (compatible) wallet; And users to sign 
+This is a generalization of tools like Metamask for Ethereum, as it allows any
+service to communicate with any (compatible) wallet; And users to sign
 transactions from any service without ever divulgating private keys.
 
-The ultimate goal of the CosmicLink protocol is to enable **cross-wallet 
+The ultimate goal of the CosmicLink protocol is to enable **cross-wallet
 applications** for Stellar.
 
 ## Installation
@@ -42,8 +42,8 @@ applications** for Stellar.
 In your script:
 
 ```js
-const cosmiclib = require('cosmic-lib')
-const CosmicLink = cosmiclib.CosmicLink
+const cosmicLib = require('cosmic-lib')
+const CosmicLink = cosmicLib.CosmicLink
 ```
 
 ### Bower
@@ -66,7 +66,7 @@ In your HTML pages:
   <script src="https://cosmic.plus/cosmic-lib/cosmic-lib.js"></script>
 ```
 
-**Note**: For production release it is advised to serve your own copy of the 
+**Note**: For production release it is advised to serve your own copy of the
 libraries.
 
 ## Basic Usage
@@ -75,12 +75,12 @@ libraries.
 
 #### From a New Transaction
 
-The transaction builder is similar to the one provided by StellarSdk. 
-Additionaly, it accepts federated addresses and offer syntactic sugar for 
+The transaction builder is similar to the one provided by StellarSdk.
+Additionaly, it accepts federated addresses and offer syntactic sugar for
 memos, dates and assets.
 
 ```js
-const cosmiclink = new CosmicLink({ memo: 'Demo', maxTime: '2019-01', network: 'test', ...moreTxFields })
+const cosmicLink = new CosmicLink({ memo: 'Demo', maxTime: '2019-01', network: 'test', ...moreTxFields })
   .addOperation('payment', { destination: 'tips*cosmic.link', amount: 10:  })
   .addOperation('changeTrust', { asset: 'CNY:admin*ripplefox.com' })
   .addOperation(...)
@@ -96,7 +96,7 @@ const cosmiclink = new CosmicLink({ memo: 'Demo', maxTime: '2019-01', network: '
 ### Edit a CosmicLink
 
 ```js
-cosmiclink.setTxFields({ memo: 'newMemo', source: null, sequence: null })
+cosmicLink.setTxFields({ memo: 'newMemo', source: null, sequence: null })
   .addOperation('manageData', { name: 'foo', value: 'bar'})
   .setOperation(1, 'mergeAccount', { destination: 'in*tempo.eu.com' })
   .setOperation(0, null)
@@ -104,63 +104,63 @@ cosmiclink.setTxFields({ memo: 'newMemo', source: null, sequence: null })
 
 ### Get the Link
 
-* Get the HTML link: `cosmiclink.htmlLink`
-* Get the URI: `cosmiclink.uri`
-* Get the query: `cosmiclink.query`
+* Get the HTML link: `cosmicLink.htmlLink`
+* Get the URI: `cosmicLink.uri`
+* Get the query: `cosmicLink.query`
 
-If your webpack contains a link HTML element with `id="cosmiclink"`, it will
+If your webpage contains a link HTML element with `id="cosmicLink"`, it will
 automatically get updated with the latest CosmicLink URI.
 
 ### Display the Transaction
 
-You'll probably want to load the StyleSheet for cosmic-lib first: `await 
-cosmiclib.load.styles([URL])`. Then, you can get the HTML description from: 
-`cosmiclink.htmlDescription`
+You'll probably want to load the StyleSheet for cosmic-lib first: `await
+cosmicLib.load.styles([URL])`. Then, you can get the HTML description from:
+`cosmicLink.htmlDescription`
 
-If your webpage contains an HTML element with `id="cosmiclink_description"`, it 
+If your webpage contains an HTML element with `id="cosmicLink_description"`, it
 will automatically get updated with the latest CosmicLink description.
 
 
 ### Convert to other formats
 
 ```js
-console.log(cosmiclink.json)
-console.log(cosmiclink.tdesc) // The most convenient format to manipulate transactions
+console.log(cosmicLink.json)
+console.log(cosmicLink.tdesc) // The most convenient format to manipulate transactions
 
-await cosmiclink.lock({ network: ..., source: ...}) // Lock CosmicLink to a network & a source account
-console.log(cosmiclink.transaction)
-console.log(cosmiclink.xdr)
-console.log(cosmiclink.sep7)
+await cosmicLink.lock({ network: ..., source: ...}) // Lock CosmicLink to a network & a source account
+console.log(cosmicLink.transaction)
+console.log(cosmicLink.xdr)
+console.log(cosmicLink.sep7)
 ```
 
 **Note**: If you parsed CosmicLink from an XDR/Transaction/SEP-0007 link you
-don't need to use `cosmiclink.lock()` for conversion purpose.
+don't need to use `cosmicLink.lock()` for conversion purpose.
 
 ### Sign & Send the Transaction
 
 ```js
-await cosmiclink.lock({ network: ..., source: ...}) // Lock CosmicLink to a network & a source account
-cosmiclink.sign(...keypair|preimage)
-await cosmiclink.send()
+await cosmicLink.lock({ network: ..., source: ...}) // Lock CosmicLink to a network & a source account
+cosmicLink.sign(...keypair|preimage)
+await cosmicLink.send()
 ```
 
-**Note**: the transaction will automatically be transmitted to 
+**Note**: the transaction will automatically be transmitted to
 [StellarGuard](https://stellarguard.me) when relevant.
 
 ## Global configuration
 
-`cosmiclib.config` allows to define globally a few parameters:
+`cosmicLib.config` allows to define globally a few parameters:
 
 ```js
-cosmiclib.config.page = 'https://cosmic.link/'  // Base URI when generating links
-cosmiclib.config.network = 'test'               // 'public' by default
-cosmiclib.config.source = 'tips*cosmic.link'    // Undefined by default
+cosmicLib.config.page = 'https://cosmic.link/'  // Base URI when generating links
+cosmicLib.config.network = 'test'               // 'public' by default
+cosmicLib.config.source = 'tips*cosmic.link'    // Undefined by default
 ```
 
 You can also set the horizon node to use for a given network:
 
 ```js
-cosmiclib.config.setupNetwork('test', 'https://horizon.example.org')
+cosmicLib.config.setupNetwork('test', 'https://horizon.example.org')
 ```
 
 ## Other Utilities
@@ -169,18 +169,21 @@ cosmic-lib exposes part of its underlying code as additional modules.
 
 ### Resolve
 
-* Get the Server object for a network `cosmiclib.resolve.server('public'|'test'|passphrase)`
-* Resolve a federated address: `await cosmiclib.resolve.address('tips*cosmic.link')`
-* Resolve an account: `await cosmiclib.resolve.account('tips*cosmic.link')`
-* Resolve transaction signers list: `await cosmiclib.resolve.txSignersList(transaction)`
+* Get the Server object for a network `cosmicLib.resolve.server('public'|'test'|passphrase)`
+* Resolve a federated address: `await cosmicLib.resolve.address('tips*cosmic.link')`
+* Resolve an account: `await cosmicLib.resolve.account('tips*cosmic.link')`
+* Resolve transaction signers: `await cosmicLib.resolve.txSigners(transaction)`
+* Resolve transaction signers list: `await cosmicLib.resolve.txSignersList(transaction)`
 
 ### Signers Utils
 
-Extends a StellarSdk Transaction object with convenient multi-signature 
+Extends a StellarSdk Transaction object with convenient multi-signature
 utilities:
 
 ```js
-cosmiclib.signersUtils.extends(transaction)
+cosmicLib.signersUtils.extends(transaction)
+console.log(transaction.signers)
+console.log(transaction.signersList)
 transaction.hasSigner('GB...DECX')
 transaction.hasSigned('GB...DECX')
 ```
@@ -193,9 +196,9 @@ cosmic-lib packs more that showed in this brief presentation. Please take a
 look at the manual:
 
  * [Complete documentation](https://cosmic.plus/cosmic-lib/doc/CosmicLink.html)
- * [Cosmic queries specification](https://cosmic.plus/cosmic-lib/doc/tutorial-specifications.html)
- * [Cosmic queries cheatsheet](https://cosmic.plus/cosmic-lib/doc/tutorial-cheatsheet2.html)
- * [Emitting CosmicLinks without this library](https://cosmic.plus/cosmic-lib/doc/tutorial-emitting.html)
+ * [Cosmic queries specification](https://cosmic.plus/cosmic-lib/doc/tutorial-10-specifications.html)
+ * [Cosmic queries cheatsheet](https://cosmic.plus/cosmic-lib/doc/tutorial-20-cheatsheet2.html)
+ * [Emitting CosmicLinks without this library](https://cosmic.plus/cosmic-lib/doc/tutorial-30-emitting.html)
 
 ### Support
 
@@ -205,7 +208,7 @@ look at the manual:
 
 ### Releases
 
-This is the beta-2 release. The codebase is mature and few to no compatibility 
+This is the beta-2 release. The codebase is mature and few to no compatibility
 breaks are expected.
 
  * [Task list](https://github.com/cosmic-plus/node-cosmic-lib/blob/master/TODO.md)
@@ -232,8 +235,8 @@ breaks are expected.
 
 ## Contribute
 
-cosmic-lib is a free software. You are very welcome to contribute by whatever 
-means you'd like. Donation are also possible at 
+cosmic-lib is a free software. You are very welcome to contribute by whatever
+means you'd like. Donation are also possible at
 [tips*cosmic.link](https://cosmic.link/?payment&memo=Donation&destination=tips*cosmic.link&amount=20)
 
 
