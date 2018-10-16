@@ -1,6 +1,6 @@
 {
   "name": "cosmic-lib",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A javaScript implementation of the CosmicLink protocol",
   "author": "MisterTicot",
   "repository": "github:cosmic-plus/node-cosmic-lib",
@@ -43,7 +43,7 @@
   },
   "dependencies": {
     "@cosmic-plus/base": "^1.0.2",
-    "@cosmic-plus/jsutils": "^1.4.0",
+    "@cosmic-plus/jsutils": "^1.6.0",
     "@stellarguard/sdk": "^1.4.1"
   }
 }
