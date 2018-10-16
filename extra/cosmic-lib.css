@@ -59,27 +59,36 @@
     margin: 0.5em 0;
 }
 
-.cosmiclib_transactionNode .cosmiclib_sideInfo
+.cosmiclib_sideInfo
 {
     border-left: 0.2em solid lightgrey;
-    padding-left: 0.2em;
+    padding-left: 0.3em;
     margin: 0;
     list-style-type: none;
     list-style-position: inside;
 }
 
+.cosmiclib_sideInfo li
+{
+    padding: 0.1em;
+}
+
 .cosmiclib_operation
 {
-    margin: 0.5em 0;
+    padding: 0.5em;
 }
 
 .cosmiclib_sourcedOperation
 {
+    margin-left: 1em;
+/*
     border-left: 0.2em solid lightgrey;
-    padding-left: 0.2em;
+*/
     background-color: ghostwhite;
 
 }
+
+
 
 /*** Status/Signers node styling ***/
 

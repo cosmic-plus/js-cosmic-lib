@@ -61,13 +61,14 @@ format.tdesc = function (conf, tdesc) {
  */
 format.odesc = function (conf, odesc) {
   const opNode = html.create('div', '.cosmiclib_operation')
+  let retNode = opNode
 
   if (odesc.source) {
-    html.appendClass(opNode, 'cosmiclib_sourcedOperation')
+    retNode = html.create('div', '.cosmiclib_sourcedOperation')
     const sourceNode = html.create('div', '.cosmiclib_sideInfo', 'Source: ')
     const addressNode = format.address(conf, odesc.source)
     html.append(sourceNode, addressNode)
-    html.append(opNode, sourceNode)
+    html.append(retNode, sourceNode, opNode)
   }
 
   let meaning = operationMeaning(odesc)
@@ -88,7 +89,7 @@ format.odesc = function (conf, odesc) {
       html.append(opNode, txt)
     }
   }
-  return opNode
+  return retNode
 }
 
 /**
