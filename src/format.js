@@ -40,12 +40,8 @@ format.tdesc = function (conf, tdesc) {
   })
   if (infoNode) html.append(trNode, infoNode)
 
-  /// Sort operations so that the ones with declared sources are at the end.
-  /// (makes data presentation better)
-  let operations = tdesc.operations.sort(entry => entry.source ? 1 : 0)
-
   try {
-    for (let index in operations) {
+    for (let index in tdesc.operations) {
       const operation = tdesc.operations[index]
       const opNode = format.odesc(conf, operation)
       html.append(trNode, opNode)
