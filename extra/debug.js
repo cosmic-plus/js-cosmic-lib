@@ -99,8 +99,7 @@ const tests = [
   ['query', '?xdr=' + xdr, { dontSign: 1 }],
   ['query', '?xdr=' + xdr + '&stripSource&network=test', { dontSign: 1 }],
   ['query', '?xdr=' + xdr + '&stripSequence', { dontSign: 1 }],
-  ['query', '?xdr=' + xdr + '&stripSignatures', { dontSign: 1,
-    loopbackQuery: '?setOptions&source=GBE2LAL3CVBJDHCGDH2GEGDEW3C3737BQ5GAQ3TRZU5CHHGDJUKB2K4B'}],
+  ['query', '?xdr=' + xdr + '&stripSignatures', { dontSign: 1 }],
 
   /** * Sending tests ***/
   ['bigTitle', 'Sending tests'],

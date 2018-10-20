@@ -26,7 +26,7 @@ destruct.transaction = function (conf, tx, options = {}) {
 
   if (options.network !== undefined) tdesc.network = options.network
   if (!options.stripSource) tdesc.source = tx.source
-  if (!options.stripSignatures && !options.stripSequence) {
+  if (!options.stripSource && !options.stripSequence) {
     tdesc.sequence = destruct.sequence(conf, tx.sequence)
   }
 
