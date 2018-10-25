@@ -63,7 +63,7 @@ In your HTML pages:
 
 ```HTML
   <script src="https://cosmic.plus/stellar-sdk/stellar-sdk.min.js"></script>
-  <script src="https://cosmic.plus/cosmic-lib/cosmic-lib.js"></script>
+  <script src="https://cosmic.plus/web-cosmic-lib/cosmic-lib.js"></script>
 ```
 
 **Note**: For production release it is advised to serve your own copy of the
