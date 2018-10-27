@@ -338,7 +338,7 @@ process.asset = function (conf, asset) {
     html.append(codeNode, html.create('span', '.cosmiclib_loadingAnim'))
   } else {
     codeNode.title = 'Native asset'
-    html.append(issuerNode, ' native asset')
+    html.rewrite(issuerNode, ' native asset')
   }
 
   codeNode.onclick = () => {
