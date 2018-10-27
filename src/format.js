@@ -44,12 +44,14 @@ format.tdesc = function (conf, tdesc) {
     for (let index in tdesc.operations) {
       const operation = tdesc.operations[index]
       const opNode = format.odesc(conf, operation)
+      opNode.index = index
       html.append(trNode, opNode)
     }
   } catch (error) {
     console.error(error)
   }
 
+  trNode.tdesc = tdesc
   return trNode
 }
 
@@ -61,6 +63,7 @@ format.tdesc = function (conf, tdesc) {
  */
 format.odesc = function (conf, odesc) {
   const opNode = html.create('div', '.cosmiclib_operation')
+  opNode.odesc = odesc
   let retNode = opNode
 
   if (odesc.source) {
@@ -226,6 +229,41 @@ function makeAccountSignersNode (conf, utils, accountId) {
   return accountSignersNode
 }
 
+/**
+ * Retrieves the parent odesc (*Operation Descriptor*) of an HTML element, or
+ * returns `undefined` if **element** is not the child of an HTML formatted
+ * operation.
+ *
+ * @param {HTMLElement} element
+ * @return {Object} odesc
+ */
+format.parentOdesc = (conf, element) => parentProperty(element, 'odesc')
+
+/**
+ * Retrieves the parent operation index of an HTML element, or returns
+ * `undefined` if **element** is not the child of an HTML formatted operation.
+ *
+ * @param {HTMLElement} element
+ * @return {Number} operation index
+ */
+format.parentIndex = (conf, element) => parentProperty(element, 'index')
+
+/**
+ * Retrieves the parent tdesc of an HTML element, or returns `undefined`
+ * if **element** is not the child of an HTML formatted transaction.
+ *
+ * @param {HTMLElement} element
+ * @return {Object} tdesc
+ */
+format.parentTdesc = (conf, element) => parentProperty(element, 'tdesc')
+
+function parentProperty (element, property) {
+  while (element.parentNode) {
+    if (element.parentNode[property]) return element.parentNode[property]
+    else element = element.parentNode
+  }
+}
+
 /******************************************************************************/
 
 /**
@@ -323,6 +361,10 @@ async function resolveAddressAndUpdate (conf, address, addressNode) {
   const grandpa = addressNode.parentNode.parentNode
   if (grandpa && grandpa.classList.contains('cosmiclib_asset')) {
     html.destroy(html.grab('.cosmiclib_loadingAnim', grandpa))
+    const odesc = format.parentOdesc(conf, grandpa)
+    if (odesc && odesc.type === 'changeTrust') {
+      addressNode.parentNode.style.display = 'inline'
+    }
   }
 }
 

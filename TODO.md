@@ -1,7 +1,6 @@
 Before stable release (planned for this autumn):
 * Have a native english speaker check all the texts
 * Support private networks (horizon parameter)
-* Support DKIF
 * Support callbacks
 * Fancier signing interface when clicking on cosmicLink.htmlLink
 * Get rid of StellarGuard+axios dependency
