@@ -9,6 +9,8 @@ const event = exports
 
 const helpers = require('@cosmic-plus/jsutils/misc')
 
+const format = require('./format')
+
 /** *** Click events *****/
 
 /**
@@ -42,6 +44,9 @@ event.callClickHandler = function (conf, type, event) {
   const handler = conf.clickHandlers[type]
   event.extra = event.domNode.extra
   event.field = event.domNode.field
+  event.tdesc = format.parentTdesc(conf, event.domNode)
+  event.odesc = format.parentOdesc(conf, event.domNode)
+  event.index = format.parentIndex(conf, event.domNode)
   if (handler) handler(event)
 }
 
@@ -66,6 +71,7 @@ event.callClickHandler = function (conf, type, event) {
  */
 event.defaultClickHandlers = {
   address: function (event) {
+    console.log(event.tdesc)
     if (!event.extra) return
     let message = ''
     for (let field in event.extra) {
