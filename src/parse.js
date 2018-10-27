@@ -60,6 +60,7 @@ function guessType (value) {
   if (typeof value === 'string') {
     const query = convert.uriToQuery('', value)
     if (value.substr(0, 12) === 'web+stellar:') type = 'sep7'
+    else if (query && query.substr(0, 5) === '?req=') type = 'sep7Request'
     else if (query && query.substr(0, 5) === '?xdr=') type = 'xdrUri'
     else if (value.substr(0, 1) === '?') type = 'query'
     else if (value.substr(0, 1) === '{') type = 'json'
@@ -110,6 +111,17 @@ parseFmt.xdrUri = function (cosmicLink, xdrUri, options) {
   })
 
   setTdesc(cosmicLink, 'xdr', xdr, options)
+}
+
+/**
+ * Initialize cosmicLink using `sep7Request`.
+ */
+parseFmt.sep7Request = function (cosmicLink, sep7Request, options) {
+  parse.page(cosmicLink, sep7Request)
+
+  const query = convert.uriToQuery(cosmicLink, sep7Request)
+  const sep7 = decodeURIComponent(query.substr(5))
+  parseFmt.sep7(cosmicLink, sep7, options)
 }
 
 /**
