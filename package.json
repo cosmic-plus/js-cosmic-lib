@@ -44,7 +44,6 @@
   },
   "dependencies": {
     "@cosmic-plus/base": "^1.0.2",
-    "@cosmic-plus/jsutils": "^1.6.0",
-    "@stellarguard/sdk": "^1.4.1"
+    "@cosmic-plus/jsutils": "^1.6.0"
   }
 }

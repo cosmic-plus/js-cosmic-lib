@@ -3,7 +3,6 @@ Before stable release (planned for this autumn):
 * Support private networks (horizon parameter)
 * Support callbacks
 * Fancier signing interface when clicking on cosmicLink.htmlLink
-* Get rid of StellarGuard+axios dependency
 
 Later:
 * Internationalization support

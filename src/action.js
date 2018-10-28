@@ -7,9 +7,9 @@
  */
 const action = exports
 
+const axios = require('@cosmic-plus/base/axios')
 const env = require('@cosmic-plus/jsutils/env')
 const helpers = require('@cosmic-plus/jsutils/misc')
-const StellarGuard = require('@stellarguard/sdk')
 
 const convert = require('./convert')
 const config = require('./config')
@@ -170,11 +170,17 @@ action.send = async function (cosmicLink, horizon = cosmicLink.horizon) {
   const server = resolve.server(cosmicLink, horizon)
   const account = await resolve.account(cosmicLink, cosmicLink.source)
 
-  if (StellarGuard.hasStellarGuard(account)) {
-    if (cosmicLink.network === 'public') StellarGuard.usePublicNetwork()
-    else StellarGuard.useTestNetwork()
-    return StellarGuard.submitTransaction(cosmicLink.transaction)
+  if (cosmicLink.transaction.hasSigner(STELLARGUARD_PUBKEY)) {
+    let endpoint
+    if (cosmicLink.network === 'public') enpoint = 'https://stellarguard.me/api'
+    else if (cosmicLink.network === 'test') endpoint = 'https://test.stellarguard.me/api'
+    if (endpoint) {
+      return axios.post(endpoint + '/transactions', { xdr: cosmicLink.xdr })
+        .then(result => result.data)
+    }
   } else {
     return server.submitTransaction(cosmicLink.transaction)
   }
 }
+
+const STELLARGUARD_PUBKEY = "GCVHEKSRASJBD6O2Z532LWH4N2ZLCBVDLLTLKSYCSMBLOYTNMEEGUARD"
