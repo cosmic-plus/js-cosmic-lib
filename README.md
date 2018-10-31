@@ -11,7 +11,7 @@ in their query. It allows to pass Stellar transaction to **any webpage** or
 
 > <https://cosmic.link/?payment&amount=100&destination=tips*cosmic.link>
 
-CosmicLinks use a simple syntax that allow to write any arbirtrary transaction:
+CosmicLinks use a simple syntax that allow to write any arbitrary transaction:
 
 > <https://cosmic.link/?transaction&operation=manageData&name=migrated&value=true&operation=setOptions&homeDomain=anywallet.org>
 
@@ -22,12 +22,12 @@ It can be used to pass transaction XDR as well:
 While the **https://cosmic.link** website provides a convenient way to share
 transactions over social medias, emails and static documents, any
 wallet/service can issue or accept CosmicLinks. One big advantage of using
-queries is that they can be used to pass transactions without having to rely on
-any particular service.
+queries is that they can be used to pass transactions without having to rely
+on any particular service.
 
 This is a generalization of tools like Metamask for Ethereum, as it allows any
 service to communicate with any (compatible) wallet; And users to sign
-transactions from any service without ever divulgating private keys.
+transactions from any service without ever divulging private keys.
 
 The ultimate goal of the CosmicLink protocol is to enable **cross-wallet
 applications** for Stellar.
@@ -76,7 +76,7 @@ libraries.
 #### New Transaction
 
 The transaction builder is similar to the one provided by StellarSdk.
-Additionaly, it accepts federated addresses and offer syntactic sugar for
+Additionally, it accepts federated addresses and offer syntactic sugar for
 memos, dates and assets.
 
 ```js
@@ -125,10 +125,10 @@ You'll probably want to load the StyleSheet for cosmic-lib first:
 ```js
 await cosmicLib.load.styles()
 ```
-Then, you can get the HTML description elememt at: `cosmicLink.htmlDescription`.
+Then, you can get the HTML description element at: `cosmicLink.htmlDescription`.
 
-If your webpage contains an HTML element with `id="cosmiclink_description"`, it
-will automatically get updated with the latest CosmicLink description.
+If your webpage contains an HTML element with `id="cosmiclink_description"`,
+it will automatically get updated with the latest CosmicLink description.
 
 
 ### Formats conversion
@@ -234,8 +234,10 @@ breaks are expected.
 
 ### Related articles
 
-* 26 Jul 2018: [Understanding Cosmic Links](https://medium.com/@mister.ticot/understanding-cosmic-links-ee2ace259671)
-* 22 Jan 2018: [A standardized way of handling Stellar transactions](https://steemit.com/crypto/@mister.ticot/a-standardized-way-of-handling-stellar-transactions)
+* 26 Jul 2018: [Understanding Cosmic
+  Links](https://medium.com/@mister.ticot/understanding-cosmic-links-ee2ace259671)
+* 22 Jan 2018: [A standardized way of handling Stellar
+  transactions](https://steemit.com/crypto/@mister.ticot/a-standardized-way-of-handling-stellar-transactions)
 
 
 ### Services that implement cosmic links
@@ -248,10 +250,7 @@ breaks are expected.
 
 cosmic-lib is a free software. You are very welcome to contribute by whatever
 means you'd like. Donation are also possible at
-[tips*cosmic.link](https://cosmic.link/?payment&memo=Donation&destination=tips*cosmic.link&amount=20)
+[tips\*cosmic.link](https://cosmic.link/?payment&memo=Donation&destination=tips*cosmic.link&amount=20)
 
 
 ## Thank you :)
-
-Especially to: Torkus, Dhzam, Paul, Zac and Umbrel.
-And to the Stellar Foundation for supporting my work.
