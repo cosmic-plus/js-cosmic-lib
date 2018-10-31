@@ -34,11 +34,13 @@ Example:
 
 > ...?xdr={xdr}&{...options}
 
-4 options are possible:
+5 options are possible:
 
-* `&network=[public|test]`: This one is always recommended as *js-cosmic-lib*
+* `&network=[public|test]`: This one is always recommended as *cosmic-lib*
   won't automatically detect the valid network for {xdr}, and the default
   network may vary from one service to another.
+* `&horizon=${url}`: Provide a fallback Horizon node for custom network in case
+  the client doesn't know any.
 * `&stripSignatures`: Remove the signatures when parsing the transaction.
 * `&stripSequence`: Remove sequence number when parsing the transaction. Meaning it
   can be signed anytime in the future, possibly several times. Imply
@@ -65,6 +67,13 @@ optional as the source can be set by the wallet service when signing.
 > &network={public|test}
 
 Tie the transaction to a specific network.
+
+#### horizon
+
+> &horizon={url}
+
+Provide a fallback Horizon node for custom network in case the client doesn't
+know any.
 
 #### memo
 

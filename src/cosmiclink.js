@@ -306,6 +306,28 @@ class CosmicLink {
     this.setTxFields({ network: network })
   }
 
+  /**
+   * The horizon node this CosmicLink uses, which is defined after the following
+   * rule:
+   *
+   * > default horizon for CosmicLink network OR transaction horizon
+   *
+   * The rationale for this behavior is that we allow transaction emitter to
+   * provide the horizon node URL only if none is known for a transaction
+   * happening on a custom network. In other cases, it is up to the user/wallet
+   * to define the horizon node to use, not up to the emitter.
+   *
+   * When a transaction defines its horizon node, it is available at
+   * `cosmicLink.tdesc.horizon`.
+   */
+  get horizon () {
+    return resolve.horizon(this, this.network) || (this.tdesc && this.tdesc.horizon)
+  }
+
+  set horizon (horizon) {
+    this.setTxFields({ horizon: horizon })
+  }
+
   /// Editor
   /**
    * Add/remove transaction fields and reparse the CosmicLink. **object** should

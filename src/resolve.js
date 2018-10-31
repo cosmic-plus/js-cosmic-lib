@@ -23,12 +23,8 @@ const status = require('./status')
  * @returns {Server} A StellarSdk Server object
  */
 resolve.server = function (conf, network = conf.network, horizon = conf.horizon) {
-  if (!horizon) {
-    const passphrase = resolve.networkPassphrase(conf, network)
-    if (!passphrase) throw new Error('No network selected.')
-    horizon = conf.current.horizon[passphrase]
-    if (!horizon) throw new Error('No horizon node defined for selected network.')
-  }
+  if (!horizon) horizon = resolve.horizon(conf)
+  if (!horizon) throw new Error('No horizon node defined for selected network.')
   if (!conf.current.server[horizon]) conf.current.server[horizon] = new StellarSdk.Server(horizon)
   return conf.current.server[horizon]
 }
@@ -56,7 +52,11 @@ resolve.useNetwork = function (conf, network = conf.network) {
  */
 resolve.horizon = function (conf, network = conf.network) {
   const passphrase = resolve.networkPassphrase(conf, network)
-  return conf.current.horizon[passphrase]
+  if (conf.current && conf.current.horizon[passphrase]) {
+    return conf.current.horizon[passphrase]
+  } else if (conf.network === network && conf.horizon) {
+    return conf.horizon
+  }
 }
 
 /**
@@ -70,6 +70,17 @@ resolve.networkPassphrase = function (conf = {}, network = conf.network) {
     const currentNetwork = StellarSdk.Network.current()
     if (currentNetwork) return currentNetwork.networkPassphrase()
   }
+}
+
+/**
+ * Returns the network name for **network passphrase**, or `undefined`.
+ *
+ * @param {string} networkPassphrase
+ * @return {string}
+ */
+resolve.networkName = function (conf = {}, networkPassphrase) {
+  const index = Object.values(conf.current.passphrase).indexOf(networkPassphrase)
+  if (index) return Object.keys(conf.current.passphrase)[index]
 }
 
 /**
@@ -136,8 +147,11 @@ async function accountResolver (conf, accountId, quietFlag) {
     if (quietFlag) {
       throw error
     } else {
-      console.error(error)
-      status.error(conf, 'Empty account: ' + helpers.shorter(accountId), 'throw')
+      if (error.response) {
+        status.error(conf, 'Empty account: ' + helpers.shorter(accountId), 'throw')
+      } else {
+        status.error(conf, 'Invalid horizon node: ' + resolve.horizon(conf), 'throw')
+      }
     }
   }
 }

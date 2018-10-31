@@ -24,7 +24,8 @@ destruct.transaction = function (conf, tx, options = {}) {
   if (tx.source === specs.neutralAccountId) options.stripSource = true
   if (tx.sequence === '0') options.stripSequence = true
 
-  if (options.network !== undefined) tdesc.network = options.network
+  tdesc.network = options.network
+  tdesc.horizon = options.horizon
   if (!options.stripSource) tdesc.source = tx.source
   if (!options.stripSource && !options.stripSequence) {
     tdesc.sequence = destruct.sequence(conf, tx.sequence)

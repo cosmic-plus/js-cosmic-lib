@@ -13,6 +13,7 @@ const parse = exports
 
 const check = require('./check')
 const convert = require('./convert')
+const decode = require('./decode')
 const expand = require('./expand')
 const specs = require('./specs')
 const status = require('./status')
@@ -102,7 +103,10 @@ parseFmt.xdrUri = function (cosmicLink, xdrUri, options) {
         options.stripSource = true
         break
       case 'network':
-        options.network = value
+        options.network = decode.network(cosmicLink, value)
+        break
+      case 'horizon':
+        options.horizon = decode.url(cosmicLink, value)
         break
       default:
         status.error(cosmicLink, 'Unknow option: ' + entry)
@@ -152,7 +156,8 @@ parseFmt.sep7 = function (cosmicLink, sep7, options = {}) {
     }
 
     if (field === 'xdr') xdr = decodeURIComponent(value)
-    if (field === 'network_passphrase') options.network = decodeURIComponent(value)
+    if (field === 'network_passphrase') options.network = decode.network(cosmicLink, value)
+    if (field === 'horizon') options.horizon = decode.url(cosmicLink, value)
   })
 
   setTdesc(cosmicLink, 'xdr', xdr, options)

@@ -6,6 +6,7 @@
 
 /** Transaction optional fields **/
 &network={public|test}
+&horizon={url}
 &memo={message|memoType:memoValue} // memoType = text|id|hash|return
 &source={address}
 &minTime={YYYY-MM-DD|YYYY-MM-DDTHH:mm:ssZ}

@@ -12,6 +12,7 @@ const helpers = require('@cosmic-plus/jsutils/misc')
 const html = require('@cosmic-plus/jsutils/html')
 const StellarSdk = require('@cosmic-plus/base/stellar-sdk')
 
+const config = require('./config')
 const event = require('./event')
 const resolve = require('./resolve')
 const signersUtils = require('./signers-utils')
@@ -28,7 +29,10 @@ format.tdesc = function (conf, tdesc) {
   if (!tdesc) return trNode
 
   let infoNode
-  specs.transactionOptionalFields.forEach(entry => {
+  for (let index in specs.transactionOptionalFields) {
+    const entry = specs.transactionOptionalFields[index]
+    if (entry === 'horizon' && resolve.horizon(config, conf.network)) continue
+
     if (tdesc[entry]) {
       if (!infoNode) infoNode = html.create('ul', '.cosmiclib_sideInfo')
       const lineNode = html.create('li', {},
@@ -37,7 +41,7 @@ format.tdesc = function (conf, tdesc) {
       )
       html.append(infoNode, lineNode)
     }
-  })
+  }
   if (infoNode) html.append(trNode, infoNode)
 
   try {

@@ -9,6 +9,8 @@ const normalize = exports
 
 const StellarSdk = require('@cosmic-plus/base/stellar-sdk')
 
+const resolve = require('./resolve')
+
 /**
  * Setup the default values for `tdesc`.
  */
@@ -23,6 +25,19 @@ normalize.tdesc = function (conf, tdesc) {
       if (tdesc[field] === '1970') delete tdesc[field]
     }
   })
+
+  if (tdesc.network) {
+    if (tdesc.network === StellarSdk.Networks.TESTNET) tdesc.network = 'test'
+    else if (tdesc.network === StellarSdk.Networks.PUBLIC) tdesc.network = 'public'
+  }
+
+  if (tdesc.horizon) {
+    if (!tdesc.network || tdesc.network === 'public' || tdesc.network === 'test') {
+      delete tdesc.horizon
+    } else if (tdesc.horizon.substr(0, 8) === 'https://') {
+      tdesc.horizon = tdesc.horizon.substr(8)
+    }
+  }
 }
 
 const dateFields = ['minTime', 'maxTime']
@@ -30,6 +45,10 @@ const dateFields = ['minTime', 'maxTime']
 normalize.date = function (conf, date) {
   return date.replace(/:00\.000/, '').replace(/\.000/, '')
     .replace(/T00:00Z/, '').replace(/-01$/, '').replace(/-01$/, '')
+}
+
+normalize.network = function (conf, network) {
+  return resolve.networkName(conf, network) || network
 }
 
 /**

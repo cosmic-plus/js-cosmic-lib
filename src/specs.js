@@ -10,8 +10,8 @@ const specs = exports
  * Transaction optional fields.
  */
 specs.transactionOptionalFields = [
-  'network', 'memo', 'source', 'sequence',
-  'minTime', 'maxTime', 'fee'
+  'network', 'horizon',
+  'memo', 'source', 'sequence', 'minTime', 'maxTime', 'fee'
 ]
 
 /**
@@ -96,6 +96,7 @@ specs.fieldType = {
   fee: 'amount',
   highThreshold: 'threshold',
   homeDomain: 'string',
+  horizon: 'url',
   inflationDest: 'address',
   limit: 'amount',
   lowThreshold: 'threshold',
@@ -142,6 +143,7 @@ specs.fieldDesc = {
   memo: 'Memo',
 
   network: 'Network',
+  horizon: 'Horizon node',
   sequence: 'Sequence'
 }
 
@@ -173,9 +175,9 @@ specs.sep7MandatoryFields = {
  * The optional fields for each SEP-0007 operation.
  */
 specs.sep7OptionalFields = {
-  tx: [ 'callback', 'pubkey', 'network_passphrase', 'origin_domain', 'signature' ],
+  tx: [ 'callback', 'pubkey', 'network_passphrase', 'horizon', 'origin_domain', 'signature' ],
   pay: [ 'amount', 'asset_code', 'asset_issuer', 'memo', 'memo_type', 'callback',
-    'network_passphrase', 'origin_domain', 'signature' ]
+    'network_passphrase', 'horizon', 'origin_domain', 'signature' ]
 }
 
 specs.sep7IgnoredFields = [ 'callback', 'pubkey', 'origin_domain', 'signature' ]

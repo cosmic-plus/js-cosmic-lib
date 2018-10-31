@@ -41,7 +41,11 @@ convert.xdrToSep7 = function (conf, xdr) {
   const passphrase = resolve.networkPassphrase(conf)
   if (passphrase !== StellarSdk.Networks.PUBLIC) {
     sep7 += '&network_passphrase=' + encodeURIComponent(passphrase)
+    if (passphrase !== StellarSdk.Networks.TESTNET && conf.horizon) {
+      sep7 += '&horizon=' + encodeURIComponent(conf.horizon)
+    }
   }
+
   return sep7
 }
 
@@ -56,6 +60,7 @@ convert.xdrToTransaction = function (conf, xdr, options = {}) {
 convert.xdrToQuery = function (conf, xdr, options = {}) {
   let query = '?xdr=' + xdr
   if (options.network) query += '&network=' + encodeURIComponent(options.network)
+  if (options.horizon) query += '&horizon' + encodeURIComponent(options.horizon)
   return query
 }
 
