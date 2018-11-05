@@ -1,4 +1,4 @@
-'use strict'
+"use strict"
 /**
  * Contains the methods to encode values formatted in `transaction descriptor`
  * format into URI format.
@@ -8,27 +8,27 @@
  */
 const encode = exports
 
-const specs = require('./specs')
+const specs = require("./specs")
 
 encode.query = function (conf, tdesc) {
   if (conf.errors) return undefined
 
   let command
   if (!tdesc.operations.length || tdesc.operations.length > 1 || tdesc.operations[0].source) {
-    command = 'transaction'
+    command = "transaction"
   } else {
     command = tdesc.operations[0].type
   }
-  let query = '?' + command
+  let query = "?" + command
 
   specs.transactionOptionalFields.forEach(field => {
     if (tdesc[field] !== undefined) query += encode.field(conf, field, tdesc[field])
   })
 
   tdesc.operations.forEach(odesc => {
-    if (command === 'transaction') query += '&operation=' + odesc.type
+    if (command === "transaction") query += "&operation=" + odesc.type
     for (let field in odesc) {
-      if (field === 'type') continue
+      if (field === "type") continue
       query += encode.field(conf, field, odesc[field])
     }
   })
@@ -51,7 +51,7 @@ encode.field = function (conf, field, value) {
   if (!type) throw new Error(`Invalid field: ${field}`)
 
   const encodedValue = encode.type(conf, type, value)
-  if (encodedValue === '' && field !== 'homeDomain') return ''
+  if (encodedValue === "" && field !== "homeDomain") return ""
   else return `&${field}=${encodedValue}`
 }
 
@@ -63,10 +63,10 @@ encode.field = function (conf, field, value) {
  * @return {string}
  */
 encode.type = function (conf, type, value) {
-  if (value === undefined) return ''
+  if (value === undefined) return ""
 
   const encodedValue = process[type] ? process[type](conf, value) : value
-  if (encodedValue === undefined) return ''
+  if (encodedValue === undefined) return ""
   else return encodedValue
 }
 
@@ -75,7 +75,7 @@ encode.type = function (conf, type, value) {
 const process = {}
 
 process.asset = function (conf, asset) {
-  if (asset.issuer) return encodeURIComponent(asset.code) + ':' + encodeURIComponent(asset.issuer)
+  if (asset.issuer) return encodeURIComponent(asset.code) + ":" + encodeURIComponent(asset.issuer)
 }
 
 process.assetsArray = function (conf, assetsArray) {
@@ -83,7 +83,7 @@ process.assetsArray = function (conf, assetsArray) {
 }
 
 process.boolean = function (conf, boolean) {
-  if (boolean === false) return 'false'
+  if (boolean === false) return "false"
 }
 
 process.buffer = function (conf, buffer) {
@@ -91,21 +91,21 @@ process.buffer = function (conf, buffer) {
 }
 
 process.date = function (conf, date) {
-  return date.replace(/Z$/, '')
+  return date.replace(/Z$/, "")
 }
 
 process.memo = function (conf, memo) {
-  if (memo.type === 'text') return encodeURIComponent(memo.value)
-  else return memo.type + ':' + encodeURIComponent(memo.value)
+  if (memo.type === "text") return encodeURIComponent(memo.value)
+  else return memo.type + ":" + encodeURIComponent(memo.value)
 }
 
 process.price = function (conf, price) {
-  if (typeof price === 'string') return price
-  else return price.n + ':' + price.d
+  if (typeof price === "string") return price
+  else return price.n + ":" + price.d
 }
 
 process.signer = function (conf, signer) {
-  return signer.weight + ':' + signer.type + ':' + signer.value
+  return signer.weight + ":" + signer.type + ":" + signer.value
 }
 
 process.string = encode.buffer

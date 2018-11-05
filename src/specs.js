@@ -1,4 +1,4 @@
-'use_strict'
+"use_strict"
 /**
  * Contains Stellar transactions specification.
  *
@@ -10,8 +10,8 @@ const specs = exports
  * Transaction optional fields.
  */
 specs.transactionOptionalFields = [
-  'network', 'horizon',
-  'memo', 'source', 'sequence', 'minTime', 'maxTime', 'fee'
+  "network", "horizon",
+  "memo", "source", "sequence", "minTime", "maxTime", "fee"
 ]
 
 /**
@@ -26,17 +26,17 @@ specs.isTransactionField = function (field) {
  * Operation mandatory fields.
  */
 specs.operationMandatoryFields = {
-  accountMerge: ['destination'],
-  allowTrust: ['authorize', 'assetCode', 'trustor'],
-  bumpSequence: ['bumpTo'],
-  changeTrust: ['asset'],
-  createAccount: ['destination', 'startingBalance'],
-  createPassiveOffer: ['selling', 'buying', 'amount', 'price'],
+  accountMerge: ["destination"],
+  allowTrust: ["authorize", "assetCode", "trustor"],
+  bumpSequence: ["bumpTo"],
+  changeTrust: ["asset"],
+  createAccount: ["destination", "startingBalance"],
+  createPassiveOffer: ["selling", "buying", "amount", "price"],
   inflation: [],
-  manageData: ['name', 'value'],
-  manageOffer: ['selling', 'buying', 'amount', 'price'],
-  pathPayment: ['sendAsset', 'sendMax', 'destination', 'destAsset', 'destAmount'],
-  payment: ['asset', 'destination', 'amount'],
+  manageData: ["name", "value"],
+  manageOffer: ["selling", "buying", "amount", "price"],
+  pathPayment: ["sendAsset", "sendMax", "destination", "destAsset", "destAmount"],
+  payment: ["asset", "destination", "amount"],
   setOptions: []
 }
 
@@ -44,20 +44,20 @@ specs.operationMandatoryFields = {
  * Operation optionnal fields.
  */
 specs.operationOptionalFields = {
-  accountMerge: ['source'],
-  allowTrust: ['source'],
-  bumpSequence: ['source'],
-  changeTrust: ['limit', 'source'],
-  createAccount: ['source'],
-  createPassiveOffer: ['source'],
-  inflation: ['source'],
-  manageData: ['source'],
-  manageOffer: ['offerId', 'source'],
-  pathPayment: ['path', 'source'],
-  payment: ['source'],
-  setOptions: ['inflationDest', 'clearFlags', 'setFlags', 'masterWeight',
-    'lowThreshold', 'medThreshold', 'highThreshold', 'signer', 'homeDomain',
-    'source']
+  accountMerge: ["source"],
+  allowTrust: ["source"],
+  bumpSequence: ["source"],
+  changeTrust: ["limit", "source"],
+  createAccount: ["source"],
+  createPassiveOffer: ["source"],
+  inflation: ["source"],
+  manageData: ["source"],
+  manageOffer: ["offerId", "source"],
+  pathPayment: ["path", "source"],
+  payment: ["source"],
+  setOptions: ["inflationDest", "clearFlags", "setFlags", "masterWeight",
+    "lowThreshold", "medThreshold", "highThreshold", "signer", "homeDomain",
+    "source"]
 }
 
 /**
@@ -82,69 +82,69 @@ specs.isOperationField = function (operation, field) {
  * Field types.
  */
 specs.fieldType = {
-  amount: 'amount',
-  asset: 'asset',
-  assetCode: 'string',
-  assetIssuer: 'address',
-  authorize: 'boolean',
-  bumpTo: 'sequence',
-  buying: 'asset',
-  clearFlags: 'flags',
-  destAsset: 'asset',
-  destAmount: 'amount',
-  destination: 'address',
-  fee: 'amount',
-  highThreshold: 'threshold',
-  homeDomain: 'string',
-  horizon: 'url',
-  inflationDest: 'address',
-  limit: 'amount',
-  lowThreshold: 'threshold',
-  masterWeight: 'weight',
-  maxTime: 'date',
-  medThreshold: 'threshold',
-  memo: 'memo',
-  memoHash: 'hash',
-  memoId: 'id',
-  memoReturn: 'hash',
-  memoText: 'buffer',
-  memoType: 'string',
-  minTime: 'date',
-  network: 'network',
-  offerId: 'string',
-  price: 'price',
-  name: 'string',
-  path: 'assetsArray',
-  selling: 'asset',
-  sendAsset: 'asset',
-  sendMax: 'amount',
-  sequence: 'sequence',
-  setFlags: 'flags',
-  signer: 'signer',
-  signerHash: 'hash',
-  signerKey: 'address',
-  signerType: 'string',
-  signerTx: 'id',
-  signerWeight: 'weight',
-  source: 'address',
-  startingBalance: 'amount',
-  trustor: 'address',
-  value: 'buffer'
+  amount: "amount",
+  asset: "asset",
+  assetCode: "string",
+  assetIssuer: "address",
+  authorize: "boolean",
+  bumpTo: "sequence",
+  buying: "asset",
+  clearFlags: "flags",
+  destAsset: "asset",
+  destAmount: "amount",
+  destination: "address",
+  fee: "amount",
+  highThreshold: "threshold",
+  homeDomain: "string",
+  horizon: "url",
+  inflationDest: "address",
+  limit: "amount",
+  lowThreshold: "threshold",
+  masterWeight: "weight",
+  maxTime: "date",
+  medThreshold: "threshold",
+  memo: "memo",
+  memoHash: "hash",
+  memoId: "id",
+  memoReturn: "hash",
+  memoText: "buffer",
+  memoType: "string",
+  minTime: "date",
+  network: "network",
+  offerId: "string",
+  price: "price",
+  name: "string",
+  path: "assetsArray",
+  selling: "asset",
+  sendAsset: "asset",
+  sendMax: "amount",
+  sequence: "sequence",
+  setFlags: "flags",
+  signer: "signer",
+  signerHash: "hash",
+  signerKey: "address",
+  signerType: "string",
+  signerTx: "id",
+  signerWeight: "weight",
+  source: "address",
+  startingBalance: "amount",
+  trustor: "address",
+  value: "buffer"
 }
 
 /**
  * Transaction field meaning.
  */
 specs.fieldDesc = {
-  source: 'Source',
-  fee: 'Fees',
-  minTime: 'Valid only after',
-  maxTime: 'Valid only before',
-  memo: 'Memo',
+  source: "Source",
+  fee: "Fees",
+  minTime: "Valid only after",
+  maxTime: "Valid only before",
+  memo: "Memo",
 
-  network: 'Network',
-  horizon: 'Horizon node',
-  sequence: 'Sequence'
+  network: "Network",
+  horizon: "Horizon node",
+  sequence: "Sequence"
 }
 
 /**
@@ -161,23 +161,23 @@ for (let field in specs.fieldType) {
  * transaction.
  * @static
  */
-specs.neutralAccountId = 'GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWHF'
+specs.neutralAccountId = "GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWHF"
 
 /**
  * The mandatory fields for each SEP-0007 operation.
  */
 specs.sep7MandatoryFields = {
-  tx: [ 'xdr' ],
-  pay: [ 'destination' ]
+  tx: [ "xdr" ],
+  pay: [ "destination" ]
 }
 
 /**
  * The optional fields for each SEP-0007 operation.
  */
 specs.sep7OptionalFields = {
-  tx: [ 'callback', 'pubkey', 'network_passphrase', 'horizon', 'origin_domain', 'signature' ],
-  pay: [ 'amount', 'asset_code', 'asset_issuer', 'memo', 'memo_type', 'callback',
-    'network_passphrase', 'horizon', 'origin_domain', 'signature' ]
+  tx: [ "callback", "pubkey", "network_passphrase", "horizon", "origin_domain", "signature" ],
+  pay: [ "amount", "asset_code", "asset_issuer", "memo", "memo_type", "callback",
+    "network_passphrase", "horizon", "origin_domain", "signature" ]
 }
 
-specs.sep7IgnoredFields = [ 'callback', 'pubkey', 'origin_domain', 'signature' ]
+specs.sep7IgnoredFields = [ "callback", "pubkey", "origin_domain", "signature" ]

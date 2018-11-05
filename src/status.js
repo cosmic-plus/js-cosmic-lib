@@ -1,4 +1,4 @@
-'use strict'
+"use strict"
 /**
  * Contains the methods to update cosmic link status and HTML status node.
  * Thoses methods won't have effect unless status reporting is enabled on `conf`
@@ -10,8 +10,8 @@
  */
 const status = exports
 
-const env = require('@cosmic-plus/jsutils/env')
-const html = env.isBrowser && require('@cosmic-plus/jsutils/html')
+const env = require("@cosmic-plus/jsutils/env")
+const html = env.isBrowser && require("@cosmic-plus/jsutils/html")
 
 /**
  * Initialize `conf.status` & `conf.errors`.
@@ -31,11 +31,12 @@ status.init = function (conf) {
 status.update = function (conf, status) {
   if (conf.status || conf.status === undefined) return
 
-  console.log('Set status: ' + status)
+  // eslint-disable-next-line no-console
+  console.log("Set status: " + status)
   conf.status = status
 
   if (conf._statusNode) {
-    const title = html.grab('.cosmiclib_status', conf._statusNode)
+    const title = html.grab(".cosmiclib_status", conf._statusNode)
     title.textContent = status
   }
 }
@@ -51,7 +52,7 @@ status.update = function (conf, status) {
  */
 status.fail = function (conf, errorStatus, continuation) {
   status.update(conf, errorStatus)
-  if (conf._statusNode) html.appendClass(conf._statusNode, 'cosmiclib_error')
+  if (conf._statusNode) html.appendClass(conf._statusNode, "cosmiclib_error")
   errorContinuation(errorStatus, continuation)
 }
 
@@ -64,6 +65,7 @@ status.fail = function (conf, errorStatus, continuation) {
  * @param {procedure|'throw'} [continuation]
  */
 status.error = function (conf, error, continuation) {
+  // eslint-disable-next-line no-console
   console.log(error)
 
   if (conf.errors !== undefined) {
@@ -72,8 +74,8 @@ status.error = function (conf, error, continuation) {
     conf.errors.push(error)
 
     if (conf._statusNode) {
-      const errorsNode = html.grab('.cosmiclib_errors', conf._statusNode)
-      const lineNode = html.create('li', null, error)
+      const errorsNode = html.grab(".cosmiclib_errors", conf._statusNode)
+      const lineNode = html.create("li", null, error)
       html.append(errorsNode, lineNode)
     }
   }
@@ -88,17 +90,17 @@ status.error = function (conf, error, continuation) {
  * @return {htmlElement}
  */
 status.makeHtmlNode = function (conf) {
-  const statusNode = html.create('div', '.cosmiclib_statusNode')
+  const statusNode = html.create("div", ".cosmiclib_statusNode")
 
-  const statusLine = html.create('span', '.cosmiclib_status')
+  const statusLine = html.create("span", ".cosmiclib_status")
   html.append(statusNode, statusLine)
   if (conf.status) statusLine.textContent = conf.status
 
-  const errorsNode = html.create('ul', '.cosmiclib_errors')
+  const errorsNode = html.create("ul", ".cosmiclib_errors")
   html.append(statusNode, errorsNode)
   if (conf.errors) {
     conf.errors.forEach(error => {
-      const errorLine = html.create('li', null, error)
+      const errorLine = html.create("li", null, error)
       html.append(errorsNode, errorLine)
     })
   }
@@ -113,7 +115,7 @@ status.makeHtmlNode = function (conf) {
  */
 function errorContinuation (error, continuation) {
   if (continuation) {
-    if (continuation === 'throw') throw new Error(error)
+    if (continuation === "throw") throw new Error(error)
     else continuation(error)
   }
 }

@@ -1,20 +1,20 @@
-'use_strict'
+"use_strict"
 
-const env = require('@cosmic-plus/jsutils/env')
-const helpers = require('@cosmic-plus/jsutils/misc')
+const env = require("@cosmic-plus/jsutils/env")
+const helpers = require("@cosmic-plus/jsutils/misc")
 
-const action = require('./action')
-const config = require('./config')
-const convert = require('./convert')
-const parse = require('./parse')
-const resolve = require('./resolve')
-const status = require('./status')
+const action = require("./action")
+const config = require("./config")
+const convert = require("./convert")
+const parse = require("./parse")
+const resolve = require("./resolve")
+const status = require("./status")
 
 /// Web only
 let html, format
 if (env.isBrowser) {
-  html = require('@cosmic-plus/jsutils/html')
-  format = require('./format')
+  html = require("@cosmic-plus/jsutils/html")
+  format = require("./format")
 }
 
 /**
@@ -147,6 +147,7 @@ class CosmicLink {
    */
   get uri () {
     if (this.query) return this.page + this.query
+    else return undefined
   }
 
   /**
@@ -446,19 +447,19 @@ class CosmicLink {
   }
 
   get htmlNode () {
-    helpers.deprecated('2019-03', 'cosmicLink.htmlNode', 'cosmicLink.htmlDescription')
+    helpers.deprecated("2019-03", "cosmicLink.htmlNode", "cosmicLink.htmlDescription")
     return this.htmlDescription
   }
-  get transactionNode () { return html.grab('.cosmiclib_transactionNode', this.htmlDescription) }
-  get statusNode () { return html.grab('.cosmiclib_statusNode', this.htmlDescription) }
-  get signersNode () { return html.grab('.cosmiclib_signersNode', this.htmlDescription) }
+  get transactionNode () { return html.grab(".cosmiclib_transactionNode", this.htmlDescription) }
+  get statusNode () { return html.grab(".cosmiclib_statusNode", this.htmlDescription) }
+  get signersNode () { return html.grab(".cosmiclib_signersNode", this.htmlDescription) }
 
   hasSigned (accountId) {
-    helpers.deprecated('2019-03', 'cosmicLink.hasSigned', 'cosmicLink.transaction.hasSigned')
+    helpers.deprecated("2019-03", "cosmicLink.hasSigned", "cosmicLink.transaction.hasSigned")
     return this.transaction.hasSigned(accountId)
   }
   hasSigner (accountId) {
-    helpers.deprecated('2019-03', 'cosmicLink.hasSigner', 'cosmicLink.transaction.hasSigner')
+    helpers.deprecated("2019-03", "cosmicLink.hasSigner", "cosmicLink.transaction.hasSigner")
     return this.transaction.hasSigner(accountId)
   }
 }
@@ -499,17 +500,17 @@ function initCosmicLink (cosmicLink, transaction, options = {}) {
     makeHtmlLink(cosmicLink)
     if (!cosmicLink._htmlDescription) {
       /// #cosmiclib_htmlNode: Backward compatibility (2018-09 -> 2019-03).
-      cosmicLink._htmlDescription = html.grab('#cosmiclink_description') || html.grab('#CL_htmlNode')
+      cosmicLink._htmlDescription = html.grab("#cosmiclink_description") || html.grab("#CL_htmlNode")
     }
     if (cosmicLink._htmlDescription) {
-      if (cosmicLink.htmlDescription.id === '#CL_htmlNode') {
-        helpers.deprecated('2019-03', 'id="#CL_htmlNode"', 'id="cosmiclink_description"')
+      if (cosmicLink.htmlDescription.id === "#CL_htmlNode") {
+        helpers.deprecated("2019-03", "id=\"#CL_htmlNode\"", "id=\"cosmiclink_description\"")
       }
       makeHtmlDescription(cosmicLink)
     }
   }
 }
-const formatsFields = ['_query', '_tdesc', '_json', '_transaction', '_xdr']
+const formatsFields = ["_query", "_tdesc", "_json", "_transaction", "_xdr"]
 
 /**
  * Initialize CosmicLink html nodes.
@@ -522,15 +523,15 @@ function makeHtmlDescription (cosmicLink) {
 
   if (htmlDescription) {
     html.clear(htmlDescription)
-    htmlDescription.className = 'cosmiclink_description'
+    htmlDescription.className = "cosmiclink_description"
   } else {
-    htmlDescription = html.create('div', '.cosmiclink_description')
+    htmlDescription = html.create("div", ".cosmiclink_description")
     cosmicLink._htmlDescription = htmlDescription
   }
 
   cosmicLink._transactionNode = format.tdesc(cosmicLink, cosmicLink.tdesc)
   cosmicLink._statusNode = status.makeHtmlNode(cosmicLink)
-  cosmicLink._signersNode = html.create('div', '.cosmiclib_signersNode')
+  cosmicLink._signersNode = html.create("div", ".cosmiclib_signersNode")
 
   html.append(htmlDescription,
     cosmicLink._transactionNode, cosmicLink._statusNode, cosmicLink._signersNode)
@@ -543,12 +544,12 @@ function makeHtmlDescription (cosmicLink) {
 function makeHtmlLink (cosmicLink) {
   if (env.isNode) return
 
-  const htmlLink = html.grab('#cosmiclink') || html.create('a')
-  htmlLink.className = '.cosmiclink'
+  const htmlLink = html.grab("#cosmiclink") || html.create("a")
+  htmlLink.className = ".cosmiclink"
   htmlLink.href = cosmicLink.page
   htmlLink.onclick = () => htmlLink.href = cosmicLink.uri
-  if (!htmlLink.title) htmlLink.title = 'Sign transaction'
-  if (!htmlLink.textContent) htmlLink.textContent = 'CosmicLink'
+  if (!htmlLink.title) htmlLink.title = "Sign transaction"
+  if (!htmlLink.textContent) htmlLink.textContent = "CosmicLink"
 
   cosmicLink._htmlLink = htmlLink
   return htmlLink
@@ -559,7 +560,7 @@ function makeHtmlLink (cosmicLink) {
  * @private
  */
 function checkLock (cosmicLink) {
-  if (cosmicLink.locker) throw new Error('Cosmic link is locked.')
+  if (cosmicLink.locker) throw new Error("Cosmic link is locked.")
 }
 
 CosmicLink.prototype.__proto__ = config

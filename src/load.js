@@ -1,4 +1,4 @@
-'use_strict'
+"use_strict"
 /**
  * Asynchronously load external ressources.
  *
@@ -6,8 +6,8 @@
  */
 const load = exports
 
-const dom = require('@cosmic-plus/jsutils/dom')
-const html = require('@cosmic-plus/jsutils/html')
+const dom = require("@cosmic-plus/jsutils/dom")
+const html = require("@cosmic-plus/jsutils/html")
 
 /**
  * Load cosmic-lib CSS from **href** or from default origin. All subsequent
@@ -24,7 +24,7 @@ const html = require('@cosmic-plus/jsutils/html')
  * @async
  * @param {string} [href='cosmic-lib.css']
  */
-load.styles = async function (conf, href = 'https://cosmic.plus/cosmic-lib/cosmic-lib.css') {
+load.styles = async function (conf, href = "https://cosmic.plus/cosmic-lib/cosmic-lib.css") {
   const promise = load.css(conf, href)
   load.styles = () => promise
   return promise
@@ -45,8 +45,8 @@ load.styles = async function (conf, href = 'https://cosmic.plus/cosmic-lib/cosmi
  */
 load.css = async function (conf, href) {
   return new Promise(function (resolve, reject) {
-    const attributes = { rel: 'stylesheet', type: 'text/css', href: href, onload: resolve, onerror: reject }
-    const linkNode = html.create('link', attributes)
+    const attributes = { rel: "stylesheet", type: "text/css", href: href, onload: resolve, onerror: reject }
+    const linkNode = html.create("link", attributes)
     html.append(dom.head, linkNode)
   })
 }

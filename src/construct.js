@@ -1,4 +1,4 @@
-'use strict'
+"use strict"
 /**
  * Contains the methods to convert field values from CosmicLink's
  * `transaction descriptor` format to Stellar transaction object format.
@@ -8,12 +8,12 @@
  */
 const construct = exports
 
-const helpers = require('@cosmic-plus/jsutils/misc')
-const StellarSdk = require('@cosmic-plus/base/stellar-sdk')
+const helpers = require("@cosmic-plus/jsutils/misc")
+const StellarSdk = require("@cosmic-plus/base/stellar-sdk")
 
-const resolve = require('./resolve')
-const specs = require('./specs')
-const status = require('./status')
+const resolve = require("./resolve")
+const specs = require("./specs")
+const status = require("./status")
 
 /**
  * Returns the StellarSdk Transaction built from tdesc.
@@ -37,7 +37,7 @@ construct.transaction = async function (conf, tdesc) {
       console.error(error)
       status.error(conf, error.message)
     }
-    if (!conf.status) status.fail(conf, 'Transaction build failed', 'throw')
+    if (!conf.status) status.fail(conf, "Transaction build failed", "throw")
     else throw error
   }
 }
@@ -85,7 +85,7 @@ async function makeTransactionBuilder (conf, tdesc) {
         const memoValue = destination.memo
         if (tdesc.memo && (tdesc.memo.type !== memoType || tdesc.memo.value !== memoValue)) {
           const short = helpers.shorter(operation.destination)
-          status.error(conf, `Memo conflict: ${short} requires to set a memo`, 'throw')
+          status.error(conf, `Memo conflict: ${short} requires to set a memo`, "throw")
         } else {
           tdesc.memo = { type: memoType, value: memoValue }
           builder.addMemo(new StellarSdk.Memo(memoType, memoValue))
@@ -157,9 +157,9 @@ construct.memo = function (conf, memo) {
 
 construct.signer = async function (conf, signer) {
   let sdkSigner = { weight: +signer.weight }
-  if (signer.type === 'tx') sdkSigner.preAuthTx = signer.value
-  else if (signer.type === 'hash') sdkSigner.sha256Hash = signer.value
-  else if (signer.type === 'key') {
+  if (signer.type === "tx") sdkSigner.preAuthTx = signer.value
+  else if (signer.type === "hash") sdkSigner.sha256Hash = signer.value
+  else if (signer.type === "key") {
     const publicKey = await construct.address(conf, signer.value)
     sdkSigner.ed25519PublicKey = publicKey
   }

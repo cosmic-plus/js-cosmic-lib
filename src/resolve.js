@@ -1,4 +1,4 @@
-'use strict'
+"use strict"
 /**
  * Contains functions that probe the blockchain or federation servers to collect
  * datas.
@@ -7,11 +7,11 @@
  */
 const resolve = exports
 
-const helpers = require('@cosmic-plus/jsutils/misc')
-const StellarSdk = require('@cosmic-plus/base/stellar-sdk')
+const helpers = require("@cosmic-plus/jsutils/misc")
+const StellarSdk = require("@cosmic-plus/base/stellar-sdk")
 
-const specs = require('./specs')
-const status = require('./status')
+const specs = require("./specs")
+const status = require("./status")
 
 /**
  * Returns the
@@ -23,8 +23,8 @@ const status = require('./status')
  * @returns {Server} A StellarSdk Server object
  */
 resolve.server = function (conf, network = conf.network, horizon = conf.horizon) {
-  if (!horizon) horizon = resolve.horizon(conf)
-  if (!horizon) throw new Error('No horizon node defined for selected network.')
+  if (!horizon) horizon = resolve.horizon(conf, network)
+  if (!horizon) throw new Error("No horizon node defined for selected network.")
   if (!conf.current.server[horizon]) conf.current.server[horizon] = new StellarSdk.Server(horizon)
   return conf.current.server[horizon]
 }
@@ -39,7 +39,8 @@ resolve.useNetwork = function (conf, network = conf.network) {
   const passphrase = resolve.networkPassphrase(conf, network)
   const currentPassphrase = resolve.networkPassphrase()
   if (passphrase !== currentPassphrase) {
-    console.log('Switch to network: ' + network)
+    // eslint-disable-next-line no-console
+    console.log("Switch to network: " + network)
     StellarSdk.Network.use(new StellarSdk.Network(passphrase))
   }
 }
@@ -105,7 +106,7 @@ async function addressResolver (conf, address) {
   try {
     const account = await StellarSdk.FederationServer.resolve(address)
     const accountId = account.account_id
-    if (!accountId) throw new Error('Unknow address')
+    if (!accountId) throw new Error("Unknow address")
     if (!account.memo_type) delete account.memo
     if (address !== accountId) account.address = address
     if (conf.aliases && conf.aliases[accountId]) {
@@ -115,7 +116,7 @@ async function addressResolver (conf, address) {
   } catch (error) {
     console.error(error)
     status.error(conf, "Can't resolve: " + helpers.shorter(address))
-    status.fail(conf, 'Unresolved address', 'throw')
+    status.fail(conf, "Unresolved address", "throw")
   }
 }
 
@@ -148,9 +149,9 @@ async function accountResolver (conf, accountId, quietFlag) {
       throw error
     } else {
       if (error.response) {
-        status.error(conf, 'Empty account: ' + helpers.shorter(accountId), 'throw')
+        status.error(conf, "Empty account: " + helpers.shorter(accountId), "throw")
       } else {
-        status.error(conf, 'Invalid horizon node: ' + resolve.horizon(conf), 'throw')
+        status.error(conf, "Invalid horizon node: " + resolve.horizon(conf), "throw")
       }
     }
   }
@@ -164,7 +165,7 @@ async function accountResolver (conf, accountId, quietFlag) {
  * @return {boolean}
  */
 resolve.isAccountEmpty = function (conf, address) {
-  return resolve.account(conf, address, true).then(x => false).catch(x => true)
+  return resolve.account(conf, address, true).then(() => false).catch(() => true)
 }
 
 /**
@@ -178,7 +179,7 @@ resolve.isAccountEmpty = function (conf, address) {
  */
 resolve.txSourceAccount = async function (conf, address, sequence) {
   if (!address) {
-    const neutralAccount = new StellarSdk.Account(specs.neutralAccountId, '-1')
+    const neutralAccount = new StellarSdk.Account(specs.neutralAccountId, "-1")
     neutralAccount.signers = []
     if (conf.cache) {
       conf.cache.account[specs.neutralAccountId] = neutralAccount
@@ -186,7 +187,7 @@ resolve.txSourceAccount = async function (conf, address, sequence) {
     return neutralAccount
   } else {
     const destination = await resolve.address(conf, address)
-    if (destination.memo) status.error(conf, 'Invalid transaction source address (requires a memo)', 'throw')
+    if (destination.memo) status.error(conf, "Invalid transaction source address (requires a memo)", "throw")
     const account = await resolve.account(conf, destination.account_id)
     if (sequence) {
       const baseAccount = new StellarSdk.Account(account.id, sequence)
@@ -204,7 +205,7 @@ resolve.txSourceAccount = async function (conf, address, sequence) {
  * @return {Array}
  */
 resolve.txSources = function (conf, transaction) {
-  if (!transaction.source) throw new Error('No source for transaction')
+  if (!transaction.source) throw new Error("No source for transaction")
 
   const extra = resolve.extra(conf, transaction)
   if (extra.cache.txSources) return extra.cache.txSources
@@ -243,7 +244,7 @@ resolve.txSigners = async function (conf, transaction) {
     const account = await resolve.account(extra, source)
     if (!signers[account.id]) {
       signers[account.id] = account.signers.filter(signer => {
-        return signer.type !== 'preauthTx'
+        return signer.type !== "preauthTx"
       })
     }
   }
@@ -283,7 +284,7 @@ function signersTableToSignersList (signersTable) {
  */
 resolve.extra = function (conf, object) {
   if (!object._cosmicplus) {
-    helpers.setHiddenProperty(object, '_cosmicplus', {})
+    helpers.setHiddenProperty(object, "_cosmicplus", {})
     if (conf.cache) object._cosmicplus.cache = conf.cache
     else object._cosmicplus.cache = { destination: {}, account: {} }
     object._cosmicplus.network = conf.network

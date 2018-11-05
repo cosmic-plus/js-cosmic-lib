@@ -1,4 +1,4 @@
-'use_strict'
+"use_strict"
 /**
  * This module provides two ways to generate {@link SignersUtils} for a
  * Transaction object. The first one extends the object and is the intended way
@@ -10,10 +10,10 @@
  */
 const signersUtils = exports
 
-const resolve = require('./resolve')
+const resolve = require("./resolve")
 
-const helpers = require('@cosmic-plus/jsutils/misc')
-const StellarSdk = require('@cosmic-plus/base/stellar-sdk')
+const helpers = require("@cosmic-plus/jsutils/misc")
+const StellarSdk = require("@cosmic-plus/base/stellar-sdk")
 
 /**
  * **SignersUtils** is a toolbox that aims to ease the handling of
@@ -88,7 +88,7 @@ class SignersUtils {
 
   constructor (conf, transaction) {
     this.signatures = transaction.signatures
-    helpers.setHiddenProperty(this, '_cosmicplus', transaction._cosmicplus)
+    helpers.setHiddenProperty(this, "_cosmicplus", transaction._cosmicplus)
   }
 }
 
@@ -121,7 +121,7 @@ utilities.hasSigner = function (accountId) {
  * @return {boolean}
  */
 utilities.hasSigned = function (accountId) {
-  if (accountId.substr(0, 1) === 'G') {
+  if (accountId.substr(0, 1) === "G") {
     const keypair = StellarSdk.Keypair.fromPublicKey(accountId)
     const txHash = this._cosmicplus.cache.txHash
     return !!this.signatures.find(entry => keypair.verify(txHash, entry.signature()))

@@ -1,4 +1,4 @@
-'use strict'
+"use strict"
 /**
  * Contains the action methods for CosmicLink.
  *
@@ -7,16 +7,16 @@
  */
 const action = exports
 
-const axios = require('@cosmic-plus/base/axios')
-const env = require('@cosmic-plus/jsutils/env')
-const helpers = require('@cosmic-plus/jsutils/misc')
+const axios = require("@cosmic-plus/base/axios")
+const env = require("@cosmic-plus/jsutils/env")
+const helpers = require("@cosmic-plus/jsutils/misc")
 
-const convert = require('./convert')
-const config = require('./config')
-const format = env.isBrowser && require('./format')
-const resolve = require('./resolve')
-const signersUtils = require('./signers-utils')
-const status = require('./status')
+const convert = require("./convert")
+const config = require("./config")
+const format = env.isBrowser && require("./format")
+const resolve = require("./resolve")
+const signersUtils = require("./signers-utils")
+const status = require("./status")
 
 /**
  * Lock a CosmicLink to a network/source pair. The actual values for this pair
@@ -41,7 +41,7 @@ const status = require('./status')
  */
 action.lock = async function (cosmicLink, options = {}) {
   if (cosmicLink.status) throw new Error(cosmicLink.status)
-  if (cosmicLink.locker) throw new Error('CosmicLink is already locked.')
+  if (cosmicLink.locker) throw new Error("CosmicLink is already locked.")
 
   try {
     await applyLock(cosmicLink, options)
@@ -50,7 +50,7 @@ action.lock = async function (cosmicLink, options = {}) {
       console.error(error)
       status.error(cosmicLink, error.message)
     }
-    status.fail(cosmicLink, 'Transaction build failed', 'throw')
+    status.fail(cosmicLink, "Transaction build failed", "throw")
   }
 
   updateSignersNode(cosmicLink)
@@ -93,20 +93,20 @@ async function applyLock (cosmicLink, options) {
  * @param {...Keypair|Buffer|string} ...keypairs_or_preimage
  */
 action.sign = async function (cosmicLink, ...keypairsOrPreimage) {
-  if (!cosmicLink.locker) throw new Error('cosmicLink is not locked.')
+  if (!cosmicLink.locker) throw new Error("cosmicLink is not locked.")
   resolve.useNetwork(cosmicLink)
 
   const transaction = cosmicLink.transaction
   let allFine = true
 
-  if (typeof keypairsOrPreimage[0] !== 'string') {
+  if (typeof keypairsOrPreimage[0] !== "string") {
     for (let index in keypairsOrPreimage) {
       const keypair = keypairsOrPreimage[index]
       const publicKey = keypair.publicKey()
 
       if (!cosmicLink.transaction.hasSigner(publicKey)) {
         const short = helpers.shorter(publicKey)
-        status.error(cosmicLink, 'Not a legit signer: ' + short)
+        status.error(cosmicLink, "Not a legit signer: " + short)
         allFine = false
         continue
       }
@@ -118,7 +118,7 @@ action.sign = async function (cosmicLink, ...keypairsOrPreimage) {
       } catch (error) {
         console.error(error)
         const short = helpers.shorter(publicKey)
-        status.error(cosmicLink, 'Failed to sign with key: ' + short)
+        status.error(cosmicLink, "Failed to sign with key: " + short)
         allFine = false
         continue
       }
@@ -129,15 +129,15 @@ action.sign = async function (cosmicLink, ...keypairsOrPreimage) {
     } catch (error) {
       console.error(error)
       const short = helpers.shorter(keypairsOrPreimage[0])
-      status.error(cosmicLink, 'Failed to sign with preimage: ' + short, 'throw')
+      status.error(cosmicLink, "Failed to sign with preimage: " + short, "throw")
     }
   }
 
   /// Update other formats.
-  ['_query', '_xdr', '_sep7'].forEach(format => delete cosmicLink[format])
+  ["_query", "_xdr", "_sep7"].forEach(format => delete cosmicLink[format])
   updateSignersNode(cosmicLink)
 
-  if (!allFine) throw new Error('Some signers where invalid')
+  if (!allFine) throw new Error("Some signers where invalid")
   else return transaction
 }
 
@@ -166,16 +166,15 @@ function updateSignersNode (cosmicLink) {
  * @return {Object} The server response
  */
 action.send = async function (cosmicLink, horizon = cosmicLink.horizon) {
-  if (!cosmicLink.locker) throw new Error('cosmicLink is not locked.')
+  if (!cosmicLink.locker) throw new Error("cosmicLink is not locked.")
   const server = resolve.server(cosmicLink, horizon)
-  const account = await resolve.account(cosmicLink, cosmicLink.source)
 
   if (cosmicLink.transaction.hasSigner(STELLARGUARD_PUBKEY)) {
     let endpoint
-    if (cosmicLink.network === 'public') enpoint = 'https://stellarguard.me/api'
-    else if (cosmicLink.network === 'test') endpoint = 'https://test.stellarguard.me/api'
+    if (cosmicLink.network === "public") endpoint = "https://stellarguard.me/api"
+    else if (cosmicLink.network === "test") endpoint = "https://test.stellarguard.me/api"
     if (endpoint) {
-      return axios.post(endpoint + '/transactions', { xdr: cosmicLink.xdr })
+      return axios.post(endpoint + "/transactions", { xdr: cosmicLink.xdr })
         .then(result => result.data)
     }
   } else {

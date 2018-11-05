@@ -1,4 +1,4 @@
-'use_strict'
+"use_strict"
 /**
  * Library-wide configuration.
  *
@@ -14,21 +14,21 @@
  */
 const config = exports
 
-const StellarSdk = require('@cosmic-plus/base/stellar-sdk')
+const StellarSdk = require("@cosmic-plus/base/stellar-sdk")
 
-const aliases = require('./aliases')
-const event = require('./event')
+const aliases = require("./aliases")
+const event = require("./event")
 
 /**
  * The base URI to build cosmic links.
  * @default 'https://cosmic.link/'
  */
-config.page = 'https://cosmic.link/'
+config.page = "https://cosmic.link/"
 /**
  * The default fallback network.
  * @default 'public'
  */
-config.network = 'public'
+config.network = "public"
 /**
  * The default fallback source address.
  * @default undefined
@@ -68,8 +68,8 @@ config.setupNetwork = function (name, horizon, passphrase) {
   config.current.horizon[passphrase] = horizon
 }
 
-config.setupNetwork('public', 'https://horizon.stellar.org', StellarSdk.Networks.PUBLIC)
-config.setupNetwork('test', 'https://horizon-testnet.stellar.org', StellarSdk.Networks.TESTNET)
+config.setupNetwork("public", "https://horizon.stellar.org", StellarSdk.Networks.PUBLIC)
+config.setupNetwork("test", "https://horizon-testnet.stellar.org", StellarSdk.Networks.TESTNET)
 
 config.aliases = aliases.all
 config.addAliases = (definitions) => aliases.add(config, definitions)

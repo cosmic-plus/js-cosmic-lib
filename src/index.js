@@ -1,9 +1,9 @@
-'use strict'
+"use strict"
 
-const env = require('@cosmic-plus/jsutils/env')
-const helpers = require('@cosmic-plus/jsutils/misc')
+const env = require("@cosmic-plus/jsutils/env")
+const helpers = require("@cosmic-plus/jsutils/misc")
 
-if (env.isBrowser) require('@cosmic-plus/jsutils/polyfill')
+if (env.isBrowser) require("@cosmic-plus/jsutils/polyfill")
 
 /**
  * Automatically pass `config` to `module` functions as first argument.
@@ -15,9 +15,9 @@ if (env.isBrowser) require('@cosmic-plus/jsutils/polyfill')
  */
 function exposeModule (config, module) {
   const layer = Object.assign({}, module)
-  helpers.setHiddenProperty(layer, '_config', config)
+  helpers.setHiddenProperty(layer, "_config", config)
   for (let name in module) {
-    if (typeof module[name] === 'function') {
+    if (typeof module[name] === "function") {
       layer[name] = function (...params) { return module[name](this._config, ...params) }
     } else {
       layer[name] = module[name]
@@ -49,7 +49,7 @@ exports.withConfig = function (params) {
       library[module].prototype.__proto__ = library.config
     } else if (this[module]._config) {
       library[module] = Object.create(this[module])
-      helpers.setHiddenProperty(library[module], '_config', library.config)
+      helpers.setHiddenProperty(library[module], "_config", library.config)
     }
   }
 
@@ -58,9 +58,9 @@ exports.withConfig = function (params) {
 
 /// Export modules.
 
-const config = exports.config = require('./config')
-exports.CosmicLink = require('./cosmiclink')
-exports.load = env.isBrowser && exposeModule(config, require('./load'))
-exports.resolve = exposeModule(config, require('./resolve'))
-exports.signersUtils = exposeModule(config, require('./signers-utils'))
-exports.specs = require('./specs')
+const config = exports.config = require("./config")
+exports.CosmicLink = require("./cosmiclink")
+exports.load = env.isBrowser && exposeModule(config, require("./load"))
+exports.resolve = exposeModule(config, require("./resolve"))
+exports.signersUtils = exposeModule(config, require("./signers-utils"))
+exports.specs = require("./specs")

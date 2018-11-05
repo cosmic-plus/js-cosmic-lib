@@ -1,4 +1,4 @@
-'use strict'
+"use strict"
 /**
  * Contains the methods to convert data from *{@see Transaction}* format to
  * *Tdesc* format.
@@ -8,8 +8,8 @@
  */
 const destruct = exports
 
-const normalize = require('./normalize')
-const specs = require('./specs')
+const normalize = require("./normalize")
+const specs = require("./specs")
 
 /**
  * Convert `tx` into *Tdesc*.
@@ -22,7 +22,7 @@ destruct.transaction = function (conf, tx, options = {}) {
   const tdesc = {}
 
   if (tx.source === specs.neutralAccountId) options.stripSource = true
-  if (tx.sequence === '0') options.stripSequence = true
+  if (tx.sequence === "0") options.stripSequence = true
 
   tdesc.network = options.network
   tdesc.horizon = options.horizon
@@ -31,7 +31,7 @@ destruct.transaction = function (conf, tx, options = {}) {
     tdesc.sequence = destruct.sequence(conf, tx.sequence)
   }
 
-  if (tx._memo._switch.name !== 'memoNone') tdesc.memo = destruct.memo(conf, tx._memo)
+  if (tx._memo._switch.name !== "memoNone") tdesc.memo = destruct.memo(conf, tx._memo)
   if (tx.timeBounds) {
     if (tx.timeBounds.minTime) tdesc.minTime = destruct.date(conf, tx.timeBounds.minTime)
     if (tx.timeBounds.maxTime) tdesc.maxTime = destruct.date(conf, tx.timeBounds.maxTime)
@@ -65,8 +65,8 @@ destruct.operation = function (conf, op) {
   const odesc = {}
 
   for (let field in op) {
-    if (field === 'type') odesc.type = op.type
-    else if (field === 'line') odesc.asset = op.line
+    if (field === "type") odesc.type = op.type
+    else if (field === "line") odesc.asset = op.line
     else odesc[field] = destruct.field(conf, field, op[field])
   }
 
@@ -120,11 +120,11 @@ destruct.date = function (conf, timestamp) {
 
 destruct.memo = function (conf, sdkMemo) {
   const memo = {}
-  if (sdkMemo._switch.name !== 'memoNone') {
+  if (sdkMemo._switch.name !== "memoNone") {
     memo.type = sdkMemo._arm
-    if (memo.type === 'hash' || memo.type === 'retHash') {
-      memo.value = sdkMemo._value.toString('hex')
-      if (memo.type === 'retHash') memo.type = 'return'
+    if (memo.type === "hash" || memo.type === "retHash") {
+      memo.value = sdkMemo._value.toString("hex")
+      if (memo.type === "retHash") memo.type = "return"
     } else {
       memo.value = sdkMemo._value.toString()
     }
@@ -139,14 +139,14 @@ destruct.sequence = function (conf, sdkSequence) {
 destruct.signer = function (conf, sdkSigner) {
   const signer = { weight: sdkSigner.weight }
   if (sdkSigner.ed25519PublicKey) {
-    signer.type = 'key'
+    signer.type = "key"
     signer.value = sdkSigner.ed25519PublicKey
   } else if (sdkSigner.sha256Hash) {
-    signer.type = 'hash'
-    signer.value = sdkSigner.sha256Hash.toString('hex')
+    signer.type = "hash"
+    signer.value = sdkSigner.sha256Hash.toString("hex")
   } else if (sdkSigner.preAuthTx) {
-    signer.type = 'tx'
-    signer.value = sdkSigner.preAuthTx.toString('hex')
+    signer.type = "tx"
+    signer.value = sdkSigner.preAuthTx.toString("hex")
   }
   return signer
 }

@@ -1,4 +1,4 @@
-'use strict'
+"use strict"
 /**
  * Contains methods to format a `transaction descriptor` into CSS/HTML for
  * display in browser.
@@ -8,15 +8,15 @@
  */
 const format = exports
 
-const helpers = require('@cosmic-plus/jsutils/misc')
-const html = require('@cosmic-plus/jsutils/html')
-const StellarSdk = require('@cosmic-plus/base/stellar-sdk')
+const helpers = require("@cosmic-plus/jsutils/misc")
+const html = require("@cosmic-plus/jsutils/html")
+const StellarSdk = require("@cosmic-plus/base/stellar-sdk")
 
-const config = require('./config')
-const event = require('./event')
-const resolve = require('./resolve')
-const signersUtils = require('./signers-utils')
-const specs = require('./specs')
+const config = require("./config")
+const event = require("./event")
+const resolve = require("./resolve")
+const signersUtils = require("./signers-utils")
+const specs = require("./specs")
 
 /**
  * Returns an HTML div describing `tdesc`.
@@ -25,18 +25,18 @@ const specs = require('./specs')
  * @return {HTMLElement} Transaction HTML description.
  */
 format.tdesc = function (conf, tdesc) {
-  const trNode = html.create('div', '.cosmiclib_transactionNode')
+  const trNode = html.create("div", ".cosmiclib_transactionNode")
   if (!tdesc) return trNode
 
   let infoNode
   for (let index in specs.transactionOptionalFields) {
     const entry = specs.transactionOptionalFields[index]
-    if (entry === 'horizon' && resolve.horizon(config, conf.network)) continue
+    if (entry === "horizon" && resolve.horizon(config, conf.network)) continue
 
     if (tdesc[entry]) {
-      if (!infoNode) infoNode = html.create('ul', '.cosmiclib_sideInfo')
-      const lineNode = html.create('li', {},
-        specs.fieldDesc[entry] + ': ',
+      if (!infoNode) infoNode = html.create("ul", ".cosmiclib_sideInfo")
+      const lineNode = html.create("li", {},
+        specs.fieldDesc[entry] + ": ",
         format.field(conf, entry, tdesc[entry])
       )
       html.append(infoNode, lineNode)
@@ -66,13 +66,13 @@ format.tdesc = function (conf, tdesc) {
  * @return {HTMLElement} Operation HTML description.
  */
 format.odesc = function (conf, odesc) {
-  const opNode = html.create('div', '.cosmiclib_operation')
+  const opNode = html.create("div", ".cosmiclib_operation")
   opNode.odesc = odesc
   let retNode = opNode
 
   if (odesc.source) {
-    retNode = html.create('div', '.cosmiclib_sourcedOperation')
-    const sourceNode = html.create('div', '.cosmiclib_sideInfo', 'Source: ')
+    retNode = html.create("div", ".cosmiclib_sourcedOperation")
+    const sourceNode = html.create("div", ".cosmiclib_sideInfo", "Source: ")
     const addressNode = format.address(conf, odesc.source)
     html.append(sourceNode, addressNode)
     html.append(retNode, sourceNode, opNode)
@@ -80,19 +80,19 @@ format.odesc = function (conf, odesc) {
 
   let meaning = operationMeaning(odesc)
   while (meaning) {
-    if (meaning.substr(0, 1) === '{') {
-      const query = meaning.substr(1).replace(/}.*/, '')
-      meaning = meaning.replace(/^[^}]*}/, '')
-      if (query === 'newline') {
-        if (meaning === '') break
-        html.append(opNode, html.create('br'))
+    if (meaning.substr(0, 1) === "{") {
+      const query = meaning.substr(1).replace(/}.*/, "")
+      meaning = meaning.replace(/^[^}]*}/, "")
+      if (query === "newline") {
+        if (meaning === "") break
+        html.append(opNode, html.create("br"))
       } else {
         const fieldNode = format.field(conf, query, odesc[query])
         html.append(opNode, fieldNode)
       }
     } else {
-      const txt = meaning.replace(/{.*/, '')
-      meaning = meaning.replace(/^[^{]*/, '')
+      const txt = meaning.replace(/{.*/, "")
+      meaning = meaning.replace(/^[^{]*/, "")
       html.append(opNode, txt)
     }
   }
@@ -107,84 +107,84 @@ format.odesc = function (conf, odesc) {
 function operationMeaning (odesc) {
   let msg
   switch (odesc.type) {
-    case 'accountMerge':
-      return 'Merge account inside {destination}'
-    case 'allowTrust':
-      if (odesc.authorize) {
-        return 'Allow usage of your asset {assetCode} to {trustor}'
+  case "accountMerge":
+    return "Merge account inside {destination}"
+  case "allowTrust":
+    if (odesc.authorize) {
+      return "Allow usage of your asset {assetCode} to {trustor}"
+    } else {
+      return "Deny usage of your asset {assetCode} to {trustor}"
+    }
+  case "bumpSequence":
+    return "Set account sequence number to {bumpTo}"
+  case "changeTrust":
+    if (odesc.limit === "0") {
+      return "Refuse asset {asset}"
+    } else if (odesc.limit) {
+      return "Set holding limit as {limit} for asset {asset}"
+    } else {
+      return "Accept asset {asset}"
+    }
+  case "createAccount":
+    return "Create account {destination} and send it {startingBalance} XLM"
+  case "createPassiveOffer":
+    return "Passive offer of {amount} {selling} at {price} {buying} / unit"
+  case "inflation":
+    return "Run inflation"
+  case "manageData":
+    if (odesc.value) {
+      return "Set data entry '{name}' as '{value}'"
+    } else {
+      return "Delete data entry '{name}'"
+    }
+  case "manageOffer":
+    if (!odesc.offerId || odesc.offerId === "0") {
+      return "Offer {amount} {selling} at {price} {buying} / unit"
+    } else if (odesc.amount !== "0") {
+      return "Change offer '{offerId}' to: offer {amount} {selling} at " +
+          "{price} {buying} / unit"
+    } else {
+      return "Delete offer '{offerId}'"
+    }
+  case "pathPayment":
+    msg = "Send {destAmount} {destAsset} to {destination} for a maximum " +
+        "of {sendMax} {sendAsset}"
+    if (odesc.path) msg += " using conversion path: {path}"
+    return msg
+  case "payment":
+    return "Send {amount} {asset} to {destination}"
+  case "setOptions":
+    msg = ""
+    if (odesc.inflationDest) {
+      msg += "Set inflation destination to: {inflationDest}{newline}"
+    }
+    if (odesc.clearFlags) msg += "Clear flag(s): {clearFlags}{newline}"
+    if (odesc.setFlags) msg += "Set flag(s): {setFlags}{newline}"
+    if (odesc.masterWeight) {
+      if (odesc.masterWeight === "0") {
+        msg += "Delete master key{newline}"
       } else {
-        return 'Deny usage of your asset {assetCode} to {trustor}'
+        msg += "Set master key weight at: {masterWeight}{newline}"
       }
-    case 'bumpSequence':
-      return 'Set account sequence number to {bumpTo}'
-    case 'changeTrust':
-      if (odesc.limit === '0') {
-        return 'Refuse asset {asset}'
-      } else if (odesc.limit) {
-        return 'Set holding limit as {limit} for asset {asset}'
+    }
+    ["lowThreshold", "medThreshold", "highThreshold"].forEach(field => {
+      if (odesc[field]) msg += "Set " + field + " at: {" + field + "}{newline}"
+    })
+    if (odesc.signer) {
+      if (odesc.signer.type === "tx") {
+        if (odesc.signer.weight === "0") msg += "Remove pre-signed {signer}{newline}"
+        else msg += "Pre-sign {signer}{newline}"
       } else {
-        return 'Accept asset {asset}'
+        if (odesc.signer.weight === "0") msg += "Remove signer: {signer}{newline}"
+        else msg += "Set signer: {signer}{newline}"
       }
-    case 'createAccount':
-      return 'Create account {destination} and send it {startingBalance} XLM'
-    case 'createPassiveOffer':
-      return 'Passive offer of {amount} {selling} at {price} {buying} / unit'
-    case 'inflation':
-      return 'Run inflation'
-    case 'manageData':
-      if (odesc.value) {
-        return "Set data entry '{name}' as '{value}'"
-      } else {
-        return "Delete data entry '{name}'"
-      }
-    case 'manageOffer':
-      if (!odesc.offerId || odesc.offerId === '0') {
-        return 'Offer {amount} {selling} at {price} {buying} / unit'
-      } else if (odesc.amount !== '0') {
-        return "Change offer '{offerId}' to: offer {amount} {selling} at " +
-          '{price} {buying} / unit'
-      } else {
-        return "Delete offer '{offerId}'"
-      }
-    case 'pathPayment':
-      msg = 'Send {destAmount} {destAsset} to {destination} for a maximum ' +
-        'of {sendMax} {sendAsset}'
-      if (odesc.path) msg += ' using conversion path: {path}'
-      return msg
-    case 'payment':
-      return 'Send {amount} {asset} to {destination}'
-    case 'setOptions':
-      msg = ''
-      if (odesc.inflationDest) {
-        msg += 'Set inflation destination to: {inflationDest}{newline}'
-      }
-      if (odesc.clearFlags) msg += 'Clear flag(s): {clearFlags}{newline}'
-      if (odesc.setFlags) msg += 'Set flag(s): {setFlags}{newline}'
-      if (odesc.masterWeight) {
-        if (odesc.masterWeight === '0') {
-          msg += 'Delete master key{newline}'
-        } else {
-          msg += 'Set master key weight at: {masterWeight}{newline}'
-        }
-      }
-      ['lowThreshold', 'medThreshold', 'highThreshold'].forEach(field => {
-        if (odesc[field]) msg += 'Set ' + field + ' at: {' + field + '}{newline}'
-      })
-      if (odesc.signer) {
-        if (odesc.signer.type === 'tx') {
-          if (odesc.signer.weight === '0') msg += 'Remove pre-signed {signer}{newline}'
-          else msg += 'Pre-sign {signer}{newline}'
-        } else {
-          if (odesc.signer.weight === '0') msg += 'Remove signer: {signer}{newline}'
-          else msg += 'Set signer: {signer}{newline}'
-        }
-      }
-      if (odesc.homeDomain) msg += 'Set home domain: {homeDomain}{newline}'
-      if (odesc.homeDomain === '') msg += 'Unset home domain'
-      if (!msg) msg = 'Do nothing'
-      return msg
-    default:
-      throw new Error('Unknow operation: ' + odesc.type)
+    }
+    if (odesc.homeDomain) msg += "Set home domain: {homeDomain}{newline}"
+    if (odesc.homeDomain === "") msg += "Unset home domain"
+    if (!msg) msg = "Do nothing"
+    return msg
+  default:
+    throw new Error("Unknow operation: " + odesc.type)
   }
 }
 
@@ -195,7 +195,7 @@ function operationMeaning (odesc) {
  * @return {HTMLElement} Signers HTML description
  */
 format.signatures = function (conf, transaction) {
-  const signersNode = html.create('div', '.cosmiclib_signersNode')
+  const signersNode = html.create("div", ".cosmiclib_signersNode")
 
   signersUtils.for(conf, transaction).then(utils => {
     if (utils.signersList.length < 2 && !utils.signatures.length) return
@@ -212,18 +212,18 @@ format.signatures = function (conf, transaction) {
 }
 
 function makeAccountSignersNode (conf, utils, accountId) {
-  const accountSignersNode = html.create('div')
+  const accountSignersNode = html.create("div")
 
-  const title = 'Signers for ' + helpers.shorter(accountId)
-  const titleNode = html.create('span', '.cosmiclib_threshold', title)
-  const listNode = html.create('ul', '.cosmiclib_signers')
+  const title = "Signers for " + helpers.shorter(accountId)
+  const titleNode = html.create("span", ".cosmiclib_threshold", title)
+  const listNode = html.create("ul", ".cosmiclib_signers")
   html.append(accountSignersNode, titleNode, listNode)
 
   utils.signers[accountId].forEach(signer => {
     const signerNode = format.signer(conf, signer)
-    const lineNode = html.create('li', null, signerNode)
+    const lineNode = html.create("li", null, signerNode)
     if (utils.hasSigned(signer.key)) {
-      html.appendClass(lineNode, 'cosmiclib_signed')
+      html.appendClass(lineNode, "cosmiclib_signed")
       listNode.insertBefore(lineNode, listNode.firstChild)
     } else {
       html.append(listNode, lineNode)
@@ -241,7 +241,7 @@ function makeAccountSignersNode (conf, utils, accountId) {
  * @param {HTMLElement} element
  * @return {Object} odesc
  */
-format.parentOdesc = (conf, element) => parentProperty(element, 'odesc')
+format.parentOdesc = (conf, element) => parentProperty(element, "odesc")
 
 /**
  * Retrieves the parent operation index of an HTML element, or returns
@@ -250,7 +250,7 @@ format.parentOdesc = (conf, element) => parentProperty(element, 'odesc')
  * @param {HTMLElement} element
  * @return {Number} operation index
  */
-format.parentIndex = (conf, element) => parentProperty(element, 'index')
+format.parentIndex = (conf, element) => parentProperty(element, "index")
 
 /**
  * Retrieves the parent tdesc of an HTML element, or returns `undefined`
@@ -259,7 +259,7 @@ format.parentIndex = (conf, element) => parentProperty(element, 'index')
  * @param {HTMLElement} element
  * @return {Object} tdesc
  */
-format.parentTdesc = (conf, element) => parentProperty(element, 'tdesc')
+format.parentTdesc = (conf, element) => parentProperty(element, "tdesc")
 
 function parentProperty (element, property) {
   while (element.parentNode) {
@@ -279,20 +279,20 @@ function parentProperty (element, property) {
  */
 format.field = function (conf, field, value) {
   const type = specs.fieldType[field]
-  if (!type) throw new Error('Unknow field: ' + field)
+  if (!type) throw new Error("Unknow field: " + field)
 
   const domNode = format.type(conf, type, value)
   domNode.field = field
-  if (field !== type) html.appendClass(domNode, 'cosmiclib_' + field)
+  if (field !== type) html.appendClass(domNode, "cosmiclib_" + field)
 
   return domNode
 }
 
 format.type = function (conf, type, value) {
-  if (typeof value === 'object' && value.error) type = 'error'
+  if (typeof value === "object" && value.error) type = "error"
   const formatter = process[type] || process.string
   const domNode = formatter(conf, value)
-  domNode.className = 'cosmiclib_' + type
+  domNode.className = "cosmiclib_" + type
 
   const eventObject = {
     conf: conf,
@@ -300,7 +300,7 @@ format.type = function (conf, type, value) {
     value: value,
     domNode: domNode
   }
-  if (conf.constructor.name === 'CosmicLink') eventObject.cosmicLink = conf
+  if (conf.constructor.name === "CosmicLink") eventObject.cosmicLink = conf
   domNode.onclick = () => event.callClickHandler(conf, type, eventObject)
   return domNode
 }
@@ -315,22 +315,22 @@ specs.types.forEach(type => {
 const process = {}
 
 process.string = function (conf, string) {
-  if (typeof string !== 'string') string = string + ''
-  return html.create('span', null, string)
+  if (typeof string !== "string") string = string + ""
+  return html.create("span", null, string)
 }
 
 process.error = function (conf, errDesc) {
-  const errorNode = html.create('span', '.cosmiclib_error')
-  errorNode.textContent = errDesc.value === '' ? '(undefined)' : errDesc.value
+  const errorNode = html.create("span", ".cosmiclib_error")
+  errorNode.textContent = errDesc.value === "" ? "(undefined)" : errDesc.value
   errorNode.title = errDesc.error.message
   return errorNode
 }
 
 process.address = function (conf, address) {
-  const addressNode = html.create('span',
-    { title: 'Resolving...' },
+  const addressNode = html.create("span",
+    { title: "Resolving..." },
     helpers.shorter(address),
-    html.create('span', '.cosmiclib_loadingAnim')
+    html.create("span", ".cosmiclib_loadingAnim")
   )
 
   resolveAddressAndUpdate(conf, address, addressNode)
@@ -352,53 +352,53 @@ async function resolveAddressAndUpdate (conf, address, addressNode) {
     addressNode.extra = account
   } catch (error) {
     addressNode.title = "Can't resolve address"
-    html.appendClass(addressNode, 'cosmiclib_error')
+    html.appendClass(addressNode, "cosmiclib_error")
 
     const parent = addressNode.parentNode
-    if (parent.classList.contains('cosmiclib_assetIssuer')) {
-      parent.style.display = 'inline'
+    if (parent.classList.contains("cosmiclib_assetIssuer")) {
+      parent.style.display = "inline"
     }
   }
 
-  const animation = html.grab('.cosmiclib_loadingAnim', addressNode)
+  const animation = html.grab(".cosmiclib_loadingAnim", addressNode)
   if (animation) html.destroy(animation)
   const grandpa = addressNode.parentNode.parentNode
-  if (grandpa && grandpa.classList.contains('cosmiclib_asset')) {
-    html.destroy(html.grab('.cosmiclib_loadingAnim', grandpa))
+  if (grandpa && grandpa.classList.contains("cosmiclib_asset")) {
+    html.destroy(html.grab(".cosmiclib_loadingAnim", grandpa))
     const odesc = format.parentOdesc(conf, grandpa)
-    if (odesc && odesc.type === 'changeTrust') {
-      addressNode.parentNode.style.display = 'inline'
+    if (odesc && odesc.type === "changeTrust") {
+      addressNode.parentNode.style.display = "inline"
     }
   }
 }
 
 process.asset = function (conf, asset) {
-  const codeNode = format.field(conf, 'assetCode', asset.code)
-  const issuerNode = html.create('span', null, ' issued by ')
-  const assetNode = html.create('span', null, codeNode, issuerNode)
-  issuerNode.style.display = 'none'
+  const codeNode = format.field(conf, "assetCode", asset.code)
+  const issuerNode = html.create("span", null, " issued by ")
+  const assetNode = html.create("span", null, codeNode, issuerNode)
+  issuerNode.style.display = "none"
 
   if (asset.issuer) {
-    codeNode.title = 'Issued by ' + asset.issuer
-    html.append(issuerNode, format.field(conf, 'assetIssuer', asset.issuer))
-    html.append(codeNode, html.create('span', '.cosmiclib_loadingAnim'))
+    codeNode.title = "Issued by " + asset.issuer
+    html.append(issuerNode, format.field(conf, "assetIssuer", asset.issuer))
+    html.append(codeNode, html.create("span", ".cosmiclib_loadingAnim"))
   } else {
-    codeNode.title = 'Native asset'
-    html.rewrite(issuerNode, ' native asset')
+    codeNode.title = "Native asset"
+    html.rewrite(issuerNode, " native asset")
   }
 
   codeNode.onclick = () => {
-    if (issuerNode.style.display === 'inline') issuerNode.style.display = 'none'
-    else issuerNode.style.display = 'inline'
+    if (issuerNode.style.display === "inline") issuerNode.style.display = "none"
+    else issuerNode.style.display = "inline"
   }
 
   return assetNode
 }
 
 process.assetsArray = function (conf, assetsArray) {
-  const assetsArrayNode = html.create('span')
+  const assetsArrayNode = html.create("span")
   for (let i = 0; i < assetsArray.length; i++) {
-    if (i !== 0) html.append(assetsArrayNode, ', ')
+    if (i !== 0) html.append(assetsArrayNode, ", ")
     html.append(assetsArrayNode, format.asset(conf, assetsArray[i]))
   }
 
@@ -406,82 +406,85 @@ process.assetsArray = function (conf, assetsArray) {
 }
 
 process.date = function (conf, date) {
-  return html.create('span', {}, new Date(date).toLocaleString())
+  return html.create("span", {}, new Date(date).toLocaleString())
 }
 
 process.hash = function (conf, hash) {
-  return html.create('span', { title: hash }, helpers.shorter(hash))
+  return html.create("span", { title: hash }, helpers.shorter(hash))
 }
 
 process.id = process.hash
 
 process.flags = function (conf, flags) {
-  let string = ''
+  let string = ""
   if (flags >= 4) {
-    string = 'immutable'
+    string = "immutable"
     flags = flags - 4
   }
   if (flags >= 2) {
-    if (string) string = ', ' + string
-    string = 'revocable' + string
+    if (string) string = ", " + string
+    string = "revocable" + string
     flags = flags - 2
   }
   if (+flags === 1) {
-    if (string) string = ', ' + string
-    string = 'required' + string
+    if (string) string = ", " + string
+    string = "required" + string
   }
 
-  return html.create('span', {}, string)
+  return html.create("span", {}, string)
 }
 
 process.memo = function (conf, memo) {
-  const typeNode = format.field(conf, 'memoType', memo.type)
+  const typeNode = format.field(conf, "memoType", memo.type)
   let valueNode
   switch (memo.type) {
-    case 'text':
-      valueNode = format.field(conf, 'memoText', memo.value)
-      break
-    case 'id':
-      valueNode = format.field(conf, 'memoId', memo.value)
-      break
-    case 'hash':
-      valueNode = format.field(conf, 'memoHash', memo.value)
-      break
-    case 'return':
-      valueNode = format.field(conf, 'memoReturn', memo.value)
+  case "text":
+    valueNode = format.field(conf, "memoText", memo.value)
+    break
+  case "id":
+    valueNode = format.field(conf, "memoId", memo.value)
+    break
+  case "hash":
+    valueNode = format.field(conf, "memoHash", memo.value)
+    break
+  case "return":
+    valueNode = format.field(conf, "memoReturn", memo.value)
   }
-  return html.create('span', {}, '(', typeNode, ') ', valueNode)
+  return html.create("span", {}, "(", typeNode, ") ", valueNode)
 }
 
 process.price = function (conf, price) {
-  if (typeof price === 'string') {
-    return html.create('span', {}, price)
+  if (typeof price === "string") {
+    return html.create("span", {}, price)
   } else {
-    return html.create('span', {}, price.n / price.d + '')
+    return html.create("span", {}, price.n / price.d + "")
   }
 }
 
 process.signer = function (conf, signer) {
-  const signerNode = html.create('span')
+  const signerNode = html.create("span")
   switch (signer.type) {
-    case 'key':
-    case 'ed25519_public_key':
-      const value1 = signer.value || signer.key
-      html.append(signerNode, 'Account ', format.field(conf, 'signerKey', value1))
-      break
-    case 'tx':
-      const value2 = signer.value || signer.key
-      html.append(signerNode, 'transaction ', format.field(conf, 'signerTx', value2))
-      break
-    case 'hash':
-    case 'sha256hash':
-      const value3 = signer.value || StellarSdk.StrKey.decodeSha256Hash(signer.key).toString('hex')
-      html.append(signerNode, 'key whose hash is ', format.field(conf, 'signerHash', value3))
-      break
+  case "key":
+  case "ed25519_public_key": {
+    const value1 = signer.value || signer.key
+    html.append(signerNode, "Account ", format.field(conf, "signerKey", value1))
+    break
+  }
+  case "tx": {
+    const value2 = signer.value || signer.key
+    html.append(signerNode, "transaction ", format.field(conf, "signerTx", value2))
+    break
+  }
+  case "hash":
+  case "sha256hash": {
+    const value3 = signer.value || StellarSdk.StrKey.decodeSha256Hash(signer.key).toString("hex")
+    html.append(signerNode, "key whose hash is ", format.field(conf, "signerHash", value3))
+    break
+  }
   }
   if (signer.weight > 1) {
     const weightNode = format.weight(conf, signer.weight)
-    html.append(signerNode, ' (weight: ', weightNode, ')')
+    html.append(signerNode, " (weight: ", weightNode, ")")
   }
   return signerNode
 }

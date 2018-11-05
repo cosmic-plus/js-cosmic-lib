@@ -1,4 +1,4 @@
-'use strict'
+"use strict"
 /**
  * Contains the methods to trigger and handle events.
  *
@@ -7,9 +7,9 @@
  */
 const event = exports
 
-const helpers = require('@cosmic-plus/jsutils/misc')
+const helpers = require("@cosmic-plus/jsutils/misc")
 
-const format = require('./format')
+const format = require("./format")
 
 /** *** Click events *****/
 
@@ -71,9 +71,8 @@ event.callClickHandler = function (conf, type, event) {
  */
 event.defaultClickHandlers = {
   address: function (event) {
-    console.log(event.tdesc)
     if (!event.extra) return
-    let message = ''
+    let message = ""
     for (let field in event.extra) {
       message += `${field}:\n` + `${event.extra[field]}\n\n`
     }
@@ -81,8 +80,8 @@ event.defaultClickHandlers = {
   },
   hash: function (event) {
     const grandma = event.domNode.parentNode.parentNode.parentNode
-    if (grandma.classList.contains('cosmiclib_signers')) {
-      const preimage = prompt('Please enter preimage:')
+    if (grandma.classList.contains("cosmiclib_signers")) {
+      const preimage = prompt("Please enter preimage:")
       if (preimage) event.cosmicLink.sign(preimage)
     } else {
       helpers.copy(event.value)
