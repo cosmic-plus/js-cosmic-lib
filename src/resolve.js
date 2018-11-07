@@ -65,11 +65,11 @@ resolve.horizon = function (conf, network = conf.network) {
  * provided.
  */
 resolve.networkPassphrase = function (conf = {}, network = conf.network) {
-  if (network) {
-    return conf.current.passphrase[network] || network
-  } else {
+  if (network === undefined) {
     const currentNetwork = StellarSdk.Network.current()
     if (currentNetwork) return currentNetwork.networkPassphrase()
+  } else {
+    return conf.current.passphrase[network] || network
   }
 }
 
@@ -81,7 +81,8 @@ resolve.networkPassphrase = function (conf = {}, network = conf.network) {
  */
 resolve.networkName = function (conf = {}, networkPassphrase) {
   const index = Object.values(conf.current.passphrase).indexOf(networkPassphrase)
-  if (index) return Object.keys(conf.current.passphrase)[index]
+  if (index === -1) return networkPassphrase
+  else return Object.keys(conf.current.passphrase)[index]
 }
 
 /**

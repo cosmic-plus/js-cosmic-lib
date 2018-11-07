@@ -35,16 +35,14 @@ convert.transactionToXdr = function (conf, transaction) {
   return transaction.toEnvelope().toXDR("base64")
 }
 
-convert.xdrToSep7 = function (conf, xdr) {
+convert.xdrToSep7 = function (conf, xdr, options) {
   let sep7 = "web+stellar:tx?xdr="
   sep7 += encodeURIComponent(xdr)
-  const passphrase = resolve.networkPassphrase(conf)
-  if (passphrase !== StellarSdk.Networks.PUBLIC) {
+  if (options.network && options.network !== "public") {
+    const passphrase = resolve.networkPassphrase(conf, options.network)
     sep7 += "&network_passphrase=" + encodeURIComponent(passphrase)
-    if (passphrase !== StellarSdk.Networks.TESTNET && conf.horizon) {
-      sep7 += "&horizon=" + encodeURIComponent(conf.horizon)
-    }
   }
+  if (options.horizon) sep7 +="&horizon=" + encode.url(conf, options.horizon)
 
   return sep7
 }
@@ -60,7 +58,7 @@ convert.xdrToTransaction = function (conf, xdr, options = {}) {
 convert.xdrToQuery = function (conf, xdr, options = {}) {
   let query = "?xdr=" + xdr
   if (options.network) query += "&network=" + encodeURIComponent(options.network)
-  if (options.horizon) query += "&horizon" + encodeURIComponent(options.horizon)
+  if (options.horizon) query += "&horizon=" + encode.url(conf, options.horizon)
   return query
 }
 

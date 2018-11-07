@@ -157,7 +157,7 @@ class CosmicLink {
    */
   get query () {
     if (!this._query) {
-      if (this.xdr) this._query = convert.xdrToQuery(this, this.xdr, { network: this.network })
+      if (this.xdr) this._query = convert.xdrToQuery(this, this.xdr, this.tdesc)
       else if (this.tdesc) this._query = convert.tdescToQuery(this, this.tdesc)
       else return undefined
     }
@@ -252,7 +252,7 @@ class CosmicLink {
   get sep7 () {
     if (!this._sep7) {
       if (!this.xdr) return undefined
-      this._sep7 = convert.xdrToSep7(this, this.xdr)
+      this._sep7 = convert.xdrToSep7(this, this.xdr, this.tdesc)
     }
     return this._sep7
   }
@@ -322,7 +322,7 @@ class CosmicLink {
    * `cosmicLink.tdesc.horizon`.
    */
   get horizon () {
-    return resolve.horizon(this, this.network) || (this.tdesc && this.tdesc.horizon)
+    return (this.tdesc && this.tdesc.horizon)
   }
 
   set horizon (horizon) {

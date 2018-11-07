@@ -9,6 +9,7 @@ const normalize = exports
 
 const StellarSdk = require("@cosmic-plus/base/stellar-sdk")
 
+const config = require("./config")
 const resolve = require("./resolve")
 
 /**
@@ -26,17 +27,15 @@ normalize.tdesc = function (conf, tdesc) {
     }
   })
 
-  if (tdesc.network) {
-    if (tdesc.network === StellarSdk.Networks.TESTNET) tdesc.network = "test"
-    else if (tdesc.network === StellarSdk.Networks.PUBLIC) tdesc.network = "public"
-  }
+  if (tdesc.network) tdesc.network = normalize.network(conf, tdesc.network)
 
-  if (tdesc.horizon) {
-    if (!tdesc.network || tdesc.network === "public" || tdesc.network === "test") {
-      delete tdesc.horizon
-    } else if (tdesc.horizon.substr(0, 8) === "https://") {
-      tdesc.horizon = tdesc.horizon.substr(8)
-    }
+  // When network is neither test nor public, we want to provide a fallback
+  // Horizon URL; else we don't need it.
+  if (tdesc.network && tdesc.network !== "public" && tdesc.network !== "test") {
+    const url = resolve.horizon(config, tdesc.network) || tdesc.horizon
+    tdesc.horizon = normalize.url(conf, url)
+  } else {
+    delete tdesc.horizon
   }
 }
 
@@ -48,7 +47,18 @@ normalize.date = function (conf, date) {
 }
 
 normalize.network = function (conf, network) {
-  return resolve.networkName(conf, network) || network
+  const networkName = resolve.networkName(conf, network)
+  if (networkName === "public" || networkName === "test") {
+    return networkName
+  // In network is neither test nor public, we want to use the network
+  // passphrase as parameter to ensure cross-wallet compatibility.
+  } else {
+    return resolve.networkPassphrase(conf, network)
+  }
+}
+
+normalize.url = function (conf, url) {
+  if (url) return (url.substr(0,4) === "http") ? url : "https://" + url
 }
 
 /**

@@ -110,6 +110,11 @@ process.signer = function (conf, signer) {
 
 process.string = encode.buffer
 
+process.url = function (conf, url) {
+  if (url.substr(0, 8) === "https://") url = url.substr(8)
+  return encodeURIComponent(url)
+}
+
 /******************************************************************************/
 
 /**

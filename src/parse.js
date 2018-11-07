@@ -189,6 +189,7 @@ function setTdesc (cosmicLink, type, value, options) {
     // eslint-disable-next-line no-fallthrough
   case "query":
     cosmicLink._tdesc = convert.queryToTdesc(cosmicLink, cosmicLink.query, options)
+    delete cosmicLink._query
     break
   case "json":
     value = convert.jsonToTdesc(cosmicLink, value)
@@ -206,6 +207,7 @@ function setTdesc (cosmicLink, type, value, options) {
     // eslint-disable-next-line no-fallthrough
   case "transaction":
     cosmicLink._tdesc = convert.transactionToTdesc(cosmicLink, cosmicLink.transaction, options)
+    delete cosmicLink._sep7
     if (options.stripSource || options.stripSequence) {
       delete cosmicLink._xdr
       delete cosmicLink._transaction
