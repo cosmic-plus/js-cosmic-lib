@@ -1,6 +1,6 @@
 {
   "name": "cosmic-lib",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "A javaScript implementation of the CosmicLink protocol",
   "author": "MisterTicot",
   "repository": "github:cosmic-plus/node-cosmic-lib",
@@ -29,21 +29,21 @@
     "serve": "npm run watch & cd web && live-server --no-browser"
   },
   "devDependencies": {
-    "@babel/core": "^7.1.2",
+    "@babel/core": "^7.1.5",
     "@babel/plugin-transform-runtime": "^7.1.0",
-    "@babel/preset-env": "^7.1.0",
-    "@babel/runtime": "^7.1.2",
+    "@babel/preset-env": "^7.1.5",
+    "@babel/runtime": "^7.1.5",
     "autoprefixer-cli": "^1.0.0",
     "babel-loader": "^8.0.4",
     "eslint": "^5.8.0",
     "jsdoc": "^3.5.5",
     "live-server": "^1.2.0",
     "minami": "^1.2.3",
-    "webpack": "^4.21.0",
+    "webpack": "^4.25.1",
     "webpack-cli": "^3.1.2"
   },
   "dependencies": {
     "@cosmic-plus/base": "^1.0.2",
-    "@cosmic-plus/jsutils": "^1.6.0"
+    "@cosmic-plus/jsutils": "^1.7.0"
   }
 }
