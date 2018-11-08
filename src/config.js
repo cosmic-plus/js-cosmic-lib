@@ -14,10 +14,11 @@
  */
 const config = exports
 
+const env = require("@cosmic-plus/jsutils/env")
 const StellarSdk = require("@cosmic-plus/base/stellar-sdk")
 
 const aliases = require("./aliases")
-const event = require("./event")
+const event = env.isBrowser && require("./event")
 
 /**
  * The base URI to build cosmic links.

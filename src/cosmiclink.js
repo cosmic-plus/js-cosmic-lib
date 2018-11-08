@@ -1,21 +1,16 @@
 "use_strict"
 
 const env = require("@cosmic-plus/jsutils/env")
+const html = env.isBrowser && require("@cosmic-plus/jsutils/html")
 const helpers = require("@cosmic-plus/jsutils/misc")
 
 const action = require("./action")
 const config = require("./config")
 const convert = require("./convert")
+const format = env.isBrowser && require("./format")
 const parse = require("./parse")
 const resolve = require("./resolve")
 const status = require("./status")
-
-/// Web only
-let html, format
-if (env.isBrowser) {
-  html = require("@cosmic-plus/jsutils/html")
-  format = require("./format")
-}
 
 /**
  * | Formats                                     | Data                               | Actions                                        | Editor                                       | HTML elements
