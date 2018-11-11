@@ -325,7 +325,7 @@ class CosmicLink {
    * `cosmicLink.tdesc.horizon`.
    */
   get horizon () {
-    return (this.tdesc && this.tdesc.horizon)
+    return resolve.horizon(this.config, this.network) || (this.tdesc && this.tdesc.horizon)
   }
 
   set horizon (horizon) {

@@ -52,11 +52,13 @@ resolve.useNetwork = function (conf, network = conf.network) {
  * @param {string} [network] A network name or passphrase.
  */
 resolve.horizon = function (conf, network = conf.network) {
-  const passphrase = resolve.networkPassphrase(conf, network)
-  if (conf.current && conf.current.horizon[passphrase]) {
-    return conf.current.horizon[passphrase]
-  } else if (conf.network === network && conf.horizon) {
+  if (conf.horizon) {
     return conf.horizon
+  } else {
+    const passphrase = resolve.networkPassphrase(conf, network)
+    if (conf.current && conf.current.horizon[passphrase]) {
+      return conf.current.horizon[passphrase]
+    }
   }
 }
 
