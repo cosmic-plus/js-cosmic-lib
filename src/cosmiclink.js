@@ -126,6 +126,14 @@ class CosmicLink {
   }
 
   /**
+   * Refer to the underlying global configuration
+   * @private
+   */
+  get config () {
+    return this.__proto__.__proto__
+  }
+
+  /**
    * Re-parse this CosmicLink. Useful in implementing transaction editors. The
    * parameters are the same than [Constructor]{@link CosmicLink#Constructor},
    * and the result is similar except that no new CosmicLink object is created.
@@ -257,7 +265,7 @@ class CosmicLink {
    * The page this CosmicLink uses to construct its [URI]{@link CosmicLink#uri}.
    */
   get page () {
-    return this._page || this.__proto__.page
+    return this._page || this.config.page
   }
 
   set page (value) {
@@ -277,7 +285,7 @@ class CosmicLink {
    * is automatically removed when those format are parsed again.
    */
   get source () {
-    return (this.tdesc && this.tdesc.source) || this.__proto__.source
+    return (this.tdesc && this.tdesc.source) || this.config.source
   }
 
   set source (source) {
@@ -295,7 +303,7 @@ class CosmicLink {
    * `cosmiclib.config.network`.
    */
   get network () {
-    return (this.tdesc && this.tdesc.network) || this.__proto__.network
+    return (this.tdesc && this.tdesc.network) || this.config.network
   }
 
   set network (network) {
