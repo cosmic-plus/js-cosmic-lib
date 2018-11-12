@@ -42,7 +42,8 @@ convert.xdrToSep7 = function (conf, xdr, options) {
     const passphrase = resolve.networkPassphrase(conf, options.network)
     sep7 += "&network_passphrase=" + encodeURIComponent(passphrase)
   }
-  if (options.horizon) sep7 +="&horizon=" + encode.url(conf, options.horizon)
+  // Not part of the standard.
+  // if (options.horizon) sep7 +="&horizon=" + encode.url(conf, options.horizon)
 
   return sep7
 }

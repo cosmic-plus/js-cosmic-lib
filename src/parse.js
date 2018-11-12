@@ -158,7 +158,8 @@ parseFmt.sep7 = function (cosmicLink, sep7, options = {}) {
 
     if (field === "xdr") xdr = decodeURIComponent(value)
     if (field === "network_passphrase") options.network = decode.network(cosmicLink, value)
-    if (field === "horizon") options.horizon = decode.url(cosmicLink, value)
+    // Not part of the standard.
+    // if (field === "horizon") options.horizon = decode.url(cosmicLink, value)
   })
 
   setTdesc(cosmicLink, "xdr", xdr, options)
