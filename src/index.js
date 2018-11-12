@@ -5,6 +5,10 @@ const helpers = require("@cosmic-plus/jsutils/misc")
 
 if (env.isBrowser) require("@cosmic-plus/jsutils/polyfill")
 
+// Configure CosmicLib Horizon node.
+// const cosmicLib = require("./cosmic-lib")
+// cosmicLib.config.setupNetwork("public", "https://horizon.stellar.lobstr.co")
+
 /**
  * Automatically pass `config` to `module` functions as first argument.
  *
