@@ -182,12 +182,7 @@ resolve.isAccountEmpty = function (conf, address) {
  */
 resolve.txSourceAccount = async function (conf, address, sequence) {
   if (!address) {
-    const neutralAccount = new StellarSdk.Account(specs.neutralAccountId, "-1")
-    neutralAccount.signers = []
-    if (conf.cache) {
-      conf.cache.account[specs.neutralAccountId] = neutralAccount
-    }
-    return neutralAccount
+    return makeAccountResponse(conf, specs.neutralAccountId, "-1")
   } else {
     const destination = await resolve.address(conf, address)
     if (destination.memo) status.error(conf, "Invalid transaction source address (requires a memo)", "throw")
@@ -199,6 +194,28 @@ resolve.txSourceAccount = async function (conf, address, sequence) {
     }
     return account
   }
+}
+
+/**
+ * Creates an AccountResponse object with signers set for an empty account.
+ *
+ * @param  {string} publicKey
+ * @param  {string} sequence [description]
+ * @return {AccountResponse}
+ */
+function makeAccountResponse (conf, publicKey, sequence) {
+  const account = new StellarSdk.Account(publicKey, sequence)
+  if (conf.cache) conf.cache.account[publicKey] = account
+  account.id = publicKey
+
+  account.signers = [{
+    public_key: publicKey,
+    weight: 1,
+    key: publicKey,
+    type: "ed25519_public_key"
+  }]
+
+  return account
 }
 
 /**
@@ -244,7 +261,7 @@ resolve.txSigners = async function (conf, transaction) {
 
   for (let index in txSources) {
     const source = txSources[index]
-    const account = await resolve.account(extra, source)
+    const account = await resolveTxSource(extra, source)
     if (!signers[account.id]) {
       signers[account.id] = account.signers.filter(signer => {
         return signer.type !== "preauthTx"
@@ -253,6 +270,14 @@ resolve.txSigners = async function (conf, transaction) {
   }
 
   return signers
+}
+
+async function resolveTxSource (conf, address) {
+  try {
+    return await resolve.account(conf, address, "quiet")
+  } catch (error) {
+    return makeAccountResponse(conf, address, "0")
+  }
 }
 
 /**
