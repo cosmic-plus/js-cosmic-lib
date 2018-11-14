@@ -288,10 +288,6 @@ class CosmicLink {
     return (this.tdesc && this.tdesc.source) || this.config.source
   }
 
-  set source (source) {
-    this.setTxFields({ source: source })
-  }
-
   /**
    * The network this CosmicLink uses, which is defined after the following
    * rule:
@@ -304,10 +300,6 @@ class CosmicLink {
    */
   get network () {
     return (this.tdesc && this.tdesc.network) || this.config.network
-  }
-
-  set network (network) {
-    this.setTxFields({ network: network })
   }
 
   /**
@@ -326,10 +318,6 @@ class CosmicLink {
    */
   get horizon () {
     return resolve.horizon(this.config, this.network) || (this.tdesc && this.tdesc.horizon)
-  }
-
-  set horizon (horizon) {
-    this.setTxFields({ horizon: horizon })
   }
 
   /// Editor
