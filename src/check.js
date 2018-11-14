@@ -26,6 +26,9 @@ check.tdesc = function (conf, tdesc) {
     }
   }
 
+  if (!tdesc.operations.length) {
+    status.error(conf, "No operation")
+  }
   if (tdesc.operations.length > 100) {
     status.error(conf, "Too much operations (max 100)")
   }
