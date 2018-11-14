@@ -12,7 +12,6 @@ const env = require("@cosmic-plus/jsutils/env")
 const helpers = require("@cosmic-plus/jsutils/misc")
 
 const convert = require("./convert")
-const config = require("./config")
 const format = env.isBrowser && require("./format")
 const resolve = require("./resolve")
 const signersUtils = require("./signers-utils")
@@ -66,8 +65,9 @@ async function applyLock (cosmicLink, options) {
    * @alias CosmicLink#locker
    */
   cosmicLink.locker = {
-    source: cosmicLink.tdesc.source || options.source || config.source,
-    network: cosmicLink.tdesc.network || options.network || config.network
+    source: cosmicLink.tdesc.source || options.source || cosmicLink.config.source,
+    network: cosmicLink.tdesc.network || options.network || cosmicLink.config.network,
+    horizon: options.horizon || cosmicLink.horizon
   }
 
   /// Preserve the underlying tdesc object.
