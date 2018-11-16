@@ -9,6 +9,7 @@
  */
 const expand = exports
 
+const Buffer = require("@cosmic-plus/base/buffer")
 const StellarSdk = require("@cosmic-plus/base/stellar-sdk")
 
 const decode = require("./decode")
@@ -88,6 +89,13 @@ expand.asset = function (conf, asset) {
 expand.assetPath = function (conf, assetPath) {
   if (Array.isArray(assetPath)) return assetPath.map(asset => expand.asset(conf, asset))
   else if (typeof assetPath === "string") return decode.assetPath(conf, assetPath)
+}
+
+expand.buffer = function (conf, buffer) {
+  if (!buffer) return ""
+  if (buffer instanceof Buffer) return destruct.buffer(conf, buffer)
+  else if (typeof buffer === "string") return decode.buffer(conf, buffer)
+  else return buffer
 }
 
 expand.date = function (conf, date) {

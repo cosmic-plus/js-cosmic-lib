@@ -117,19 +117,31 @@ process.boolean = function (conf, string) {
   }
 }
 
+process.buffer = function (conf, string) {
+  const matched = string.match(/(^[^:]*):/)
+  const type = matched && matched[1]
+  switch (type) {
+  case "text": case "binary":
+    return { type: type, value: string.substr(type.length + 1)}
+  default:
+    return { type: "text", value: string }
+  }
+}
+
 process.date = function (conf, string) {
   /// Use UTC timezone by default.
   if (string.match(/T[^+]*[0-9]$/)) string += "Z"
   return new Date(string).toISOString()
 }
 
-process.memo = function (conf, memo) {
-  const type = memo.replace(/:.*/, "")
-  const value = memo.replace(/^[^:]*:/, "")
-  if (type === value) {
-    return { type: "text", value: value }
-  } else {
-    return { type: type, value: value }
+process.memo = function (conf, string) {
+  const matched = string.match(/(^[^:]*):/)
+  const type = matched && matched[1]
+  switch (type) {
+  case "text": case "binary": case "id": case "hash": case "return":
+    return { type: type, value: string.substr(type.length + 1)}
+  default:
+    return { type: "text", value: string }
   }
 }
 

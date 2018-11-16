@@ -133,7 +133,11 @@ function operationMeaning (odesc) {
     return "Run inflation"
   case "manageData":
     if (odesc.value) {
-      return "Set data entry '{name}' as '{value}'"
+      if (odesc.value.type === "text") {
+        return "Set data entry '{name}' as '{value}'"
+      } else {
+        return "Set binary data entry '{name}' as '{value}'"
+      }
     } else {
       return "Delete data entry '{name}'"
     }
@@ -321,7 +325,8 @@ process.string = function (conf, string) {
 
 process.error = function (conf, errDesc) {
   const errorNode = html.create("span", ".cosmiclib_error")
-  errorNode.textContent = errDesc.value === "" ? "(undefined)" : errDesc.value
+  errorNode.textContent = errDesc.value === "" ? "(undefined)"
+    : errDesc.value.value  || errDesc.value
   errorNode.title = errDesc.error.message
   return errorNode
 }
@@ -405,6 +410,11 @@ process.assetsArray = function (conf, assetsArray) {
   return assetsArrayNode
 }
 
+process.buffer = function (conf, object) {
+  if (object.type === "binary") return format.hash(conf, object.value)
+  else return format.string(conf, object.value)
+}
+
 process.date = function (conf, date) {
   return html.create("span", {}, new Date(date).toLocaleString())
 }
@@ -440,6 +450,9 @@ process.memo = function (conf, memo) {
   switch (memo.type) {
   case "text":
     valueNode = format.field(conf, "memoText", memo.value)
+    break
+  case "binary":
+    valueNode = format.field(conf, "memoBinary", memo.value)
     break
   case "id":
     valueNode = format.field(conf, "memoId", memo.value)

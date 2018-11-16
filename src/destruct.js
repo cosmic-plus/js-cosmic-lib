@@ -8,6 +8,8 @@
  */
 const destruct = exports
 
+const { isUtf8 } = require("@cosmic-plus/jsutils/misc")
+
 const normalize = require("./normalize")
 const specs = require("./specs")
 
@@ -110,8 +112,14 @@ destruct.assetPath = function (conf, assetPath) {
 }
 
 destruct.buffer = function (conf, buffer) {
-  if (buffer) return buffer.toString()
-  else return null
+  if (!buffer) return null
+  const string = buffer.toString()
+  if (isUtf8(string)) {
+    return { type: "text", value: string }
+  } else {
+    const value = buffer.toString("base64").replace(/=*$/,"")
+    return { type: "binary", value: value }
+  }
 }
 
 destruct.date = function (conf, timestamp) {
@@ -125,6 +133,8 @@ destruct.memo = function (conf, sdkMemo) {
     if (memo.type === "hash" || memo.type === "retHash") {
       memo.value = sdkMemo._value.toString("hex")
       if (memo.type === "retHash") memo.type = "return"
+    } else if (memo.type === "text") {
+      return destruct.buffer(conf, sdkMemo._value)
     } else {
       memo.value = sdkMemo._value.toString()
     }

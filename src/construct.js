@@ -8,6 +8,7 @@
  */
 const construct = exports
 
+const Buffer = require("@cosmic-plus/base/buffer")
 const helpers = require("@cosmic-plus/jsutils/misc")
 const StellarSdk = require("@cosmic-plus/base/stellar-sdk")
 
@@ -147,12 +148,24 @@ construct.assetsArray = async function (conf, assetsArray) {
   return path
 }
 
+construct.buffer = function (conf, object) {
+  if (object.type === "binary") {
+    return Buffer.from(object.value, "base64")
+  } else {
+    return object.value || null
+  }
+}
+
 construct.date = function (conf, string) {
   return Date.parse(string) / 1000
 }
 
 construct.memo = function (conf, memo) {
-  return new StellarSdk.Memo(memo.type, memo.value)
+  if (memo.type === "binary") {
+    return new StellarSdk.Memo("text", Buffer.from(memo.value, "base64"))
+  } else {
+    return new StellarSdk.Memo(memo.type, memo.value)
+  }
 }
 
 construct.signer = async function (conf, signer) {

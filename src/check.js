@@ -13,6 +13,7 @@
 const check = exports
 
 const helpers = require("@cosmic-plus/jsutils/misc")
+const { isUtf8, isBase64 } = require("@cosmic-plus/jsutils/misc")
 
 const specs = require("./specs")
 const status = require("./status")
@@ -176,6 +177,18 @@ check.integer = function (conf, value, type = "integer", min, max) {
   }
 }
 
+check.utf8 = function (conf, value) {
+  if (typeof value !== "string" || !isUtf8(value)) {
+    status.error(conf, `Invalid UTF8 string: ${value}`, "throw")
+  }
+}
+
+check.base64 = function (conf, value) {
+  if (typeof value !== "string" || !isBase64(value)) {
+    status.error(conf, `Invalid base64 string: ${value}`, "throw")
+  }
+}
+
 /******************************************************************************/
 
 check.amount = function (conf, amount) {
@@ -214,6 +227,14 @@ check.boolean = function (conf, boolean) {
   }
 }
 
+check.buffer = function (conf, buffer) {
+  switch (buffer.type) {
+  case "text": check.utf8(conf, buffer.value); break
+  case "binary": check.base64(conf, buffer.value); break
+  default: status.error(conf, "Invalid buffer type: " + buffer.type, "throw")
+  }
+}
+
 check.date = function (conf, date) {
   if (isNaN(Date.parse(date))) {
     status.error(conf, "Invalid date: " + date, "throw")
@@ -225,10 +246,25 @@ check.flags = function (conf, flags) {
 }
 
 check.hash = function (conf, hash) {
-  if (hash.length !== 64 || !hash.match(/[0-9a-f]*/)) {
-    status.error(conf, "Invalid hash:" + hash, "throw")
+  if (hash.length !== 64 || !hash.match(/^[0-9a-f]*$/)) {
+    status.error(conf, "Invalid hash: " + hash, "throw")
   }
 }
+
+check.id = function (conf, id) {
+  if (!id.match(/^[0-9]*$/)) status.error(conf, "Invalid id: " + id, "throw")
+}
+
+check.memo = function (conf, memo) {
+  switch (memo.type) {
+  case "text": check.utf8(conf, memo.value); break
+  case "binary": check.base64(conf, memo.value); break
+  case "hash": case "return": check.hash(conf, memo.value); break
+  case "id": check.id(conf, memo.value); break
+  default: status.error(conf, "Invalid memo type: " + memo.type, "throw")
+  }
+}
+
 
 check.price = function (conf, price) {
   if (typeof price === "object") {

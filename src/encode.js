@@ -8,6 +8,7 @@
  */
 const encode = exports
 
+const decode = require("./decode")
 const specs = require("./specs")
 
 encode.query = function (conf, tdesc) {
@@ -87,7 +88,13 @@ process.boolean = function (conf, boolean) {
 }
 
 process.buffer = function (conf, buffer) {
-  if (buffer) return encodeURIComponent(buffer)
+  if (buffer.type === "text") {
+    // Guard against prefix mis-interpretation.
+    const decoded = decode.buffer(conf, buffer.value)
+    if (decoded.type === "text") return encodeURIComponent(buffer.value)
+  } else if (buffer) {
+    return buffer.type + ":" + encodeURIComponent(buffer.value)
+  }
 }
 
 process.date = function (conf, date) {
@@ -95,8 +102,12 @@ process.date = function (conf, date) {
 }
 
 process.memo = function (conf, memo) {
-  if (memo.type === "text") return encodeURIComponent(memo.value)
-  else return memo.type + ":" + encodeURIComponent(memo.value)
+  if (memo.type === "text") {
+    // Guard against prefix mis-interpretation.
+    const decoded = decode.memo(conf, memo.value)
+    if (decoded.type === "text") return encodeURIComponent(memo.value)
+  }
+  return memo.type + ":" + encodeURIComponent(memo.value)
 }
 
 process.price = function (conf, price) {
