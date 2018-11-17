@@ -263,14 +263,9 @@ class CosmicLink {
   /// Data
   /**
    * The page this CosmicLink uses to construct its [URI]{@link CosmicLink#uri}.
+   *
+   * @var CosmicLink#page
    */
-  get page () {
-    return this._page || this.config.page
-  }
-
-  set page (value) {
-    this._page = value
-  }
 
   /**
    * The source this CosmicLink uses, which is defined after the following
