@@ -67,7 +67,8 @@ async function applyLock (cosmicLink, options) {
   cosmicLink.locker = {
     source: cosmicLink.tdesc.source || options.source || cosmicLink.config.source,
     network: cosmicLink.tdesc.network || options.network || cosmicLink.config.network,
-    horizon: options.horizon || cosmicLink.horizon
+    horizon: options.horizon || cosmicLink.horizon,
+    callback: cosmicLink.tdesc.callback || options.callback || cosmicLink.config.callback
   }
 
   /// Preserve the underlying tdesc object.
@@ -170,16 +171,21 @@ action.send = async function (cosmicLink, horizon = cosmicLink.horizon) {
   const server = resolve.server(cosmicLink, horizon)
 
   if (cosmicLink.transaction.hasSigner(STELLARGUARD_PUBKEY)) {
-    let endpoint
-    if (cosmicLink.network === "public") endpoint = "https://stellarguard.me/api"
-    else if (cosmicLink.network === "test") endpoint = "https://test.stellarguard.me/api"
-    if (endpoint) {
-      return axios.post(endpoint + "/transactions", { xdr: cosmicLink.xdr })
-        .then(result => result.data)
-    }
+    return sendToStellarGuard(cosmicLink)
+  } else if (cosmicLink.callback) {
+    return axios.post(cosmicLink.callback, { xdr: cosmicLink.xdr })
   } else {
     return server.submitTransaction(cosmicLink.transaction)
   }
+}
+
+function sendToStellarGuard (cosmicLink) {
+  const url = cosmicLink.network === "test"
+    ? "https://test.stellarguard.me/api/transactions"
+    : "https://stellarguard.me/api/transactions"
+  return axios.post(url, {
+    xdr: cosmicLink.xdr, callback: cosmicLink.callback
+  }).then(result => result.data)
 }
 
 const STELLARGUARD_PUBKEY = "GCVHEKSRASJBD6O2Z532LWH4N2ZLCBVDLLTLKSYCSMBLOYTNMEEGUARD"

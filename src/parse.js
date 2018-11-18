@@ -105,8 +105,8 @@ parseFmt.xdrUri = function (cosmicLink, xdrUri, options) {
     case "network":
       options.network = decode.network(cosmicLink, value)
       break
-    case "horizon":
-      options.horizon = decode.url(cosmicLink, value)
+    case "horizon": case "callback":
+      options[field] = decode.url(cosmicLink, value)
       break
     default:
       status.error(cosmicLink, "Unknow option: " + entry)
@@ -147,27 +147,28 @@ parseFmt.sep7 = function (cosmicLink, sep7, options = {}) {
     const field = entry.replace(/=.*$/, "")
     const value = entry.substr(field.length + 1)
 
-    if (!isValidSep7Field("tx", field)) {
-      throw new Error("Invalid SEP-0007 field: " + field)
+    switch (field) {
+    case "xdr":
+      xdr = decodeURIComponent(value)
+      break
+    case "network_passphrase":
+      options.network = decode.network(cosmicLink, value)
+      break
+    case "callback":
+      options.callback = decode.url(cosmicLink, value)
+      break
+    default:
+      if (isIgnoredSep7Field(field)) {
+        // eslint-disable-next-line no-console
+        console.log("Ignored SEP-0007 field: " + field)
+      } else {
+        throw new Error("Invalid SEP-0007 field: " + field)
+      }
     }
-
-    if (isIgnoredSep7Field(field)) {
-      // eslint-disable-next-line no-console
-      console.log("Ignored SEP-0007 field: " + field)
-    }
-
-    if (field === "xdr") xdr = decodeURIComponent(value)
-    if (field === "network_passphrase") options.network = decode.network(cosmicLink, value)
-    // Not part of the standard.
-    // if (field === "horizon") options.horizon = decode.url(cosmicLink, value)
   })
 
+  if (!xdr) throw new Error("Missing XDR parameter")
   setTdesc(cosmicLink, "xdr", xdr, options)
-}
-
-function isValidSep7Field (sep7Op, field) {
-  return specs.sep7MandatoryFields[sep7Op].find(name => name === field) ||
-    specs.sep7OptionalFields[sep7Op].find(name => name === field)
 }
 
 function isIgnoredSep7Field (field) {

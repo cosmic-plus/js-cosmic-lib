@@ -1,6 +1,5 @@
 Before stable release (planned for this autumn):
 * Have a native english speaker check all the texts
-* Support callbacks
 * Fancier signing interface when clicking on cosmicLink.htmlLink
 
 Later:

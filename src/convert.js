@@ -42,6 +42,7 @@ convert.xdrToSep7 = function (conf, xdr, options) {
     const passphrase = resolve.networkPassphrase(conf, options.network)
     sep7 += "&network_passphrase=" + encodeURIComponent(passphrase)
   }
+  if (options.callback) sep7 += "&callback=" + encode.url(conf, options.callback)
   // Not part of the standard.
   // if (options.horizon) sep7 +="&horizon=" + encode.url(conf, options.horizon)
 
@@ -60,6 +61,7 @@ convert.xdrToQuery = function (conf, xdr, options = {}) {
   let query = "?xdr=" + xdr
   if (options.network) query += "&network=" + encodeURIComponent(options.network)
   if (options.horizon) query += "&horizon=" + encode.url(conf, options.horizon)
+  if (options.callback) query += "&callback=" + encode.url(conf, options.callback)
   return query
 }
 

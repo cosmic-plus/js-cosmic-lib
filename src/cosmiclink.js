@@ -315,6 +315,15 @@ class CosmicLink {
     return resolve.horizon(this.config, this.network) || (this.tdesc && this.tdesc.horizon)
   }
 
+  /**
+   * The URL at which the validated transaction will be posted. This can be
+   * defined either locally (`cosmicLink.tdesc.callback`) or globally
+   * (`cosmicLib.config.callback`). The local configuration takes precedence.
+   */
+  get callback () {
+    return (this.tdesc && this.tdesc.callback) || this.config.callback
+  }
+
   /// Editor
   /**
    * Add/remove transaction fields and reparse the CosmicLink. **object** should

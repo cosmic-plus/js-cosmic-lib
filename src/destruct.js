@@ -28,6 +28,7 @@ destruct.transaction = function (conf, tx, options = {}) {
 
   tdesc.network = options.network
   tdesc.horizon = options.horizon
+  tdesc.callback = options.callback
   if (!options.stripSource) tdesc.source = tx.source
   if (!options.stripSource && !options.stripSequence) {
     tdesc.sequence = destruct.sequence(conf, tx.sequence)

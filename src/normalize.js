@@ -37,6 +37,8 @@ normalize.tdesc = function (conf, tdesc) {
   } else {
     delete tdesc.horizon
   }
+
+  if (tdesc.callback) tdesc.callback = normalize.url(conf, tdesc.callback)
 }
 
 const dateFields = ["minTime", "maxTime"]

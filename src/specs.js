@@ -10,9 +10,26 @@ const specs = exports
  * Transaction optional fields.
  */
 specs.transactionOptionalFields = [
-  "network", "horizon",
+  "network", "horizon", "callback",
   "memo", "source", "sequence", "minTime", "maxTime", "fee"
 ]
+
+/**
+ * Transaction field meaning.
+ */
+specs.fieldDesc = {
+  network: "Network",
+  horizon: "Horizon node",
+  callback: "Callback",
+
+  memo: "Memo",
+  source: "Source",
+  sequence: "Sequence",
+  minTime: "Valid only after",
+  maxTime: "Valid only before",
+  fee: "Fees"
+}
+
 
 /**
  * @param {string} field
@@ -89,6 +106,7 @@ specs.fieldType = {
   authorize: "boolean",
   bumpTo: "sequence",
   buying: "asset",
+  callback: "url",
   clearFlags: "flags",
   destAsset: "asset",
   destAmount: "amount",
@@ -134,21 +152,6 @@ specs.fieldType = {
 }
 
 /**
- * Transaction field meaning.
- */
-specs.fieldDesc = {
-  source: "Source",
-  fee: "Fees",
-  minTime: "Valid only after",
-  maxTime: "Valid only before",
-  memo: "Memo",
-
-  network: "Network",
-  horizon: "Horizon node",
-  sequence: "Sequence"
-}
-
-/**
  * An array of each valid type for fields.
  */
 specs.types = []
@@ -181,4 +184,4 @@ specs.sep7OptionalFields = {
     "network_passphrase", "origin_domain", "signature" ]
 }
 
-specs.sep7IgnoredFields = [ "callback", "pubkey", "origin_domain", "signature" ]
+specs.sep7IgnoredFields = [ "message", "pubkey", "origin_domain", "signature" ]
