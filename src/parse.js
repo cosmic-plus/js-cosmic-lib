@@ -36,6 +36,7 @@ parse.page = function (cosmicLink, uri) {
  * @param {Object} options Same options as {@see CosmicLink#constructor}
  */
 parse.dispatch = function (cosmicLink, value = "?", options = {}) {
+  formats.forEach(format => delete cosmicLink[format])
   const type = guessType(value)
 
   try {
@@ -52,6 +53,8 @@ parse.dispatch = function (cosmicLink, value = "?", options = {}) {
 
   if (options.page) parse.page(cosmicLink, options.page)
 }
+
+const formats = ["_query", "_json", "_tdesc", "_transaction", "_xdr", "_sep7"]
 
 /**
  * Returns `type` which is the format of transaction represented by `value`.
@@ -155,7 +158,8 @@ parseFmt.sep7 = function (cosmicLink, sep7, options = {}) {
       options.network = decode.network(cosmicLink, value)
       break
     case "callback":
-      options.callback = decode.url(cosmicLink, value)
+      if (value.substr(0,4) !== "url:") throw new Error("Invalid callback: " + value)
+      options.callback = decode.url(cosmicLink, value.substr(4))
       break
     default:
       if (isIgnoredSep7Field(field)) {
