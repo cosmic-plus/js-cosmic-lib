@@ -13,17 +13,18 @@ const resolve = require("./resolve")
 const status = require("./status")
 
 /**
- * | Formats                                     | Data                               | Actions                                        | Editor                                       | HTML elements
- * |---------------------------------------------|------------------------------------|------------------------------------------------|----------------------------------------------|----------------------------------------
+ * | Formats                                     | Data                                | Actions                                        | Editor                                       | HTML elements
+ * |---------------------------------------------|-------------------------------------|------------------------------------------------|----------------------------------------------|----------------------------------------
  * |-----------------------|-----------------------|-----------------------|-----------------------|-----------------------
- * | [uri]{@link CosmicLink#uri}                 |[page]{@link CosmicLink#page}       |[selectNetwork]{@link CosmicLink#selectNetwork} |[parse]{@link CosmicLink#parse}               |[htmlDescription]{@link CosmicLink#htmlDescription}
- * | [query]{@link CosmicLink#query}             |[network]{@link CosmicLink#network} |await [lock]{@link CosmicLink#lock}             |[setTxFields]{@link CosmicLink#setTxFields}   |[htmlLink]{@link CosmicLink#htmlLink}
- * | [tdesc]{@link CosmicLink#tdesc}             |[source]{@link CosmicLink#source}   |[sign]{@link CosmicLink#sign}                   |[addOperation]{@link CosmicLink#addOperation} |
- * | [json]{@link CosmicLink#json}               |[status]{@link CosmicLink#status}   |await [send]{@link CosmicLink#send}             |[setOperation]{@link CosmicLink#setOperation}
- * | [transaction]{@link CosmicLink#transaction} |[errors]{@link CosmicLink#errors}   |
- * | [xdr]{@link CosmicLink#xdr}                 |[locker]{@link CosmicLink#locker}   |
- * | [sep7]{@link CosmicLink#sep7}               |[cache]{@link CosmicLink#cache}     |
- *
+ * | [uri]{@link CosmicLink#uri}                 |[page]{@link CosmicLink#page}        |[selectNetwork]{@link CosmicLink#selectNetwork} |[parse]{@link CosmicLink#parse}               |[htmlDescription]{@link CosmicLink#htmlDescription}
+ * | [query]{@link CosmicLink#query}             |[network]{@link CosmicLink#network}  |await [lock]{@link CosmicLink#lock}             |[setTxFields]{@link CosmicLink#setTxFields}   |[htmlLink]{@link CosmicLink#htmlLink}
+ * | [tdesc]{@link CosmicLink#tdesc}             |[horizon]{@link CosmicLink#horizon}  |[sign]{@link CosmicLink#sign}                   |[addOperation]{@link CosmicLink#addOperation} |
+ * | [json]{@link CosmicLink#json}               |[callback]{@link CosmicLink#callback}|await [send]{@link CosmicLink#send}             |[setOperation]{@link CosmicLink#setOperation}
+ * | [transaction]{@link CosmicLink#transaction} |[source]{@link CosmicLink#source}    |
+ * | [xdr]{@link CosmicLink#xdr}                 |[status]{@link CosmicLink#status}    |
+ * | [sep7]{@link CosmicLink#sep7}               |[errors]{@link CosmicLink#errors}    |
+ * |                                             |[locker]{@link CosmicLink#locker}
+ * |                                             |[cache]{@link CosmicLink#cache}
  * -----
  *
  * The **CosmicLink** class represents Stellar
@@ -74,14 +75,18 @@ const status = require("./status")
  * of those, hence the need for a **lock** command:
  *
  * ```js
- * const cosmicLink = new CosmicLink('?inflation')
+ * const cosmicLib = require('cosmic-lib')
+ * cosmicLib.network = 'test'
+ * cosmicLib.source = 'tips*cosmic.link'
+ *
+ * const cosmicLink = new cosmicLib.CosmicLink('?inflation')
  *
  * console.log(cosmicLink.tdesc.source)    // => undefined
  * console.log(cosmicLink.tdesc.network)   // => undefined
  * console.log(cosmicLink.tdesc.sequence)  // => undefined
  * console.log(cosmicLink.xdr)             // => undefined
  *
- * await cosmicLink.lock({ network: 'test', source: 'tips*cosmic.link' })
+ * await cosmicLink.lock({)
  *
  * console.log(cosmicLink.tdesc.source)    // => 'GC6Z...2JVW'
  * console.log(cosmicLink.tdesc.network)   // => 'test'
@@ -268,57 +273,64 @@ class CosmicLink {
    */
 
   /**
-   * The source this CosmicLink uses, which is defined after the following
-   * rule:
+   * The source for this transaction. This can be defined either locally
+   * (`cosmicLink.tdesc.source`) or globally (`cosmicLib.config.source`). The
+   * local configuration takes precedence, or, in other words, the global source
+   * is a fallback value in case the transaction emitter doesn't set one.
    *
-   * > transaction source OR locker source OR global configuration source OR neutral source
-   *
-   * When a transaction defines its source, it is available at
-   * `cosmicLink.tdesc.source`. The global configuration source is set at
-   * `cosmiclib.config.source`. The neutral source account is used to generate
-   * StellarSdk Transactions, XDR and Sep-0007 links when no source is given and
-   * is automatically removed when those format are parsed again.
+   * **Note:** cosmicLink.tdesc should be edited using [setTxFields]{@link
+   * CosmicLink#setTxFields}.
    */
   get source () {
     return (this.tdesc && this.tdesc.source) || this.config.source
   }
 
   /**
-   * The network this CosmicLink uses, which is defined after the following
-   * rule:
+   * The network for this transaction. This can be defined either locally
+   * (`cosmicLink.tdesc.network`) or globally (`cosmicLib.config.network`). The
+   * local configuration takes precedence, or, in other words, the global
+   * network is a fallback value in case the transaction emitter doesn't set
+   * one.
    *
-   * > transaction network OR locker network OR global configuration network
-   *
-   * When a transaction defines its network, it is available at
-   * `cosmicLink.tdesc.network`. The global configuration network is set at
-   * `cosmiclib.config.network`.
+   * **Note:** cosmicLink.tdesc should be edited using [setTxFields]{@link
+   * CosmicLink#setTxFields}.
    */
   get network () {
     return (this.tdesc && this.tdesc.network) || this.config.network
   }
 
   /**
-   * The horizon node this CosmicLink uses, which is defined after the following
-   * rule:
+   * The URL of the horizon node from which ledger data will be retrieved, and
+   * to which the signed transaction will be posted if there's no
+   * [callback]{@link CosmicLink#callback}.
    *
-   * > default horizon for CosmicLink network OR transaction horizon
+   * This can be defined either locally (`cosmicLink.tdesc.horizon`) or globally
+   * (using [setupNetwork]{@link module:config.setupNetwork}). This parameter is
+   * special in the sense that it's the only one for which the global
+   * configuration takes precedence.
    *
-   * The rationale for this behavior is that we allow transaction emitter to
-   * provide the horizon node URL only if none is known for a transaction
-   * happening on a custom network. In other cases, it is up to the user/wallet
-   * to define the horizon node to use, not up to the emitter.
+   * The rationale for this behavior is that we want transaction emitter to
+   * provide a fallback Horizon URL in the special case none is known for a
+   * custom network, but generally speaking it won't be right to allow the
+   * transaction emitter to force us to use a particular Horizon node.
    *
-   * When a transaction defines its horizon node, it is available at
-   * `cosmicLink.tdesc.horizon`.
+   * **Note:** cosmicLink.tdesc should be edited using [setTxFields]{@link
+   * CosmicLink#setTxFields}.
    */
   get horizon () {
     return resolve.horizon(this.config, this.network) || (this.tdesc && this.tdesc.horizon)
   }
 
   /**
-   * The URL at which the validated transaction will be posted. This can be
-   * defined either locally (`cosmicLink.tdesc.callback`) or globally
+   * The URL at which the signed transaction will be posted. This can be defined
+   * either locally (`cosmicLink.tdesc.callback`) or globally
    * (`cosmicLib.config.callback`). The local configuration takes precedence.
+   *
+   * When no callback is defined, the signed transaction is posted to
+   * [Horizon]{@link CosmicLink#horizon}. This is the default behavior.
+   *
+   * **Note:** cosmicLink.tdesc should be edited using [setTxFields]{@link
+   * CosmicLink#setTxFields}.
    */
   get callback () {
     return (this.tdesc && this.tdesc.callback) || this.config.callback

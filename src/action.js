@@ -18,25 +18,30 @@ const signersUtils = require("./signers-utils")
 const status = require("./status")
 
 /**
- * Lock a CosmicLink to a network/source pair. The actual values for this pair
- * are defined by the transaction itself, or at parsing time for Transaction &
- * XDR formats, or by this lock method, or by the global configuration.
+ * Lock a CosmicLink to a network/source pair. If the cosmicLink was created
+ * from a query/uri/tdesc/json, it will create the corresponding
+ * transaction/xdr/sep7 formats.
  *
- * Locking is an asynchronous operation and resolves the transaction's federated
- * addresses if any. It also fetchs required accounts data to handle the
- * transaction signers properly. For this reason, it is mandatory before
- * signing and sending a transaction to the blockchain.
+ * This operation must be performed by the wallet before signing & sending the
+ * transaction.
  *
  * @example
- * const cosmicLink = new CosmicLink({ memo: 'Demo', network: 'test' })
- * await cosmicLink.lock({ network: 'public' })
- * console.log(cosmicLink.network)   // => 'test'
+ * cosmicLib.config.network = "test"
+ * const cosmicLink = new CosmicLink("?setOptions")
+ * console.log(cosmicLink.network) // => undefined
+ * console.log(cosmicLink.xdr)     // => undefined
+ * await cosmicLink.lock()
+ * console.log(cosmicLink.network) // => "test"
+ * console.log(cosmicLink.xdr)     // => "AAAA...AA=="
+ *
  *
  * @alias CosmicLink#lock
  * @async
  * @param {Object} [options]
- * @param {string} options.network The fallback network in case transaction doesn't provides one.
- * @param {string} options.source The fallback address in case transaction doesn't provides one.
+ * @param {string} options.network Local fallback network
+ * @param {string} options.horizon Local fallback horizon (overwrited by global configuration)
+ * @param {string} options.callback Local fallback callback
+ * @param {string} options.source Local fallback source
  */
 action.lock = async function (cosmicLink, options = {}) {
   if (cosmicLink.status) throw new Error(cosmicLink.status)

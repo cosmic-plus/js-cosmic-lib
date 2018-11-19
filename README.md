@@ -29,7 +29,7 @@ This is a generalization of tools like Metamask for Ethereum, as it allows any
 service to communicate with any (compatible) wallet; And users to sign
 transactions from any service without ever divulging private keys.
 
-The ultimate goal of the CosmicLink protocol is to enable **cross-wallet
+The ultimate goal of the CosmicLink protocol is to enable **wallet-less
 applications** for Stellar.
 
 ## Installation
@@ -71,7 +71,15 @@ libraries.
 
 ## Basic Usage
 
-### Create a CosmicLink
+### Configuration
+
+```js
+cosmicLib.config.page = 'https://cosmic.link/'  // Base URI when generating CosmicLinks
+cosmicLib.config.network = 'test'               // 'public' by default
+cosmicLib.config.source = 'tips*cosmic.link'    // Undefined by default
+```
+
+### Create CosmicLinks
 
 #### New Transaction
 
@@ -138,7 +146,7 @@ console.log(cosmicLink.json)
 console.log(cosmicLink.tdesc) // The most convenient format to manipulate transactions
 
 // Lock CosmicLink to a network & a source account to compute its Transaction & XDR.
-await cosmicLink.lock({ network: ..., source: ...})
+await cosmicLink.lock()
 console.log(cosmicLink.transaction)
 console.log(cosmicLink.xdr)
 console.log(cosmicLink.sep7)
@@ -151,7 +159,7 @@ don't need to use `cosmicLink.lock()` for conversion purpose.
 
 ```js
 // Lock CosmicLink to a network & a source account to fetch signers data.
-await cosmicLink.lock({ network: ..., source: ...})
+await cosmicLink.lock()
 cosmicLink.sign(...keypair|preimage)
 await cosmicLink.send()
 ```
@@ -159,20 +167,18 @@ await cosmicLink.send()
 **Note**: the transaction will automatically be transmitted to
 [StellarGuard](https://stellarguard.me) when relevant.
 
-## Global configuration
+### Advanced configuration
 
-`cosmicLib.config` allows to define globally a few parameters:
-
-```js
-cosmicLib.config.page = 'https://cosmic.link/'  // Base URI when generating links
-cosmicLib.config.network = 'test'               // 'public' by default
-cosmicLib.config.source = 'tips*cosmic.link'    // Undefined by default
-```
-
-You can also set the horizon node to use for a given network:
+Setting the Horizon node for a given network:
 
 ```js
 cosmicLib.config.setupNetwork('test', 'https://horizon.example.org')
+```
+
+Adding a custom network:
+
+```js
+cosmicLib.config.setupNetwork('myCustomNetwork', 'https://horizon.example.org', 'MyCustomPassphrase')
 ```
 
 ## Other Utilities
