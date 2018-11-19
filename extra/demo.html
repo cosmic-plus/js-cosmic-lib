@@ -20,6 +20,8 @@
     // Grabbing the HTML elements for later use.
     pageBox = document.querySelector('#page')
     networkBox = document.querySelector('#network')
+    horizonBox = document.querySelector('#horizon')
+    callbackBox = document.querySelector('#callback')
     sourceBox = document.querySelector('#source')
     signerBox = document.querySelector('#signer')
     lockButton = document.querySelector('#lockButton')
@@ -61,11 +63,19 @@
     // Create the new cosmicLink.
     cosmicLink = new CosmicLink(transaction, { page: pageBox.value })
 
-    // Refresh edition boxes.
-    pageBox.value = cosmicLink.page || pageBox.value || cosmicLib.config.page
-    networkBox.value = cosmicLink.network || networkBox.value || cosmicLib.config.network
-    sourceBox.value = cosmicLink.source || sourceBox.value || cosmicLib.config.source
-    refreshFormatBoxes()
+    refreshBoxes()
+  }
+
+  function set () {
+    const txFields = {
+      network: networkBox.value || null, horizon: horizonBox.value || null,
+      callback: callbackBox.value || null, source: sourceBox.value || null
+    }
+
+    if (cosmicLink.locker) refresh()
+    cosmicLink.page = pageBox.value
+    cosmicLink.setTxFields(txFields)
+    refreshBoxes()
   }
 
   // Compute XDR and update boxes accordingly.
@@ -77,8 +87,8 @@
       .then(function (obj) {
         // cosmicLink may have changed by the time lock() resolves.
         if (obj !== cosmicLink) return
-      
-        refreshFormatBoxes()
+
+        refreshBoxes()
         enableButtons()
       })
   }
@@ -99,7 +109,7 @@
     cosmicLink.sign(signer)
       .then(function () {
         display('Done')
-        refreshFormatBoxes()
+        refreshBoxes()
       })
       .catch(display)
       .finally(enableButtons)
@@ -138,13 +148,22 @@
     }
   }
 
-  // Update format boxes content.
-  function refreshFormatBoxes (boxes = formats) {
+  // Refresh boxes content.
+  function refreshBoxes (boxes = formats) {
+    // Refresh edition boxes.
+    pageBox.value = cosmicLink.page || cosmicLib.config.page
+    networkBox.value = cosmicLink.network || cosmicLib.config.network
+    horizonBox.value = cosmicLink.horizon || ""
+    callbackBox.value = cosmicLink.callback || ""
+    sourceBox.value = cosmicLink.source || ""
+
+    // Refresh format boxes.
     boxes.forEach(format => {
       const box = formatBoxes[format]
       if (format === 'query') history.replaceState({}, '', cosmicLink[format])
-      if (cosmicLink[format]) box.value = cosmicLink[format]
-      else if (cosmicLink.errors) box.placeholder = cosmicLink.status
+      console.log(cosmicLink[format])
+      box.value = cosmicLink[format] || ""
+      box.placeholder = cosmicLink.status || format
     })
   }
 
@@ -197,7 +216,7 @@ main {
   overflow: hidden;
 }
 
-@media (min-width: 85.375em) {
+@media (min-width: 80em) {
   .column {
     width: 40%;
     min-width: 30em;
@@ -246,19 +265,26 @@ input, textarea {
         <input id="sendButton" type="button" value="Send" onclick="send()">
         <pre id="message"></pre>
       </form>
+      <h2>
+        <a id="cosmiclink" title="Open page" target="_blank" rel="noopener">Open Link</a>
+      </h2>
     </div>
     <div class="column">
       <!-- An HTML element with id="cosmiclink" will automatically points to
            the last cosmicLink URI
       -->
-      <h2>Edit (<a id="cosmiclink" title="Open page" target="_blank" rel="noopener">go</a>)</h2>
+      <h2>Edit</h2>
       <form autocomplete="off">
         <label for="page">Page:</label>
-        <input id="page" type="text" onchange="refresh()">
+        <input id="page" type="text" onchange="set()">
         <label for="network">Network:</label>
-        <input id="network" type="text" onchange="refresh()">
+        <input id="network" type="text" onchange="set()">
+        <label for="horizon">Horizon:</label>
+        <input id="horizon" type="text" onchange="set()">
+        <label for="callback">Callback:</label>
+        <input id="callback" type="text" onchange="set()">
         <label for="source">Source:</label>
-        <input id="source" type="text" onchange="refresh()">
+        <input id="source" type="text" onchange="set()">
         <label for="uri">Link:</label>
         <input id="uri" type="text" placeholder="URI">
         <label for="query">Query:</label>
@@ -266,7 +292,7 @@ input, textarea {
         <label for="json">JSON:</label>
         <textarea id="json" rows=8 placeholder="JSON"></textarea>
         <label for="lockButton">Lock:</label>
-        <input id="lockButton" type="button" value="Compute XDR" onclick="lock()">
+        <input id="lockButton" type="button" value="Check Sources / Compute XDR" onclick="lock()">
         <label for="xdr">XDR:</label>
         <textarea id="xdr" rows=3 placeholder="XDR"></textarea>
         <label for="sep7">SEP-0007:</label>

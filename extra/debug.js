@@ -17,6 +17,7 @@ const asset4 = 'XRP:GBXRPL45NPHCVMFFAYZVUVFFVKSIZ362ZXFP7I2ETNQ3QKZMFLPRDTD5'
 const shasum = '4a3ec3730504983f960fb2df35a1d68d640ff55d151fa3128ca0fc707f86882e'
 const txsum = '3389e9f0f1a65f19736cacf544c2e825313e8447f569233bb8db39aa607c1234'
 const id = '18446744073709551615'
+const bin = "ABCDEFGH"
 const xdr = 'AAAAAEmlgXsVQpGcRhn0YhhktsW/7+GHTAhucc06I5zDTRQdAAAAZAAB7x0AAAACAAAAAAAAAAAAAAABAAAAAAAAAAUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=='
 
 const invalidKey = 'GBP7EQX652UPJJJRYFAPH64V2MHGUGFJNKJN7RNOPNSFIBH4BW6NSF54'
@@ -25,6 +26,9 @@ const tests = [
   /** * Transaction fields ***/
   ['bigTitle', 'Transaction fields'],
   ['query', '?inflation&network=test'],
+  ['query', '?inflation&horizon=broken-url'],
+  ['query', '?inflation&network=multisig&horizon=horizon-testnet.stellar.org'],
+  ['query', '?inflation&callback=example.org'],
   ['query', '?inflation&source=' + accountMultiSig, { dontSign: 1 }],
   ['query', '?inflation&fee=500'],
   ['query', '?manageData&minTime=2017-12-12&maxTime=2018-12-12&name=test&value=true',
@@ -35,6 +39,7 @@ const tests = [
     {loopbackQuery: '?manageData&maxTime=2018-12-12T04:35&name=test&value=true',
       send: 1}],
   ['query', '?inflation&memo=Hello_world!'],
+  ['query', '?inflation&memo=binary:' + bin],
   ['query', '?inflation&memo=id:' + id],
   ['query', '?inflation&memo=hash:' + shasum],
   ['query', '?inflation&memo=return:' + shasum],
@@ -64,6 +69,7 @@ const tests = [
   ['query', '?inflation'],
   ['title', 'Manage data'],
   ['query', '?manageData&name=mail&value=someone%40example.org'],
+  ['query', '?manageData&name=code&value=binary:' + bin],
   ['query', '?manageData&name=address'],
   ['title', 'Manage offer'],
   ['query', '?manageOffer&selling=' + asset1 + '&buying=' + asset2 + '&amount=500&price=1:50',
@@ -254,6 +260,8 @@ async function checkCosmicLink (cosmicLink, options) {
   if (!cosmicLink.tdesc.sequence) linkOpts.stripSequence = true
   if (!cosmicLink.tdesc.source) linkOpts.stripSource = true
   if (cosmicLink.tdesc.network) linkOpts.network = cosmicLink.tdesc.network
+  if (cosmicLink.tdesc.horizon) linkOpts.horizon = cosmicLink.tdesc.horizon
+  if (cosmicLink.tdesc.callback) linkOpts.callback = cosmicLink.tdesc.callback
 
   await cosmicLink.lock()
 
