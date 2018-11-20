@@ -53,7 +53,7 @@
   // Parse cosmicLink.
   function refresh (transaction) {
     // Use an empty query if none is provided.
-    if (!transaction) transaction = location.search || '?'
+    if (!transaction) transaction = location.search || '?setOptions'
 
     // Reset the interface.
     clearBoxes()
@@ -67,21 +67,22 @@
   }
 
   function set () {
+    const page = pageBox.value
     const txFields = {
       network: networkBox.value || null, horizon: horizonBox.value || null,
-      callback: callbackBox.value || null, source: sourceBox.value || null
+      callback: callbackBox.value || null, source: sourceBox.value || null,
+      sequence: sourceBox.value === cosmicLink.source ? cosmicLink.tdesc.sequence : null
     }
 
-    if (cosmicLink.locker) refresh()
-    cosmicLink.page = pageBox.value
+    if (lockButton.disabled) refresh()
+    cosmicLink.page = page
     cosmicLink.setTxFields(txFields)
     refreshBoxes()
   }
 
   // Compute XDR and update boxes accordingly.
   function lock () {
-    formatBoxes.xdr.placeholder = 'Computing...'
-    formatBoxes.uri.placeholder = 'Computing...'
+    formats.forEach(format => formatBoxes[format].placeholdr = 'Computing...')
 
     cosmicLink.lock({ network: networkBox.value, source: sourceBox.value })
       .then(function (obj) {
@@ -90,7 +91,7 @@
 
         refreshBoxes()
         enableButtons()
-      })
+      }).catch(refreshBoxes)
   }
 
   function sign () {
@@ -149,7 +150,9 @@
   }
 
   // Refresh boxes content.
-  function refreshBoxes (boxes = formats) {
+  function refreshBoxes () {
+    if (cosmicLink.errors) lockButton.disabled = true
+
     // Refresh edition boxes.
     pageBox.value = cosmicLink.page || cosmicLib.config.page
     networkBox.value = cosmicLink.network || cosmicLib.config.network
@@ -158,10 +161,9 @@
     sourceBox.value = cosmicLink.source || ""
 
     // Refresh format boxes.
-    boxes.forEach(format => {
+    formats.forEach(format => {
       const box = formatBoxes[format]
       if (format === 'query') history.replaceState({}, '', cosmicLink[format])
-      console.log(cosmicLink[format])
       box.value = cosmicLink[format] || ""
       box.placeholder = cosmicLink.status || format
     })
