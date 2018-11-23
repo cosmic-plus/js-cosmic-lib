@@ -39,6 +39,13 @@ parse.dispatch = function (cosmicLink, value = "?", options = {}) {
   formats.forEach(format => delete cosmicLink[format])
   const type = guessType(value)
 
+  // Strip out URL hash
+  switch (type) {
+  case "uri": case "query": case "xdrUri": case "sep7": case "sep7Request":
+    value = value.replace(/#.*$/, "")
+  }
+
+  // Parse transaction
   try {
     if (parseFmt[type]) parseFmt[type](cosmicLink, value, options)
     else setTdesc(cosmicLink, type, value, options)
