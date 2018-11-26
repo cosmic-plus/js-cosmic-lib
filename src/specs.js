@@ -19,14 +19,14 @@ specs.transactionOptionalFields = [
  */
 specs.fieldDesc = {
   network: "Network",
-  horizon: "Horizon node",
+  horizon: "Horizon",
   callback: "Callback",
 
   memo: "Memo",
   source: "Source",
   sequence: "Sequence",
-  minTime: "Valid only after",
-  maxTime: "Valid only before",
+  minTime: "Valid after",
+  maxTime: "Valid until",
   fee: "Fees"
 }
 
