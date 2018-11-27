@@ -1,11 +1,18 @@
 "use strict"
 /**
- * Provide checks for varous type of field used in cosmic links.
+ * Exposes some of the check routines used by cosmic-lib. Individual type-checks
+ * are also available for:
  *
- * This module may no be type-complete and new type checks got added only when
- * needed.
+ * > address, amount, asset, assetsArray, boolean, buffer, date, flags, hash,
+ * id, memo, network, price, sequence, signer, string, threshold, url, weight
  *
- * The check apply on values using the cosmic link JSON format.
+ * All checks are meant to be used on tdesc formatted values. Form example, in
+ * tdesc buffer values are not encoded as actual Buffer object but as something
+ * like: `{ type: "text", value: "Hello World!"}`.
+ *
+ * @example
+ * check.field("minTime", "2018-11")
+ * check.date("2018-11")
  *
  * @private
  * @exports check
@@ -18,6 +25,19 @@ const { isUtf8, isBase64 } = require("@cosmic-plus/jsutils/misc")
 const specs = require("./specs")
 const status = require("./status")
 
+/**
+ * Check that **tdesc** is valid.
+ *
+ * @example
+ * check.tdesc({
+ *   memo: { type: "text", value: "Hello, World!" },
+ *   network: "public",
+ *   source: "tips*cosmic.link",
+ *   operations: [{ type: "setOptions", homeDomain: "cosmic.link" }]
+ * })
+ *
+ * @param  {Object} tdesc
+ */
 check.tdesc = function (conf, tdesc) {
   for (let field in tdesc) {
     try {
@@ -46,6 +66,14 @@ check.tdesc = function (conf, tdesc) {
   }
 }
 
+/**
+ * Check that tdesc operation is valid (referred as **odesc**).
+ *
+ * @example
+ * check.odesc({ type: "payment", destination: "tips*cosmic.link", amount: "20" })
+ *
+ * @param  {Object} odesc [description]
+ */
 check.odesc = function (conf, odesc) {
   try {
     check.operationType(conf, odesc.type)
@@ -72,6 +100,13 @@ check.odesc = function (conf, odesc) {
   if (conf.errors) throw new Error("Invalid odesc")
 }
 
+/**
+ * Check that **field** is a valid transaction field and that its **value** is
+ * valid.
+ *
+ * @param  {string} field
+ * @param  {*} value
+ */
 check.txField = function (conf, field, value) {
   if (field === "operations") return
   if (!specs.transactionOptionalFields.find(name => name === field)) {
@@ -80,12 +115,25 @@ check.txField = function (conf, field, value) {
   check.field(conf, field, value)
 }
 
+/**
+ * Check that **type** is a valid Stellar Operation type.
+ *
+ * @param  {String}
+ */
 check.operationType = function (conf, type) {
   if (!specs.operationMandatoryFields[type]) {
     status.error(conf, "Invalid operation: " + type, "throw")
   }
 }
 
+/**
+ * Check that **field** is a valid **operation** field and that its **value** is
+ * valid.
+ *
+ * @param {String} operation
+ * @param {String} field
+ * @param {*} value
+ */
 check.operationField = function (conf, operation, field, value) {
   if (field === "type") return
   if (!specs.isOperationField(operation, field)) {
@@ -101,12 +149,13 @@ function errDesc (error, value = "") {
 /******************************************************************************/
 
 /**
- * Check that `field` is a valid transaction/operation field. If `value` is
- * given, check that it is valid for that `field`. If a check doesn't pass, an
- * error is throwed.
+ * Check that **field** **value** is a valid.
  *
- * @param {string} field
- * @param {string} [value]
+ * @example
+ * check.field("memo", { type: "text", value: "Hello, World!" })
+ *
+ * @param {string} field The name of a Stellar Transaction parameter
+ * @param {*} value
  */
 check.field = function (conf, field, value) {
   if (value === "" && field !== "homeDomain" && field !== "value") {
@@ -119,12 +168,13 @@ check.field = function (conf, field, value) {
 }
 
 /**
- * Check that `type` is a valid transaction/operation field type. If `value` is
- * given, check that it is valid for that `type`. If a check doesn't pass, an
- * error is throwed.
+ * Check that **value** is of type **type**.
+ *
+ * @example
+ * check.type("date", "2018-11-28")
  *
  * @param {string} type
- * @param {string} [value]
+ * @param {string} value
  */
 check.type = function (conf, type, value) {
   if (!specs.types.find(entry => entry === type)) {
@@ -134,10 +184,10 @@ check.type = function (conf, type, value) {
 }
 
 /**
- * Generic check for numbers. Check that `value` is a number or a string
- * representing a number. `type` is for the customization of the message in case
- * of error. `min` and `max` may be provided as additional restriction for
- * `value`.
+ * Generic check for numbers. Check that **value** is a number or a string
+ * representing a number. **type** is for the customization of the message in
+ * case of error. **min** and **max** may be provided as additional restriction
+ * for `value`.
  *
  * @param {number|string} value
  * @param {string} [type = 'number']
@@ -160,10 +210,10 @@ check.number = function (conf, value, type = "number", min, max = "unlimited") {
 }
 
 /**
- * Generic check for integers. Check that `value` is an integer or a string
- * representing an integer. `type` is for the customization of the message in
- * case of error. `min` and `max` may be provided as additional restriction for
- * `value`.
+ * Generic check for integers. Check that **value** is an integer or a string
+ * representing an integer. **type** is for the customization of the message in
+ * case of error. **min** and **max** may be provided as additional restriction for
+ * **value**.
  *
  * @param {number|string} value
  * @param {string} [type = 'integer']
@@ -177,12 +227,25 @@ check.integer = function (conf, value, type = "integer", min, max) {
   }
 }
 
+/**
+ * Check that **value** is an UTF-8 string.
+ *
+ * *Note:* This use a weak (simplified) test that may not be accurate for small
+ * strings.
+ *
+ * @param  {String} value
+ */
 check.utf8 = function (conf, value) {
   if (typeof value !== "string" || !isUtf8(value)) {
     status.error(conf, `Invalid UTF8 string: ${value}`, "throw")
   }
 }
 
+/**
+ * Check that **value** is a base64 string.
+ *
+ * @param  {String} value
+ */
 check.base64 = function (conf, value) {
   if (typeof value !== "string" || !isBase64(value)) {
     status.error(conf, `Invalid base64 string: ${value}`, "throw")

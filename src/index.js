@@ -63,6 +63,7 @@ exports.withConfig = function (params) {
 /// Export modules.
 
 const config = exports.config = require("./config")
+exports.check = exposeModule(config, require("./check"))
 exports.CosmicLink = require("./cosmiclink")
 exports.load = env.isBrowser && exposeModule(config, require("./load"))
 exports.resolve = exposeModule(config, require("./resolve"))
