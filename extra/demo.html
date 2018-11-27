@@ -2,8 +2,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width">
+  <meta http-equiv="Content-Security-Policy" content="
+    default-src 'none';
+    script-src 'self' 'unsafe-inline' https://cosmic.plus;
+    style-src 'self' 'unsafe-inline' https://necolas.github.io;
+    connect-src *;
+  ">
+
   <title>cosmic-lib demo page</title>
-  <link rel="stylesheet" type="text/css" href="https://necolas.github.io/normalize.css/latest/normalize.css">
+  <link rel="stylesheet" type="text/css"
+    href="https://necolas.github.io/normalize.css/latest/normalize.css">
 </head>
 
 <script>
@@ -13,7 +21,7 @@
 
   function preinit () {
     // Asynchronous CSS loading.
-    cosmicLib.load.css('cosmic-lib.css').then(init)
+    cosmicLib.load.styles('cosmic-lib.css').then(init)
   }
 
   function init () {
@@ -308,7 +316,7 @@ input, textarea {
   <footer>
   </footer>
 
-  <script src="https://unpkg.com/stellar-sdk/dist/stellar-sdk.min.js"></script>
+  <script src="https://cosmic.plus/stellar-sdk/stellar-sdk.min.js"></script>
   <script>console.log(StellarSdk)</script>
   <script src="cosmic-lib.js"></script>
   <script>console.log(cosmicLib)</script>

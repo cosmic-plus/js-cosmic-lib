@@ -2,11 +2,20 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width">
+  <meta http-equiv="Content-Security-Policy" content="
+    default-src 'none';
+    script-src 'self' https://cosmic.plus;
+    style-src 'self' 'unsafe-inline' https://necolas.github.io;
+    connect-src *;
+  ">
+
   <title>cosmic-lib debug page</title>
-  <link rel="stylesheet" type="text/css" href="cosmic-lib.css">
+
+  <link rel="stylesheet" type="text/css"
+    href="https://necolas.github.io/normalize.css/latest/normalize.css">
 </head>
 
-<body id="body" onload="debug.debug()" style="max-width:40em;margin:auto;font-size:1.2em;"/>
+<body id="body">
 
   <header>
     <h1>cosmic-lib debug page</h1>
@@ -29,13 +38,8 @@
   <footer>
   </footer>
 
-  <script src="https://unpkg.com/stellar-sdk/dist/stellar-sdk.min.js"></script>
-  <script>console.log(StellarSdk)</script>
+  <script src="https://cosmic.plus/stellar-sdk/stellar-sdk.min.js"></script>
   <script src="cosmic-lib.js"></script>
-  <script>console.log(cosmicLib)</script>
-  <script>var CosmicLink = cosmicLib.CosmicLink</script>
   <script src="debug.js"></script>
-  <script>console.log(debug)</script>
-
 </body>
 </html>

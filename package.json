@@ -23,9 +23,9 @@
     "build-doc": "rm -rf web/doc; jsdoc -c jsdoc.json",
     "build-html": "cp -fl extra/*.html web",
     "build-misc": "cp -f AUTHORS LICENSE README.md package-lock.json web",
-    "build": "for i in js css doc html misc; do npm run build-$i || return; done",
+    "build": "sh setenv.sh -p && for i in js css doc html misc; do npm run build-$i || return; done",
     "check": "npm run get && cp web/package-lock.json . && npm ci && npm run build && cd web && git status",
-    "watch": "webpack -d --watch",
+    "watch": "sh setenv.sh -d && npm run build-html && webpack -d --watch",
     "serve": "npm run watch & cd web && live-server --no-browser"
   },
   "devDependencies": {
@@ -44,6 +44,6 @@
   },
   "dependencies": {
     "@cosmic-plus/base": "^1.2.0",
-    "@cosmic-plus/jsutils": "^1.9.0"
+    "@cosmic-plus/jsutils": "^1.10.0"
   }
 }

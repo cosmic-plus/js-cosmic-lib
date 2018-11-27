@@ -137,6 +137,9 @@ const tests = [
 
 cosmicLib.config.network = 'test'
 cosmicLib.config.source = source
+cosmicLib.load.styles("cosmic-lib.css")
+
+const CosmicLink = cosmicLib.CosmicLink
 
 /*******************************************************************************
  * Page Layout
@@ -144,7 +147,7 @@ cosmicLib.config.source = source
 
 const mainNode = html.grab('main')
 
-export async function debug () {
+async function debug () {
   makeNav()
   if (document.location.hash) {
     const number = +document.location.hash.substr(1)
@@ -340,7 +343,8 @@ function addStyle (string) {
 }
 
 addStyle(`
-  body { font-family: "Trebuchet MS", Helvetica, sans-serif; }
+  html { font-size: 1.2em; font-family: "Trebuchet MS", Helvetica, sans-serif; }
+  body { max-width: 40em; margin: auto; }
   nav { display: block; margin: auto; }
   nav a { display: inline-block; margin: 1em; }
   footer { text-align: right; }
@@ -351,3 +355,8 @@ addStyle(`
   .debug_done { color: mediumseagreen; }
   .debug_error { color: tomato; }
 `)
+
+
+// Trigger the lib once page is loaded.
+document.body.onload = debug
+
