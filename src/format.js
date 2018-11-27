@@ -134,9 +134,9 @@ function operationMeaning (odesc) {
   case "manageData":
     if (odesc.value) {
       if (odesc.value.type === "text") {
-        return "Set data entry '{name}' as '{value}'"
+        return "Set data entry '{name}' to: '{value}'"
       } else {
-        return "Set binary data entry '{name}' as '{value}'"
+        return "Set data entry '{name}' to base64: '{value}'"
       }
     } else {
       return "Delete data entry '{name}'"
@@ -411,7 +411,7 @@ process.assetsArray = function (conf, assetsArray) {
 }
 
 process.buffer = function (conf, object) {
-  if (object.type === "binary") return format.hash(conf, object.value)
+  if (object.type === "base64") return format.hash(conf, object.value)
   else return format.string(conf, object.value)
 }
 
@@ -451,7 +451,7 @@ process.memo = function (conf, memo) {
   case "text":
     valueNode = format.field(conf, "memoText", memo.value)
     break
-  case "binary":
+  case "base64":
     valueNode = format.field(conf, "memoBinary", memo.value)
     break
   case "id":

@@ -293,7 +293,7 @@ check.boolean = function (conf, boolean) {
 check.buffer = function (conf, buffer) {
   switch (buffer.type) {
   case "text": check.utf8(conf, buffer.value); break
-  case "binary": check.base64(conf, buffer.value); break
+  case "base64": check.base64(conf, buffer.value); break
   default: status.error(conf, "Invalid buffer type: " + buffer.type, "throw")
   }
 }
@@ -321,7 +321,7 @@ check.id = function (conf, id) {
 check.memo = function (conf, memo) {
   switch (memo.type) {
   case "text": check.utf8(conf, memo.value); break
-  case "binary": check.base64(conf, memo.value); break
+  case "base64": check.base64(conf, memo.value); break
   case "hash": case "return": check.hash(conf, memo.value); break
   case "id": check.id(conf, memo.value); break
   default: status.error(conf, "Invalid memo type: " + memo.type, "throw")

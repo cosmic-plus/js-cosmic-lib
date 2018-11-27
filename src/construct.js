@@ -149,7 +149,7 @@ construct.assetsArray = async function (conf, assetsArray) {
 }
 
 construct.buffer = function (conf, object) {
-  if (object.type === "binary") {
+  if (object.type === "base64") {
     return Buffer.from(object.value, "base64")
   } else {
     return object.value || null
@@ -161,7 +161,7 @@ construct.date = function (conf, string) {
 }
 
 construct.memo = function (conf, memo) {
-  if (memo.type === "binary") {
+  if (memo.type === "base64") {
     return new StellarSdk.Memo("text", Buffer.from(memo.value, "base64"))
   } else {
     return new StellarSdk.Memo(memo.type, memo.value)

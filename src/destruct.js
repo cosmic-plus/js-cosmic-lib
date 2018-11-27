@@ -119,7 +119,7 @@ destruct.buffer = function (conf, buffer) {
     return { type: "text", value: string }
   } else {
     const value = buffer.toString("base64").replace(/=*$/,"")
-    return { type: "binary", value: value }
+    return { type: "base64", value: value }
   }
 }
 

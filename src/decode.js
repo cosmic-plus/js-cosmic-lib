@@ -121,7 +121,7 @@ process.buffer = function (conf, string) {
   const matched = string.match(/(^[^:]*):/)
   const type = matched && matched[1]
   switch (type) {
-  case "text": case "binary":
+  case "text": case "base64":
     return { type: type, value: string.substr(type.length + 1)}
   default:
     return { type: "text", value: string }
@@ -138,7 +138,7 @@ process.memo = function (conf, string) {
   const matched = string.match(/(^[^:]*):/)
   const type = matched && matched[1]
   switch (type) {
-  case "text": case "binary": case "id": case "hash": case "return":
+  case "text": case "base64": case "id": case "hash": case "return":
     return { type: type, value: string.substr(type.length + 1)}
   default:
     return { type: "text", value: string }
