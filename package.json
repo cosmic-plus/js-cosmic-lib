@@ -1,6 +1,6 @@
 {
   "name": "cosmic-lib",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "A javaScript implementation of the CosmicLink protocol",
   "author": "MisterTicot",
   "repository": "github:cosmic-plus/node-cosmic-lib",
@@ -37,9 +37,9 @@
     "babel-loader": "^8.0.4",
     "eslint": "^5.9.0",
     "jsdoc": "^3.5.5",
-    "live-server": "^1.2.0",
+    "live-server": "^1.2.1",
     "minami": "^1.2.3",
-    "webpack": "^4.26.0",
+    "webpack": "^4.26.1",
     "webpack-cli": "^3.1.2"
   },
   "dependencies": {
