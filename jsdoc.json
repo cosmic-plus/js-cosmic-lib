@@ -1,6 +1,6 @@
 {
   "source": {
-    "include": [ "src" ]
+    "include": [ "src", "node_modules/@cosmic-plus/jsutils/load.js" ]
   },
   "opts": {
     "destination": "./web/doc",
