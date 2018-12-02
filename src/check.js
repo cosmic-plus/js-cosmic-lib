@@ -39,28 +39,36 @@ const status = require("./status")
  * @param  {Object} tdesc
  */
 check.tdesc = function (conf, tdesc) {
+  let isValid = true
+
   for (let field in tdesc) {
     try {
       check.txField(conf, field, tdesc[field])
     } catch (error) {
+      isValid = false
       tdesc[field] = errDesc(error, tdesc[field])
     }
   }
 
   if (!tdesc.operations.length) {
+    isValid = false
     status.error(conf, "No operation")
-  }
-  if (tdesc.operations.length > 100) {
+  } else if (tdesc.operations.length > 100) {
+    isValid = false
     status.error(conf, "Too much operations (max 100)")
   }
 
   tdesc.operations.forEach(odesc => {
-    // eslint-disable-next-line no-empty
-    try { check.odesc(conf, odesc) } catch (e) { }
+    try {
+      check.odesc(conf, odesc)
+    } catch (e) {
+      isValid = false
+    }
   })
 
-  if (conf.errors) {
+  if (!isValid) {
     const error = new Error("Invalid tdesc")
+    // TODO: check if this is really useful
     error.tdesc = tdesc
     throw error
   }
@@ -75,9 +83,12 @@ check.tdesc = function (conf, tdesc) {
  * @param  {Object} odesc [description]
  */
 check.odesc = function (conf, odesc) {
+  let isValid = true
+
   try {
     check.operationType(conf, odesc.type)
   } catch (error) {
+    isValid = false
     odesc.type = errDesc(error, odesc.type)
   }
 
@@ -85,19 +96,21 @@ check.odesc = function (conf, odesc) {
     try {
       check.operationField(conf, odesc.type, field, odesc[field])
     } catch (error) {
+      isValid = false
       odesc[field] = errDesc(error, odesc[field])
     }
   }
 
   specs.operationMandatoryFields[odesc.type].forEach(field => {
     if (odesc[field] === undefined) {
+      isValid = false
       const error = new Error("Missing mandatory field: " + field)
       odesc[field] = errDesc(error)
       status.error(conf, error.message)
     }
   })
 
-  if (conf.errors) throw new Error("Invalid odesc")
+  if (!isValid) throw new Error("Invalid odesc")
 }
 
 /**
