@@ -5,19 +5,15 @@ const helpers = require("@cosmic-plus/jsutils/misc")
 
 if (env.isBrowser) require("@cosmic-plus/jsutils/polyfill")
 
-// Configure CosmicLib Horizon node.
-// const cosmicLib = require("./cosmic-lib")
-// cosmicLib.config.setupNetwork("public", "https://horizon.stellar.lobstr.co")
-
 /**
  * Automatically pass `config` to `module` functions as first argument.
  *
+ * @param {Object} module A cosmic-lib module whose functions takes config as
+ *   the first argument.
  * @param {Object} config A configuration object similar than config.js module.
- * @param {Object} module A cosmic-lib module whose functions takes config as the
- *   first argument.
  * @private
  */
-function exposeModule (config, module) {
+function exposeModule (module, config = {}) {
   const layer = Object.assign({}, module)
   helpers.setHiddenProperty(layer, "_config", config)
   for (let name in module) {
@@ -60,12 +56,29 @@ exports.withConfig = function (params) {
   return library
 }
 
-/// Export modules.
+/**
+ * Export modules **names** after linking them to `config`.
+ *
+ * @param  {...String} names Module names
+ */
+function exportModule (name, module) {
+  exports[name] = exposeModule(module, config)
+}
+
+// Export modules.
 
 const config = exports.config = require("./config")
-exports.check = exposeModule(config, require("./check"))
+exportModule("check", require("./check"))
 exports.CosmicLink = require("./cosmiclink")
-exports.load = env.isBrowser && exposeModule(config, require("./load"))
-exports.resolve = exposeModule(config, require("./resolve"))
-exports.signersUtils = exposeModule(config, require("./signers-utils"))
+if (env.isBrowser) exportModule("load", require("./load"))
+exportModule("resolve", require("./resolve"))
+exportModule("signersUtils", require("./signers-utils"))
 exports.specs = require("./specs")
+
+// Export helpers (not documented in the manual - please check the code).
+exportModule("check", require("./check"))
+exportModule("expand", require("./expand"))
+exportModule("construct", require("./construct"))
+exportModule("destruct", require("./destruct"))
+exportModule("encode", require("./encode"))
+exportModule("decode", require("./decode"))
