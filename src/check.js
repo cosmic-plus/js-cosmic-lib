@@ -50,10 +50,7 @@ check.tdesc = function (conf, tdesc) {
     }
   }
 
-  if (!tdesc.operations.length) {
-    isValid = false
-    status.error(conf, "No operation")
-  } else if (tdesc.operations.length > 100) {
+  if (tdesc.operations.length > 100) {
     isValid = false
     status.error(conf, "Too much operations (max 100)")
   }

@@ -61,7 +61,7 @@
   // Parse cosmicLink.
   function refresh (transaction) {
     // Use an empty query if none is provided.
-    if (!transaction) transaction = location.search || '?setOptions'
+    if (!transaction) transaction = location.search || '?'
 
     // Reset the interface.
     clearBoxes()

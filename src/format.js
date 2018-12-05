@@ -55,6 +55,14 @@ format.tdesc = function (conf, tdesc) {
     console.error(error)
   }
 
+  if (!tdesc.operations.length) {
+    if (Object.keys(tdesc).length === 1) {
+      html.append(trNode, html.create("div", null, "No transaction"))
+    } else {
+      html.append(trNode, html.create("div", ".cosmiclib_operation", "No operation"))
+    }
+  }
+
   trNode.tdesc = tdesc
   return trNode
 }
