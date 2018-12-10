@@ -2,6 +2,8 @@
 /**
  * Asynchronously load external ressources.
  */
+
+/**/
 const parent = require("@cosmic-plus/jsutils/load")
 const load = module.exports
 
