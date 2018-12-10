@@ -1,6 +1,10 @@
 {
   "source": {
-    "include": [ "src", "node_modules/@cosmic-plus/jsutils/load.js" ]
+    "include": [
+      "src",
+      "node_modules/@cosmic-plus/jsutils/load.js",
+      "node_modules/@cosmic-plus/base/aliases.js"
+    ]
   },
   "opts": {
     "destination": "./web/doc",

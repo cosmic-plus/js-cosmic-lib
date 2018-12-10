@@ -3,7 +3,7 @@
  * Library-wide configuration.
  *
  * @borrows module:aliases.all as aliases
- * @borrows module:aliases.add as addAliases
+ * @borrows module:aliases.set as addAliases
  * @borrows module:aliases.remove as removeAliases
  *
  * @borrows module:event.defaultClickHandlers as clickHandlers
@@ -14,10 +14,10 @@
  */
 const config = exports
 
+const aliases = require("@cosmic-plus/base/aliases")
 const env = require("@cosmic-plus/jsutils/env")
 const StellarSdk = require("@cosmic-plus/base/stellar-sdk")
 
-const aliases = require("./aliases")
 const event = env.isBrowser && require("./event")
 
 /**
@@ -73,7 +73,7 @@ config.setupNetwork("public", "https://horizon.stellar.org", StellarSdk.Networks
 config.setupNetwork("test", "https://horizon-testnet.stellar.org", StellarSdk.Networks.TESTNET)
 
 config.aliases = aliases.all
-config.addAliases = (definitions) => aliases.add(config, definitions)
+config.addAliases = (definitions) => aliases.set(config, definitions)
 config.removeAliases = (array) => aliases.remove(config, array)
 
 config.clickHandlers = event.defaultClickHandlers
