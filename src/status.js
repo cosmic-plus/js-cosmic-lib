@@ -52,7 +52,7 @@ status.update = function (conf, status) {
  */
 status.fail = function (conf, errorStatus, continuation) {
   status.update(conf, errorStatus)
-  if (conf._statusNode) html.appendClass(conf._statusNode, "cosmiclib_error")
+  if (conf._statusNode) html.addClass(conf._statusNode, "cosmiclib_error")
   errorContinuation(errorStatus, continuation)
 }
 

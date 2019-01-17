@@ -7,7 +7,7 @@
  */
 const event = exports
 
-const helpers = require("@cosmic-plus/jsutils/misc")
+const html = require("@cosmic-plus/jsutils/html")
 
 const format = require("./format")
 
@@ -84,8 +84,8 @@ event.defaultClickHandlers = {
       const preimage = prompt("Please enter preimage:")
       if (preimage) event.cosmicLink.sign(preimage)
     } else {
-      helpers.copy(event.value)
+      html.copyString(event.value)
     }
   },
-  id: helpers.copy
+  id: event => html.copyString(event.value)
 }

@@ -235,7 +235,7 @@ function makeAccountSignersNode (conf, utils, accountId) {
     const signerNode = format.signer(conf, signer)
     const lineNode = html.create("li", null, signerNode)
     if (utils.hasSigned(signer.key)) {
-      html.appendClass(lineNode, "cosmiclib_signed")
+      html.addClass(lineNode, "cosmiclib_signed")
       listNode.insertBefore(lineNode, listNode.firstChild)
     } else {
       html.append(listNode, lineNode)
@@ -295,7 +295,7 @@ format.field = function (conf, field, value) {
 
   const domNode = format.type(conf, type, value)
   domNode.field = field
-  if (field !== type) html.appendClass(domNode, "cosmiclib_" + field)
+  if (field !== type) html.addClass(domNode, "cosmiclib_" + field)
 
   return domNode
 }
@@ -365,7 +365,7 @@ async function resolveAddressAndUpdate (conf, address, addressNode) {
     addressNode.extra = account
   } catch (error) {
     addressNode.title = "Can't resolve address"
-    html.appendClass(addressNode, "cosmiclib_error")
+    html.addClass(addressNode, "cosmiclib_error")
 
     const parent = addressNode.parentNode
     if (parent.classList.contains("cosmiclib_assetIssuer")) {
