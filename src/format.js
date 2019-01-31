@@ -364,48 +364,24 @@ async function resolveAddressAndUpdate (conf, address, addressNode) {
 
     if (account.address) addressNode.textContent = account.address
     else if (account.alias) addressNode.textContent = account.alias
-
     addressNode.extra = account
+
   } catch (error) {
     addressNode.title = "Can't resolve address"
     html.addClass(addressNode, "cosmiclib_error")
-
-    const parent = addressNode.parentNode
-    if (parent.classList.contains("cosmiclib_assetIssuer")) {
-      parent.style.display = "inline"
-    }
   }
 
   const animation = html.grab(".cosmiclib_loadingAnim", addressNode)
   if (animation) html.destroy(animation)
-  const grandpa = addressNode.parentNode.parentNode
-  if (grandpa && grandpa.classList.contains("cosmiclib_asset")) {
-    html.destroy(html.grab(".cosmiclib_loadingAnim", grandpa))
-    const odesc = format.parentOdesc(conf, grandpa)
-    if (odesc && odesc.type === "changeTrust") {
-      addressNode.parentNode.style.display = "inline"
-    }
-  }
 }
 
 process.asset = function (conf, asset) {
-  const codeNode = format.field(conf, "assetCode", asset.code)
-  const issuerNode = html.create("span", null, " issued by ")
-  const assetNode = html.create("span", null, codeNode, issuerNode)
-  issuerNode.style.display = "none"
+  const assetNode = html.create("span", null,
+    format.field(conf, "assetCode", asset.code))
 
   if (asset.issuer) {
-    codeNode.title = "Issued by " + asset.issuer
-    html.append(issuerNode, format.field(conf, "assetIssuer", asset.issuer))
-    html.append(codeNode, html.create("span", ".cosmiclib_loadingAnim"))
-  } else {
-    codeNode.title = "Native asset"
-    html.rewrite(issuerNode, " native asset")
-  }
-
-  codeNode.onclick = () => {
-    if (issuerNode.style.display === "inline") issuerNode.style.display = "none"
-    else issuerNode.style.display = "inline"
+    html.append(assetNode,
+      " (", format.field(conf, "assetIssuer", asset.issuer), ")")
   }
 
   return assetNode
