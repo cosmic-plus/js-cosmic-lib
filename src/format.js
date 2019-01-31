@@ -313,7 +313,10 @@ format.type = function (conf, type, value) {
     domNode: domNode
   }
   if (conf.constructor.name === "CosmicLink") eventObject.cosmicLink = conf
-  domNode.onclick = () => event.callClickHandler(conf, type, eventObject)
+  if (event.defaultClickHandlers[type]) {
+    domNode.onclick = () => event.callClickHandler(conf, type, eventObject)
+    html.addClass(domNode, "cosmiclib_clickable")
+  }
   return domNode
 }
 

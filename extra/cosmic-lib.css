@@ -1,36 +1,19 @@
 /* cosmiclib styling */
 
-.cosmiclib_asset .cosmiclib_assetCode,
-.cosmiclib_address
+.cosmiclib_clickable
 {
     display: inline-block;
-    margin: 0.1em;
-    border: 1px solid lightgrey;
+    border-top: 0.1em solid transparent;
+    border-bottom: 0.1em solid lightgrey;
+    padding: 0 0.1em;
+    transition: all 0.2s ease;
+}
+
+.cosmiclib_clickable:hover
+{
+    cursor: pointer;
+    border-top: 0.1em solid #F1F1F1;
     background-color: #F1F1F1;
-    border-radius: 0.2em;
-    padding: 0.1em;
-    color: #4C4C4C;
-}
-
-.cosmiclib_asset .cosmiclib_assetCode:hover,
-.cosmiclib_address:hover
-{
-    cursor: pointer;
-    background-color: lightgrey;
-}
-
-.cosmiclib_asset
-{
-    background-color: ghostwhite;
-    border-left: 0;
-    border-right: 0;
-}
-
-.cosmiclib_hash:hover,
-.cosmiclib_id:hover
-{
-    background-color: ghostwhite;
-    cursor: pointer;
 }
 
 .cosmiclib_done,
@@ -61,7 +44,7 @@
 
 .cosmiclib_sideInfo
 {
-    border-left: 0.2em solid lightgrey;
+    border-left: 0.1em solid lightgrey;
     padding-left: 0.3em;
     margin: 0;
     list-style-type: none;
