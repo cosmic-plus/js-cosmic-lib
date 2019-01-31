@@ -464,7 +464,7 @@ process.memo = function (conf, memo) {
   case "return":
     valueNode = format.field(conf, "memoReturn", memo.value)
   }
-  return html.create("span", {}, "(", typeNode, ") ", valueNode)
+  return html.create("span", {}, valueNode, " (", typeNode, ")")
 }
 
 process.price = function (conf, price) {
