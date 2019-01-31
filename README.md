@@ -246,7 +246,7 @@ breaks are expected.
   transactions](https://steemit.com/crypto/@mister.ticot/a-standardized-way-of-handling-stellar-transactions)
 
 
-### Services that implement cosmic links
+### Services that implements cosmic links
 
  * The Cosmic.Link website: <https://cosmic.link>
  * Stellar Authenticator: <https://stellar-authenticator.org>
