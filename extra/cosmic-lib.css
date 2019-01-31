@@ -16,6 +16,11 @@
     background-color: #F1F1F1;
 }
 
+.cosmiclib_ellipsis
+{
+    color: darkgrey;
+}
+
 .cosmiclib_done,
 .cosmiclib_signed
 {

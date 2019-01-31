@@ -10,6 +10,7 @@ const format = exports
 
 const helpers = require("@cosmic-plus/jsutils/misc")
 const html = require("@cosmic-plus/jsutils/html")
+const nice = require("@cosmic-plus/jsutils/nice")
 const StellarSdk = require("@cosmic-plus/base/stellar-sdk")
 
 const config = require("./config")
@@ -304,7 +305,7 @@ format.type = function (conf, type, value) {
   if (typeof value === "object" && value.error) type = "error"
   const formatter = process[type] || process.string
   const domNode = formatter(conf, value)
-  domNode.className = "cosmiclib_" + type
+  html.addClass(domNode, "cosmiclib_" + type)
 
   const eventObject = {
     conf: conf,
@@ -373,6 +374,19 @@ async function resolveAddressAndUpdate (conf, address, addressNode) {
 
   const animation = html.grab(".cosmiclib_loadingAnim", addressNode)
   if (animation) html.destroy(animation)
+}
+
+process.amount = function (conf, amount, significant = 3, max = 7) {
+  // Hide non-significant numbers
+  if (typeof amount !== "number") amount = Number(amount)
+  const nicified = nice(amount, { significant, max })
+  if (String(amount).length <= nicified.length) {
+    return html.create("span", null, nicified)
+  } else {
+    return html.create("span",
+      { className: "cosmiclib_clickable", title: amount },
+      nicified, html.create("span", ".cosmiclib_ellipsis", "..."))
+  }
 }
 
 process.asset = function (conf, asset) {
@@ -454,11 +468,8 @@ process.memo = function (conf, memo) {
 }
 
 process.price = function (conf, price) {
-  if (typeof price === "string") {
-    return html.create("span", {}, price)
-  } else {
-    return html.create("span", {}, price.n / price.d + "")
-  }
+  if (typeof price === "string") return process.amount(conf, price, 3, null)
+  else return process.amount(conf, price.n / price.d, 3, null)
 }
 
 process.signer = function (conf, signer) {
