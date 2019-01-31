@@ -75,6 +75,7 @@ async function makeTransactionBuilder (conf, tdesc) {
 
   const sourceAccount = await resolve.txSourceAccount(conf, tdesc.source, tdesc.sequence)
   const builder = new StellarSdk.TransactionBuilder(sourceAccount, txOpts)
+  if (!tdesc.maxTime) builder.setTimeout(StellarSdk.TimeoutInfinite)
 
   /// Check if memo is needed for destination account.
   for (let index in tdesc.operations) {
