@@ -35,6 +35,21 @@ encode.query = function (conf, tdesc) {
     if (command === "transaction") query += "&operation=" + odesc.type
     for (let field in odesc) {
       if (field === "type") continue
+      // Syntactic sugar for offer deletion.
+      if (
+        odesc.type === "manageOffer"
+        && odesc.amount == "0"
+        && odesc.offerId
+      ) {
+        if (field === "price" && odesc.price === "1") continue
+        if (
+          field === "buying"
+          && odesc.buying.code === "XLM"
+          && odesc.buying.issuer === specs.neutralAccountId
+        ) {
+          continue
+        }
+      }
       query += encode.field(conf, field, odesc[field])
     }
   })

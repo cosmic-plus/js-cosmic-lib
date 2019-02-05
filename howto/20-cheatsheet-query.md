@@ -41,9 +41,10 @@ Optional: &source={address}
 ...?manageData&name={string}
 Optional: &value={string}&source={address}
 
-...?selling={assetCode:issuerAddress}&buying={assetCode:issuerAddress}&amount={amount}&price={price}
+...?manageOffer&selling={assetCode:issuerAddress}&buying={assetCode:issuerAddress}&amount={amount}&price={price}
 Note: buying or selling can be omitted for XLM
 Optional: &offerId={integer}&source={address}
+Delete offer: ...?manageOffer&offerId={integer}&amount=0
 
 ...?pathPayment&destination={address}&destAmount={amount}&destAsset={assetCode:assetIssuer}
     &sendMax={amount}&sendAsset={assetCode:assetIssuer}

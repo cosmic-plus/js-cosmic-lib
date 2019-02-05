@@ -220,7 +220,7 @@ Optional fields
 
 Sell `amount` `selling` at `price` `buying`.
 
-> ...?selling={assetCode:issuerAddress}&buying={assetCode:issuerAddress}&amount={amount}&price={price}
+> ...?manageOffer&selling={assetCode:issuerAddress}&buying={assetCode:issuerAddress}&amount={amount}&price={price}
 
 Notes:
 
@@ -232,6 +232,10 @@ Optional fields:
 * &offerId={integer} Allow to edit an existing offer. Will delete it if
 `amount` is set to 0.
 * &source={address}
+
+Syntactic sugar for deleting offer:
+
+> ...?manageOffer&offerId={integer}&amount=0
 
 
 #### pathPayment

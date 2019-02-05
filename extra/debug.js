@@ -128,10 +128,7 @@ const tests = [
     }
   ],
   ["query", "?manageOffer&selling=" + asset1 + "&amount=10&price=0.1"],
-  [
-    "query",
-    "?manageOffer&selling=" + asset1 + "&amount=0&price=1&offerId=12345"
-  ],
+  ["query", "?manageOffer&amount=0&offerId=12345"],
   ["title", "Path Payment"],
   [
     "query",

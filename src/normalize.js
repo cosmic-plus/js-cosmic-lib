@@ -11,6 +11,7 @@ const StellarSdk = require("@cosmic-plus/base/stellar-sdk")
 
 const config = require("./config")
 const resolve = require("./resolve")
+const specs = require("./specs")
 
 /**
  * Setup the default values for `tdesc`.
@@ -89,6 +90,12 @@ normalize.odesc = function (conf, odesc) {
     break
   case "createPassiveOffer":
   case "manageOffer": {
+    /// Syntactic sugar for offer deletion
+    if (odesc.offerId && odesc.amount === "0") {
+      if (!odesc.buying)
+        odesc.buying = new StellarSdk.Asset("XLM", specs.neutralAccountId)
+      if (!odesc.price) odesc.price = "1"
+    }
     /// XLM as default asset.
     if (odesc.buying && !odesc.selling) odesc.selling = XLM
     if (odesc.selling && !odesc.buying) odesc.buying = XLM
