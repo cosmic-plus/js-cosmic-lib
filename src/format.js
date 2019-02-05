@@ -36,7 +36,9 @@ format.tdesc = function (conf, tdesc) {
 
     if (tdesc[entry]) {
       if (!infoNode) infoNode = html.create("ul", ".cosmiclib_sideInfo")
-      const lineNode = html.create("li", {},
+      const lineNode = html.create(
+        "li",
+        {},
         specs.fieldDesc[entry] + ": ",
         format.field(conf, entry, tdesc[entry])
       )
@@ -60,7 +62,10 @@ format.tdesc = function (conf, tdesc) {
     if (Object.keys(tdesc).length === 1) {
       html.append(trNode, html.create("div", null, "No transaction"))
     } else {
-      html.append(trNode, html.create("div", ".cosmiclib_operation", "No operation"))
+      html.append(
+        trNode,
+        html.create("div", ".cosmiclib_operation", "No operation")
+      )
     }
   }
 
@@ -154,14 +159,17 @@ function operationMeaning (odesc) {
     if (!odesc.offerId || odesc.offerId === "0") {
       return "Offer {amount} {selling} at {price} {buying} / unit"
     } else if (odesc.amount !== "0") {
-      return "Change offer '{offerId}' to: offer {amount} {selling} at " +
-          "{price} {buying} / unit"
+      return (
+        "Change offer '{offerId}' to: offer {amount} {selling} at "
+          + "{price} {buying} / unit"
+      )
     } else {
       return "Delete offer '{offerId}'"
     }
   case "pathPayment":
-    msg = "Send {destAmount} {destAsset} to {destination} for a maximum " +
-        "of {sendMax} {sendAsset}"
+    msg =
+        "Send {destAmount} {destAsset} to {destination} for a maximum "
+        + "of {sendMax} {sendAsset}"
     if (odesc.path) msg += " using conversion path: {path}"
     return msg
   case "payment":
@@ -181,14 +189,17 @@ function operationMeaning (odesc) {
       }
     }
     ["lowThreshold", "medThreshold", "highThreshold"].forEach(field => {
-      if (odesc[field]) msg += "Set " + field + " at: {" + field + "}{newline}"
+      if (odesc[field])
+        msg += "Set " + field + " at: {" + field + "}{newline}"
     })
     if (odesc.signer) {
       if (odesc.signer.type === "tx") {
-        if (odesc.signer.weight === "0") msg += "Remove pre-signed {signer}{newline}"
+        if (odesc.signer.weight === "0")
+          msg += "Remove pre-signed {signer}{newline}"
         else msg += "Pre-sign {signer}{newline}"
       } else {
-        if (odesc.signer.weight === "0") msg += "Remove signer: {signer}{newline}"
+        if (odesc.signer.weight === "0")
+          msg += "Remove signer: {signer}{newline}"
         else msg += "Set signer: {signer}{newline}"
       }
     }
@@ -337,14 +348,15 @@ process.string = function (conf, string) {
 
 process.error = function (conf, errDesc) {
   const errorNode = html.create("span", ".cosmiclib_error")
-  errorNode.textContent = errDesc.value === "" ? "(undefined)"
-    : errDesc.value.value  || errDesc.value
+  errorNode.textContent =
+    errDesc.value === "" ? "(undefined)" : errDesc.value.value || errDesc.value
   errorNode.title = errDesc.error.message
   return errorNode
 }
 
 process.address = function (conf, address) {
-  const addressNode = html.create("span",
+  const addressNode = html.create(
+    "span",
     { title: "Resolving..." },
     helpers.shorter(address),
     html.create("span", ".cosmiclib_loadingAnim")
@@ -366,7 +378,6 @@ async function resolveAddressAndUpdate (conf, address, addressNode) {
     if (account.address) addressNode.textContent = account.address
     else if (account.alias) addressNode.textContent = account.alias
     addressNode.extra = account
-
   } catch (error) {
     addressNode.title = "Can't resolve address"
     html.addClass(addressNode, "cosmiclib_error")
@@ -383,19 +394,29 @@ process.amount = function (conf, amount, significant = 3, max = 7) {
   if (String(amount).length <= nicified.length) {
     return html.create("span", null, nicified)
   } else {
-    return html.create("span",
+    return html.create(
+      "span",
       { className: "cosmiclib_clickable", title: amount },
-      nicified, html.create("span", ".cosmiclib_ellipsis", "..."))
+      nicified,
+      html.create("span", ".cosmiclib_ellipsis", "...")
+    )
   }
 }
 
 process.asset = function (conf, asset) {
-  const assetNode = html.create("span", null,
-    format.field(conf, "assetCode", asset.code))
+  const assetNode = html.create(
+    "span",
+    null,
+    format.field(conf, "assetCode", asset.code)
+  )
 
   if (asset.issuer) {
-    html.append(assetNode,
-      " (", format.field(conf, "assetIssuer", asset.issuer), ")")
+    html.append(
+      assetNode,
+      " (",
+      format.field(conf, "assetIssuer", asset.issuer),
+      ")"
+    )
   }
 
   return assetNode
@@ -478,18 +499,32 @@ process.signer = function (conf, signer) {
   case "key":
   case "ed25519_public_key": {
     const value1 = signer.value || signer.key
-    html.append(signerNode, "Account ", format.field(conf, "signerKey", value1))
+    html.append(
+      signerNode,
+      "Account ",
+      format.field(conf, "signerKey", value1)
+    )
     break
   }
   case "tx": {
     const value2 = signer.value || signer.key
-    html.append(signerNode, "transaction ", format.field(conf, "signerTx", value2))
+    html.append(
+      signerNode,
+      "transaction ",
+      format.field(conf, "signerTx", value2)
+    )
     break
   }
   case "hash":
   case "sha256hash": {
-    const value3 = signer.value || StellarSdk.StrKey.decodeSha256Hash(signer.key).toString("hex")
-    html.append(signerNode, "key whose hash is ", format.field(conf, "signerHash", value3))
+    const value3 =
+        signer.value
+        || StellarSdk.StrKey.decodeSha256Hash(signer.key).toString("hex")
+    html.append(
+      signerNode,
+      "key whose hash is ",
+      format.field(conf, "signerHash", value3)
+    )
     break
   }
   }

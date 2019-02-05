@@ -70,10 +70,15 @@ async function applyLock (cosmicLink, options) {
    * @alias CosmicLink#locker
    */
   cosmicLink.locker = {
-    source: cosmicLink.tdesc.source || options.source || cosmicLink.config.source,
-    network: cosmicLink.tdesc.network || options.network || cosmicLink.config.network,
+    source:
+      cosmicLink.tdesc.source || options.source || cosmicLink.config.source,
+    network:
+      cosmicLink.tdesc.network || options.network || cosmicLink.config.network,
     horizon: options.horizon || cosmicLink.horizon,
-    callback: cosmicLink.tdesc.callback || options.callback || cosmicLink.config.callback
+    callback:
+      cosmicLink.tdesc.callback
+      || options.callback
+      || cosmicLink.config.callback
   }
 
   /// Preserve the underlying tdesc object.
@@ -82,7 +87,10 @@ async function applyLock (cosmicLink, options) {
   delete cosmicLink._json
 
   if (!cosmicLink._transaction) {
-    cosmicLink._transaction = await convert.tdescToTransaction(cosmicLink, cosmicLink.tdesc)
+    cosmicLink._transaction = await convert.tdescToTransaction(
+      cosmicLink,
+      cosmicLink.tdesc
+    )
     delete cosmicLink._tdesc
   }
 
@@ -135,7 +143,11 @@ action.sign = async function (cosmicLink, ...keypairsOrPreimage) {
     } catch (error) {
       console.error(error)
       const short = helpers.shorter(keypairsOrPreimage[0])
-      status.error(cosmicLink, "Failed to sign with preimage: " + short, "throw")
+      status.error(
+        cosmicLink,
+        "Failed to sign with preimage: " + short,
+        "throw"
+      )
     }
   }
 
@@ -150,7 +162,10 @@ action.sign = async function (cosmicLink, ...keypairsOrPreimage) {
 function updateSignersNode (cosmicLink) {
   if (cosmicLink._signersNode) {
     const signersNode = format.signatures(cosmicLink, cosmicLink._transaction)
-    cosmicLink.htmlDescription.replaceChild(signersNode, cosmicLink._signersNode)
+    cosmicLink.htmlDescription.replaceChild(
+      signersNode,
+      cosmicLink._signersNode
+    )
     cosmicLink._signersNode = signersNode
   }
 }
@@ -185,12 +200,17 @@ action.send = async function (cosmicLink, horizon = cosmicLink.horizon) {
 }
 
 function sendToStellarGuard (cosmicLink) {
-  const url = cosmicLink.network === "test"
-    ? "https://test.stellarguard.me/api/transactions"
-    : "https://stellarguard.me/api/transactions"
-  return axios.post(url, {
-    xdr: cosmicLink.xdr, callback: cosmicLink.callback
-  }).then(result => result.data)
+  const url =
+    cosmicLink.network === "test"
+      ? "https://test.stellarguard.me/api/transactions"
+      : "https://stellarguard.me/api/transactions"
+  return axios
+    .post(url, {
+      xdr: cosmicLink.xdr,
+      callback: cosmicLink.callback
+    })
+    .then(result => result.data)
 }
 
-const STELLARGUARD_PUBKEY = "GCVHEKSRASJBD6O2Z532LWH4N2ZLCBVDLLTLKSYCSMBLOYTNMEEGUARD"
+const STELLARGUARD_PUBKEY =
+  "GCVHEKSRASJBD6O2Z532LWH4N2ZLCBVDLLTLKSYCSMBLOYTNMEEGUARD"

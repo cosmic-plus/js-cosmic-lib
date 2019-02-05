@@ -69,11 +69,17 @@ async function makeTransactionBuilder (conf, tdesc) {
   if (tdesc.memo) txOpts.memo = construct.memo(conf, tdesc.memo)
   if (tdesc.minTime || tdesc.maxTime) {
     txOpts.timebounds = { minTime: 0, maxTime: 0 }
-    if (tdesc.minTime) txOpts.timebounds.minTime = construct.date(conf, tdesc.minTime)
-    if (tdesc.maxTime) txOpts.timebounds.maxTime = construct.date(conf, tdesc.maxTime)
+    if (tdesc.minTime)
+      txOpts.timebounds.minTime = construct.date(conf, tdesc.minTime)
+    if (tdesc.maxTime)
+      txOpts.timebounds.maxTime = construct.date(conf, tdesc.maxTime)
   }
 
-  const sourceAccount = await resolve.txSourceAccount(conf, tdesc.source, tdesc.sequence)
+  const sourceAccount = await resolve.txSourceAccount(
+    conf,
+    tdesc.source,
+    tdesc.sequence
+  )
   const builder = new StellarSdk.TransactionBuilder(sourceAccount, txOpts)
   if (!tdesc.maxTime) builder.setTimeout(StellarSdk.TimeoutInfinite)
 
@@ -85,9 +91,16 @@ async function makeTransactionBuilder (conf, tdesc) {
       if (destination.memo) {
         const memoType = destination.memo_type
         const memoValue = destination.memo
-        if (tdesc.memo && (tdesc.memo.type !== memoType || tdesc.memo.value !== memoValue)) {
+        if (
+          tdesc.memo
+          && (tdesc.memo.type !== memoType || tdesc.memo.value !== memoValue)
+        ) {
           const short = helpers.shorter(operation.destination)
-          status.error(conf, `Memo conflict: ${short} requires to set a memo`, "throw")
+          status.error(
+            conf,
+            `Memo conflict: ${short} requires to set a memo`,
+            "throw"
+          )
         } else {
           tdesc.memo = { type: memoType, value: memoValue }
           builder.addMemo(new StellarSdk.Memo(memoType, memoValue))

@@ -202,7 +202,12 @@ class CosmicLink {
    */
   get tdesc () {
     if (!this._tdesc) {
-      if (this.transaction) this._tdesc = convert.transactionToTdesc(this, this.transaction, this.locker)
+      if (this.transaction)
+        this._tdesc = convert.transactionToTdesc(
+          this,
+          this.transaction,
+          this.locker
+        )
       else return undefined
     }
     return this._tdesc
@@ -282,7 +287,7 @@ class CosmicLink {
    * CosmicLink#setTxFields}.
    */
   get source () {
-    return (this.tdesc && this.tdesc.source) || this.config.source
+    return this.tdesc && this.tdesc.source || this.config.source
   }
 
   /**
@@ -296,7 +301,7 @@ class CosmicLink {
    * CosmicLink#setTxFields}.
    */
   get network () {
-    return (this.tdesc && this.tdesc.network) || this.config.network
+    return this.tdesc && this.tdesc.network || this.config.network
   }
 
   /**
@@ -318,7 +323,10 @@ class CosmicLink {
    * CosmicLink#setTxFields}.
    */
   get horizon () {
-    return resolve.horizon(this.config, this.network) || (this.tdesc && this.tdesc.horizon)
+    return (
+      resolve.horizon(this.config, this.network)
+      || this.tdesc && this.tdesc.horizon
+    )
   }
 
   /**
@@ -333,7 +341,7 @@ class CosmicLink {
    * CosmicLink#setTxFields}.
    */
   get callback () {
-    return (this.tdesc && this.tdesc.callback) || this.config.callback
+    return this.tdesc && this.tdesc.callback || this.config.callback
   }
 
   /// Editor
@@ -422,10 +430,18 @@ class CosmicLink {
   /**
    * Select the network that this CosmicLink uses.
    */
-  selectNetwork () { return resolve.useNetwork(this) }
-  lock (options) { return action.lock(this, options) }
-  sign (...keypairs_or_preimage) { return action.sign(this, ...keypairs_or_preimage) }
-  send (horizon) { return action.send(this, horizon) }
+  selectNetwork () {
+    return resolve.useNetwork(this)
+  }
+  lock (options) {
+    return action.lock(this, options)
+  }
+  sign (...keypairs_or_preimage) {
+    return action.sign(this, ...keypairs_or_preimage)
+  }
+  send (horizon) {
+    return action.send(this, horizon)
+  }
 
   /**
    * The HTML DOM node that displays a description of the current transaction.
@@ -454,19 +470,37 @@ class CosmicLink {
   }
 
   get htmlNode () {
-    helpers.deprecated("2019-03", "cosmicLink.htmlNode", "cosmicLink.htmlDescription")
+    helpers.deprecated(
+      "2019-03",
+      "cosmicLink.htmlNode",
+      "cosmicLink.htmlDescription"
+    )
     return this.htmlDescription
   }
-  get transactionNode () { return html.grab(".cosmiclib_transactionNode", this.htmlDescription) }
-  get statusNode () { return html.grab(".cosmiclib_statusNode", this.htmlDescription) }
-  get signersNode () { return html.grab(".cosmiclib_signersNode", this.htmlDescription) }
+  get transactionNode () {
+    return html.grab(".cosmiclib_transactionNode", this.htmlDescription)
+  }
+  get statusNode () {
+    return html.grab(".cosmiclib_statusNode", this.htmlDescription)
+  }
+  get signersNode () {
+    return html.grab(".cosmiclib_signersNode", this.htmlDescription)
+  }
 
   hasSigned (accountId) {
-    helpers.deprecated("2019-03", "cosmicLink.hasSigned", "cosmicLink.transaction.hasSigned")
+    helpers.deprecated(
+      "2019-03",
+      "cosmicLink.hasSigned",
+      "cosmicLink.transaction.hasSigned"
+    )
     return this.transaction.hasSigned(accountId)
   }
   hasSigner (accountId) {
-    helpers.deprecated("2019-03", "cosmicLink.hasSigner", "cosmicLink.transaction.hasSigner")
+    helpers.deprecated(
+      "2019-03",
+      "cosmicLink.hasSigner",
+      "cosmicLink.transaction.hasSigner"
+    )
     return this.transaction.hasSigner(accountId)
   }
 }
@@ -507,11 +541,16 @@ function initCosmicLink (cosmicLink, transaction, options = {}) {
     makeHtmlLink(cosmicLink)
     if (!cosmicLink._htmlDescription) {
       /// #cosmiclib_htmlNode: Backward compatibility (2018-09 -> 2019-03).
-      cosmicLink._htmlDescription = html.grab("#cosmiclink_description") || html.grab("#CL_htmlNode")
+      cosmicLink._htmlDescription =
+        html.grab("#cosmiclink_description") || html.grab("#CL_htmlNode")
     }
     if (cosmicLink._htmlDescription) {
       if (cosmicLink.htmlDescription.id === "#CL_htmlNode") {
-        helpers.deprecated("2019-03", "id=\"#CL_htmlNode\"", "id=\"cosmiclink_description\"")
+        helpers.deprecated(
+          "2019-03",
+          "id=\"#CL_htmlNode\"",
+          "id=\"cosmiclink_description\""
+        )
       }
       makeHtmlDescription(cosmicLink)
     }
@@ -540,8 +579,12 @@ function makeHtmlDescription (cosmicLink) {
   cosmicLink._statusNode = status.makeHtmlNode(cosmicLink)
   cosmicLink._signersNode = html.create("div", ".cosmiclib_signersNode")
 
-  html.append(htmlDescription,
-    cosmicLink._transactionNode, cosmicLink._statusNode, cosmicLink._signersNode)
+  html.append(
+    htmlDescription,
+    cosmicLink._transactionNode,
+    cosmicLink._statusNode,
+    cosmicLink._signersNode
+  )
 }
 
 /**

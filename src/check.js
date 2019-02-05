@@ -207,12 +207,14 @@ check.type = function (conf, type, value) {
 check.number = function (conf, value, type = "number", min, max = "unlimited") {
   const num = +value
   if (isNaN(num)) {
-    status.error(conf,
+    status.error(
+      conf,
       `Invalid ${type} (should be a number): ${value}`,
       "throw"
     )
-  } else if ((min && num < min) || (max && num > max)) {
-    status.error(conf,
+  } else if (min && num < min || max && num > max) {
+    status.error(
+      conf,
       `Invalid ${type} (should be between ${min} and ${max} ): ${value}`,
       "throw"
     )
@@ -302,9 +304,14 @@ check.boolean = function (conf, boolean) {
 
 check.buffer = function (conf, buffer) {
   switch (buffer.type) {
-  case "text": check.utf8(conf, buffer.value); break
-  case "base64": check.base64(conf, buffer.value); break
-  default: status.error(conf, "Invalid buffer type: " + buffer.type, "throw")
+  case "text":
+    check.utf8(conf, buffer.value)
+    break
+  case "base64":
+    check.base64(conf, buffer.value)
+    break
+  default:
+    status.error(conf, "Invalid buffer type: " + buffer.type, "throw")
   }
 }
 
@@ -330,14 +337,23 @@ check.id = function (conf, id) {
 
 check.memo = function (conf, memo) {
   switch (memo.type) {
-  case "text": check.utf8(conf, memo.value); break
-  case "base64": check.base64(conf, memo.value); break
-  case "hash": case "return": check.hash(conf, memo.value); break
-  case "id": check.id(conf, memo.value); break
-  default: status.error(conf, "Invalid memo type: " + memo.type, "throw")
+  case "text":
+    check.utf8(conf, memo.value)
+    break
+  case "base64":
+    check.base64(conf, memo.value)
+    break
+  case "hash":
+  case "return":
+    check.hash(conf, memo.value)
+    break
+  case "id":
+    check.id(conf, memo.value)
+    break
+  default:
+    status.error(conf, "Invalid memo type: " + memo.type, "throw")
   }
 }
-
 
 check.price = function (conf, price) {
   if (typeof price === "object") {

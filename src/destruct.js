@@ -34,10 +34,13 @@ destruct.transaction = function (conf, tx, options = {}) {
     tdesc.sequence = destruct.sequence(conf, tx.sequence)
   }
 
-  if (tx._memo._switch.name !== "memoNone") tdesc.memo = destruct.memo(conf, tx._memo)
+  if (tx._memo._switch.name !== "memoNone")
+    tdesc.memo = destruct.memo(conf, tx._memo)
   if (tx.timeBounds) {
-    if (tx.timeBounds.minTime) tdesc.minTime = destruct.date(conf, tx.timeBounds.minTime)
-    if (tx.timeBounds.maxTime) tdesc.maxTime = destruct.date(conf, tx.timeBounds.maxTime)
+    if (tx.timeBounds.minTime)
+      tdesc.minTime = destruct.date(conf, tx.timeBounds.minTime)
+    if (tx.timeBounds.maxTime)
+      tdesc.maxTime = destruct.date(conf, tx.timeBounds.maxTime)
   }
   tdesc.fee = tx.fee
 
@@ -107,7 +110,7 @@ destruct.buffer = function (conf, buffer) {
   if (isUtf8(string)) {
     return { type: "text", value: string }
   } else {
-    const value = buffer.toString("base64").replace(/=*$/,"")
+    const value = buffer.toString("base64").replace(/=*$/, "")
     return { type: "base64", value: value }
   }
 }

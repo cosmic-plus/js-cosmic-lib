@@ -22,10 +22,15 @@ const status = require("./status")
  * @param {string} [horizon] A horizon URL
  * @returns {Server} A StellarSdk Server object
  */
-resolve.server = function (conf, network = conf.network, horizon = conf.horizon) {
+resolve.server = function (
+  conf,
+  network = conf.network,
+  horizon = conf.horizon
+) {
   if (!horizon) horizon = resolve.horizon(conf, network)
   if (!horizon) throw new Error("No horizon node defined for selected network.")
-  if (!conf.current.server[horizon]) conf.current.server[horizon] = new StellarSdk.Server(horizon)
+  if (!conf.current.server[horizon])
+    conf.current.server[horizon] = new StellarSdk.Server(horizon)
   return conf.current.server[horizon]
 }
 
@@ -82,7 +87,9 @@ resolve.networkPassphrase = function (conf = {}, network = conf.network) {
  * @return {string}
  */
 resolve.networkName = function (conf = {}, networkPassphrase) {
-  const index = Object.values(conf.current.passphrase).indexOf(networkPassphrase)
+  const index = Object.values(conf.current.passphrase).indexOf(
+    networkPassphrase
+  )
   if (index === -1) return networkPassphrase
   else return Object.keys(conf.current.passphrase)[index]
 }
@@ -152,9 +159,17 @@ async function accountResolver (conf, accountId, quietFlag) {
       throw error
     } else {
       if (error.response) {
-        status.error(conf, "Empty account: " + helpers.shorter(accountId), "throw")
+        status.error(
+          conf,
+          "Empty account: " + helpers.shorter(accountId),
+          "throw"
+        )
       } else {
-        status.error(conf, "Invalid horizon node: " + resolve.horizon(conf), "throw")
+        status.error(
+          conf,
+          "Invalid horizon node: " + resolve.horizon(conf),
+          "throw"
+        )
       }
     }
   }
@@ -168,7 +183,10 @@ async function accountResolver (conf, accountId, quietFlag) {
  * @return {boolean}
  */
 resolve.isAccountEmpty = function (conf, address) {
-  return resolve.account(conf, address, true).then(() => false).catch(() => true)
+  return resolve
+    .account(conf, address, true)
+    .then(() => false)
+    .catch(() => true)
 }
 
 /**
@@ -185,7 +203,12 @@ resolve.txSourceAccount = async function (conf, address, sequence) {
     return makeAccountResponse(conf, specs.neutralAccountId, "-1")
   } else {
     const destination = await resolve.address(conf, address)
-    if (destination.memo) status.error(conf, "Invalid transaction source address (requires a memo)", "throw")
+    if (destination.memo)
+      status.error(
+        conf,
+        "Invalid transaction source address (requires a memo)",
+        "throw"
+      )
     const account = await resolve.account(conf, destination.account_id)
     if (sequence) {
       const baseAccount = new StellarSdk.Account(account.id, sequence)
@@ -208,12 +231,14 @@ function makeAccountResponse (conf, publicKey, sequence) {
   if (conf.cache) conf.cache.account[publicKey] = account
   account.id = publicKey
 
-  account.signers = [{
-    public_key: publicKey,
-    weight: 1,
-    key: publicKey,
-    type: "ed25519_public_key"
-  }]
+  account.signers = [
+    {
+      public_key: publicKey,
+      weight: 1,
+      key: publicKey,
+      type: "ed25519_public_key"
+    }
+  ]
 
   return account
 }
@@ -230,7 +255,7 @@ resolve.txSources = function (conf, transaction) {
   const extra = resolve.extra(conf, transaction)
   if (extra.cache.txSources) return extra.cache.txSources
 
-  const array = extra.cache.txSources = [ transaction.source ]
+  const array = extra.cache.txSources = [transaction.source]
   for (let index in transaction.operations) {
     const source = transaction.operations[index].source
     if (source && !array.find(a => a === source)) array.push(source)

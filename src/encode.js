@@ -15,7 +15,11 @@ encode.query = function (conf, tdesc) {
   if (conf.errors) return undefined
 
   let command
-  if (!tdesc.operations.length || tdesc.operations.length > 1 || tdesc.operations[0].source) {
+  if (
+    !tdesc.operations.length
+    || tdesc.operations.length > 1
+    || tdesc.operations[0].source
+  ) {
     command = "transaction"
   } else {
     command = tdesc.operations[0].type
@@ -23,7 +27,8 @@ encode.query = function (conf, tdesc) {
   let query = "?" + command
 
   specs.transactionOptionalFields.forEach(field => {
-    if (tdesc[field] !== undefined) query += encode.field(conf, field, tdesc[field])
+    if (tdesc[field] !== undefined)
+      query += encode.field(conf, field, tdesc[field])
   })
 
   tdesc.operations.forEach(odesc => {
@@ -76,7 +81,10 @@ encode.type = function (conf, type, value) {
 const process = {}
 
 process.asset = function (conf, asset) {
-  if (asset.issuer) return encodeURIComponent(asset.code) + ":" + encodeURIComponent(asset.issuer)
+  if (asset.issuer)
+    return (
+      encodeURIComponent(asset.code) + ":" + encodeURIComponent(asset.issuer)
+    )
 }
 
 process.assetsArray = function (conf, assetsArray) {

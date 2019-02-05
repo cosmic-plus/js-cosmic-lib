@@ -17,14 +17,17 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "get": "git submodule update -i --recursive",
-    "lint": "eslint --fix src/*.js",
+    "prettier": "prettier --write --no-semi '**.js' 'src/**.js' 'extra/**.js' '**.json' '**.md'",
+    "eslint": "eslint --fix '**.js' 'src/**.js' 'extra/**.js'",
+    "lint": "npm run prettier && npm run eslint",
     "build-js": "webpack -p",
     "build-css": "autoprefixer-cli -o web/cosmic-lib.css extra/cosmic-lib.css",
     "build-doc": "rm -rf web/doc; jsdoc -c jsdoc.json",
     "build-html": "cp -fl extra/*.html web",
     "build-misc": "cp -f AUTHORS LICENSE README.md package-lock.json web",
     "build": "sh setenv.sh -p && for i in js css doc html misc; do npm run build-$i || return; done",
-    "check": "npm run get && cp web/package-lock.json . && npm ci && npm run build && cd web && git status",
+    "rebuild": "npm run get && cp -f web/package-lock.json . && npm ci && npm run build",
+    "check": "npm run rebuild && cd web && git status",
     "watch": "sh setenv.sh -d && npm run build-html && webpack -d --watch",
     "serve": "npm run watch & cd web && live-server --no-browser"
   },
@@ -39,6 +42,7 @@
     "jsdoc": "^3.5.5",
     "live-server": "^1.2.1",
     "minami": "^1.2.3",
+    "prettier": "^1.16.4",
     "webpack": "^4.28.4",
     "webpack-cli": "^3.2.1"
   },

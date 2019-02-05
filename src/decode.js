@@ -45,7 +45,7 @@ decode.query = function (conf, query = "?") {
       tdesc[field] = value
     } else if (command === "operation") {
       operations[operations.length - 1][field] = value
-    /// One-operation link.
+      /// One-operation link.
     } else {
       if (specs.isTransactionField(field)) {
         tdesc[field] = value
@@ -112,8 +112,10 @@ process.assetsArray = function (conf, assetsList) {
 
 process.boolean = function (conf, string) {
   switch (string) {
-  case "true": return true
-  case "false": return false
+  case "true":
+    return true
+  case "false":
+    return false
   }
 }
 
@@ -121,8 +123,9 @@ process.buffer = function (conf, string) {
   const matched = string.match(/(^[^:]*):/)
   const type = matched && matched[1]
   switch (type) {
-  case "text": case "base64":
-    return { type: type, value: string.substr(type.length + 1)}
+  case "text":
+  case "base64":
+    return { type: type, value: string.substr(type.length + 1) }
   default:
     return { type: "text", value: string }
   }
@@ -138,8 +141,12 @@ process.memo = function (conf, string) {
   const matched = string.match(/(^[^:]*):/)
   const type = matched && matched[1]
   switch (type) {
-  case "text": case "base64": case "id": case "hash": case "return":
-    return { type: type, value: string.substr(type.length + 1)}
+  case "text":
+  case "base64":
+  case "id":
+  case "hash":
+  case "return":
+    return { type: type, value: string.substr(type.length + 1) }
   default:
     return { type: "text", value: string }
   }

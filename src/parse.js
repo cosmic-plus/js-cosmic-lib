@@ -41,7 +41,11 @@ parse.dispatch = function (cosmicLink, value = "?", options = {}) {
 
   // Strip out URL hash
   switch (type) {
-  case "uri": case "query": case "xdrUri": case "sep7": case "sep7Request":
+  case "uri":
+  case "query":
+  case "xdrUri":
+  case "sep7":
+  case "sep7Request":
     value = value.replace(/#.*$/, "")
   }
 
@@ -115,7 +119,8 @@ parseFmt.xdrUri = function (cosmicLink, xdrUri, options) {
     case "network":
       options.network = decode.network(cosmicLink, value)
       break
-    case "horizon": case "callback":
+    case "horizon":
+    case "callback":
       options[field] = decode.url(cosmicLink, value)
       break
     default:
@@ -165,7 +170,8 @@ parseFmt.sep7 = function (cosmicLink, sep7, options = {}) {
       options.network = decode.network(cosmicLink, value)
       break
     case "callback":
-      if (value.substr(0,4) !== "url:") throw new Error("Invalid callback: " + value)
+      if (value.substr(0, 4) !== "url:")
+        throw new Error("Invalid callback: " + value)
       options.callback = decode.url(cosmicLink, value.substr(4))
       break
     default:
@@ -201,7 +207,11 @@ function setTdesc (cosmicLink, type, value, options) {
     cosmicLink._query = convert.uriToQuery(cosmicLink, value, options)
     // eslint-disable-next-line no-fallthrough
   case "query":
-    cosmicLink._tdesc = convert.queryToTdesc(cosmicLink, cosmicLink.query, options)
+    cosmicLink._tdesc = convert.queryToTdesc(
+      cosmicLink,
+      cosmicLink.query,
+      options
+    )
     delete cosmicLink._query
     break
   case "json":
@@ -216,10 +226,18 @@ function setTdesc (cosmicLink, type, value, options) {
     cosmicLink._xdr = convert.sep7ToXdr(cosmicLink, cosmicLink.sep7)
     // eslint-disable-next-line no-fallthrough
   case "xdr":
-    cosmicLink._transaction = convert.xdrToTransaction(cosmicLink, cosmicLink.xdr, options)
+    cosmicLink._transaction = convert.xdrToTransaction(
+      cosmicLink,
+      cosmicLink.xdr,
+      options
+    )
     // eslint-disable-next-line no-fallthrough
   case "transaction":
-    cosmicLink._tdesc = convert.transactionToTdesc(cosmicLink, cosmicLink.transaction, options)
+    cosmicLink._tdesc = convert.transactionToTdesc(
+      cosmicLink,
+      cosmicLink.transaction,
+      options
+    )
     delete cosmicLink._sep7
     if (options.stripSource || options.stripSequence) {
       delete cosmicLink._xdr

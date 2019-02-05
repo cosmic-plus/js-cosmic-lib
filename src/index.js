@@ -18,7 +18,9 @@ function exposeModule (module, config = {}) {
   helpers.setHiddenProperty(layer, "_config", config)
   for (let name in module) {
     if (typeof module[name] === "function") {
-      layer[name] = function (...params) { return module[name](this._config, ...params) }
+      layer[name] = function (...params) {
+        return module[name](this._config, ...params)
+      }
     } else {
       layer[name] = module[name]
     }
@@ -43,7 +45,10 @@ exports.withConfig = function (params) {
   library.config = Object.assign({}, this.config, params)
 
   for (let module in this) {
-    if (this[module].prototype && this[module].prototype.__proto__ === this.config) {
+    if (
+      this[module].prototype
+      && this[module].prototype.__proto__ === this.config
+    ) {
       library[module] = class extends this[module] {}
       Object.assign(library[module].prototype, this[module].prototype)
       library[module].prototype.__proto__ = library.config

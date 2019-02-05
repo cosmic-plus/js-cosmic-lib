@@ -79,7 +79,8 @@ class SignersUtils {
     }
 
     if (extendFlag) {
-      if (!transaction.hasSigner) Object.assign(transaction, extra.cache.signersUtils)
+      if (!transaction.hasSigner)
+        Object.assign(transaction, extra.cache.signersUtils)
       return transaction
     } else {
       return extra.cache.signersUtils
@@ -124,7 +125,9 @@ utilities.hasSigned = function (accountId) {
   if (accountId.substr(0, 1) === "G") {
     const keypair = StellarSdk.Keypair.fromPublicKey(accountId)
     const txHash = this._cosmicplus.cache.txHash
-    return !!this.signatures.find(entry => keypair.verify(txHash, entry.signature()))
+    return !!this.signatures.find(entry =>
+      keypair.verify(txHash, entry.signature())
+    )
   }
 }
 
@@ -137,7 +140,8 @@ utilities.hasSigned = function (accountId) {
  * @param {Transaction} transaction
  * @return {SignersUtils}
  */
-signersUtils.for = (conf, transaction) => SignersUtils.resolve(conf, transaction)
+signersUtils.for = (conf, transaction) =>
+  SignersUtils.resolve(conf, transaction)
 
 /**
  * Extends **transaction** with SignersUtils.
@@ -146,4 +150,5 @@ signersUtils.for = (conf, transaction) => SignersUtils.resolve(conf, transaction
  * @param {Transaction} transaction
  * @return {Transaction}
  */
-signersUtils.extends = (conf, transaction) => SignersUtils.resolve(conf, transaction, true)
+signersUtils.extends = (conf, transaction) =>
+  SignersUtils.resolve(conf, transaction, true)

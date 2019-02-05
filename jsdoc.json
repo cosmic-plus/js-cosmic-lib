@@ -14,9 +14,7 @@
     "template": "node_modules/minami",
     "tutorials": "howto"
   },
-  "plugins": [
-    "plugins/markdown"
-  ],
+  "plugins": ["plugins/markdown"],
   "templates": {
     "default": {
       "includeDate": false

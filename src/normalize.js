@@ -44,23 +44,27 @@ normalize.tdesc = function (conf, tdesc) {
 const dateFields = ["minTime", "maxTime"]
 
 normalize.date = function (conf, date) {
-  return date.replace(/:00\.000/, "").replace(/\.000/, "")
-    .replace(/T00:00Z/, "").replace(/-01$/, "").replace(/-01$/, "")
+  return date
+    .replace(/:00\.000/, "")
+    .replace(/\.000/, "")
+    .replace(/T00:00Z/, "")
+    .replace(/-01$/, "")
+    .replace(/-01$/, "")
 }
 
 normalize.network = function (conf, network) {
   const networkName = resolve.networkName(conf, network)
   if (networkName === "public" || networkName === "test") {
     return networkName
-  // In network is neither test nor public, we want to use the network
-  // passphrase as parameter to ensure cross-wallet compatibility.
+    // In network is neither test nor public, we want to use the network
+    // passphrase as parameter to ensure cross-wallet compatibility.
   } else {
     return resolve.networkPassphrase(conf, network)
   }
 }
 
 normalize.url = function (conf, url) {
-  if (url) return (url.substr(0,4) === "http") ? url : "https://" + url
+  if (url) return url.substr(0, 4) === "http" ? url : "https://" + url
 }
 
 /**
@@ -110,6 +114,7 @@ const XLM = StellarSdk.Asset.native()
 
 function removeEmptyFields (object) {
   for (let field in object) {
-    if (object[field] === null || object[field] === undefined) delete object[field]
+    if (object[field] === null || object[field] === undefined)
+      delete object[field]
   }
 }

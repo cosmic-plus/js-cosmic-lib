@@ -1,37 +1,35 @@
-const webpack = require('webpack')
-
 const config = {
-  devtool: 'source-map',
+  devtool: "source-map",
   module: {
     rules: [
-     {
+      {
         test: /\.(js)$/,
-        loader: 'babel-loader'
-     }
+        loader: "babel-loader"
+      }
     ]
   }
 }
 
 const library = Object.assign({}, config, {
-  entry: './src/index.js',
+  entry: "./src/index.js",
   output: {
-    path: __dirname + '/web',
-    filename: 'cosmic-lib.js',
-    library: 'cosmicLib',
-    libraryTarget: 'umd',
-    globalObject: 'typeof self !== \'undefined\' ? self : this'
+    path: __dirname + "/web",
+    filename: "cosmic-lib.js",
+    library: "cosmicLib",
+    libraryTarget: "umd",
+    globalObject: "typeof self !== 'undefined' ? self : this"
   },
-  externals: { 'stellar-sdk': 'stellar-sdk' }
+  externals: { "stellar-sdk": "stellar-sdk" }
 })
 
 const debug = Object.assign({}, config, {
-  entry: './extra/debug.js',
+  entry: "./extra/debug.js",
   output: {
-    path: __dirname + '/web',
-    filename: 'debug.js',
-    library: 'debug',
-    libraryTarget: 'var'
-  },
+    path: __dirname + "/web",
+    filename: "debug.js",
+    library: "debug",
+    libraryTarget: "var"
+  }
 })
 
-module.exports = [ debug, library ]
+module.exports = [debug, library]

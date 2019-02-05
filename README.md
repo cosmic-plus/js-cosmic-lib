@@ -36,13 +36,13 @@ applications** for Stellar.
 
 ### Node / Yarn
 
-* **NPM**: `npm install --save cosmic-lib`
-* **Yarn**: `yarn add cosmic-lib`
+- **NPM**: `npm install --save cosmic-lib`
+- **Yarn**: `yarn add cosmic-lib`
 
 In your script:
 
 ```js
-const cosmicLib = require('cosmic-lib')
+const cosmicLib = require("cosmic-lib")
 const CosmicLink = cosmicLib.CosmicLink
 ```
 
@@ -74,9 +74,23 @@ libraries.
 ### Configuration
 
 ```js
-cosmicLib.config.page = 'https://cosmic.link/'  // Base URI when generating CosmicLinks
-cosmicLib.config.network = 'test'               // 'public' by default
-cosmicLib.config.source = 'tips*cosmic.link'    // Undefined by default
+/**
+ * Fallback network for network-less transaction requests.
+ * @default "public"
+ */
+cosmicLib.config.network = "test"
+
+/**
+ * Fallback account for source-less transaction requests.
+ * @default undefined
+ */
+cosmicLib.config.source = "tips*cosmic.link" // Undefined by default
+
+/**
+ * Base URL to use when building Cosmic Links.
+ * @default "https://cosmic.link/"
+ */
+cosmicLib.config.page = "https://cosmic.link/"
 ```
 
 ### Create CosmicLinks
@@ -96,32 +110,33 @@ const cosmicLink = new CosmicLink({ network: 'test', memo: 'Demo', maxTime: '201
 
 #### From an Existing Transaction
 
-* From a StellarSdk Transaction: `new CosmicLink(transaction, { network: 'public'|'test' })`
-* From an XDR: `new CosmicLink(xdr, { network: 'public'|'test' })`
-* From a CosmicLink URI/query: `new CosmicLink(uri|query)`
-* From a SEP-0007 link: `new CosmicLink(sep7)`
+- From a StellarSdk Transaction: `new CosmicLink(transaction, { network: "public" | "test" })`
+- From an XDR: `new CosmicLink(xdr, { network: "public" | "test" })`
+- From a CosmicLink URI/query: `new CosmicLink(uri|query)`
+- From a SEP-0007 link: `new CosmicLink(sep7)`
 
 ### Edit a CosmicLink
 
-* Change transaction fields: `cosmicLink.setTxFields(parameters)`
-* Add operation: `cosmicLink.addOperation(name, parameters)`
-* Set operation: `cosmicLink.setOperation(index, name, parameters)`
-* Remove operation: `cosmicLink.setOperation(index, null)`
+- Change transaction fields: `cosmicLink.setTxFields(parameters)`
+- Add operation: `cosmicLink.addOperation(name, parameters)`
+- Set operation: `cosmicLink.setOperation(index, name, parameters)`
+- Remove operation: `cosmicLink.setOperation(index, null)`
 
 **Example:**
 
 ```js
-cosmicLink.setTxFields({ memo: 'newMemo', source: null, sequence: null })
-  .addOperation('manageData', { name: 'foo', value: 'bar'})
-  .setOperation(1, 'mergeAccount', { destination: 'in*tempo.eu.com' })
+cosmicLink
+  .setTxFields({ memo: "newMemo", source: null, sequence: null })
+  .addOperation("manageData", { name: "foo", value: "bar" })
+  .setOperation(1, "mergeAccount", { destination: "in*tempo.eu.com" })
   .setOperation(0, null)
 ```
 
 ### Get the Link
 
-* Get the HTML link element: `cosmicLink.htmlLink`
-* Get the URI: `cosmicLink.uri`
-* Get the query: `cosmicLink.query`
+- Get the HTML link element: `cosmicLink.htmlLink`
+- Get the URI: `cosmicLink.uri`
+- Get the query: `cosmicLink.query`
 
 If your webpage contains an HTML link element with `id="cosmiclink"`, it will
 automatically get updated with the latest CosmicLink URI.
@@ -133,11 +148,11 @@ You'll probably want to load the StyleSheet for cosmic-lib first:
 ```js
 await cosmicLib.load.styles()
 ```
+
 Then, you can get the HTML description element at: `cosmicLink.htmlDescription`.
 
 If your webpage contains an HTML element with `id="cosmiclink_description"`,
 it will automatically get updated with the latest CosmicLink description.
-
 
 ### Formats conversion
 
@@ -160,7 +175,7 @@ don't need to use `cosmicLink.lock()` for conversion purpose.
 ```js
 // Lock CosmicLink to a network & a source account to fetch signers data.
 await cosmicLink.lock()
-cosmicLink.sign(...keypair|preimage)
+cosmicLink.sign(...(keypair | preimage))
 await cosmicLink.send()
 ```
 
@@ -172,13 +187,17 @@ await cosmicLink.send()
 Setting the Horizon node for a given network:
 
 ```js
-cosmicLib.config.setupNetwork('test', 'https://horizon.example.org')
+cosmicLib.config.setupNetwork("test", "https://horizon.example.org")
 ```
 
 Adding a custom network:
 
 ```js
-cosmicLib.config.setupNetwork('myCustomNetwork', 'https://horizon.example.org', 'MyCustomPassphrase')
+cosmicLib.config.setupNetwork(
+  "myCustomNetwork",
+  "https://horizon.example.org",
+  "MyCustomPassphrase"
+)
 ```
 
 ## Other Utilities
@@ -187,10 +206,10 @@ cosmic-lib exposes part of its underlying code as additional modules.
 
 ### Resolve
 
-* Get the Server object for a network `cosmicLib.resolve.server('public'|'test'|passphrase)`
-* Resolve a federated address: `await cosmicLib.resolve.address('tips*cosmic.link')`
-* Resolve an account: `await cosmicLib.resolve.account('tips*cosmic.link')`
-* Resolve transaction signers list: `await cosmicLib.resolve.txSignersList(transaction)`
+- Get the Server object for a network `cosmicLib.resolve.server("public" | "test" | passphrase)`
+- Resolve a federated address: `await cosmicLib.resolve.address("tips*cosmic.link")`
+- Resolve an account: `await cosmicLib.resolve.account("tips*cosmic.link")`
+- Resolve transaction signers list: `await cosmicLib.resolve.txSignersList(transaction)`
 
 ### Signers Utils
 
@@ -201,8 +220,8 @@ utilities:
 cosmicLib.signersUtils.extends(transaction)
 console.log(transaction.signers)
 console.log(transaction.signersList)
-transaction.hasSigner('GB...DECX')
-transaction.hasSigned('GB...DECX')
+transaction.hasSigner("GB...DECX")
+transaction.hasSigned("GB...DECX")
 ```
 
 ## Additional ressources
@@ -212,51 +231,50 @@ transaction.hasSigned('GB...DECX')
 cosmic-lib packs more that showed in this brief presentation. Please take a
 look at the manual:
 
- * [Complete documentation](https://cosmic.plus/cosmic-lib/doc/CosmicLink.html)
- * [Cosmic queries specification](https://cosmic.plus/cosmic-lib/doc/tutorial-10-specs-query.html)
- * [Cosmic queries cheatsheet](https://cosmic.plus/cosmic-lib/doc/tutorial-20-cheatsheet-query.html)
- * [Emitting CosmicLinks without this library](https://cosmic.plus/cosmic-lib/doc/tutorial-30-emitting.html)
+- [Complete documentation](https://cosmic.plus/cosmic-lib/doc/CosmicLink.html)
+- [Cosmic queries specification](https://cosmic.plus/cosmic-lib/doc/tutorial-10-specs-query.html)
+- [Cosmic queries cheatsheet](https://cosmic.plus/cosmic-lib/doc/tutorial-20-cheatsheet-query.html)
+- [Emitting CosmicLinks without this library](https://cosmic.plus/cosmic-lib/doc/tutorial-30-emitting.html)
 
 ### Support
 
-* [Galactic Talk](https://galactictalk.org/d/1701-release-cosmic-lib-beta-2)
-* [Telegram](https://t.me/cosmiclink)
-* [Stellar Slack](https://slack.stellar.org/): @Mister.Ticot
+- [Galactic Talk](https://galactictalk.org/d/1701-release-cosmic-lib-beta-2)
+- [Telegram](https://t.me/cosmiclink)
+- [Stellar Slack](https://slack.stellar.org/): @Mister.Ticot
 
 ### Releases
 
 This is the beta-2 release. The codebase is mature and few to no compatibility
 breaks are expected.
 
- * [Task list](https://github.com/cosmic-plus/node-cosmic-lib/blob/master/TODO.md)
- * [GitHub repository](https://github.com/cosmic-plus/node-cosmic-lib)
- * [NPM package](https://npmjs.com/cosmic-lib)
- * [Yarn package](https://yarn.pm/cosmic-lib)
+- [Task list](https://github.com/cosmic-plus/node-cosmic-lib/blob/master/TODO.md)
+- [GitHub repository](https://github.com/cosmic-plus/node-cosmic-lib)
+- [NPM package](https://npmjs.com/cosmic-lib)
+- [Yarn package](https://yarn.pm/cosmic-lib)
 
 ### Related tools
 
- * [Demo page](https://cosmic.plus/cosmic-lib/demo.html)
- * [Debug page](https://cosmic.plus/cosmic-lib/debug.html)
+- [Demo page](https://cosmic.plus/cosmic-lib/demo.html)
+- [Debug page](https://cosmic.plus/cosmic-lib/debug.html)
 
 ### Related articles
 
-* 26 Jul 2018: [Understanding Cosmic
-  Links](https://medium.com/@mister.ticot/understanding-cosmic-links-ee2ace259671)
-* 22 Jan 2018: [A standardized way of handling Stellar
-  transactions](https://steemit.com/crypto/@mister.ticot/a-standardized-way-of-handling-stellar-transactions)
-
+- 23 Jan 2018: [One Year Later: Walletless Stellar Applications Are Finally
+  Coming](https://medium.com/cosmic-plus/one-year-later-walletless-stellar-applications-are-finally-coming-238a8aa368b2)
+- 26 Jul 2018: [Understanding Cosmic
+  Links](https://medium.com/cosmic-plus/understanding-cosmic-links-ee2ace259671)
+- 22 Jan 2018: [A standardized way of handling Stellar
+  transactions](https://medium.com/cosmic-plus/a-standardize-way-of-handling-stellar-transactions-4dd35382eda1)
 
 ### Services that implements cosmic links
 
- * The Cosmic.Link website: <https://cosmic.link>
- * Stellar Authenticator: <https://stellar-authenticator.org>
-
+- The Cosmic.Link website: <https://cosmic.link>
+- Stellar Authenticator: <https://stellar-authenticator.org>
 
 ## Contribute
 
 cosmic-lib is a free software. You are very welcome to contribute by whatever
 means you'd like. Donation are also possible at
 [tips\*cosmic.link](https://cosmic.link/?payment&memo=Donation&destination=tips*cosmic.link&amount=20)
-
 
 ## Thank you :)

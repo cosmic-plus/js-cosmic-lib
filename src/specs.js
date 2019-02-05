@@ -10,8 +10,15 @@ const specs = exports
  * Transaction optional fields.
  */
 specs.transactionOptionalFields = [
-  "network", "horizon", "callback",
-  "memo", "source", "sequence", "minTime", "maxTime", "fee"
+  "network",
+  "horizon",
+  "callback",
+  "memo",
+  "source",
+  "sequence",
+  "minTime",
+  "maxTime",
+  "fee"
 ]
 
 /**
@@ -29,7 +36,6 @@ specs.fieldDesc = {
   maxTime: "Valid until",
   fee: "Fees"
 }
-
 
 /**
  * @param {string} field
@@ -52,7 +58,13 @@ specs.operationMandatoryFields = {
   inflation: [],
   manageData: ["name", "value"],
   manageOffer: ["selling", "buying", "amount", "price"],
-  pathPayment: ["sendAsset", "sendMax", "destination", "destAsset", "destAmount"],
+  pathPayment: [
+    "sendAsset",
+    "sendMax",
+    "destination",
+    "destAsset",
+    "destAmount"
+  ],
   payment: ["asset", "destination", "amount"],
   setOptions: []
 }
@@ -72,9 +84,18 @@ specs.operationOptionalFields = {
   manageOffer: ["offerId", "source"],
   pathPayment: ["path", "source"],
   payment: ["source"],
-  setOptions: ["inflationDest", "clearFlags", "setFlags", "masterWeight",
-    "lowThreshold", "medThreshold", "highThreshold", "signer", "homeDomain",
-    "source"]
+  setOptions: [
+    "inflationDest",
+    "clearFlags",
+    "setFlags",
+    "masterWeight",
+    "lowThreshold",
+    "medThreshold",
+    "highThreshold",
+    "signer",
+    "homeDomain",
+    "source"
+  ]
 }
 
 /**
@@ -82,8 +103,9 @@ specs.operationOptionalFields = {
  */
 specs.operationFields = {}
 for (let field in specs.operationMandatoryFields) {
-  specs.operationFields[field] = specs.operationMandatoryFields[field]
-    .concat(specs.operationOptionalFields[field])
+  specs.operationFields[field] = specs.operationMandatoryFields[field].concat(
+    specs.operationOptionalFields[field]
+  )
 }
 
 /**
@@ -165,23 +187,39 @@ for (let field in specs.fieldType) {
  * transaction.
  * @static
  */
-specs.neutralAccountId = "GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWHF"
+specs.neutralAccountId =
+  "GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWHF"
 
 /**
  * The mandatory fields for each SEP-0007 operation.
  */
 specs.sep7MandatoryFields = {
-  tx: [ "xdr" ],
-  pay: [ "destination" ]
+  tx: ["xdr"],
+  pay: ["destination"]
 }
 
 /**
  * The optional fields for each SEP-0007 operation.
  */
 specs.sep7OptionalFields = {
-  tx: [ "callback", "pubkey", "network_passphrase", "origin_domain", "signature" ],
-  pay: [ "amount", "asset_code", "asset_issuer", "memo", "memo_type", "callback",
-    "network_passphrase", "origin_domain", "signature" ]
+  tx: [
+    "callback",
+    "pubkey",
+    "network_passphrase",
+    "origin_domain",
+    "signature"
+  ],
+  pay: [
+    "amount",
+    "asset_code",
+    "asset_issuer",
+    "memo",
+    "memo_type",
+    "callback",
+    "network_passphrase",
+    "origin_domain",
+    "signature"
+  ]
 }
 
-specs.sep7IgnoredFields = [ "message", "pubkey", "origin_domain", "signature" ]
+specs.sep7IgnoredFields = ["message", "pubkey", "origin_domain", "signature"]

@@ -69,13 +69,23 @@ config.setupNetwork = function (name, horizon, passphrase) {
   config.current.horizon[passphrase] = horizon
 }
 
-config.setupNetwork("public", "https://horizon.stellar.org", StellarSdk.Networks.PUBLIC)
-config.setupNetwork("test", "https://horizon-testnet.stellar.org", StellarSdk.Networks.TESTNET)
+config.setupNetwork(
+  "public",
+  "https://horizon.stellar.org",
+  StellarSdk.Networks.PUBLIC
+)
+config.setupNetwork(
+  "test",
+  "https://horizon-testnet.stellar.org",
+  StellarSdk.Networks.TESTNET
+)
 
 config.aliases = aliases.all
-config.addAliases = (definitions) => aliases.set(config, definitions)
-config.removeAliases = (array) => aliases.remove(config, array)
+config.addAliases = definitions => aliases.set(config, definitions)
+config.removeAliases = array => aliases.remove(config, array)
 
 config.clickHandlers = event.defaultClickHandlers
-config.setClickHandler = (fieldType, callback) => event.setClickHandler(config, fieldType, callback)
-config.clearClickHandler = (fieldType) => event.clearClickHandler(config, fieldType)
+config.setClickHandler = (fieldType, callback) =>
+  event.setClickHandler(config, fieldType, callback)
+config.clearClickHandler = fieldType =>
+  event.clearClickHandler(config, fieldType)
