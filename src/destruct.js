@@ -104,6 +104,10 @@ destruct.assetPath = function (conf, assetPath) {
   return assetPath.map(asset => destruct.asset(asset))
 }
 
+destruct.amount = function (conf, amount) {
+  return amount.replace(/\.?0+$/, "")
+}
+
 destruct.buffer = function (conf, buffer) {
   if (!buffer) return null
   const string = buffer.toString()
