@@ -31,7 +31,7 @@ Optional: &limit={integer}&source={address}
 ...?createAccount&destination={address}&initialBalance={amount}
 Optional: &source={address}
 
-...?selling={assetCode:issuerAddress}&buying={assetCode:issuerAddress}&amount={amount}&price={price|n:d}
+...?createPassiveOffer&selling={assetCode:issuerAddress}&buying={assetCode:issuerAddress}&amount={amount}&price={price|n:d}
 Note: buying or selling can be omitted for XLM
 Optional: &source={address}
 

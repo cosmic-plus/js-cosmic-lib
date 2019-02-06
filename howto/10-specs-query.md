@@ -181,7 +181,7 @@ Optional fields:
 
 Sell `amount` `selling` under `price` `buying`.
 
-> ...?selling={assetCode:issuerAddress}&buying={assetCode:issuerAddress}&amount={amount}&price={price}
+> ...?createPassiveOffer&selling={assetCode:issuerAddress}&buying={assetCode:issuerAddress}&amount={amount}&price={price}
 
 Notes:
 
