@@ -21,14 +21,17 @@
     "eslint": "eslint --fix '**.js' 'src/**.js' 'extra/**.js'",
     "lint": "npm run prettier && npm run eslint",
     "build-js": "webpack -p",
-    "build-css": "autoprefixer-cli -o web/cosmic-lib.css extra/cosmic-lib.css",
+    "build-scss": "node-sass extra/cosmic-lib.scss -o web -t compressed",
+    "build-css": "npm run build-scss && autoprefixer-cli web/cosmic-lib.css",
     "build-doc": "rm -rf web/doc; jsdoc -c jsdoc.json",
     "build-html": "cp -fl extra/*.html web",
     "build-misc": "cp -f AUTHORS LICENSE README.md package-lock.json web",
     "build": "sh setenv.sh -p && for i in js css doc html misc; do npm run build-$i || return; done",
     "rebuild": "npm run get && cp -f web/package-lock.json . && npm ci && npm run build",
     "check": "npm run rebuild && cd web && git status",
-    "watch": "sh setenv.sh -d && npm run build-html && webpack -d --watch",
+    "watch-css": "npm run build-css && node-sass extra/cosmic-lib.scss -wo web",
+    "watch-js": "webpack -d --watch",
+    "watch": "sh setenv.sh -d && npm run build-html && npm run watch-css & npm run watch-js",
     "serve": "npm run watch & cd web && live-server --no-browser"
   },
   "devDependencies": {
@@ -42,6 +45,7 @@
     "jsdoc": "^3.5.5",
     "live-server": "^1.2.1",
     "minami": "^1.2.3",
+    "node-sass": "^4.11.0",
     "prettier": "^1.16.4",
     "webpack": "^4.29.1",
     "webpack-cli": "^3.2.3"
