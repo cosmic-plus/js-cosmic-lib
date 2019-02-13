@@ -4,20 +4,20 @@
 {
   display: inline-block;
   border-top: 0.1em solid transparent;
-  border-bottom: 0.1em solid lightgrey;
+  border-bottom: 0.1em solid #F0F0F0;
   padding: 0 0.1em;
   transition: all 0.2s ease;
 
   &:hover {
     cursor: pointer;
-    border-top: 0.1em solid #F1F1F1;
-    background-color: #F1F1F1;
+    border-top: 0.1em solid whitesmoke;
+    background-color: whitesmoke;
   }
 }
 
-.cosmiclib_ellipsis
+.cosmiclib_tilde
 {
-  color: darkgrey;
+  color: lightgrey;
 }
 
 .cosmiclib_done,

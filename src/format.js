@@ -397,8 +397,8 @@ process.amount = function (conf, amount, significant = 3, max = 7) {
     return html.create(
       "span",
       { className: "cosmiclib_clickable", title: amount },
-      nicified,
-      html.create("span", ".cosmiclib_ellipsis", "...")
+      html.create("span", ".cosmiclib_tilde", "~"),
+      nicified
     )
   }
 }
