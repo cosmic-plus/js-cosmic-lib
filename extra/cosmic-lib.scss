@@ -123,19 +123,26 @@
 
 /* Loading animation */
 
-.cosmiclib_loadingAnim {
+.cosmiclib_loadingAnim,
+.cosmiclib_loader
+{
   display: inline-block;
-  width: 0.7em;
-  height: 0.7em;
-  margin: 0 0.2em;
-  border: 0.2em solid rgba(105,105,105,1);
-  border-top-color: rgba(105,105,105,0.4);
-  border-bottom-color: rgba(105,105,105,0.4);
-  border-radius: 50%;
-  animation: cosmiclib_spin 1s linear infinite;
+  width: 1em;
+  height: 1em;
+  margin: 0 0.1em;
+  vertical-align: middle;
+  border-radius: 100%;
+  background-color: grey;
+
+  animation: animate 1.0s infinite ease-in-out;
 }
 
-@keyframes cosmiclib_spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+@keyframes animate {
+  0% {
+    transform: scale(0);
+  }
+  100% {
+    transform: scale(1.0);
+    opacity: 0;
+  }
 }
