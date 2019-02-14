@@ -119,7 +119,7 @@ format.odesc = function (conf, odesc) {
  * @private
  */
 function operationMeaning (odesc) {
-  let msg
+  let msg = ""
   switch (odesc.type) {
   case "accountMerge":
     return "Merge account inside {destination}"
@@ -156,15 +156,14 @@ function operationMeaning (odesc) {
       return "Delete data entry '{name}'"
     }
   case "manageOffer":
-    if (!odesc.offerId || odesc.offerId === "0") {
-      return "Offer {amount} {selling} at {price} {buying} / unit"
-    } else if (odesc.amount !== "0") {
-      return (
-        "Change offer '{offerId}' to: offer {amount} {selling} at "
-          + "{price} {buying} / unit"
-      )
-    } else {
+    if (odesc.amount === "0") {
       return "Delete offer '{offerId}'"
+    } else {
+      if (odesc.offerId) {
+        msg += "Change offer '{offerId}' to:{newline}"
+      }
+      msg += "Offer {amount} {selling} at {price} {buying} / unit"
+      return msg
     }
   case "pathPayment":
     msg =
@@ -175,7 +174,6 @@ function operationMeaning (odesc) {
   case "payment":
     return "Send {amount} {asset} to {destination}"
   case "setOptions":
-    msg = ""
     if (odesc.inflationDest) {
       msg += "Set inflation destination to: {inflationDest}{newline}"
     }
