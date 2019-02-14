@@ -1,4 +1,4 @@
-Before stable release (planned for this autumn):
+Before stable release (planned for this spring):
 
 - Have a native english speaker check all the texts
 - Fancier signing interface when clicking on cosmicLink.htmlLink
