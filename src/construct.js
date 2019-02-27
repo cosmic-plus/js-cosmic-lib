@@ -64,8 +64,12 @@ construct.operation = async function (conf, odesc) {
  * Returns the TransactionBuilder for `tdesc`.
  */
 async function makeTransactionBuilder (conf, tdesc) {
+  const server = resolve.server(conf)
+  const baseFee = await server.fetchBaseFee()
+
   let txOpts = {}
   if (tdesc.fee) txOpts.fee = tdesc.fee
+  else txOpts.fee = tdesc.operations.length * baseFee
   if (tdesc.memo) txOpts.memo = construct.memo(conf, tdesc.memo)
   if (tdesc.minTime || tdesc.maxTime) {
     txOpts.timebounds = { minTime: 0, maxTime: 0 }
