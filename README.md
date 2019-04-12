@@ -87,7 +87,7 @@ cosmicLib.config.network = "test"
 cosmicLib.config.source = "tips*cosmic.link" // Undefined by default
 
 /**
- * Base URL to use when building Cosmic Links.
+ * Base URL to use when building CosmicLinks.
  * @default "https://cosmic.link/"
  */
 cosmicLib.config.page = "https://cosmic.link/"
@@ -226,6 +226,17 @@ transaction.hasSigned("GB...DECX")
 
 ## Additional ressources
 
+### Release
+
+This is the beta-2 release. The codebase is mature and few to no compatibility
+breaks are expected.
+
+- [GitHub repository](https://github.com/cosmic-plus/node-cosmic-lib)
+- [NPM package](https://npmjs.com/cosmic-lib)
+- [Yarn package](https://yarn.pm/cosmic-lib)
+- [Changelog](https://github.com/cosmic-plus/node-cosmic-lib/blob/master/CHANGELOG.md)
+- [Tasklist](https://github.com/cosmic-plus/node-cosmic-lib/blob/master/TODO.md)
+
 ### Documentation
 
 cosmic-lib packs more that showed in this brief presentation. Please take a
@@ -238,19 +249,11 @@ look at the manual:
 
 ### Support
 
-- [Galactic Talk](https://galactictalk.org/d/1701-release-cosmic-lib-beta-2)
-- [Telegram](https://t.me/cosmiclink)
-- [Stellar Slack](https://slack.stellar.org/): @Mister.Ticot
-
-### Releases
-
-This is the beta-2 release. The codebase is mature and few to no compatibility
-breaks are expected.
-
-- [Task list](https://github.com/cosmic-plus/node-cosmic-lib/blob/master/TODO.md)
-- [GitHub repository](https://github.com/cosmic-plus/node-cosmic-lib)
-- [NPM package](https://npmjs.com/cosmic-lib)
-- [Yarn package](https://yarn.pm/cosmic-lib)
+- [Keybase](https://keybase.io/team/cosmic_plus)
+- [Telegram](https://t.me/cosmic_plus)
+- [Reddit](https://reddit.com/r/cosmic_plus)
+- [Website](https://cosmic.plus)
+- [Mail](mailto:mister.ticot@cosmic.plus)
 
 ### Related tools
 
@@ -266,8 +269,9 @@ breaks are expected.
 - 22 Jan 2018: [A standardized way of handling Stellar
   transactions](https://medium.com/cosmic-plus/a-standardize-way-of-handling-stellar-transactions-4dd35382eda1)
 
-### Services that implements cosmic links
+### Services that uses CosmicLinks
 
+- Equilibre.io portfolio balancer: <https://equilibre.io>
 - The Cosmic.Link website: <https://cosmic.link>
 - Stellar Authenticator: <https://stellar-authenticator.org>
 
