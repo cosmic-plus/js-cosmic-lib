@@ -188,14 +188,29 @@ function updateSignersNode (cosmicLink) {
  */
 action.send = async function (cosmicLink, horizon = cosmicLink.horizon) {
   if (!cosmicLink.locker) throw new Error("cosmicLink is not locked.")
-  const server = resolve.server(cosmicLink, horizon)
 
   if (cosmicLink.transaction.hasSigner(STELLARGUARD_PUBKEY)) {
     return sendToStellarGuard(cosmicLink)
   } else if (cosmicLink.callback) {
     return axios.post(cosmicLink.callback, { xdr: cosmicLink.xdr })
   } else {
-    return server.submitTransaction(cosmicLink.transaction)
+    return sendToHorizon(cosmicLink, horizon)
+  }
+}
+
+async function sendToHorizon (cosmicLink, horizon) {
+  const server = resolve.server(cosmicLink, horizon)
+
+  // Keep connection alive until transaction gets validated or a non-504 error
+  // is returned. 504 error means the transaction is still following the
+  // validation process.
+  // eslint-disable-next-line no-constant-condition
+  while (true) {
+    try {
+      return await server.submitTransaction(cosmicLink.transaction)
+    } catch (error) {
+      if (error.status !== 504) throw error
+    }
   }
 }
 
