@@ -19,8 +19,7 @@
  */
 const check = exports
 
-const helpers = require("@cosmic-plus/jsutils/misc")
-const { isUtf8, isBase64 } = require("@cosmic-plus/jsutils/misc")
+const { shorter, isUtf8, isBase64 } = require("@cosmic-plus/jsutils/misc")
 
 const specs = require("./specs")
 const status = require("./status")
@@ -272,7 +271,7 @@ check.amount = function (conf, amount) {
 
 check.address = function (conf, address) {
   if (address.length !== 56 && !address.match(/.*\*.*\..*/)) {
-    status.error(conf, "Invalid address: " + helpers.shorter(address), "throw")
+    status.error(conf, "Invalid address: " + shorter(address), "throw")
   }
 }
 
