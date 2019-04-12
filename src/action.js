@@ -189,12 +189,17 @@ function updateSignersNode (cosmicLink) {
 action.send = async function (cosmicLink, horizon = cosmicLink.horizon) {
   if (!cosmicLink.locker) throw new Error("cosmicLink is not locked.")
 
-  if (cosmicLink.transaction.hasSigner(STELLARGUARD_PUBKEY)) {
-    return sendToStellarGuard(cosmicLink)
-  } else if (cosmicLink.callback) {
-    return axios.post(cosmicLink.callback, { xdr: cosmicLink.xdr })
-  } else {
-    return sendToHorizon(cosmicLink, horizon)
+  try {
+    if (cosmicLink.transaction.hasSigner(STELLARGUARD_PUBKEY)) {
+      return await sendToStellarGuard(cosmicLink)
+    } else if (cosmicLink.callback) {
+      return await axios.post(cosmicLink.callback, { xdr: cosmicLink.xdr })
+    } else {
+      return await sendToHorizon(cosmicLink, horizon)
+    }
+  } catch (error) {
+    if (error.response) console.error(error.message, error.response)
+    throw error
   }
 }
 
