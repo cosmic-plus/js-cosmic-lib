@@ -132,6 +132,8 @@ process.buffer = function (conf, string) {
 }
 
 process.date = function (conf, string) {
+  /// now + {minutes} syntactic sugar
+  if (string.match(/^\+[0-9]+$/)) return string
   /// Use UTC timezone by default.
   if (string.match(/T[^+]*[0-9]$/)) string += "Z"
   return new Date(string).toISOString()

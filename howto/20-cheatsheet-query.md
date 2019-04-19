@@ -10,8 +10,8 @@
 &callback={url}
 &memo={message}|{memoType}:{memoValue} // memoType = text|id|hash|return
 &source={address}
-&minTime={YYYY-MM-DD}|{YYYY-MM-DDTHH:mm:ssZ}
-&maxTime={YYYY-MM-DD}|{YYYY-MM-DDTHH:mm:ssZ}
+&minTime={YYYY-MM-DD}|{YYYY-MM-DDTHH:mm:ssZ}|+{minutes}
+&maxTime={YYYY-MM-DD}|{YYYY-MM-DDTHH:mm:ssZ}|+{minutes}
 &sequence={integer}
 &fee={integer}
 

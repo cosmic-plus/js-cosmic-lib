@@ -103,10 +103,16 @@ in `js-cosmic-lib`.
 
 #### minTime / maxTime
 
-> &minTime={YYYY-MM-DD}
-> &maxTime={YYYY-MM-DDTHH:mm:ssZ}
+> &minTime|maxTime={YYYY-MM-DD}
+> &minTime|maxTime={YYYY-MM-DDTHH:mm:ssZ}
 
 This is the ISO 8601 date format.
+
+> &minTime|maxTime=+{minutes}
+
+This is a syntactic sugar to define minTime/maxTime relatively to the current
+time, in minutes. This gets immediately computed into the corresponding UTC
+date.
 
 #### sequence
 

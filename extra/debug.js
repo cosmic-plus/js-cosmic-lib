@@ -52,6 +52,7 @@ const tests = [
       send: 1
     }
   ],
+  ["query", "?setOptions&maxTime=+15", { send: 1 }],
   ["query", "?inflation&memo=Hello_world!"],
   ["query", "?inflation&memo=base64:" + bin],
   ["query", "?inflation&memo=id:" + id],

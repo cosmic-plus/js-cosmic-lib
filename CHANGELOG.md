@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+### Added
+
+- Syntactic sugar to define minTime/maxTime relatively to the current time, in
+  minutes. This gets immediately computed into the corresponding UTC date.
+  - In queries: `&maxTime=+10`
+  - In objects: `{ maxTime: "+10" }`.
+
 ### Changed
 
 - Update documentation.
@@ -58,6 +65,6 @@ All notable changes to this project will be documented in this file.
 ## Older Releases
 
 There is no changelog for older releases. Please take a look at the [commit
-history](https://github.com/cosmic-plus/node-ledger-wallet/commits/master).
+history](https://github.com/cosmic-plus/node-cosmic-lib/commits/master).
 
 [stellar-sdk]: https://github.com/stellar/js-stellar-sdk/blob/master/CHANGELOG.md

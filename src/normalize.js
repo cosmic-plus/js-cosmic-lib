@@ -45,6 +45,11 @@ normalize.tdesc = function (conf, tdesc) {
 const dateFields = ["minTime", "maxTime"]
 
 normalize.date = function (conf, date) {
+  if (date.match(/^\+[0-9]+$/)) {
+    const shifted = new Date()
+    shifted.setMinutes(shifted.getMinutes() + +date.substr(1))
+    date = shifted.toISOString().replace(/\.[0-9]{3}/, "")
+  }
   return date
     .replace(/:00\.000/, "")
     .replace(/\.000/, "")
