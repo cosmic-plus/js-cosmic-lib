@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## Unreleased
+
+### Changed
+
+- Update documentation.
+
 ## 1.2.10 - 2019-04-12
 
 ### Changed

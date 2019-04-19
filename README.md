@@ -71,28 +71,6 @@ libraries.
 
 ## Basic Usage
 
-### Configuration
-
-```js
-/**
- * Fallback network for network-less transaction requests.
- * @default "public"
- */
-cosmicLib.config.network = "test"
-
-/**
- * Fallback account for source-less transaction requests.
- * @default undefined
- */
-cosmicLib.config.source = "tips*cosmic.link" // Undefined by default
-
-/**
- * Base URL to use when building CosmicLinks.
- * @default "https://cosmic.link/"
- */
-cosmicLib.config.page = "https://cosmic.link/"
-```
-
 ### Create CosmicLinks
 
 #### New Transaction
@@ -110,8 +88,8 @@ const cosmicLink = new CosmicLink({ network: 'test', memo: 'Demo', maxTime: '201
 
 #### From an Existing Transaction
 
-- From a StellarSdk Transaction: `new CosmicLink(transaction, { network: "public" | "test" })`
-- From an XDR: `new CosmicLink(xdr, { network: "public" | "test" })`
+- From a StellarSdk Transaction: `new CosmicLink(transaction, { network: "public" | "test" | passphrase })`
+- From an XDR: `new CosmicLink(xdr, { network: "public" | "test" | passphrase })`
 - From a CosmicLink URI/query: `new CosmicLink(uri|query)`
 - From a SEP-0007 link: `new CosmicLink(sep7)`
 
@@ -182,6 +160,28 @@ await cosmicLink.send()
 **Note**: the transaction will automatically be transmitted to
 [StellarGuard](https://stellarguard.me) when relevant.
 
+### Global Configuration
+
+```js
+/**
+ * Fallback network for network-less transaction requests.
+ * @default "public"
+ */
+cosmicLib.config.network = "test"
+
+/**
+ * Fallback account for source-less transaction requests.
+ * @default undefined
+ */
+cosmicLib.config.source = "tips*cosmic.link" // Undefined by default
+
+/**
+ * Base URL to use when building CosmicLinks.
+ * @default "https://cosmic.link/"
+ */
+cosmicLib.config.page = "https://cosmic.link/"
+```
+
 ### Advanced configuration
 
 Setting the Horizon node for a given network:
@@ -224,9 +224,7 @@ transaction.hasSigner("GB...DECX")
 transaction.hasSigned("GB...DECX")
 ```
 
-## Additional ressources
-
-### Release
+## Release
 
 This is the beta-2 release. The codebase is mature and few to no compatibility
 breaks are expected.
@@ -236,6 +234,8 @@ breaks are expected.
 - [Yarn package](https://yarn.pm/cosmic-lib)
 - [Changelog](https://github.com/cosmic-plus/node-cosmic-lib/blob/master/CHANGELOG.md)
 - [Tasklist](https://github.com/cosmic-plus/node-cosmic-lib/blob/master/TODO.md)
+
+## Additional ressources
 
 ### Documentation
 

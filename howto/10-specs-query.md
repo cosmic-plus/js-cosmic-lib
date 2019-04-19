@@ -34,13 +34,15 @@ Example:
 
 > ...?xdr={xdr}&{...options}
 
-5 options are possible:
+6 options are possible:
 
-* `&network=[public|test]`: This one is always recommended as *cosmic-lib*
+* `&network=["public"|"test"|{passphrase}]`: This one is always recommended as *cosmic-lib*
   won't automatically detect the valid network for {xdr}, and the default
   network may vary from one service to another.
-* `&horizon=${url}`: Provide a fallback Horizon node for custom network in case
+* `&horizon={url}`: Provide a fallback Horizon node for custom network in case
   the client doesn't know any.
+* `&callback={url}`: Provide the destination at which the signed transaction
+  must be posted.
 * `&stripSignatures`: Remove the signatures when parsing the transaction.
 * `&stripSequence`: Remove sequence number when parsing the transaction. Meaning it
   can be signed anytime in the future, possibly several times. Imply
@@ -64,7 +66,7 @@ optional as the source can be set by the wallet service when signing.
 
 #### network
 
-> &network={public|test}
+> &network=["public"|"test"|{passphrase}]
 
 Tie the transaction to a specific network.
 
@@ -74,6 +76,12 @@ Tie the transaction to a specific network.
 
 Provide a fallback Horizon node for custom network in case the client doesn't
 know any.
+
+#### callback
+
+> &callback={url}
+
+Provide the destination at which the signed transaction must be posted.
 
 #### memo
 
@@ -157,7 +165,7 @@ Optional fields:
 
 Accept `asset`.
 
-> ...?changeTrust&asset={assetCode:issuerAddress}
+> ...?changeTrust&asset={assetCode}:{assetIssuer}
 
 Optional fields:
 
@@ -181,12 +189,12 @@ Optional fields:
 
 Sell `amount` `selling` under `price` `buying`.
 
-> ...?createPassiveOffer&selling={assetCode:issuerAddress}&buying={assetCode:issuerAddress}&amount={amount}&price={price}
+> ...?createPassiveOffer&selling={assetCode}:{assetIssuer}&buying={assetCode}:{assetIssuer}&amount={amount}&price={price}
 
 Notes:
 
 * `selling` or `buying` field may be omitted when it is lumens.
-* `price` can also be a fraction like: 1:2, 1:100, or buyingAmount:sellingAmount
+* `price` can also be a fraction, like `1:2`, `1:100`, or `{buyingAmount}:{sellingAmount}`.
 
 Optional fields:
 
@@ -220,12 +228,12 @@ Optional fields
 
 Sell `amount` `selling` at `price` `buying`.
 
-> ...?manageOffer&selling={assetCode:issuerAddress}&buying={assetCode:issuerAddress}&amount={amount}&price={price}
+> ...?manageOffer&selling={assetCode}:{assetIssuer}&buying={assetCode}:{assetIssuer}&amount={amount}&price={price}
 
 Notes:
 
 * `selling` or `buying` field may be omitted when it is lumens.
-* `price` can also be a fraction like: 1:2, 1:100, or buyingAmount:sellingAmount
+* `price` can also be a fraction, like `1:2`, `1:100`, or `{buyingAmount}:{sellingAmount}`.
 
 Optional fields:
 
@@ -243,8 +251,8 @@ Syntactic sugar for deleting offer:
 Send `destAmount` `destAsset` to `destination` for `sendMax` `sendAsset` using
 the available offers for the conversion.
 
-> ...?pathPayment&destination={address}&destAmount={amount}&destAsset={assetCode:assetIssuer}
-    &sendMax={amount}&sendAsset={assetCode:assetIssuer}
+> ...?pathPayment&destination={address}&destAmount={amount}&destAsset={assetCode}:{assetIssuer}
+    &sendMax={amount}&sendAsset={assetCode}:{assetIssuer}
 
 Notes:
 
@@ -252,10 +260,10 @@ Notes:
 
 Optional fields:
 
-* &path={asset1,asset2,...,assetN} Where each asset is `assetCode:assetIssuer`
-  or `XLM`. Define a conversion path to follow. If neither `destAsset` or
-  `sendAsset` are lumens, you'll likely need `&path=XLM` to set lumens as an
-  intermediate conversion step.
+* &path={asset1},{asset2},...,{assetN} Where each asset is
+  `{assetCode}:{assetIssuer}` or `XLM`. Define a conversion path to follow. If
+  neither `destAsset` or `sendAsset` are lumens, you'll likely need `&path=XLM`
+  to set lumens as an intermediate conversion step.
 * &source={address}
 
 
@@ -267,7 +275,7 @@ Send `amount` `asset` to `destination`.
 
 Optional fields:
 
-* &asset={assetCode:assetIssuer} Define `asset` when it is not lumens.
+* &asset={assetCode}:{assetIssuer} Define `asset` when it is not lumens.
 * &source={address}
 
 
@@ -288,7 +296,7 @@ Optional fields:
 * &lowThreshold={weight} The sum weight for the low threshold.
 * &medThreshold={weight} The sum weight for the medium threshold.
 * &highThreshold={weight} The sum weight for the high threshold.
-* &signer={weight:type:value} If `weight` is set to 0, remove a signer from
+* &signer={weight}:{type}:{value} If `weight` is set to 0, remove a signer from
 `source` account, else edit or add one. `type` can be either:
   * `key`: refer to another account
   * `tx`: refer to a transaction hash
