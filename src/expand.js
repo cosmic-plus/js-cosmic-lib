@@ -9,8 +9,8 @@
  */
 const expand = exports
 
-const Buffer = require("@cosmic-plus/base/buffer")
-const StellarSdk = require("@cosmic-plus/base/stellar-sdk")
+const Buffer = require("@cosmic-plus/base/es5/buffer")
+const StellarSdk = require("@cosmic-plus/base/es5/stellar-sdk")
 
 const decode = require("./decode")
 const destruct = require("./destruct")

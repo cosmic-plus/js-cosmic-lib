@@ -7,7 +7,7 @@
  */
 const normalize = exports
 
-const StellarSdk = require("@cosmic-plus/base/stellar-sdk")
+const StellarSdk = require("@cosmic-plus/base/es5/stellar-sdk")
 
 const config = require("./config")
 const resolve = require("./resolve")

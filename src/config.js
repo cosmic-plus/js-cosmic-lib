@@ -14,9 +14,9 @@
  */
 const config = exports
 
-const aliases = require("@cosmic-plus/base/aliases")
+const aliases = require("@cosmic-plus/base/es5/aliases")
 const env = require("@cosmic-plus/jsutils/es5/env")
-const StellarSdk = require("@cosmic-plus/base/stellar-sdk")
+const StellarSdk = require("@cosmic-plus/base/es5/stellar-sdk")
 
 const event = env.isBrowser && require("./event")
 

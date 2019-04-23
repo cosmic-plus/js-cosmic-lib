@@ -8,9 +8,9 @@
  */
 const construct = exports
 
-const Buffer = require("@cosmic-plus/base/buffer")
+const Buffer = require("@cosmic-plus/base/es5/buffer")
 const misc = require("@cosmic-plus/jsutils/es5/misc")
-const StellarSdk = require("@cosmic-plus/base/stellar-sdk")
+const StellarSdk = require("@cosmic-plus/base/es5/stellar-sdk")
 
 const resolve = require("./resolve")
 const specs = require("./specs")

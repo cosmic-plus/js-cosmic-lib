@@ -11,7 +11,7 @@ const format = exports
 const misc = require("@cosmic-plus/jsutils/es5/misc")
 const nice = require("@cosmic-plus/jsutils/es5/nice")
 const html = require("@cosmic-plus/domutils/es5/html")
-const StellarSdk = require("@cosmic-plus/base/stellar-sdk")
+const StellarSdk = require("@cosmic-plus/base/es5/stellar-sdk")
 
 const config = require("./config")
 const event = require("./event")

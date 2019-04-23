@@ -7,7 +7,7 @@
  */
 const convert = exports
 
-const StellarSdk = require("@cosmic-plus/base/stellar-sdk")
+const StellarSdk = require("@cosmic-plus/base/es5/stellar-sdk")
 
 const construct = require("./construct")
 const decode = require("./decode")

@@ -7,7 +7,7 @@
  */
 const action = exports
 
-const axios = require("@cosmic-plus/base/axios")
+const axios = require("@cosmic-plus/base/es5/axios")
 const env = require("@cosmic-plus/jsutils/es5/env")
 const misc = require("@cosmic-plus/jsutils/es5/misc")
 

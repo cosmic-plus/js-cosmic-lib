@@ -8,7 +8,7 @@
 const resolve = exports
 
 const misc = require("@cosmic-plus/jsutils/es5/misc")
-const StellarSdk = require("@cosmic-plus/base/stellar-sdk")
+const StellarSdk = require("@cosmic-plus/base/es5/stellar-sdk")
 
 const specs = require("./specs")
 const status = require("./status")
