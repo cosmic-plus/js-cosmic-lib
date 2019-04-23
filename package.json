@@ -52,6 +52,7 @@
   },
   "dependencies": {
     "@cosmic-plus/base": "^1.3.6",
-    "@cosmic-plus/jsutils": "^1.15.0"
+    "@cosmic-plus/domutils": "^2.0.0",
+    "@cosmic-plus/jsutils": "^2.0.0"
   }
 }

@@ -10,10 +10,10 @@
  */
 const signersUtils = exports
 
-const resolve = require("./resolve")
-
-const helpers = require("@cosmic-plus/jsutils/misc")
+const misc = require("@cosmic-plus/jsutils/es5/misc")
 const StellarSdk = require("@cosmic-plus/base/stellar-sdk")
+
+const resolve = require("./resolve")
 
 /**
  * **SignersUtils** is a toolbox that aims to ease the handling of
@@ -89,7 +89,7 @@ class SignersUtils {
 
   constructor (conf, transaction) {
     this.signatures = transaction.signatures
-    helpers.setHiddenProperty(this, "_cosmicplus", transaction._cosmicplus)
+    misc.setHiddenProperty(this, "_cosmicplus", transaction._cosmicplus)
   }
 }
 

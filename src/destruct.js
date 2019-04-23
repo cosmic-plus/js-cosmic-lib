@@ -8,7 +8,7 @@
  */
 const destruct = exports
 
-const { isUtf8 } = require("@cosmic-plus/jsutils/misc")
+const misc = require("@cosmic-plus/jsutils/es5/misc")
 
 const normalize = require("./normalize")
 const specs = require("./specs")
@@ -111,7 +111,7 @@ destruct.amount = function (conf, amount) {
 destruct.buffer = function (conf, buffer) {
   if (!buffer) return null
   const string = buffer.toString()
-  if (isUtf8(string)) {
+  if (misc.isUtf8(string)) {
     return { type: "text", value: string }
   } else {
     const value = buffer.toString("base64").replace(/=*$/, "")

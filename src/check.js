@@ -19,7 +19,7 @@
  */
 const check = exports
 
-const { shorter, isUtf8, isBase64 } = require("@cosmic-plus/jsutils/misc")
+const misc = require("@cosmic-plus/jsutils/es5/misc")
 
 const specs = require("./specs")
 const status = require("./status")
@@ -247,7 +247,7 @@ check.integer = function (conf, value, type = "integer", min, max) {
  * @param  {String} value
  */
 check.utf8 = function (conf, value) {
-  if (typeof value !== "string" || !isUtf8(value)) {
+  if (typeof value !== "string" || !misc.isUtf8(value)) {
     status.error(conf, `Invalid UTF8 string: ${value}`, "throw")
   }
 }
@@ -258,7 +258,7 @@ check.utf8 = function (conf, value) {
  * @param  {String} value
  */
 check.base64 = function (conf, value) {
-  if (typeof value !== "string" || !isBase64(value)) {
+  if (typeof value !== "string" || !misc.isBase64(value)) {
     status.error(conf, `Invalid base64 string: ${value}`, "throw")
   }
 }
@@ -271,7 +271,7 @@ check.amount = function (conf, amount) {
 
 check.address = function (conf, address) {
   if (address.length !== 56 && !address.match(/.*\*.*\..*/)) {
-    status.error(conf, "Invalid address: " + shorter(address), "throw")
+    status.error(conf, "Invalid address: " + misc.shorter(address), "throw")
   }
 }
 

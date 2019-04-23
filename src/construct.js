@@ -9,7 +9,7 @@
 const construct = exports
 
 const Buffer = require("@cosmic-plus/base/buffer")
-const helpers = require("@cosmic-plus/jsutils/misc")
+const misc = require("@cosmic-plus/jsutils/es5/misc")
 const StellarSdk = require("@cosmic-plus/base/stellar-sdk")
 
 const resolve = require("./resolve")
@@ -99,7 +99,7 @@ async function makeTransactionBuilder (conf, tdesc) {
           tdesc.memo
           && (tdesc.memo.type !== memoType || tdesc.memo.value !== memoValue)
         ) {
-          const short = helpers.shorter(operation.destination)
+          const short = misc.shorter(operation.destination)
           status.error(
             conf,
             `Memo conflict: ${short} requires to set a memo`,

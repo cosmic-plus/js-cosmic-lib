@@ -7,7 +7,7 @@
  */
 const event = exports
 
-const html = require("@cosmic-plus/jsutils/html")
+const html = require("@cosmic-plus/domutils/es5/html")
 
 const format = require("./format")
 

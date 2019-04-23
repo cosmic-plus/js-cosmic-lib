@@ -1,9 +1,8 @@
 "use strict"
 
-const env = require("@cosmic-plus/jsutils/env")
-const helpers = require("@cosmic-plus/jsutils/misc")
-
-if (env.isBrowser) require("@cosmic-plus/jsutils/polyfill")
+const env = require("@cosmic-plus/jsutils/es5/env")
+const misc = require("@cosmic-plus/jsutils/es5/misc")
+if (env.isBrowser) require("@cosmic-plus/domutils/es5/polyfill")
 
 /**
  * Automatically pass `config` to `module` functions as first argument.
@@ -15,7 +14,7 @@ if (env.isBrowser) require("@cosmic-plus/jsutils/polyfill")
  */
 function exposeModule (module, config = {}) {
   const layer = Object.assign({}, module)
-  helpers.setHiddenProperty(layer, "_config", config)
+  misc.setHiddenProperty(layer, "_config", config)
   for (let name in module) {
     if (typeof module[name] === "function") {
       layer[name] = function (...params) {
@@ -54,7 +53,7 @@ exports.withConfig = function (params) {
       library[module].prototype.__proto__ = library.config
     } else if (this[module]._config) {
       library[module] = Object.create(this[module])
-      helpers.setHiddenProperty(library[module], "_config", library.config)
+      misc.setHiddenProperty(library[module], "_config", library.config)
     }
   }
 
@@ -73,9 +72,8 @@ function exportModule (name, module) {
 // Export modules.
 
 const config = exports.config = require("./config")
-exportModule("check", require("./check"))
 exports.CosmicLink = require("./cosmiclink")
-if (env.isBrowser) exportModule("load", require("./load"))
+if (env.isBrowser) exports.load = require("./load")
 exportModule("resolve", require("./resolve"))
 exportModule("signersUtils", require("./signers-utils"))
 exports.specs = require("./specs")

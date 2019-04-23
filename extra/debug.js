@@ -1,6 +1,6 @@
 "use_strict"
 
-const html = require("@cosmic-plus/jsutils/html")
+const html = require("@cosmic-plus/domutils/es5/html")
 const StellarSdk = window.StellarSdk
 const cosmicLib = window.cosmicLib
 

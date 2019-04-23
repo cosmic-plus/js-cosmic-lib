@@ -2,7 +2,7 @@
   "source": {
     "include": [
       "src",
-      "node_modules/@cosmic-plus/jsutils/load.js",
+      "node_modules/@cosmic-plus/domutils/src/load.js",
       "node_modules/@cosmic-plus/base/aliases.js"
     ]
   },

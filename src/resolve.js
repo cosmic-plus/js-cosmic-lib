@@ -7,7 +7,7 @@
  */
 const resolve = exports
 
-const helpers = require("@cosmic-plus/jsutils/misc")
+const misc = require("@cosmic-plus/jsutils/es5/misc")
 const StellarSdk = require("@cosmic-plus/base/stellar-sdk")
 
 const specs = require("./specs")
@@ -125,7 +125,7 @@ async function addressResolver (conf, address) {
     return account
   } catch (error) {
     console.error(error)
-    status.error(conf, "Can't resolve: " + helpers.shorter(address))
+    status.error(conf, "Can't resolve: " + misc.shorter(address))
     status.fail(conf, "Unresolved address", "throw")
   }
 }
@@ -161,7 +161,7 @@ async function accountResolver (conf, accountId, quietFlag) {
       if (error.response) {
         status.error(
           conf,
-          "Empty account: " + helpers.shorter(accountId),
+          "Empty account: " + misc.shorter(accountId),
           "throw"
         )
       } else {
@@ -337,7 +337,7 @@ function signersTableToSignersList (signersTable) {
  */
 resolve.extra = function (conf, object) {
   if (!object._cosmicplus) {
-    helpers.setHiddenProperty(object, "_cosmicplus", {})
+    misc.setHiddenProperty(object, "_cosmicplus", {})
     if (conf.cache) object._cosmicplus.cache = conf.cache
     else object._cosmicplus.cache = { destination: {}, account: {} }
     object._cosmicplus.network = conf.network

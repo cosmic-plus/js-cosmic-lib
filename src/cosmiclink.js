@@ -1,8 +1,8 @@
 "use_strict"
 
-const env = require("@cosmic-plus/jsutils/env")
-const html = env.isBrowser && require("@cosmic-plus/jsutils/html")
-const helpers = require("@cosmic-plus/jsutils/misc")
+const env = require("@cosmic-plus/jsutils/es5/env")
+const misc = require("@cosmic-plus/jsutils/es5/misc")
+const html = env.isBrowser && require("@cosmic-plus/domutils/es5/html")
 
 const action = require("./action")
 const config = require("./config")
@@ -470,7 +470,7 @@ class CosmicLink {
   }
 
   get htmlNode () {
-    helpers.deprecated(
+    misc.deprecated(
       "2019-03",
       "cosmicLink.htmlNode",
       "cosmicLink.htmlDescription"
@@ -488,7 +488,7 @@ class CosmicLink {
   }
 
   hasSigned (accountId) {
-    helpers.deprecated(
+    misc.deprecated(
       "2019-03",
       "cosmicLink.hasSigned",
       "cosmicLink.transaction.hasSigned"
@@ -496,7 +496,7 @@ class CosmicLink {
     return this.transaction.hasSigned(accountId)
   }
   hasSigner (accountId) {
-    helpers.deprecated(
+    misc.deprecated(
       "2019-03",
       "cosmicLink.hasSigner",
       "cosmicLink.transaction.hasSigner"
@@ -546,7 +546,7 @@ function initCosmicLink (cosmicLink, transaction, options = {}) {
     }
     if (cosmicLink._htmlDescription) {
       if (cosmicLink.htmlDescription.id === "#CL_htmlNode") {
-        helpers.deprecated(
+        misc.deprecated(
           "2019-03",
           "id=\"#CL_htmlNode\"",
           "id=\"cosmiclink_description\""

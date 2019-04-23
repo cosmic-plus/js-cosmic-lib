@@ -8,9 +8,9 @@
  */
 const format = exports
 
-const helpers = require("@cosmic-plus/jsutils/misc")
-const html = require("@cosmic-plus/jsutils/html")
-const nice = require("@cosmic-plus/jsutils/nice")
+const misc = require("@cosmic-plus/jsutils/es5/misc")
+const nice = require("@cosmic-plus/jsutils/es5/nice")
+const html = require("@cosmic-plus/domutils/es5/html")
 const StellarSdk = require("@cosmic-plus/base/stellar-sdk")
 
 const config = require("./config")
@@ -236,7 +236,7 @@ format.signatures = function (conf, transaction) {
 function makeAccountSignersNode (conf, utils, accountId) {
   const accountSignersNode = html.create("div")
 
-  const title = "Signers for " + helpers.shorter(accountId)
+  const title = "Signers for " + misc.shorter(accountId)
   const titleNode = html.create("span", ".cosmiclib_threshold", title)
   const listNode = html.create("ul", ".cosmiclib_signers")
   html.append(accountSignersNode, titleNode, listNode)
@@ -356,7 +356,7 @@ process.address = function (conf, address) {
   const addressNode = html.create(
     "span",
     { title: "Resolving..." },
-    helpers.shorter(address),
+    misc.shorter(address),
     html.create("span", ".cosmiclib_loadingAnim")
   )
 
@@ -440,7 +440,7 @@ process.date = function (conf, date) {
 }
 
 process.hash = function (conf, hash) {
-  return html.create("span", { title: hash }, helpers.shorter(hash))
+  return html.create("span", { title: hash }, misc.shorter(hash))
 }
 
 process.id = process.hash

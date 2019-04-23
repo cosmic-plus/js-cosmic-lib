@@ -8,8 +8,8 @@
 const action = exports
 
 const axios = require("@cosmic-plus/base/axios")
-const env = require("@cosmic-plus/jsutils/env")
-const helpers = require("@cosmic-plus/jsutils/misc")
+const env = require("@cosmic-plus/jsutils/es5/env")
+const misc = require("@cosmic-plus/jsutils/es5/misc")
 
 const convert = require("./convert")
 const format = env.isBrowser && require("./format")
@@ -119,7 +119,7 @@ action.sign = async function (cosmicLink, ...keypairsOrPreimage) {
       const publicKey = keypair.publicKey()
 
       if (!cosmicLink.transaction.hasSigner(publicKey)) {
-        const short = helpers.shorter(publicKey)
+        const short = misc.shorter(publicKey)
         status.error(cosmicLink, "Not a legit signer: " + short)
         allFine = false
         continue
@@ -131,7 +131,7 @@ action.sign = async function (cosmicLink, ...keypairsOrPreimage) {
         transaction.sign(keypair)
       } catch (error) {
         console.error(error)
-        const short = helpers.shorter(publicKey)
+        const short = misc.shorter(publicKey)
         status.error(cosmicLink, "Failed to sign with key: " + short)
         allFine = false
         continue
@@ -142,7 +142,7 @@ action.sign = async function (cosmicLink, ...keypairsOrPreimage) {
       transaction.signHashX(keypairsOrPreimage[0])
     } catch (error) {
       console.error(error)
-      const short = helpers.shorter(keypairsOrPreimage[0])
+      const short = misc.shorter(keypairsOrPreimage[0])
       status.error(
         cosmicLink,
         "Failed to sign with preimage: " + short,

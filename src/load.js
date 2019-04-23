@@ -4,8 +4,8 @@
  */
 
 /**/
-const parent = require("@cosmic-plus/jsutils/load")
-const load = module.exports
+const load = require("@cosmic-plus/domutils/es5/load")
+module.exports = load
 
 /**
  *
@@ -25,13 +25,9 @@ const load = module.exports
  * @param {string} [href='cosmic-lib.css']
  */
 load.styles = async function (
-  conf,
   href = "https://cosmic.plus/cosmic-lib/cosmic-lib.css"
 ) {
-  const promise = parent.css(href)
+  const promise = load.css(href)
   load.styles = () => promise
   return promise
 }
-
-// Make other member compatible with how cosmic-lib exposes modules.
-load.css = (conf, href) => parent.css(href)
