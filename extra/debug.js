@@ -1,6 +1,7 @@
 "use_strict"
 
 const html = require("@cosmic-plus/domutils/es5/html")
+const friendbot = require("@cosmic-plus/base/es5/friendbot")
 const StellarSdk = window.StellarSdk
 const cosmicLib = window.cosmicLib
 
@@ -230,7 +231,21 @@ const CosmicLink = cosmicLib.CosmicLink
 
 const mainNode = html.grab("main")
 
+async function maybeFund () {
+  const neededAccounts = [source, accountMultiSig, account1]
+  neededAccounts.push(
+    "GBE2LAL3CVBJDHCGDH2GEGDEW3C3737BQ5GAQ3TRZU5CHHGDJUKB2K4B"
+  )
+  for (const index in neededAccounts) {
+    const account = neededAccounts[index]
+    if (await cosmicLib.resolve.isAccountEmpty(account)) {
+      await friendbot(account)
+    }
+  }
+}
+
 async function debug () {
+  await maybeFund()
   makeNav()
   if (document.location.hash) {
     const number = +document.location.hash.substr(1)
