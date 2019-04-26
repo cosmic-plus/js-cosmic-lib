@@ -5,8 +5,8 @@
   "author": "MisterTicot",
   "repository": "github:cosmic-plus/node-cosmic-lib",
   "license": "MIT",
-  "browserslist": "last 4 version, > 0.1%",
   "main": "src/index.js",
+  "module": "es5/index.js",
   "keywords": [
     "cryptocurrency",
     "stellar",
@@ -17,10 +17,11 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "get": "git submodule update -i --recursive",
-    "prettier": "prettier --write --no-semi '**.js' 'src/**.js' 'extra/**.js' '**.json' '**.md'",
-    "eslint": "eslint --fix '**.js' 'src/**.js' 'extra/**.js'",
+    "prettier": "prettier --write --no-semi  'extra/*.js' 'src/*.js' '*.js' '*.json' '*.md'",
+    "eslint": "eslint --fix 'extra/*.js' 'src/*.js' '*.js'",
     "lint": "npm run prettier && npm run eslint",
-    "build-js": "webpack -p",
+    "build-es5": "babel --delete-dir-on-start --out-dir es5 src",
+    "build-js": "npm run build-es5 && webpack -p",
     "build-scss": "node-sass extra/cosmic-lib.scss -o web -t compressed",
     "build-css": "npm run build-scss && autoprefixer-cli web/cosmic-lib.css",
     "build-doc": "rm -rf web/doc; jsdoc -c jsdoc.json",
@@ -29,18 +30,18 @@
     "build": "sh setenv.sh -p && for i in js css doc html misc; do npm run build-$i || return; done",
     "rebuild": "npm run get && cp -f web/package-lock.json . && npm ci && npm run build",
     "check": "npm run rebuild && cd web && git status",
-    "watch-css": "npm run build-css && node-sass extra/cosmic-lib.scss -wo web",
-    "watch-js": "webpack -d --watch",
+    "watch-css": "node-sass extra/cosmic-lib.scss -wo web",
+    "watch-es5": "babel --watch --out-dir es5 src",
+    "watch-js": "npm run build-es5 && webpack -d --watch & npm run watch-es5",
     "watch": "sh setenv.sh -d && npm run build-html && npm run watch-css & npm run watch-js",
     "serve": "npm run watch & cd web && live-server --no-browser"
   },
   "devDependencies": {
+    "@babel/cli": "^7.4.3",
     "@babel/core": "^7.4.3",
     "@babel/plugin-transform-runtime": "^7.4.3",
     "@babel/preset-env": "^7.4.3",
-    "@babel/runtime": "^7.4.3",
     "autoprefixer-cli": "^1.0.0",
-    "babel-loader": "^8.0.5",
     "eslint": "^5.16.0",
     "jsdoc": "^3.5.5",
     "live-server": "^1.2.1",
@@ -51,6 +52,7 @@
     "webpack-cli": "^3.3.0"
   },
   "dependencies": {
+    "@babel/runtime": "^7.4.3",
     "@cosmic-plus/base": "^2.0.0",
     "@cosmic-plus/domutils": "^2.0.0",
     "@cosmic-plus/jsutils": "^2.0.0"

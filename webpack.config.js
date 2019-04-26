@@ -1,25 +1,16 @@
 const config = {
   devtool: "source-map",
-  module: {
-    rules: [
-      {
-        test: /\.(js)$/,
-        loader: "babel-loader"
-      }
-    ]
-  }
 }
 
 const library = Object.assign({}, config, {
-  entry: "./src/index.js",
+  entry: "./es5/index.js",
   output: {
     path: __dirname + "/web",
     filename: "cosmic-lib.js",
     library: "cosmicLib",
     libraryTarget: "umd",
     globalObject: "typeof self !== 'undefined' ? self : this"
-  },
-  externals: { "stellar-sdk": "stellar-sdk" }
+  }
 })
 
 const debug = Object.assign({}, config, {
