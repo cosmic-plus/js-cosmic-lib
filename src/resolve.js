@@ -159,11 +159,7 @@ async function accountResolver (conf, accountId, quietFlag) {
       throw error
     } else {
       if (error.response) {
-        status.error(
-          conf,
-          "Empty account: " + misc.shorter(accountId),
-          "throw"
-        )
+        status.error(conf, "Empty account: " + misc.shorter(accountId), "throw")
       } else {
         status.error(
           conf,

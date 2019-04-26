@@ -1,5 +1,5 @@
 const config = {
-  devtool: "source-map",
+  devtool: "source-map"
 }
 
 const library = Object.assign({}, config, {
