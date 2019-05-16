@@ -214,7 +214,7 @@ async function sendToHorizon (cosmicLink, horizon) {
     try {
       return await server.submitTransaction(cosmicLink.transaction)
     } catch (error) {
-      if (error.status !== 504) throw error
+      if (error.response.status !== 504) throw error
     }
   }
 }

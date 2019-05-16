@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## Unreleased
+
+### Fixed
+
+- Fix gateway timeout handling (error 504).
+
 ## 1.4.0 - 2019-04-26
 
 ### Added
