@@ -4,9 +4,20 @@ All notable changes to this project will be documented in this file.
 
 ## 1.5.0 - 2019-06-08
 
+### Added
+
+- Support for the new operation `manageBuyOffer`.
+- New operations `manageSellOffer` & `createPassiveSellOffer` replace
+  `manageOffer` & `createPassiveOffer` in protocol 11 update. For backward
+  compatibility, the old operations are still accepted.
+
 ### Changed
 
 - Update [stellar-sdk] to 1.0.2.
+
+### Fixed
+
+- Fix a rare bug related to offer deletion.
 
 ## 1.4.1 - 2019-05-17
 

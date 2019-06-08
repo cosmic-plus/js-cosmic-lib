@@ -94,18 +94,25 @@ normalize.odesc = function (conf, odesc) {
     if (odesc.authorize === undefined) odesc.authorize = true
     break
   case "createPassiveOffer":
-  case "manageOffer": {
+  case "manageOffer":
+    /// Protocol 11 update renamed those operations.
+    if (odesc.type === "manageOffer") odesc.type = "manageSellOffer"
+    else odesc.type = "createPassiveSellOffer"
+    // Fall Through
+  case "createPassiveSellOffer":
+  case "manageBuyOffer":
+  case "manageSellOffer":
     /// Syntactic sugar for offer deletion
-    if (odesc.offerId && odesc.amount === "0") {
-      if (!odesc.buying)
+    if (odesc.offerId && (odesc.amount === "0" || odesc.buyAmount === "0")) {
+      if (!odesc.buying && !odesc.selling) {
         odesc.buying = new StellarSdk.Asset("XLM", specs.neutralAccountId)
+      }
       if (!odesc.price) odesc.price = "1"
     }
     /// XLM as default asset.
     if (odesc.buying && !odesc.selling) odesc.selling = XLM
     if (odesc.selling && !odesc.buying) odesc.buying = XLM
     break
-  }
   case "manageData":
     /// Delete data entry.
     if (!odesc.value) odesc.value = ""

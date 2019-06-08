@@ -142,7 +142,8 @@ function operationMeaning (odesc) {
   case "createAccount":
     return "Create account {destination} and send {startingBalance} XLM to it"
   case "createPassiveOffer":
-    return "Passive offer of {amount} {selling} at {price} {buying} / unit"
+  case "createPassiveSellOffer":
+    return "Offer to passively sell {amount} {selling} for {price} {buying} / unit"
   case "inflation":
     return "Run inflation"
   case "manageData":
@@ -156,13 +157,20 @@ function operationMeaning (odesc) {
       return "Delete data entry '{name}'"
     }
   case "manageOffer":
-    if (odesc.amount === "0") {
+  case "manageBuyOffer":
+  case "manageSellOffer":
+    if (odesc.amount === "0" || odesc.buyAmount === "0") {
       return "Delete offer '{offerId}'"
     } else {
       if (odesc.offerId) {
-        msg += "Change offer '{offerId}' to:{newline}"
+        msg += "Change offer '{offerId}' into:{newline}"
       }
-      msg += "Offer {amount} {selling} at {price} {buying} / unit"
+      if (odesc.type === "manageBuyOffer") {
+        msg
+            += "Offer to buy {buyAmount} {buying} for {price} {selling} / unit"
+      } else {
+        msg += "Offer to sell {amount} {selling} for {price} {buying} / unit"
+      }
       return msg
     }
   case "pathPayment":

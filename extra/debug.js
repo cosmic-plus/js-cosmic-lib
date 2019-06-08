@@ -86,50 +86,128 @@ const tests = [
   ["query", "?changeTrust&asset=" + asset1 + "&limit=1000"],
   ["title", "Create account"],
   ["query", "?createAccount&destination=" + account1 + "&startingBalance=220"],
-  ["title", "Create passive offer"],
+  ["title", "Create passive offer (backward compatibility)"],
+  ["query", "?createPassiveOffer&buying=" + asset1 + "&amount=100&price=10"],
+  ["title", "Create passive sell offer"],
   [
     "query",
-    "?createPassiveOffer&selling="
+    "?createPassiveSellOffer&buying=" + asset1 + "&amount=100&price=10"
+  ],
+  [
+    "query",
+    "?createPassiveSellOffer&selling=" + asset1 + "&amount=100&price=0.1"
+  ],
+  [
+    "query",
+    "?createPassiveSellOffer&selling="
       + asset2
       + "&buying="
       + asset1
       + "&amount=10&price=50"
   ],
-  ["query", "?createPassiveOffer&buying=" + asset1 + "&amount=100&price=10"],
-  ["query", "?createPassiveOffer&selling=" + asset1 + "&amount=100&price=0.1"],
   ["title", "Inflation"],
   ["query", "?inflation"],
   ["title", "Manage data"],
   ["query", "?manageData&name=mail&value=someone%40example.org"],
   ["query", "?manageData&name=code&value=base64:" + bin],
   ["query", "?manageData&name=address"],
-  ["title", "Manage offer"],
+  ["title", "Manage buy offer"],
+  ["query", "?manageBuyOffer&selling=" + asset1 + "&buyAmount=10&price=0.1"],
   [
     "query",
-    "?manageOffer&selling="
+    "?manageBuyOffer&selling="
+      + asset1
+      + "&buying="
+      + asset2
+      + "&buyAmount=500&price=1:50",
+    {
+      loopbackQuery:
+        "?manageBuyOffer&selling=ETH:GBDEVU63Y6NTHJQQZIKVTC23NWLQVP3WJ2RI2OTSJTNYOIGICST6DUXR&buying=CNY:admin*ripplefox.com&buyAmount=500&price=0.02"
+    }
+  ],
+  [
+    "query",
+    "?manageBuyOffer&selling="
+      + asset2
+      + "&buying="
+      + asset1
+      + "&buyAmount=500&price=1:25&offerId=12345",
+    {
+      loopbackQuery:
+        "?manageBuyOffer&selling=CNY:admin*ripplefox.com&buying=ETH:GBDEVU63Y6NTHJQQZIKVTC23NWLQVP3WJ2RI2OTSJTNYOIGICST6DUXR&buyAmount=500&price=0.04&offerId=12345"
+    }
+  ],
+  [
+    "query",
+    "?manageBuyOffer&buyAmount=0&offerId=12345",
+    {
+      loopbackQuery:
+        "?manageBuyOffer&buying=XLM:GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWHF&buyAmount=0&price=1&offerId=12345"
+    }
+  ],
+  ["title", "Manage offer (backward compatibility)"],
+  ["query", "?manageOffer&selling=" + asset1 + "&amount=10&price=0.1"],
+  ["title", "Manage sell offer"],
+  ["query", "?manageSellOffer&selling=" + asset1 + "&amount=10&price=0.1"],
+  [
+    "query",
+    "?manageSellOffer&selling="
       + asset1
       + "&buying="
       + asset2
       + "&amount=500&price=1:50",
     {
       loopbackQuery:
-        "?manageOffer&selling=ETH:GBDEVU63Y6NTHJQQZIKVTC23NWLQVP3WJ2RI2OTSJTNYOIGICST6DUXR&buying=CNY:admin*ripplefox.com&amount=500&price=0.02"
+        "?manageSellOffer&selling=ETH:GBDEVU63Y6NTHJQQZIKVTC23NWLQVP3WJ2RI2OTSJTNYOIGICST6DUXR&buying=CNY:admin*ripplefox.com&amount=500&price=0.02"
     }
   ],
   [
     "query",
-    "?manageOffer&selling="
+    "?manageSellOffer&selling="
       + asset2
       + "&buying="
       + asset1
       + "&amount=500&price=1:25&offerId=12345",
     {
       loopbackQuery:
-        "?manageOffer&selling=CNY:admin*ripplefox.com&buying=ETH:GBDEVU63Y6NTHJQQZIKVTC23NWLQVP3WJ2RI2OTSJTNYOIGICST6DUXR&amount=500&price=0.04&offerId=12345"
+        "?manageSellOffer&selling=CNY:admin*ripplefox.com&buying=ETH:GBDEVU63Y6NTHJQQZIKVTC23NWLQVP3WJ2RI2OTSJTNYOIGICST6DUXR&amount=500&price=0.04&offerId=12345"
     }
   ],
-  ["query", "?manageOffer&selling=" + asset1 + "&amount=10&price=0.1"],
-  ["query", "?manageOffer&amount=0&offerId=12345"],
+  [
+    "query",
+    "?manageSellOffer&amount=0&offerId=12345",
+    {
+      loopbackQuery:
+        "?manageSellOffer&buying=XLM:GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWHF&amount=0&price=1&offerId=12345"
+    }
+  ],
+  ["title", "Manage sell offer"],
+  ["query", "?manageSellOffer&selling=" + asset1 + "&amount=10&price=0.1"],
+  [
+    "query",
+    "?manageSellOffer&selling="
+      + asset1
+      + "&buying="
+      + asset2
+      + "&amount=500&price=1:50",
+    {
+      loopbackQuery:
+        "?manageSellOffer&selling=ETH:GBDEVU63Y6NTHJQQZIKVTC23NWLQVP3WJ2RI2OTSJTNYOIGICST6DUXR&buying=CNY:admin*ripplefox.com&amount=500&price=0.02"
+    }
+  ],
+  [
+    "query",
+    "?manageSellOffer&selling="
+      + asset2
+      + "&buying="
+      + asset1
+      + "&amount=500&price=1:25&offerId=12345",
+    {
+      loopbackQuery:
+        "?manageSellOffer&selling=CNY:admin*ripplefox.com&buying=ETH:GBDEVU63Y6NTHJQQZIKVTC23NWLQVP3WJ2RI2OTSJTNYOIGICST6DUXR&amount=500&price=0.04&offerId=12345"
+    }
+  ],
+  ["query", "?manageSellOffer&amount=0&offerId=12345"],
   ["title", "Path Payment"],
   [
     "query",

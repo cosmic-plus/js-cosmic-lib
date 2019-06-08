@@ -32,8 +32,9 @@ Optional: &limit={integer}&source={address}
 ...?createAccount&destination={address}&initialBalance={amount}
 Optional: &source={address}
 
-...?createPassiveOffer&selling={assetCode}:{assetIssuer}&buying={assetCode}:{assetIssuer}&amount={amount}&price={price}|{buying}:{selling}
-Note: buying or selling can be omitted for XLM
+...?createPassiveSellOffer&selling={assetCode}:{assetIssuer}&buying={assetCode}:{assetIssuer}&amount={amount}&price={price}|{buying}:{selling}
+Note: buying or selling can be omitted for XLM.
+Note: createPassiveOffer is still supported for backward compatibility.
 Optional: &source={address}
 
 ...?inflation
@@ -42,14 +43,20 @@ Optional: &source={address}
 ...?manageData&name={string}
 Optional: &value={string}&source={address}
 
-...?manageOffer&selling={assetCode}:{assetIssuer}&buying={assetCode}:{assetIssuer}&amount={amount}&price={price}|{buying}:{selling}
-Note: buying or selling can be omitted for XLM
+...?manageBuyOffer&selling={assetCode}:{assetIssuer}&buying={assetCode}:{assetIssuer}&buyAmount={amount}&price={price}|{selling}:{buying}
+Note: buying or selling can be omitted for XLM.
 Optional: &offerId={integer}&source={address}
-Delete offer: ...?manageOffer&offerId={integer}&amount=0
+Delete offer: ...?manageBuyOffer&offerId={integer}&amount=0
+
+...?manageSellOffer&selling={assetCode}:{assetIssuer}&buying={assetCode}:{assetIssuer}&amount={amount}&price={price}|{buying}:{selling}
+Note: buying or selling can be omitted for XLM.
+Note: manageOffer is still supported for backward compatibility.
+Optional: &offerId={integer}&source={address}
+Delete offer: ...?manageSellOffer&offerId={integer}&amount=0
 
 ...?pathPayment&destination={address}&destAmount={amount}&destAsset={assetCode:assetIssuer}
     &sendMax={amount}&sendAsset={assetCode}:{assetIssuer}
-Note: destAsset or sendAsset can be omitted for XLM
+Note: destAsset or sendAsset can be omitted for XLM.
 Optional: &path={asset1,asset2,...,assetN}&source={address}
 
 ...?payment&amount={amount}&destination={address}
@@ -59,5 +66,5 @@ Optional: &asset={assetCode}:{assetIssuer}&source={address}
 Optional: &inflationDest={address}&clearFlags={integer}&setFlags={integer}&masterWeight={weight}
     &lowThreshold={weight}&midThreshold={weight}&highThreshold={weight}&signer={weight}:{type}:{value}
     &homeDomain={string}&source={address}
-Note: signer type can be `key`, `tx` or `hash`
+Note: signer type can be `key`, `tx` or `hash`.
 ```

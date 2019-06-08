@@ -191,16 +191,18 @@ Optional fields:
 * &source={address}
 
 
-#### createPassiveOffer
+#### createPassiveSellOffer
 
-Sell `amount` `selling` under `price` `buying`.
+Offer to passively sell `amount` `selling` for `price` `buying` / unit.
 
-> ...?createPassiveOffer&selling={assetCode}:{assetIssuer}&buying={assetCode}:{assetIssuer}&amount={amount}&price={price}
+> ...?createPassiveSellOffer&selling={assetCode}:{assetIssuer}&buying={assetCode}:{assetIssuer}&amount={amount}&price={price}
 
 Notes:
 
+* Before protocol 11 update, this operation was named `createPassiveOffer`. The
+  old name is still supported for backward compatibility.
 * `selling` or `buying` field may be omitted when it is lumens.
-* `price` can also be a fraction, like `1:2`, `1:100`, or `{buyingAmount}:{sellingAmount}`.
+* `price` can also be a fraction in the form `{1:2}` or `{sellAmount}:{buyAmount}`.
 
 Optional fields:
 
@@ -230,16 +232,16 @@ Optional fields
 * &source={address}
 
 
-#### manageOffer
+#### manageBuyOffer
 
-Sell `amount` `selling` at `price` `buying`.
+Offer to buy `buyAmount` `buying` for `price` `selling` / unit.
 
-> ...?manageOffer&selling={assetCode}:{assetIssuer}&buying={assetCode}:{assetIssuer}&amount={amount}&price={price}
+> ...?manageOffer&selling={assetCode}:{assetIssuer}&buying={assetCode}:{assetIssuer}&buyAmount={amount}&price={price}
 
 Notes:
 
 * `selling` or `buying` field may be omitted when it is lumens.
-* `price` can also be a fraction, like `1:2`, `1:100`, or `{buyingAmount}:{sellingAmount}`.
+* `price` can also be a fraction in the form `{1:2}` or `{sellAmount}:{buyAmount}`.
 
 Optional fields:
 
@@ -249,7 +251,30 @@ Optional fields:
 
 Syntactic sugar for deleting offer:
 
-> ...?manageOffer&offerId={integer}&amount=0
+> ...?manageBuyOffer&offerId={integer}&amount=0
+
+#### manageSellOffer
+
+Offer to sell `amount` `selling` for `price` `buying` / unit.
+
+> ...?manageSellOffer&selling={assetCode}:{assetIssuer}&buying={assetCode}:{assetIssuer}&amount={amount}&price={price}
+
+Notes:
+
+* Before protocol 11 update, this operation was named `manageOffer`. The old
+  name is still supported for backward compatibility.
+* `selling` or `buying` field may be omitted when it is lumens.
+* `price` can also be a fraction in the form `{1:2}` or `{sellAmount}:{buyAmount}`.
+
+Optional fields:
+
+* &offerId={integer} Allow to edit an existing offer. Will delete it if
+`amount` is set to 0.
+* &source={address}
+
+Syntactic sugar for deleting offer:
+
+> ...?manageSellOffer&offerId={integer}&amount=0
 
 
 #### pathPayment
