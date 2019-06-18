@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## Unreleased
+
+### Changed
+
+- Update [stellar-sdk] to 1.0.3. (Get rid of a vulnerability in axios)
+
 ## 1.5.0 - 2019-06-08
 
 ### Added
