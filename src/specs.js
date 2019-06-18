@@ -211,22 +211,24 @@ specs.sep7MandatoryFields = {
 specs.sep7OptionalFields = {
   tx: [
     "callback",
-    "pubkey",
+    "msg",
     "network_passphrase",
     "origin_domain",
+    "pubkey",
     "signature"
   ],
   pay: [
     "amount",
     "asset_code",
     "asset_issuer",
+    "callback",
     "memo",
     "memo_type",
-    "callback",
+    "msg",
     "network_passphrase",
     "origin_domain",
     "signature"
   ]
 }
 
-specs.sep7IgnoredFields = ["message", "pubkey", "origin_domain", "signature"]
+specs.sep7IgnoredFields = ["msg", "pubkey", "origin_domain", "signature"]

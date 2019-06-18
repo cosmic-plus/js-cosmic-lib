@@ -8,6 +8,14 @@ All notable changes to this project will be documented in this file.
 
 - Update [stellar-sdk] to 1.0.3. (Get rid of a vulnerability in axios)
 
+### Fixed
+
+- Ignore SEP-0007 `msg` field as intended, instead of raising an error. This
+  field is not supported by cosmic-lib because we don't want to display a
+  message from untrusted sources into trusted interfaces, and because URL length
+  is limited. Transaction request emitter should make sure the purpose of the
+  transaction is clear before issuing a transaction request.
+
 ## 1.5.0 - 2019-06-08
 
 ### Added
