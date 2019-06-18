@@ -15,6 +15,8 @@ All notable changes to this project will be documented in this file.
   message from untrusted sources into trusted interfaces, and because URL length
   is limited. Transaction request emitter should make sure the purpose of the
   transaction is clear before issuing a transaction request.
+- Decode the '+' character as a space for string parameters (text memo, network
+  passphrase, text data in 'manageData' operation).
 
 ## 1.5.0 - 2019-06-08
 

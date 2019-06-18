@@ -123,11 +123,13 @@ process.buffer = function (conf, string) {
   const matched = string.match(/(^[^:]*):/)
   const type = matched && matched[1]
   switch (type) {
-  case "text":
   case "base64":
     return { type: type, value: string.substr(type.length + 1) }
+  case "text":
+    string = string.substr(type.length + 1)
+    // Fallthrough
   default:
-    return { type: "text", value: string }
+    return { type: "text", value: process.string(conf, string) }
   }
 }
 
@@ -143,14 +145,16 @@ process.memo = function (conf, string) {
   const matched = string.match(/(^[^:]*):/)
   const type = matched && matched[1]
   switch (type) {
-  case "text":
   case "base64":
   case "id":
   case "hash":
   case "return":
     return { type: type, value: string.substr(type.length + 1) }
+  case "text":
+    string = string.substr(type.length + 1)
+    // Fallthrough
   default:
-    return { type: "text", value: string }
+    return { type: "text", value: process.string(conf, string) }
   }
 }
 
@@ -166,6 +170,12 @@ process.signer = function (conf, signer) {
   const object = { weight: temp[0], type: temp[1], value: temp[2] }
   return object
 }
+
+process.string = function (conf, string) {
+  return string.replace(/\+/g, " ")
+}
+
+process.network = process.string
 
 /******************************************************************************/
 
