@@ -2,7 +2,7 @@
 /** Link general syntax **/
 ...?{operation}&{...transaction_or_operation_fields}
 ...?transaction&{...transaction_fields}&operation={operation}&{...operation_fields}&{...more_operations}
-...?xdr={xdr}&network={public|test}&{stripSource|stripSequence|stripSignatures}
+...?xdr={xdr}&network={"public"|"test"|passphrase}&[stripSource|stripSequence|stripSignatures]&[callback={url}]&[horizon={url}]
 
 /** Transaction optional fields **/
 &network="public"|"test"|{passphrase}
