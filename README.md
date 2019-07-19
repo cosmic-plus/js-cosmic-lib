@@ -62,8 +62,8 @@ In your HTML pages:
 ### Web
 
 ```HTML
-  <script src="https://cosmic.plus/stellar-sdk/stellar-sdk.min.js"></script>
-  <script src="https://cosmic.plus/web-cosmic-lib/cosmic-lib.js"></script>
+  <script src="https://cdn.cosmic.plus/stellar-sdk"></script>
+  <script src="https://cdn.cosmic.plus/cosmic-lib@1.x"></script>
 ```
 
 **Note**: For production release it is advised to serve your own copy of the
@@ -229,11 +229,11 @@ transaction.hasSigned("GB...DECX")
 This is the beta-2 release. The codebase is mature and few to no compatibility
 breaks are expected.
 
-- [GitHub repository](https://github.com/cosmic-plus/node-cosmic-lib)
+- [GitHub repository](https://github.com/cosmic-plus/js-cosmic-lib)
 - [NPM package](https://npmjs.com/cosmic-lib)
 - [Yarn package](https://yarn.pm/cosmic-lib)
-- [Changelog](https://github.com/cosmic-plus/node-cosmic-lib/blob/master/CHANGELOG.md)
-- [Tasklist](https://github.com/cosmic-plus/node-cosmic-lib/blob/master/TODO.md)
+- [Changelog](https://github.com/cosmic-plus/js-cosmic-lib/blob/master/CHANGELOG.md)
+- [Tasklist](https://github.com/cosmic-plus/js-cosmic-lib/blob/master/TODO.md)
 
 ## Additional ressources
 
@@ -242,10 +242,10 @@ breaks are expected.
 cosmic-lib packs more that showed in this brief presentation. Please take a
 look at the manual:
 
-- [Complete documentation](https://cosmic.plus/cosmic-lib/doc/CosmicLink.html)
-- [Cosmic queries specification](https://cosmic.plus/cosmic-lib/doc/tutorial-10-specs-query.html)
-- [Cosmic queries cheatsheet](https://cosmic.plus/cosmic-lib/doc/tutorial-20-cheatsheet-query.html)
-- [Emitting CosmicLinks without this library](https://cosmic.plus/cosmic-lib/doc/tutorial-30-emitting.html)
+- [Complete documentation](https://cosmic.plus/js-cosmic-lib/web/doc/CosmicLink.html)
+- [Cosmic queries specification](https://cosmic.plus/js-cosmic-lib/web/doc/tutorial-10-specs-query.html)
+- [Cosmic queries cheatsheet](https://cosmic.plus/js-cosmic-lib/web/doc/tutorial-20-cheatsheet-query.html)
+- [Emitting CosmicLinks without this library](https://cosmic.plus/js-cosmic-lib/web/doc/tutorial-30-emitting.html)
 
 ### Support
 
@@ -257,8 +257,8 @@ look at the manual:
 
 ### Related tools
 
-- [Demo page](https://cosmic.plus/cosmic-lib/demo.html)
-- [Debug page](https://cosmic.plus/cosmic-lib/debug.html)
+- [Demo page](https://cosmic.plus/js-cosmic-lib/web/demo.html)
+- [Debug page](https://cosmic.plus/js-cosmic-lib/web/debug.html)
 
 ### Related articles
 
