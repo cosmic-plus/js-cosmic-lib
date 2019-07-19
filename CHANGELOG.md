@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.5.2 - 2019-07-19
+
+### Changed
+
+- Update [stellar-sdk] to 2.0.1.
+
 ## 1.5.1 - 2019-06-18
 
 ### Changed
