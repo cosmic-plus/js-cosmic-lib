@@ -21,9 +21,9 @@ All notable changes to this project will be documented in this file.
   field is not supported by cosmic-lib because we don't want to display a
   message from untrusted sources into trusted interfaces, and because URL length
   is limited. Transaction request emitter should make sure the purpose of the
-  transaction is clear before issuing a transaction request.
+  transaction is clear before issuing a transaction request. - Thanks [@tyvdh]
 - Decode the '+' character as a space for string parameters (text memo, network
-  passphrase, text data in 'manageData' operation).
+  passphrase, text data in 'manageData' operation). - Thanks [@tyvdh]
 
 ## 1.5.0 - 2019-06-08
 
@@ -117,6 +117,7 @@ All notable changes to this project will be documented in this file.
 ## Older Releases
 
 There is no changelog for older releases. Please take a look at the [commit
-history](https://github.com/cosmic-plus/node-cosmic-lib/commits/master).
+history](https://github.com/cosmic-plus/js-cosmic-lib/commits/master).
 
 [stellar-sdk]: https://github.com/stellar/js-stellar-sdk/blob/master/CHANGELOG.md
+[@tyvdh]: https://github.com/tyvdh
