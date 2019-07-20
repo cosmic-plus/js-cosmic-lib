@@ -9,11 +9,14 @@
   "main": "src/index.js",
   "module": "es5/index.js",
   "keywords": [
-    "cryptocurrency",
     "stellar",
-    "cosmic",
-    "link",
-    "library"
+    "CosmicLink",
+    "SEP-0007",
+    "transaction",
+    "request",
+    "QRcode",
+    "browser",
+    "node"
   ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
