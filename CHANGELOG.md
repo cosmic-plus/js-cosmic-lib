@@ -13,7 +13,7 @@ All notable changes to this project will be documented in this file.
 ### Changed
 
 - Update [stellar-sdk] to 2.0.1.
-- Update code & documentation to use the new https://cdn.cosmic.plus.
+- Switch to new cosmic.plus paths (cdn.cosmic.plus, new repository name).
 
 ## 1.5.1 - 2019-06-18
 
