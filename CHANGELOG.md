@@ -12,7 +12,7 @@ All notable changes to this project will be documented in this file.
 
 ## 1.5.3 - 2019-07-20
 
-### Changed.
+### Changed
 
 - Improve discoverability (add badges, keywords, set homepage...).
 
