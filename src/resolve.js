@@ -29,9 +29,12 @@ resolve.server = function (
 ) {
   if (!horizon) horizon = resolve.horizon(conf, network)
   if (!horizon) throw new Error("No horizon node defined for selected network.")
-  if (!conf.current.server[horizon])
+  if (!conf.current.server[horizon]) {
     conf.current.server[horizon] = new StellarSdk.Server(horizon)
-  return conf.current.server[horizon]
+  }
+  // [WORKAROUND] https://github.com/stellar/js-stellar-sdk/issues/379
+  // return conf.current.server[horizon]
+  return new StellarSdk.Server(horizon)
 }
 
 /**

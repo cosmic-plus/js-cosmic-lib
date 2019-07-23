@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.5.4 - 2019-07-23
+
+### Fixed
+
+- Workaround a regression in [stellar-sdk] 2.0.1 that causes CallBuilder to
+  fetch the wrong URL when several of them are created from the same Server
+  instance. ([#379](https://github.com/stellar/js-stellar-sdk/issues/379)).
+
 ## 1.5.3 - 2019-07-20
 
 ### Changed.
