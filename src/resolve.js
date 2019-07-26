@@ -32,9 +32,7 @@ resolve.server = function (
   if (!conf.current.server[horizon]) {
     conf.current.server[horizon] = new StellarSdk.Server(horizon)
   }
-  // [WORKAROUND] https://github.com/stellar/js-stellar-sdk/issues/379
-  // return conf.current.server[horizon]
-  return new StellarSdk.Server(horizon)
+  return conf.current.server[horizon]
 }
 
 /**
