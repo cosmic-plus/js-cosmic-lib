@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.5.5 - 2019-07-26
+
+### Changed
+
+- Automate release procedure.
+
 ## 1.5.4 - 2019-07-23
 
 ### Fixed
