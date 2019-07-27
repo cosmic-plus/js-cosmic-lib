@@ -67,5 +67,3 @@ Those helpers require a POSIX shell.
 - `npm run serve`: Run a live server that updates after each change.
 - `version={semver} npm run make-release`: Build & locally commit release.
 - `version={semver} npm run publish-release`: Check, tag, push & publish release.
-
-

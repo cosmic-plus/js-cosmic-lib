@@ -1,6 +1,6 @@
 {
   "name": "cosmic-lib",
-  "version": "1.5.4",
+  "version": "1.5.5",
   "description": "A JavaScript implementation of the CosmicLink protocol for Stellar",
   "author": "MisterTicot",
   "homepage": "https://cosmic.plus/#view:js-cosmic-lib",
@@ -30,10 +30,10 @@
     "build-css": "npm run build-scss && autoprefixer-cli web/cosmic-lib.css",
     "build-doc": "rm -rf web/doc; jsdoc -c jsdoc.json",
     "build-html": "cp -fl extra/*.html web",
-    "build-misc": "cp -f AUTHORS LICENSE README.md package-lock.json web",
+    "build-misc": "cp -f *.md package-lock.json web",
     "build": "sh setenv.sh -p && for i in js css doc html misc; do npm run build-$i || return; done",
     "rebuild": "npm run get && cp -f web/package-lock.json . && npm ci && npm run build",
-    "check": "npm run rebuild && cd web && git status",
+    "check": "npm run rebuild && cd web && git status && [ ! \"$(git status -z)\" ]",
     "watch-css": "node-sass extra/cosmic-lib.scss -wo web",
     "watch-es5": "babel --watch --out-dir es5 src",
     "watch-js": "npm run build-es5 && webpack -d --watch & npm run watch-es5",
@@ -63,12 +63,12 @@
     "minami": "^1.2.3",
     "node-sass": "^4.12.0",
     "prettier": "^1.18.2",
-    "webpack": "^4.36.1",
+    "webpack": "^4.38.0",
     "webpack-cli": "^3.3.6"
   },
   "dependencies": {
     "@babel/runtime": "^7.5.5",
-    "@cosmic-plus/base": "^2.0.4",
+    "@cosmic-plus/base": "^2.0.5",
     "@cosmic-plus/domutils": "^2.0.2",
     "@cosmic-plus/jsutils": "^2.0.2",
     "stellar-sdk": "^2.1.1"
