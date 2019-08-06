@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## Unreleased
+
+### Added
+
+- Add new method `cosmicLink.insertOperation(index, type, params)`.
+
 ## 1.5.5 - 2019-07-26
 
 ### Changed

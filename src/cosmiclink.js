@@ -20,7 +20,7 @@ const status = require("./status")
  * | [query]{@link CosmicLink#query}             |[network]{@link CosmicLink#network}  |await [lock]{@link CosmicLink#lock}             |[setTxFields]{@link CosmicLink#setTxFields}   |[htmlLink]{@link CosmicLink#htmlLink}
  * | [tdesc]{@link CosmicLink#tdesc}             |[horizon]{@link CosmicLink#horizon}  |[sign]{@link CosmicLink#sign}                   |[addOperation]{@link CosmicLink#addOperation} |
  * | [json]{@link CosmicLink#json}               |[callback]{@link CosmicLink#callback}|await [send]{@link CosmicLink#send}             |[setOperation]{@link CosmicLink#setOperation}
- * | [transaction]{@link CosmicLink#transaction} |[source]{@link CosmicLink#source}    |
+ * | [transaction]{@link CosmicLink#transaction} |[source]{@link CosmicLink#source}    |                                                |[insertOperation]{@link CosmicLink#insertOperation}
  * | [xdr]{@link CosmicLink#xdr}                 |[status]{@link CosmicLink#status}    |
  * | [sep7]{@link CosmicLink#sep7}               |[errors]{@link CosmicLink#errors}    |
  * |                                             |[locker]{@link CosmicLink#locker}
@@ -395,6 +395,33 @@ class CosmicLink {
   }
 
   /**
+   * Insert an operation at **index**. **params** should follow the
+   * Tdesc format, but fields can be written using query or StellarSdk format
+   * as well.
+   *
+   * @example
+   * cosmicLink.insertOperation(0, 'changeTrust', {
+   *   asset: 'CNY:admin*ripplefox'
+   * })
+   *
+   * @param {integer} index The operation index.
+   * @param {string} type  The operation type.
+   * @param {params} params The operation parameters.
+   * @return {CosmicLink}
+   */
+  insertOperation (index, type, params) {
+    checkLock(this)
+    if (index > !this.tdesc.operations.length) {
+      throw new Error(`Can't insert opereration at position ${index}: there are only ${this.tdesc.operations.length} operations`)
+    }
+
+    const odesc = Object.assign({ type }, params)
+    this.tdesc.operations.splice(index, 0, odesc)
+    this.parse(this.tdesc)
+    return this
+  }
+
+  /**
    * Set/remove one of the CosmicLink operations. **params** should follow the
    * Tdesc format, but fields can be written using query or StellarSdk format
    * as well. If **type** is set to `null`, the operation at **index**
@@ -407,7 +434,7 @@ class CosmicLink {
    * cosmicLink.setOperation(2, null)
    *
    * @param {integer} index The operation index.
-   * @param {type} type  The operation type.
+   * @param {string} type  The operation type.
    * @param {params} params The operation parameters.
    * @return {CosmicLink}
    */
