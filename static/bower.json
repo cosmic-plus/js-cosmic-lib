@@ -1,0 +1,14 @@
+{
+  "name": "cosmic-lib",
+  "description": "A JavaScript implementation of the CosmicLink protocol for Stellar",
+  "authors": [ "MisterTicot" ],
+  "homepage": "https://cosmic.plus/#view:js-cosmic-lib",
+  "licence": "MIT",
+  "keywords": [ "stellar", "CosmicLink", "SEP-0007", "transaction", "request",
+    "QRcode", "browser", "node" ],
+  "main": "cosmic-lib.js",
+  "ignore": [ ".*", "package-lock.json", "doc" ],
+  "dependencies": {
+    "stellar-sdk": "^2.0.1"
+  }
+}

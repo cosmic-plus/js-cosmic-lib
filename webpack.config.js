@@ -14,7 +14,7 @@ const library = Object.assign({}, config, {
 })
 
 const debug = Object.assign({}, config, {
-  entry: "./extra/debug.js",
+  entry: "./test/debug.js",
   output: {
     path: __dirname + "/web",
     filename: "debug.js",
