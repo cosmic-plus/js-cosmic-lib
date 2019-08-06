@@ -1,6 +1,6 @@
-# To code reviewers
+# To Reviewers
 
-Here's a few clues about how this library is organized.
+Here are some clues about how this library works.
 
 ## Library configuration
 
@@ -27,7 +27,7 @@ configuration:
 Along with the ones pertaining to global configuration, those modules provide
 the base upon which this library is built:
 
-* **resolve.js** implements routine to select network/horizon nodes and
+* **resolve.js** implements routines to select network/horizon nodes and
   retrieve data from the blockchain and federated servers.
 * **status.js** provides a way to store and display errors.
 
@@ -45,7 +45,7 @@ Query  <--->  Tdesc  <--->  Transaction
 
 **Tdesc** is an intermediate format. It is both a simplified transaction
 object, and an objectified query. While it is not required to be standardized
-across languages, it has the property on converting from/to JSON without loss
+across languages, it has the property of converting from/to JSON without loss
 of information. This is a valuable property as JSON is massively used on the
 web to pass data.
 
@@ -78,7 +78,7 @@ formats. The parsing of `?xdr=` sep7/queries is handled separately inside
 **parse.js**.
 
 While conversion to secondary formats is rather straightforward, each of the 4
-conversions paths between the primary format is implemented in its own module:
+conversions paths between the primary formats is implemented in its own module:
 
 ```
      decode.js    construct.js
@@ -108,15 +108,15 @@ makes use of the following modules on top of formats ones:
 * **action.js** implements lock()/sign()/send().
 * **cosmiclink.js** ties everything together in the CosmicLink class.
 * **parse.js** handle the user/dev transaction input from which CosmicLink are
-  created. It guess input type and convert it to tdesc to create the
+  created. It guesses input type and convert it to tdesc to create the
   CosmicLink object.
-* **signers-utils.js** handle everything related to multi-signature.
+* **signers-utils.js** handles everything related to multi-signature.
 
 ## Caching
 
-Responses from federation servers and horizon node are cached along with every
-CosmicLink object. Cached data are not shared between object. This is
-generally a good strategy, as it optimizes a bit bandwidth and ensure
+Responses from federation servers and horizon node are cached along with each
+CosmicLink object. Cached data are not shared between objects. This is
+generally a good strategy, as it optimizes the bandwidth and ensure
 CosmicLink consistency without making new objects out-of-sync.
 
 You can enable global caching if you need. In this case, it's up to you to
