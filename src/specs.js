@@ -196,39 +196,3 @@ for (let field in specs.fieldType) {
  */
 specs.neutralAccountId =
   "GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWHF"
-
-/**
- * The mandatory fields for each SEP-0007 operation.
- */
-specs.sep7MandatoryFields = {
-  tx: ["xdr"],
-  pay: ["destination"]
-}
-
-/**
- * The optional fields for each SEP-0007 operation.
- */
-specs.sep7OptionalFields = {
-  tx: [
-    "callback",
-    "msg",
-    "network_passphrase",
-    "origin_domain",
-    "pubkey",
-    "signature"
-  ],
-  pay: [
-    "amount",
-    "asset_code",
-    "asset_issuer",
-    "callback",
-    "memo",
-    "memo_type",
-    "msg",
-    "network_passphrase",
-    "origin_domain",
-    "signature"
-  ]
-}
-
-specs.sep7IgnoredFields = ["msg", "pubkey", "origin_domain", "signature"]

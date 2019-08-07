@@ -15,7 +15,7 @@ const check = require("./check")
 const convert = require("./convert")
 const decode = require("./decode")
 const expand = require("./expand")
-const specs = require("./specs")
+const parseSep7 = require("./parse-sep7")
 const status = require("./status")
 
 /**
@@ -51,8 +51,12 @@ parse.dispatch = function (cosmicLink, value = "?", options = {}) {
 
   // Parse transaction
   try {
-    if (parseFmt[type]) parseFmt[type](cosmicLink, value, options)
-    else setTdesc(cosmicLink, type, value, options)
+    if (parse.rule[type]) {
+      const params = parse.rule[type](cosmicLink, value, options)
+      setTdesc(cosmicLink, params.type, params.value, params.options)
+    } else {
+      setTdesc(cosmicLink, type, value, options)
+    }
   } catch (error) {
     if (!cosmicLink.errors) {
       console.error(error)
@@ -89,13 +93,15 @@ function guessType (value) {
 }
 
 /******************************************************************************/
-
-const parseFmt = {}
+/**
+ * Parse-type type extension
+ */
+parse.rule = {}
 
 /**
  * Initialize cosmicLink using `xdrUri`.
  */
-parseFmt.xdrUri = function (cosmicLink, xdrUri, options) {
+parse.rule.xdrUri = function (cosmicLink, xdrUri, options) {
   parse.page(cosmicLink, xdrUri)
 
   const query = convert.uriToQuery(cosmicLink, xdrUri)
@@ -129,68 +135,14 @@ parseFmt.xdrUri = function (cosmicLink, xdrUri, options) {
     }
   })
 
-  setTdesc(cosmicLink, "xdr", xdr, options)
+  return { type: "xdr", value: xdr, options }
 }
 
 /**
- * Initialize cosmicLink using `sep7Request`.
+ * SEP-0007 parsing
  */
-parseFmt.sep7Request = function (cosmicLink, sep7Request, options) {
-  parse.page(cosmicLink, sep7Request)
-
-  const query = convert.uriToQuery(cosmicLink, sep7Request)
-  const sep7 = decodeURIComponent(query.substr(5))
-  parseFmt.sep7(cosmicLink, sep7, options)
-}
-
-/**
- * Initialize cosmicLink using `sep7`.
- */
-parseFmt.sep7 = function (cosmicLink, sep7, options = {}) {
-  if (sep7.substr(12, 4) === "pay?") {
-    throw new Error("SEP-0007 'pay' operation is not currently supported.")
-  } else if (sep7.substr(12, 3) !== "tx?") {
-    throw new Error("Invalid SEP-0007 link.")
-  }
-
-  const query = convert.uriToQuery(cosmicLink, sep7)
-  const params = query.substr(1).split("&")
-  if (!options.network) options.network = "public"
-  let xdr
-
-  params.forEach(entry => {
-    const field = entry.replace(/=.*$/, "")
-    const value = entry.substr(field.length + 1)
-
-    switch (field) {
-    case "xdr":
-      xdr = decodeURIComponent(value)
-      break
-    case "network_passphrase":
-      options.network = decode.network(cosmicLink, value)
-      break
-    case "callback":
-      if (value.substr(0, 4) !== "url:")
-        throw new Error("Invalid callback: " + value)
-      options.callback = decode.url(cosmicLink, value.substr(4))
-      break
-    default:
-      if (isIgnoredSep7Field(field)) {
-        // eslint-disable-next-line no-console
-        console.log("Ignored SEP-0007 field: " + field)
-      } else {
-        throw new Error("Invalid SEP-0007 field: " + field)
-      }
-    }
-  })
-
-  if (!xdr) throw new Error("Missing XDR parameter")
-  setTdesc(cosmicLink, "xdr", xdr, options)
-}
-
-function isIgnoredSep7Field (field) {
-  return specs.sep7IgnoredFields.find(name => name === field)
-}
+parse.rule.sep7Request = parseSep7.request
+parse.rule.sep7 = parseSep7.link
 
 /******************************************************************************/
 
