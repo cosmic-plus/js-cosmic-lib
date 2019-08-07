@@ -67,7 +67,6 @@ Query  <--->  Tdesc  <--->  Transaction
 
 **Notes:**
 
-- SEP-0007 is partially supported (only `tx` operation which embed an XDR)
 - There's a conversion path between Query and XDR formats with the `?xdr=`
   command.
 
@@ -75,7 +74,7 @@ Query  <--->  Tdesc  <--->  Transaction
 
 The **convert.js** module exposes most of the conversion paths between
 formats. The parsing of `?xdr=` sep7/queries is handled separately inside
-**parse.js**.
+**parse.js/parse-sep7.js**.
 
 While conversion to secondary formats is rather straightforward, each of the 4
 conversions paths between the primary formats is implemented in its own module:
@@ -110,6 +109,7 @@ makes use of the following modules on top of formats ones:
 - **parse.js** handle the user/dev transaction input from which CosmicLink are
   created. It guesses input type and convert it to tdesc to create the
   CosmicLink object.
+- **parse-sep7.js** implements SEP-0007 support.
 - **signers-utils.js** handles everything related to multi-signature.
 
 ## Caching
