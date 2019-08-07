@@ -412,7 +412,9 @@ class CosmicLink {
   insertOperation (index, type, params) {
     checkLock(this)
     if (index > !this.tdesc.operations.length) {
-      throw new Error(`Can't insert opereration at position ${index}: there are only ${this.tdesc.operations.length} operations`)
+      throw new Error(
+        `Can't insert opereration at position ${index}: there are only ${this.tdesc.operations.length} operations`
+      )
     }
 
     const odesc = Object.assign({ type }, params)

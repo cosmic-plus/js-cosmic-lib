@@ -16,20 +16,20 @@ node, fallback source account, per-object error handling and per-object cache.
 The following modules are playing a role in the context of library
 configuration:
 
-* **index.js** provides a way to make a clone of the library with an
+- **index.js** provides a way to make a clone of the library with an
   alternative configuration object (**withConfig**)
-* **aliases.js** provides a way to uses aliases instead of public keys when
+- **aliases.js** provides a way to uses aliases instead of public keys when
   displaying a transaction.
-* **event.js** provides clickHandlers which are globally configurable.
+- **event.js** provides clickHandlers which are globally configurable.
 
 ## Other Base Modules
 
 Along with the ones pertaining to global configuration, those modules provide
 the base upon which this library is built:
 
-* **resolve.js** implements routines to select network/horizon nodes and
+- **resolve.js** implements routines to select network/horizon nodes and
   retrieve data from the blockchain and federated servers.
-* **status.js** provides a way to store and display errors.
+- **status.js** provides a way to store and display errors.
 
 ## Conversions
 
@@ -67,8 +67,8 @@ Query  <--->  Tdesc  <--->  Transaction
 
 **Notes:**
 
-* SEP-0007 is partially supported (only `tx` operation which embed an XDR)
-* There's a conversion path between Query and XDR formats with the `?xdr=`
+- SEP-0007 is partially supported (only `tx` operation which embed an XDR)
+- There's a conversion path between Query and XDR formats with the `?xdr=`
   command.
 
 ### Modules
@@ -90,14 +90,14 @@ Query         Tdesc         Transaction
 
 ### Other libraries related to tdesc format
 
-* **check.js** exports the routines to check for tdesc correctness.
-* **normalize.js** exports the routines to add default values, remove useless
+- **check.js** exports the routines to check for tdesc correctness.
+- **normalize.js** exports the routines to add default values, remove useless
   ones and format some values to a more compact form.
-* **expand.js** convert query/StellarSdk formated values to well-formated
+- **expand.js** convert query/StellarSdk formated values to well-formated
   tdesc values when creating CosmicLinks from tdesc/JSON. This allows library
   users to use the compact query syntax ('XRP:admin\*ripplefox.com') in tdesc
   inputs.
-* **format.js** exports the routines to convert a tdesc in its HTML
+- **format.js** exports the routines to convert a tdesc in its HTML
   description.
 
 ## CosmicLink
@@ -105,12 +105,12 @@ Query         Tdesc         Transaction
 CosmicLink is the class that embed most of the library functionalities. It
 makes use of the following modules on top of formats ones:
 
-* **action.js** implements lock()/sign()/send().
-* **cosmiclink.js** ties everything together in the CosmicLink class.
-* **parse.js** handle the user/dev transaction input from which CosmicLink are
+- **action.js** implements lock()/sign()/send().
+- **cosmiclink.js** ties everything together in the CosmicLink class.
+- **parse.js** handle the user/dev transaction input from which CosmicLink are
   created. It guesses input type and convert it to tdesc to create the
   CosmicLink object.
-* **signers-utils.js** handles everything related to multi-signature.
+- **signers-utils.js** handles everything related to multi-signature.
 
 ## Caching
 
