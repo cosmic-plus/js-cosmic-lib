@@ -7,6 +7,14 @@ All notable changes to this project will be documented in this file.
 ### Added
 
 - Implement support for SEP-0007 `pay` operation.
+- Add the `cosmicLink.extra` property for SEP-0007 specific information:
+  - `cosmicLink.extra.type` indicates the operation encoded into the
+    SEP-0007 link (either `tx` or `pay`).
+  - `cosmicLink.extra.pubkey` contains the tx operation `pubkey`, if any.
+  - `cosmicLink.extra.msg` contains the parsed `msg`, if any. This is provided
+    for compatibility purpose only. Displaying messages from untrusted sources
+    into trusted interfaces opens hard to mitigate attack vectors & is
+    discouraged.
 - Add new method `cosmicLink.insertOperation(index, type, params)`.
 
 ### Fixed

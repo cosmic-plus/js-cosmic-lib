@@ -25,6 +25,7 @@ const status = require("./status")
  * | [sep7]{@link CosmicLink#sep7}               |[errors]{@link CosmicLink#errors}    |
  * |                                             |[locker]{@link CosmicLink#locker}
  * |                                             |[cache]{@link CosmicLink#cache}
+ * |                                             |[extra]{@link CosmicLink#extra}
  * -----
  *
  * The **CosmicLink** class represents Stellar
@@ -563,6 +564,22 @@ function initCosmicLink (cosmicLink, transaction, options = {}) {
    * @var CosmicLink#cache
    */
   cosmicLink.cache = { destination: {}, account: {} }
+
+  /**
+   * After parsing a SEP-0007 link, `cosmicLink.extra` contains SEP-0007
+   * specific information:
+   *
+   * - `cosmicLink.extra.type` indicates the operation encoded into the SEP-0007
+   *   link (either `tx` or `pay`).
+   * - `cosmicLink.extra.pubkey` contains the tx operation `pubkey`, if any.
+   * - `cosmicLink.extra.msg` contains the parsed `msg`, if any. This is
+   *   provided for compatibility purpose only. Displaying messages from
+   *   untrusted sources into trusted interfaces opens hard to mitigate attack
+   *   vectors & is discouraged.
+   *
+   * @var CosmicLink#extra
+   */
+  cosmicLink.extra = {}
 
   parse.dispatch(cosmicLink, transaction, options)
 

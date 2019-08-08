@@ -15,9 +15,9 @@
 </head>
 
 <script>
-  var cosmicLink, pageBox, networkBox, sourceBox, signerBox, formatBoxes = [],
-      lockButton, signButton, sendButton,
-      formats = ['uri', 'query', 'json', 'xdr', 'sep7']
+  var cosmicLink, pageBox, networkBox, sourceBox, extraBox, signerBox,
+    formatBoxes = [], lockButton, signButton, sendButton,
+    formats = ['uri', 'query', 'json', 'xdr', 'sep7']
 
   function preinit () {
     // Asynchronous CSS loading.
@@ -31,6 +31,7 @@
     horizonBox = document.querySelector('#horizon')
     callbackBox = document.querySelector('#callback')
     sourceBox = document.querySelector('#source')
+    extraBox = document.querySelector('#extra')
     signerBox = document.querySelector('#signer')
     lockButton = document.querySelector('#lockButton')
     signButton = document.querySelector('#signButton')
@@ -167,6 +168,7 @@
     horizonBox.value = cosmicLink.horizon || ""
     callbackBox.value = cosmicLink.callback || ""
     sourceBox.value = cosmicLink.source || ""
+    extraBox.value = JSON.stringify(cosmicLink.extra, null, 2)
 
     // Refresh format boxes.
     formats.forEach(format => {
@@ -307,6 +309,8 @@ input, textarea {
         <textarea id="xdr" rows=3 placeholder="XDR"></textarea>
         <label for="sep7">SEP-0007:</label>
         <input id="sep7" type="text" placeholder="SEP-0007">
+        <label for="extra">SEP-0007 extra:</label>
+        <textarea id="extra" rows=5 placeHolder="/xtra"></textarea>
       </form>
     </div>
   </main>

@@ -9,6 +9,7 @@ const parseSep7 = exports
 
 const Buffer = require("@cosmic-plus/base/es5/buffer")
 
+const check = require("./check")
 const convert = require("./convert")
 const decode = require("./decode")
 const parse = require("./parse")
@@ -31,8 +32,10 @@ parseSep7.link = function (cosmicLink, sep7, options = {}) {
   cosmicLink._sep7 = sep7
   if (!options.network) options.network = "public"
   if (sep7.substr(12, 4) === "pay?") {
+    cosmicLink.extra.type = "pay"
     return parseSep7.link.pay(cosmicLink, sep7, options)
   } else if (sep7.substr(12, 3) === "tx?") {
+    cosmicLink.extra.type = "tx"
     return parseSep7.link.xdr(cosmicLink, sep7, options)
   } else {
     throw new Error("Invalid SEP-0007 link.")
@@ -54,6 +57,10 @@ parseSep7.link.xdr = function (cosmicLink, sep7, options = {}) {
     switch (field) {
     case "xdr":
       xdr = decodeURIComponent(value)
+      break
+    case "pubkey":
+      check.address(cosmicLink, value)
+      cosmicLink.extra.pubkey = value
       break
     default:
       parseSep7.link.common(cosmicLink, "xdr", field, value, options)
@@ -133,6 +140,9 @@ parseSep7.link.common = function (cosmicLink, mode, field, value, options) {
     }
     options.callback = decode.url(cosmicLink, value.substr(4))
     break
+  case "msg":
+    cosmicLink.extra.msg = decode.string(cosmicLink, value)
+    break
   default:
     if (isIgnoredSep7Field(field)) {
       // eslint-disable-next-line no-console
@@ -186,4 +196,4 @@ specs.sep7OptionalFields = {
   ]
 }
 
-specs.sep7IgnoredFields = ["msg", "origin_domain", "pubkey", "signature"]
+specs.sep7IgnoredFields = ["origin_domain", "signature"]
