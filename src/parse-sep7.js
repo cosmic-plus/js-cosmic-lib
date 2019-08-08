@@ -28,6 +28,7 @@ parseSep7.request = function (cosmicLink, sep7Request, options) {
  * Initialize cosmicLink using `sep7`.
  */
 parseSep7.link = function (cosmicLink, sep7, options = {}) {
+  cosmicLink._sep7 = sep7
   if (!options.network) options.network = "public"
   if (sep7.substr(12, 4) === "pay?") {
     return parseSep7.link.pay(cosmicLink, sep7, options)

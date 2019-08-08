@@ -9,6 +9,11 @@ All notable changes to this project will be documented in this file.
 - Implement support for SEP-0007 `pay` operation.
 - Add new method `cosmicLink.insertOperation(index, type, params)`.
 
+### Fixed
+
+- Set `cosmicLink.sep7` to input URL when parsing CosmicLink from SEP-0007
+  link.
+
 ## 1.5.5 - 2019-07-26
 
 ### Changed
