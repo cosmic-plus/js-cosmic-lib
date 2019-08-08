@@ -54,21 +54,8 @@ parseSep7.link.xdr = function (cosmicLink, sep7, options = {}) {
     case "xdr":
       xdr = decodeURIComponent(value)
       break
-    case "network_passphrase":
-      options.network = decode.network(cosmicLink, value)
-      break
-    case "callback":
-      if (value.substr(0, 4) !== "url:")
-        throw new Error("Invalid callback: " + value)
-      options.callback = decode.url(cosmicLink, value.substr(4))
-      break
     default:
-      if (isIgnoredSep7Field(field)) {
-        // eslint-disable-next-line no-console
-        console.log("Ignored SEP-0007 field: " + field)
-      } else {
-        throw new Error("Invalid SEP-0007 xdr field: " + field)
-      }
+      parseSep7.link.common(cosmicLink, "xdr", field, value, options)
     }
   })
 
@@ -113,21 +100,8 @@ parseSep7.link.pay = function (cosmicLink, sep7, options = {}) {
     case "memo":
       memo[1] = value
       break
-    case "network_passphrase":
-      options.network = decode.network(cosmicLink, value)
-      break
-    case "callback":
-      if (value.substr(0, 4) !== "url:")
-        throw new Error("Invalid callback: " + value)
-      options.callback = decode.url(cosmicLink, value.substr(4))
-      break
     default:
-      if (isIgnoredSep7Field(field)) {
-        // eslint-disable-next-line no-console
-        console.log("Ignored SEP-0007 field: " + field)
-      } else {
-        throw new Error("Invalid SEP-0007 pay field: " + field)
-      }
+      parseSep7.link.common(cosmicLink, "pay", field, value, options)
     }
   })
 
@@ -145,6 +119,27 @@ parseSep7.link.pay = function (cosmicLink, sep7, options = {}) {
 
   if (!odesc.destination) throw new Error("Missing parameter: destination")
   return { type: "tdesc", value: tdesc, options }
+}
+
+parseSep7.link.common = function (cosmicLink, mode, field, value, options) {
+  switch (field) {
+  case "network_passphrase":
+    options.network = decode.network(cosmicLink, value)
+    break
+  case "callback":
+    if (value.substr(0, 4) !== "url:") {
+      throw new Error("Invalid callback: " + value)
+    }
+    options.callback = decode.url(cosmicLink, value.substr(4))
+    break
+  default:
+    if (isIgnoredSep7Field(field)) {
+      // eslint-disable-next-line no-console
+      console.log("Ignored SEP-0007 field: " + field)
+    } else {
+      throw new Error(`Invalid SEP-0007 ${mode} field: ` + field)
+    }
+  }
 }
 
 function isIgnoredSep7Field (field) {
