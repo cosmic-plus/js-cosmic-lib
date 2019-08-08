@@ -36,7 +36,6 @@ parse.page = function (cosmicLink, uri) {
  * @param {Object} options Same options as {@see CosmicLink#constructor}
  */
 parse.dispatch = function (cosmicLink, value = "?", options = {}) {
-  formats.forEach(format => delete cosmicLink[format])
   const type = guessType(value)
 
   // Strip out URL hash
@@ -68,8 +67,6 @@ parse.dispatch = function (cosmicLink, value = "?", options = {}) {
 
   if (options.page) parse.page(cosmicLink, options.page)
 }
-
-const formats = ["_query", "_json", "_tdesc", "_transaction", "_xdr", "_sep7"]
 
 /**
  * Returns `type` which is the format of transaction represented by `value`.
