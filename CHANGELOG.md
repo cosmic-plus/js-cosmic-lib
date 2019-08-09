@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## Unreleased
+## 1.6.0 - 2019-08-10
 
 ### Added
 
@@ -19,8 +19,7 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 
-- Set `cosmicLink.sep7` to input URL when parsing CosmicLink from SEP-0007
-  link.
+- Set `cosmicLink.sep7` to input URL when parsing CosmicLink from SEP-0007 link.
 
 ## 1.5.5 - 2019-07-26
 
