@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+### Added
+
+- api: Add SEP-0007 signature check.
+  - `cosmicLink.extra.originDomain` is a _Promise_ that resolves to the
+    origin_domain parameter when the link signature is valid. It rejects an
+    error when the signature check fails. This property is `undefined` when the
+    link has no origin_domain.
+  - `cosmicLink.extra.signature` contains the link signature, if any.
+
 ### Fixed
 
 - api: Fix SEP-0007 `callback` parameter encoding.

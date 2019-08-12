@@ -8,6 +8,8 @@
 const parseSep7 = exports
 
 const Buffer = require("@cosmic-plus/base/es5/buffer")
+const StellarSdk = require("@cosmic-plus/base/es5/stellar-sdk")
+const { timeout } = require("@cosmic-plus/jsutils/es5/misc")
 
 const check = require("./check")
 const convert = require("./convert")
@@ -141,21 +143,57 @@ parseSep7.link.common = function (cosmicLink, mode, field, value, options) {
     }
     options.callback = value.substr(4)
     break
+  case "origin_domain":
+    cosmicLink.extra.originDomain = parseSep7.checkSignature(
+      cosmicLink,
+      value
+    )
+    break
+  case "signature":
+    cosmicLink.extra.signature = decodeURIComponent(value)
+    break
   case "msg":
     cosmicLink.extra.msg = decode.string(cosmicLink, value)
     break
   default:
-    if (isIgnoredSep7Field(field)) {
-      // eslint-disable-next-line no-console
-      console.log("Ignored SEP-0007 field: " + field)
-    } else {
-      throw new Error(`Invalid SEP-0007 ${mode} field: ` + field)
-    }
+    throw new Error(`Invalid SEP-0007 ${mode} field: ` + field)
   }
 }
 
-function isIgnoredSep7Field (field) {
-  return specs.sep7IgnoredFields.find(name => name === field)
+parseSep7.checkSignature = async function (cosmicLink, domain) {
+  const link = cosmicLink.sep7.replace(/&signature=.*/, "")
+
+  // Let parser parse signature.
+  await timeout(1)
+  const signature = cosmicLink.extra.signature
+
+  if (!signature) {
+    throw new Error(`No signature attached for domain: ${domain}`)
+  }
+
+  const toml = await StellarSdk.StellarTomlResolver.resolve(domain)
+  const signingKey = toml.URI_REQUEST_SIGNING_KEY
+
+  if (!signingKey) {
+    throw new Error(`Can't find signing key for domain: ${domain}`)
+  }
+
+  const keypair = StellarSdk.Keypair.fromPublicKey(signingKey)
+  const payload = makePayload(link)
+
+  if (keypair.verify(payload, Buffer.from(signature, "base64"))) {
+    return domain
+  } else {
+    throw new Error(`Invalid signature for domain: ${domain}`)
+  }
+}
+
+function makePayload (link) {
+  return Buffer.concat([
+    Buffer.alloc(35),
+    Buffer.alloc(1, 4),
+    Buffer.from(`stellar.sep.7 - URI Scheme${link}`)
+  ])
 }
 
 /******************************************************************************/
@@ -196,5 +234,3 @@ specs.sep7OptionalFields = {
     "signature"
   ]
 }
-
-specs.sep7IgnoredFields = ["origin_domain", "signature"]

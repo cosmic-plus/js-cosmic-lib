@@ -170,6 +170,18 @@
     sourceBox.value = cosmicLink.source || ""
     extraBox.value = JSON.stringify(cosmicLink.extra, null, 2)
 
+
+    // SEP-0007: Update origin_domain after signature check.
+    if (cosmicLink.extra.originDomain) {
+      cosmicLink.extra.originDomain.then(origin => {
+        cosmicLink.extra.originDomain = origin
+      }).catch(error => {
+        cosmicLink.extra.originDomain = error
+      }).finally(() => {
+        extraBox.value = JSON.stringify(cosmicLink.extra, null, 2)
+      })
+    }
+
     // Refresh format boxes.
     formats.forEach(format => {
       const box = formatBoxes[format]

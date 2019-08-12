@@ -571,6 +571,11 @@ function initCosmicLink (cosmicLink, transaction, options = {}) {
    *
    * - `cosmicLink.extra.type` indicates the operation encoded into the SEP-0007
    *   link (either `tx` or `pay`).
+   * - `cosmicLink.extra.originDomain` is a _Promise_ that resolves to the
+   *   origin_domain parameter when the link signature is valid. It rejects an
+   *   error when the signature check fails. This property is `undefined` when
+   *   the link has no origin_domain.
+   * - `cosmicLink.extra.signature` contains the link signature, if any.
    * - `cosmicLink.extra.pubkey` contains the tx operation `pubkey`, if any.
    * - `cosmicLink.extra.msg` contains the parsed `msg`, if any. This is
    *   provided for compatibility purpose only. Displaying messages from
