@@ -135,10 +135,11 @@ parseSep7.link.common = function (cosmicLink, mode, field, value, options) {
     options.network = decode.network(cosmicLink, value)
     break
   case "callback":
+    value = decode.url(cosmicLink, value)
     if (value.substr(0, 4) !== "url:") {
       throw new Error("Invalid callback: " + value)
     }
-    options.callback = decode.url(cosmicLink, value.substr(4))
+    options.callback = value.substr(4)
     break
   case "msg":
     cosmicLink.extra.msg = decode.string(cosmicLink, value)

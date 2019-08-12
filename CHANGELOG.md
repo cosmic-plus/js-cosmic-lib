@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## Unreleased
+
+### Fixed
+
+- api: Fix SEP-0007 `callback` parameter encoding.
+
 ## 1.6.0 - 2019-08-10
 
 ### Added
