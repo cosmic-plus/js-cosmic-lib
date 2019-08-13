@@ -16,6 +16,7 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 
 - api: Fix SEP-0007 `callback` parameter encoding.
+- demo: Fix the 'computing...' message in format boxes.
 
 ## 1.6.0 - 2019-08-10
 

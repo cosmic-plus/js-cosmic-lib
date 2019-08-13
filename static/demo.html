@@ -91,7 +91,7 @@
 
   // Compute XDR and update boxes accordingly.
   function lock () {
-    formats.forEach(format => formatBoxes[format].placeholdr = 'Computing...')
+    formats.forEach(format => formatBoxes[format].placeholder = 'Computing...')
 
     cosmicLink.lock({ network: networkBox.value, source: sourceBox.value })
       .then(function (obj) {
