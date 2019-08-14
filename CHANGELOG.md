@@ -6,6 +6,10 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
+- api: Add action `cosmicLink.open(target)`. Valid targets are:
+  - `tab`: Open cosmicLink in a new tab.
+  - `current`: Open cosmicLink into the current window.
+  - `sep7`: Open cosmicLink using user's SEP-0007 handler.
 - api: Add SEP-0007 signature check.
   - `cosmicLink.extra.originDomain` is a _Promise_ that resolves to the
     origin_domain parameter when the link signature is valid. It rejects an

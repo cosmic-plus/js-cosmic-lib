@@ -20,7 +20,7 @@ const status = require("./status")
  * | [query]{@link CosmicLink#query}             |[network]{@link CosmicLink#network}  |await [lock]{@link CosmicLink#lock}             |[setTxFields]{@link CosmicLink#setTxFields}   |[htmlLink]{@link CosmicLink#htmlLink}
  * | [tdesc]{@link CosmicLink#tdesc}             |[horizon]{@link CosmicLink#horizon}  |[sign]{@link CosmicLink#sign}                   |[addOperation]{@link CosmicLink#addOperation} |
  * | [json]{@link CosmicLink#json}               |[callback]{@link CosmicLink#callback}|await [send]{@link CosmicLink#send}             |[setOperation]{@link CosmicLink#setOperation}
- * | [transaction]{@link CosmicLink#transaction} |[source]{@link CosmicLink#source}    |                                                |[insertOperation]{@link CosmicLink#insertOperation}
+ * | [transaction]{@link CosmicLink#transaction} |[source]{@link CosmicLink#source}    |[open]{@link CosmicLink#open}                   |[insertOperation]{@link CosmicLink#insertOperation}
  * | [xdr]{@link CosmicLink#xdr}                 |[status]{@link CosmicLink#status}    |
  * | [sep7]{@link CosmicLink#sep7}               |[errors]{@link CosmicLink#errors}    |
  * |                                             |[locker]{@link CosmicLink#locker}
@@ -492,6 +492,47 @@ class CosmicLink {
   get htmlLink () {
     if (!this._htmlLink) makeHtmlLink(this)
     return this._htmlLink
+  }
+
+  /**
+   * Open CosmicLink in **target**.
+   *
+   * - `tab`: Open cosmicLink in a new tab.
+   * - `current`: Open cosmicLink into the current window.
+   * - `sep7`: Open cosmicLink using user's SEP-0007 handler.
+   *
+   * @param {String} target Open `cosmicLink` into the requested target. Valid
+   *    targets are: `tab`, `current` and `sep7`.
+   */
+  open (target) {
+    if (env.isNode) {
+      console.error(
+        "Warning: cosmicLink.open() is not supported in Node.js environment."
+      )
+      return
+    }
+
+    if (this.status) throw new Error(this.status)
+
+    switch (target) {
+    case "tab":
+      window.open(this.uri)
+      break
+    case "current":
+      location.href = this.uri
+      break
+    case "sep7":
+      if (!this.sep7) {
+        throw new Error(
+          "Please use cosmicLink.lock() to build SEP-0007 link."
+        )
+      } else {
+        location.href = this.sep7
+      }
+      break
+    default:
+      throw new Error(`Invalid cosmicLink.open() target: ${target}`)
+    }
   }
 
   /// Backward compatibility (2018-09 -> 2019-03).

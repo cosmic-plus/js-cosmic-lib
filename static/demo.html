@@ -133,6 +133,14 @@
     promise.then(display).catch(display).finally(enableButtons)
   }
 
+  function openLink (target) {
+    try {
+      cosmicLink.open(target)
+    } catch (error) {
+      display(error.message)
+    }
+  }
+
   /** Helpers **/
 
   // Display a message in the interface
@@ -289,16 +297,24 @@ input, textarea {
         <input id="sendButton" type="button" value="Send" onclick="send()">
         <pre id="message"></pre>
       </form>
-      <h2>
-        <a id="cosmiclink" title="Open page" target="_blank" rel="noopener">Open Link</a>
-      </h2>
+
+      <h2>Open</h2>
+      <ul>
+        <li><a href="#" onclick="openLink('tab')">
+          Open in new tab
+        </a></li>
+        <li><a href="#" onclick="openLink('current')">
+          Open in current window
+        </a></li>
+        <li><a href="#" onclick="openLink('sep7')">
+          Open with your SEP-0007 handler
+        </a></li>
+      </ul>
     </div>
+
     <div class="column">
-      <!-- An HTML element with id="cosmiclink" will automatically points to
-           the last cosmicLink URI
-      -->
-      <h2>Edit</h2>
       <form autocomplete="off">
+        <h2>Meta-Parameters</h2>
         <label for="page">Page:</label>
         <input id="page" type="text" onchange="set()">
         <label for="network">Network:</label>
@@ -309,7 +325,9 @@ input, textarea {
         <input id="callback" type="text" onchange="set()">
         <label for="source">Source:</label>
         <input id="source" type="text" onchange="set()">
-        <label for="uri">Link:</label>
+
+        <h2>Formats</h2>
+        <label for="uri">URI:</label>
         <input id="uri" type="text" placeholder="URI">
         <label for="query">Query:</label>
         <input id="query" type="text" placeholder="Query">
