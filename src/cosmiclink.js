@@ -4,6 +4,8 @@ const env = require("@cosmic-plus/jsutils/es5/env")
 const misc = require("@cosmic-plus/jsutils/es5/misc")
 const html = env.isBrowser && require("@cosmic-plus/domutils/es5/html")
 
+const SideFrame = env.isBrowser && require("./helpers/side-frame")
+
 const action = require("./action")
 const config = require("./config")
 const convert = require("./convert")
@@ -497,14 +499,15 @@ class CosmicLink {
   /**
    * Open CosmicLink in **target**.
    *
+   * - `frame` (default): Open cosmicLink in a side-frame.
    * - `tab`: Open cosmicLink in a new tab.
    * - `current`: Open cosmicLink into the current window.
    * - `sep7`: Open cosmicLink using user's SEP-0007 handler.
    *
-   * @param {String} target Open `cosmicLink` into the requested target. Valid
-   *    targets are: `tab`, `current` and `sep7`.
+   * @param {String} [target="frame"] Open `cosmicLink` into the requested
+   *    target. Valid targets are: `frame`, `tab`, `current` and `sep7`.
    */
-  open (target) {
+  open (target = "frame") {
     if (env.isNode) {
       console.error(
         "Warning: cosmicLink.open() is not supported in Node.js environment."
@@ -515,6 +518,8 @@ class CosmicLink {
     if (this.status) throw new Error(this.status)
 
     switch (target) {
+    case "frame":
+      return new SideFrame(this.uri)
     case "tab":
       window.open(this.uri)
       break

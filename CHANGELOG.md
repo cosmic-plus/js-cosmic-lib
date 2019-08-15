@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 ### Added
 
 - api: Add action `cosmicLink.open(target)`. Valid targets are:
+  - `frame` (default): Open cosmicLink in a side-frame.
   - `tab`: Open cosmicLink in a new tab.
   - `current`: Open cosmicLink into the current window.
   - `sep7`: Open cosmicLink using user's SEP-0007 handler.

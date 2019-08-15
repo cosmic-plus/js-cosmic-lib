@@ -4,8 +4,10 @@
   <meta name="viewport" content="width=device-width">
   <meta http-equiv="Content-Security-Policy" content="
     default-src 'none';
-    script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net;
+    script-src 'unsafe-inline' 'unsafe-eval' 'self' 'unsafe-inline' https://cdn.jsdelivr.net;
     style-src 'self' 'unsafe-inline' https://necolas.github.io;
+    img-src 'self' data:;
+    frame-src *;
     connect-src *;
   ">
 
@@ -137,6 +139,7 @@
     try {
       cosmicLink.open(target)
     } catch (error) {
+      console.error(error)
       display(error.message)
     }
   }
@@ -300,13 +303,16 @@ input, textarea {
 
       <h2>Open</h2>
       <ul>
-        <li><a href="#" onclick="openLink('tab')">
+        <li><a href="javascript:openLink('frame')">
+          Open in side-frame
+        </a></li>
+        <li><a href="javascript:openLink('tab')">
           Open in new tab
         </a></li>
-        <li><a href="#" onclick="openLink('current')">
+        <li><a href="javascript:openLink('current')">
           Open in current window
         </a></li>
-        <li><a href="#" onclick="openLink('sep7')">
+        <li><a href="javascript:openLink('sep7')">
           Open with your SEP-0007 handler
         </a></li>
       </ul>

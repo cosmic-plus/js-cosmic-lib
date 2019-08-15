@@ -1,5 +1,13 @@
 const config = {
-  devtool: "source-map"
+  devtool: "source-map",
+  module: {
+    rules: [
+      {
+        test: /\.(html|svg)$/,
+        loader: "raw-loader"
+      }
+    ]
+  }
 }
 
 const library = Object.assign({}, config, {
