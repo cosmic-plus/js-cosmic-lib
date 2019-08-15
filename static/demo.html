@@ -4,7 +4,7 @@
   <meta name="viewport" content="width=device-width">
   <meta http-equiv="Content-Security-Policy" content="
     default-src 'none';
-    script-src 'unsafe-inline' 'unsafe-eval' 'self' 'unsafe-inline' https://cdn.jsdelivr.net;
+    script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net;
     style-src 'self' 'unsafe-inline' https://necolas.github.io;
     img-src 'self' data:;
     frame-src *;
@@ -142,6 +142,15 @@
       console.error(error)
       display(error.message)
     }
+  }
+
+  function registerSep7Handler () {
+    const service = location.href.slice(0, -location.search.length)
+    navigator.registerProtocolHandler(
+      "web+stellar",
+      `${service}?req=%s`,
+      "Cosmic.plus SEP-0007 debugger"
+    )
   }
 
   /** Helpers **/
@@ -314,6 +323,13 @@ input, textarea {
         </a></li>
         <li><a href="javascript:openLink('sep7')">
           Open with your SEP-0007 handler
+        </a></li>
+      </ul>
+
+      <h2>Setup</h2>
+      <ul>
+        <li><a href="javascript:registerSep7Handler()">
+          Set this page as your SEP-0007 handler
         </a></li>
       </ul>
     </div>

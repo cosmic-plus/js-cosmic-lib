@@ -17,6 +17,7 @@ All notable changes to this project will be documented in this file.
     error when the signature check fails. This property is `undefined` when the
     link has no origin_domain.
   - `cosmicLink.extra.signature` contains the link signature, if any.
+- demo: Add a link to register as a SEP-0007 handler.
 
 ### Fixed
 
