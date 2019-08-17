@@ -4,7 +4,8 @@
       "src",
       "node_modules/@cosmic-plus/domutils/src/load.js",
       "node_modules/@cosmic-plus/base/src/aliases.js"
-    ]
+    ],
+    "exclude": ["src/helpers"]
   },
   "opts": {
     "destination": "./web/doc",
