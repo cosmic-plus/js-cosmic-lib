@@ -81,8 +81,8 @@ parseSep7.link.pay = function (cosmicLink, sep7, options = {}) {
   const params = query.substr(1).split("&")
 
   const odesc = { type: "payment" },
-    asset = [],
-    memo = []
+    asset = {},
+    memo = {}
   const tdesc = {
     network: options.network,
     operations: [odesc]
@@ -99,16 +99,16 @@ parseSep7.link.pay = function (cosmicLink, sep7, options = {}) {
       odesc[field] = decode.field(cosmicLink, field, value)
       break
     case "asset_code":
-      asset[0] = value
+      asset.code = decodeURIComponent(value)
       break
     case "asset_issuer":
-      asset[1] = value
+      asset.issuer = decodeURIComponent(value)
       break
     case "memo_type":
-      memo[0] = value.split("_")[1].toLowerCase()
+      memo.type = value.split("_")[1].toLowerCase()
       break
     case "memo":
-      memo[1] = value
+      memo.value = decode.string(cosmicLink, value)
       break
     default:
       parseSep7.link.common(cosmicLink, "pay", field, value, options)
@@ -116,16 +116,13 @@ parseSep7.link.pay = function (cosmicLink, sep7, options = {}) {
   })
 
   // Convert
-  if (memo.length) {
-    if (memo[0] === "hash" || memo[0] === "return") {
-      const buffer = Buffer.from(decodeURIComponent(memo[1]), "base64")
-      memo[1] = buffer.toString("hex")
+  if (memo.type || memo.value) {
+    if (memo.type === "hash" || memo.type === "return") {
+      memo.value = Buffer.from(memo.value, "base64").toString("hex")
     }
-    tdesc.memo = decode.memo(cosmicLink, `${memo[0]}:${memo[1]}`)
+    tdesc.memo = memo
   }
-  if (asset.length) {
-    odesc.asset = decode.asset(cosmicLink, `${asset[0]}:${asset[1]}`)
-  }
+  if (asset.code || asset.issuer) odesc.asset = asset
 
   if (!odesc.destination) throw new Error("Missing parameter: destination")
   return { type: "tdesc", value: tdesc, options }
