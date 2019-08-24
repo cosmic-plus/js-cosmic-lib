@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 
 - Api: Fix SEP-0007 `pay` memo & asset error checks.
+- Demo: Fix source-code link.
 
 ## 1.7.0 - 2019-08-17
 
