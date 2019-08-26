@@ -55,7 +55,7 @@ convert.xdrToSep7 = function (conf, xdr, options) {
 
 convert.xdrToTransaction = function (conf, xdr, options = {}) {
   const transaction = new StellarSdk.Transaction(xdr)
-  if (options.stripSignatures) transaction.signatures = []
+  if (options.strip === "signatures") transaction.signatures = []
   return transaction
 }
 

@@ -120,13 +120,11 @@ class CosmicLink {
    *     to URI format.
    * @param {string} options.network For Transaction/XDR formats, the network for
    *     which it have been created
-   * @param {boolean} options.stripSignatures If set, will strip out signatures
-   *     from XDR/Transaction formats.
-   * @param {boolean} options.stripSequence If set, will strip out signatures
-   *     and sequence number from XDR/Transaction formats.
-   * @param {boolean} options.stripSource If set, will strip out signatures,
-   *     sequence number and transaction primary source account from
-   *     XDR/Transaction formats.
+   * @param {string} options.strip Remove an element from the original
+   *     XDR transaction. Valid values are `source`, `sequence` and
+   *     `signatures`. Stripping out sequence means that the transaction request
+   *     can get signed anytime in the future, possibly several times.
+   *     Stripping out source means that it can get signed by any account.
    * @return {CosmicLink}
    */
   constructor (transaction, options) {

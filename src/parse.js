@@ -110,14 +110,16 @@ parse.rule.xdrUri = function (cosmicLink, xdrUri, options) {
     let value = entry.substr(field.length + 1)
 
     switch (field) {
-    case "stripSignatures":
-      options.stripSignatures = true
-      break
-    case "stripSequence":
-      options.stripSequence = true
-      break
-    case "stripSource":
-      options.stripSource = true
+    case "strip":
+      switch (value) {
+      case "source":
+      case "sequence":
+      case "signatures":
+        options.strip = value
+        break
+      default:
+        throw new Error(`Invalid strip directive: strip=${value}`)
+      }
       break
     case "network":
       options.network = decode.network(cosmicLink, value)
@@ -126,6 +128,18 @@ parse.rule.xdrUri = function (cosmicLink, xdrUri, options) {
     case "callback":
       options[field] = decode.url(cosmicLink, value)
       break
+
+      // Backward compatibility, deprecated since the 2019-08-26.
+    case "stripSignatures":
+      options.strip = "signatures"
+      break
+    case "stripSequence":
+      options.strip = "sequence"
+      break
+    case "stripSource":
+      options.strip = "source"
+      break
+
     default:
       status.error(cosmicLink, "Unknow option: " + entry)
       status.fail(cosmicLink, "Invalid query")
@@ -188,10 +202,10 @@ function setTdesc (cosmicLink, type, value, options) {
       options
     )
     delete cosmicLink._sep7
-    if (options.stripSource || options.stripSequence) {
+    if (options.strip === "source" || options.strip === "sequence") {
       delete cosmicLink._xdr
       delete cosmicLink._transaction
-    } else if (options.stripSignatures) {
+    } else if (options.strip === "signatures") {
       cosmicLink.transaction.signatures = []
       delete cosmicLink._xdr
     }

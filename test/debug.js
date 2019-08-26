@@ -258,9 +258,9 @@ const tests = [
   /** * XDR conversion **/
   ["bigTitle", "XDR conversion"],
   ["query", "?xdr=" + xdr, { dontSign: 1 }],
-  ["query", "?xdr=" + xdr + "&stripSource&network=test", { dontSign: 1 }],
-  ["query", "?xdr=" + xdr + "&stripSequence", { dontSign: 1 }],
-  ["query", "?xdr=" + xdr + "&stripSignatures", { dontSign: 1 }],
+  ["query", "?xdr=" + xdr + "&strip=source&network=test", { dontSign: 1 }],
+  ["query", "?xdr=" + xdr + "&strip=sequence", { dontSign: 1 }],
+  ["query", "?xdr=" + xdr + "&strip=signatures", { dontSign: 1 }],
 
   /** * Sending tests ***/
   ["bigTitle", "Sending tests"],
@@ -445,8 +445,8 @@ async function checkCosmicLink (cosmicLink, options) {
   }
 
   const linkOpts = {}
-  if (!cosmicLink.tdesc.sequence) linkOpts.stripSequence = true
-  if (!cosmicLink.tdesc.source) linkOpts.stripSource = true
+  if (!cosmicLink.tdesc.sequence) linkOpts.strip = "sequence"
+  if (!cosmicLink.tdesc.source) linkOpts.strip = "source"
   if (cosmicLink.tdesc.network) linkOpts.network = cosmicLink.tdesc.network
   if (cosmicLink.tdesc.horizon) linkOpts.horizon = cosmicLink.tdesc.horizon
   if (cosmicLink.tdesc.callback) linkOpts.callback = cosmicLink.tdesc.callback

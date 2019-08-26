@@ -23,15 +23,17 @@ const specs = require("./specs")
 destruct.transaction = function (conf, tx, options = {}) {
   const tdesc = {}
 
-  if (tx.source === specs.neutralAccountId) options.stripSource = true
-  if (tx.sequence === "0") options.stripSequence = true
+  if (tx.source === specs.neutralAccountId) options.strip = "source"
+  else if (tx.sequence === "0") options.strip = "sequence"
 
   tdesc.network = options.network
   tdesc.horizon = options.horizon
   tdesc.callback = options.callback
-  if (!options.stripSource) tdesc.source = tx.source
-  if (!options.stripSource && !options.stripSequence) {
-    tdesc.sequence = destruct.sequence(conf, tx.sequence)
+  if (options.strip !== "source") {
+    tdesc.source = tx.source
+    if (options.strip !== "sequence") {
+      tdesc.sequence = destruct.sequence(conf, tx.sequence)
+    }
   }
 
   if (tx._memo._switch.name !== "memoNone")

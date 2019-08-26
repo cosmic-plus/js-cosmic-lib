@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## Unreleased
+
+### Changed
+
+- Api: Implement XDR-links param `strip`. It replaces parameters `stripSource`,
+  `stripSequence` & `stripSignatures` by the standard-compliant
+  `strip="source"|"sequence"|"signatures"`.
+
 ## 1.7.2 - 2019-08-27
 
 ### Fixed

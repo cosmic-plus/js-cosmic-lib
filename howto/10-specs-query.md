@@ -43,17 +43,14 @@ Example:
   the client doesn't know any.
 * `&callback={url}`: Provide the destination at which the signed transaction
   must be posted.
-* `&stripSignatures`: Remove the signatures when parsing the transaction.
-* `&stripSequence`: Remove sequence number when parsing the transaction. Meaning it
-  can be signed anytime in the future, possibly several times. Imply
-  `&stripSignatures`.
-* `&stripSource`: Remove the source account when parsing the transaction. Meaning
-    it can be signed by anybody, possibly several times. Imply `&stripSequence`
-    and `&stripSignatures`.
+* `&strip="source"|"sequence"|"signatures"`: Remove an element from the original
+  XDR transaction. Stripping out sequence means that the transaction request can
+  get signed anytime in the future, possibly several times. Stripping out source
+  means that it can get signed by any account.
 
 Example:
 
-> [https://cosmic.link/?xdr=AAAA...AA==&network=public&stripSource](https://cosmic.link/?xdr=AAAAAL2ef/Z7FpGtgUvkKaEg3uvy9IH+T9chWSUhQILKTk/NAAAAZAEMX34AAAADAAAAAAAAAAAAAAABAAAAAAAAAAUAAAABAAAAAIQ/AS7GRUBBd96ykumKKUFE92+oiwRuJ7KXuvPwwTQWAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==&network=public&stripSource)
+> [https://cosmic.link/?xdr=AAAA...AA==&network=public&strip=source](https://cosmic.link/?xdr=AAAAAL2ef/Z7FpGtgUvkKaEg3uvy9IH+T9chWSUhQILKTk/NAAAAZAEMX34AAAADAAAAAAAAAAAAAAABAAAAAAAAAAUAAAABAAAAAIQ/AS7GRUBBd96ykumKKUFE92+oiwRuJ7KXuvPwwTQWAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==&network=public&strip=source)
 
 ## Fields
 
