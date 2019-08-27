@@ -1,16 +1,4 @@
-const config = {
-  devtool: "source-map",
-  module: {
-    rules: [
-      {
-        test: /\.(html|svg)$/,
-        loader: "raw-loader"
-      }
-    ]
-  }
-}
-
-const library = Object.assign({}, config, {
+const library = {
   entry: "./es5/index.js",
   output: {
     path: __dirname + "/web",
@@ -18,17 +6,19 @@ const library = Object.assign({}, config, {
     library: "cosmicLib",
     libraryTarget: "umd",
     globalObject: "typeof self !== 'undefined' ? self : this"
-  }
-})
+  },
+  devtool: "source-map"
+}
 
-const debug = Object.assign({}, config, {
+const debug = {
   entry: "./test/debug.js",
   output: {
     path: __dirname + "/web",
     filename: "debug.js",
     library: "debug",
     libraryTarget: "var"
-  }
-})
+  },
+  devtool: "source-map"
+}
 
 module.exports = [debug, library]

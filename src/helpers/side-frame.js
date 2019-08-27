@@ -10,7 +10,7 @@ const { timeout } = require("@cosmic-plus/jsutils/es5/misc")
 
 const ClickWall = require("./click-wall")
 
-const cosmicLinkIcon = require("../../bundled/cosmic-link.svg").default
+const cosmicLinkIcon = require("../../bundled/cosmic-link.svg")
 
 /**
  * Class

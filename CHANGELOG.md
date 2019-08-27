@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.7.2 - 2019-08-27
+
+### Fixed
+
+- Meta: Fix a regression that prevented to bundle cosmic-lib. It was introduced
+  in 1.7.0.
+
 ## 1.7.1 - 2019-08-24
 
 ### Fixed
