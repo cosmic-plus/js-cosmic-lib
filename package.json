@@ -1,6 +1,6 @@
 {
   "name": "cosmic-lib",
-  "version": "1.7.1",
+  "version": "1.7.2",
   "description": "A JavaScript implementation of the CosmicLink protocol for Stellar",
   "author": "MisterTicot <mister.ticot@cosmic.plus>",
   "homepage": "https://cosmic.plus/#view:js-cosmic-lib",
