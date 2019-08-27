@@ -9,6 +9,9 @@ All notable changes to this project will be documented in this file.
 - Api: Implement XDR-links param `strip`. It replaces parameters `stripSource`,
   `stripSequence` & `stripSignatures` by the standard-compliant
   `strip="source"|"sequence"|"signatures"`.
+- Api: Add a `type=` prefix to param queries. The previous syntax was not
+  standard-compliant. Example:
+  `?type=payment&destination=tips*cosmic.link&amount=20`
 
 ## 1.7.2 - 2019-08-27
 

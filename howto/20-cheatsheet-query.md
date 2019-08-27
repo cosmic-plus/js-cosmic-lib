@@ -1,7 +1,7 @@
 ```
 /** Link general syntax **/
-...?{operation}&{...transaction_or_operation_fields}
-...?transaction&{...transaction_fields}&operation={operation}&{...operation_fields}&{...more_operations}
+...?type={operation}&{...transaction_or_operation_fields}
+...?type=transaction&{...transaction_fields}&operation={operation}&{...operation_fields}&{...more_operations}
 ...?xdr={xdr}&network={"public"|"test"|passphrase}&[strip="source"|"sequence"|"signatures"]&[callback={url}]&[horizon={url}]
 
 /** Transaction optional fields **/

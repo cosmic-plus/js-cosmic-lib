@@ -19,31 +19,52 @@ const status = require("./status")
 
 decode.query = function (conf, query = "?") {
   if (query.substr(0, 1) !== "?") status.fail(conf, "Invalid query", "throw")
+  query = query.substr(1)
 
   const operations = []
   const tdesc = {}
 
-  let command = query.substr(1).replace(/&.*/, "")
-  const params = query.substr(command.length + 2).split("&")
-  if (command && command !== "transaction") operations.push({ type: command })
+  // Backward compatibility with the old non-standard syntax, deprecated since
+  // 2019-08-26. This adds `type=` at the beginning of the query when the first
+  // parameter doesn't contains an `=` sign.
+  if (query.match(/^\w*&/)) query = `type=${query}`
+
+  let parser
+  const params = query.split("&")
 
   for (let index in params) {
     const param = params[index].split("=", 2)
     const field = param[0]
     if (!field) continue
 
+    if (field === "type") {
+      if (parser) {
+        status.error(conf, "Query declares 'type' several times", "throw")
+      } else if (param[1] !== "transaction") {
+        operations[0] = { type: param[1] }
+      }
+      parser = param[1]
+      continue
+    } else if (!parser) {
+      status.error(
+        conf,
+        `Query doesn't declare 'type' in first position`,
+        "throw"
+      )
+    }
+
     if (field === "operation") {
       operations.push({ type: param[1] })
-      command = "operation"
+      parser = "operation"
       continue
     }
 
     const value = decode.field(conf, field, param[1])
 
     /// Multi-operation link.
-    if (command === "transaction") {
+    if (parser === "transaction") {
       tdesc[field] = value
-    } else if (command === "operation") {
+    } else if (parser === "operation") {
       operations[operations.length - 1][field] = value
       /// One-operation link.
     } else {

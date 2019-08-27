@@ -9,7 +9,7 @@ methods.
 
 ### One-operation link
 
-> ...?{operation}&{field}={value}&{...more_fields}
+> ...?type={operation}&{field}={value}&{...more_fields}
 
 Where `{field}` can be either a transaction field or a valid field for
 `{operation}`.
@@ -20,7 +20,7 @@ Example:
 
 ### Multi-operation link
 
-> ...?transaction&{...transactionFields}&operation={operation}&{...operationFields}&{...more_operations}
+> ...?type=transaction&{...transactionFields}&operation={operation}&{...operationFields}&{...more_operations}
 
 Because both the transaction and each operation can have a `source`
 field, transactions fields have to be provided prior to any operation, then the

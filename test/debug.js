@@ -28,190 +28,202 @@ const invalidKey = "GBP7EQX652UPJJJRYFAPH64V2MHGUGFJNKJN7RNOPNSFIBH4BW6NSF54"
 const tests = [
   /** * Transaction fields ***/
   ["bigTitle", "Transaction fields"],
-  ["query", "?inflation&network=test"],
-  ["query", "?inflation&horizon=broken-url"],
-  ["query", "?inflation&network=multisig&horizon=horizon-testnet.stellar.org"],
-  ["query", "?inflation&callback=example.org"],
-  ["query", "?inflation&source=" + accountMultiSig, { dontSign: 1 }],
-  ["query", "?inflation&fee=500"],
+  ["query", "?type=inflation&network=test"],
+  ["query", "?type=inflation&horizon=broken-url"],
   [
     "query",
-    "?manageData&minTime=2017-12-12&maxTime=2030-12-12&name=test&value=true",
+    "?type=inflation&network=multisig&horizon=horizon-testnet.stellar.org"
+  ],
+  ["query", "?type=inflation&callback=example.org"],
+  ["query", "?type=inflation&source=" + accountMultiSig, { dontSign: 1 }],
+  ["query", "?type=inflation&fee=500"],
+  [
+    "query",
+    "?type=manageData&minTime=2017-12-12&maxTime=2030-12-12&name=test&value=true",
     { send: 1 }
   ],
   [
     "query",
-    "?manageData&minTime=2017-12-12T06:05&name=test&value=true",
+    "?type=manageData&minTime=2017-12-12T06:05&name=test&value=true",
     { send: 1 }
   ],
   [
     "query",
-    "?manageData&maxTime=2030-12-12T06:05+01:30&name=test&value=true",
+    "?type=manageData&maxTime=2030-12-12T06:05+01:30&name=test&value=true",
     {
       loopbackQuery:
-        "?manageData&maxTime=2030-12-12T04:35&name=test&value=true",
+        "?type=manageData&maxTime=2030-12-12T04:35&name=test&value=true",
       send: 1
     }
   ],
-  ["query", "?setOptions&maxTime=+15", { send: 1 }],
-  ["query", "?inflation&memo=Hello_world!"],
-  ["query", "?inflation&memo=base64:" + bin],
-  ["query", "?inflation&memo=id:" + id],
-  ["query", "?inflation&memo=hash:" + shasum],
-  ["query", "?inflation&memo=return:" + shasum],
+  ["query", "?type=setOptions&maxTime=+15", { send: 1 }],
+  ["query", "?type=inflation&memo=Hello_world!"],
+  ["query", "?type=inflation&memo=base64:" + bin],
+  ["query", "?type=inflation&memo=id:" + id],
+  ["query", "?type=inflation&memo=hash:" + shasum],
+  ["query", "?type=inflation&memo=return:" + shasum],
 
   /** * Stellar operations ***/
   ["bigTitle", "Operations"],
   ["title", "Account merge"],
-  ["query", "?accountMerge&destination=" + account1],
+  ["query", "?type=accountMerge&destination=" + account1],
   ["title", "Allow trust"],
   [
     "query",
-    "?allowTrust&trustor=" + account1 + "&assetCode=DIA&authorize=true",
+    "?type=allowTrust&trustor=" + account1 + "&assetCode=DIA&authorize=true",
     {
       loopbackQuery:
-        "?allowTrust&trustor=GBWYUHFOHJECKDLFNCPGPVU6XRDJIBT5BYF6VXZEDHWVQRCR4HZVCGPU&assetCode=DIA"
+        "?type=allowTrust&trustor=GBWYUHFOHJECKDLFNCPGPVU6XRDJIBT5BYF6VXZEDHWVQRCR4HZVCGPU&assetCode=DIA"
     }
   ],
-  ["query", "?allowTrust&trustor=" + account1 + "&assetCode=DIA"],
+  ["query", "?type=allowTrust&trustor=" + account1 + "&assetCode=DIA"],
   [
     "query",
-    "?allowTrust&trustor=" + account1 + "&assetCode=DIA&authorize=false"
+    "?type=allowTrust&trustor=" + account1 + "&assetCode=DIA&authorize=false"
   ],
   ["title", "Bump Sequence"],
-  ["query", "?bumpSequence&bumpTo=999999999"],
+  ["query", "?type=bumpSequence&bumpTo=999999999"],
   ["title", "Change trust"],
-  ["query", "?changeTrust&asset=" + asset1],
-  ["query", "?changeTrust&asset=" + asset1 + "&limit=0"],
-  ["query", "?changeTrust&asset=" + asset1 + "&limit=1000"],
+  ["query", "?type=changeTrust&asset=" + asset1],
+  ["query", "?type=changeTrust&asset=" + asset1 + "&limit=0"],
+  ["query", "?type=changeTrust&asset=" + asset1 + "&limit=1000"],
   ["title", "Create account"],
-  ["query", "?createAccount&destination=" + account1 + "&startingBalance=220"],
+  [
+    "query",
+    "?type=createAccount&destination=" + account1 + "&startingBalance=220"
+  ],
   ["title", "Create passive offer (backward compatibility)"],
-  ["query", "?createPassiveOffer&buying=" + asset1 + "&amount=100&price=10"],
+  [
+    "query",
+    "?type=createPassiveOffer&buying=" + asset1 + "&amount=100&price=10"
+  ],
   ["title", "Create passive sell offer"],
   [
     "query",
-    "?createPassiveSellOffer&buying=" + asset1 + "&amount=100&price=10"
+    "?type=createPassiveSellOffer&buying=" + asset1 + "&amount=100&price=10"
   ],
   [
     "query",
-    "?createPassiveSellOffer&selling=" + asset1 + "&amount=100&price=0.1"
+    "?type=createPassiveSellOffer&selling=" + asset1 + "&amount=100&price=0.1"
   ],
   [
     "query",
-    "?createPassiveSellOffer&selling="
+    "?type=createPassiveSellOffer&selling="
       + asset2
       + "&buying="
       + asset1
       + "&amount=10&price=50"
   ],
   ["title", "Inflation"],
-  ["query", "?inflation"],
+  ["query", "?type=inflation"],
   ["title", "Manage data"],
-  ["query", "?manageData&name=mail&value=someone%40example.org"],
-  ["query", "?manageData&name=code&value=base64:" + bin],
-  ["query", "?manageData&name=address"],
+  ["query", "?type=manageData&name=mail&value=someone%40example.org"],
+  ["query", "?type=manageData&name=code&value=base64:" + bin],
+  ["query", "?type=manageData&name=address"],
   ["title", "Manage buy offer"],
-  ["query", "?manageBuyOffer&selling=" + asset1 + "&buyAmount=10&price=0.1"],
   [
     "query",
-    "?manageBuyOffer&selling="
+    "?type=manageBuyOffer&selling=" + asset1 + "&buyAmount=10&price=0.1"
+  ],
+  [
+    "query",
+    "?type=manageBuyOffer&selling="
       + asset1
       + "&buying="
       + asset2
       + "&buyAmount=500&price=1:50",
     {
       loopbackQuery:
-        "?manageBuyOffer&selling=ETH:GBDEVU63Y6NTHJQQZIKVTC23NWLQVP3WJ2RI2OTSJTNYOIGICST6DUXR&buying=CNY:admin*ripplefox.com&buyAmount=500&price=0.02"
+        "?type=manageBuyOffer&selling=ETH:GBDEVU63Y6NTHJQQZIKVTC23NWLQVP3WJ2RI2OTSJTNYOIGICST6DUXR&buying=CNY:admin*ripplefox.com&buyAmount=500&price=0.02"
     }
   ],
   [
     "query",
-    "?manageBuyOffer&selling="
+    "?type=manageBuyOffer&selling="
       + asset2
       + "&buying="
       + asset1
       + "&buyAmount=500&price=1:25&offerId=12345",
     {
       loopbackQuery:
-        "?manageBuyOffer&selling=CNY:admin*ripplefox.com&buying=ETH:GBDEVU63Y6NTHJQQZIKVTC23NWLQVP3WJ2RI2OTSJTNYOIGICST6DUXR&buyAmount=500&price=0.04&offerId=12345"
+        "?type=manageBuyOffer&selling=CNY:admin*ripplefox.com&buying=ETH:GBDEVU63Y6NTHJQQZIKVTC23NWLQVP3WJ2RI2OTSJTNYOIGICST6DUXR&buyAmount=500&price=0.04&offerId=12345"
     }
   ],
   [
     "query",
-    "?manageBuyOffer&buyAmount=0&offerId=12345",
+    "?type=manageBuyOffer&buyAmount=0&offerId=12345",
     {
       loopbackQuery:
-        "?manageBuyOffer&buying=XLM:GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWHF&buyAmount=0&price=1&offerId=12345"
+        "?type=manageBuyOffer&buying=XLM:GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWHF&buyAmount=0&price=1&offerId=12345"
     }
   ],
   ["title", "Manage offer (backward compatibility)"],
-  ["query", "?manageOffer&selling=" + asset1 + "&amount=10&price=0.1"],
+  ["query", "?type=manageOffer&selling=" + asset1 + "&amount=10&price=0.1"],
   ["title", "Manage sell offer"],
-  ["query", "?manageSellOffer&selling=" + asset1 + "&amount=10&price=0.1"],
+  ["query", "?type=manageSellOffer&selling=" + asset1 + "&amount=10&price=0.1"],
   [
     "query",
-    "?manageSellOffer&selling="
+    "?type=manageSellOffer&selling="
       + asset1
       + "&buying="
       + asset2
       + "&amount=500&price=1:50",
     {
       loopbackQuery:
-        "?manageSellOffer&selling=ETH:GBDEVU63Y6NTHJQQZIKVTC23NWLQVP3WJ2RI2OTSJTNYOIGICST6DUXR&buying=CNY:admin*ripplefox.com&amount=500&price=0.02"
+        "?type=manageSellOffer&selling=ETH:GBDEVU63Y6NTHJQQZIKVTC23NWLQVP3WJ2RI2OTSJTNYOIGICST6DUXR&buying=CNY:admin*ripplefox.com&amount=500&price=0.02"
     }
   ],
   [
     "query",
-    "?manageSellOffer&selling="
+    "?type=manageSellOffer&selling="
       + asset2
       + "&buying="
       + asset1
       + "&amount=500&price=1:25&offerId=12345",
     {
       loopbackQuery:
-        "?manageSellOffer&selling=CNY:admin*ripplefox.com&buying=ETH:GBDEVU63Y6NTHJQQZIKVTC23NWLQVP3WJ2RI2OTSJTNYOIGICST6DUXR&amount=500&price=0.04&offerId=12345"
+        "?type=manageSellOffer&selling=CNY:admin*ripplefox.com&buying=ETH:GBDEVU63Y6NTHJQQZIKVTC23NWLQVP3WJ2RI2OTSJTNYOIGICST6DUXR&amount=500&price=0.04&offerId=12345"
     }
   ],
   [
     "query",
-    "?manageSellOffer&amount=0&offerId=12345",
+    "?type=manageSellOffer&amount=0&offerId=12345",
     {
       loopbackQuery:
-        "?manageSellOffer&buying=XLM:GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWHF&amount=0&price=1&offerId=12345"
+        "?type=manageSellOffer&buying=XLM:GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWHF&amount=0&price=1&offerId=12345"
     }
   ],
   ["title", "Manage sell offer"],
-  ["query", "?manageSellOffer&selling=" + asset1 + "&amount=10&price=0.1"],
+  ["query", "?type=manageSellOffer&selling=" + asset1 + "&amount=10&price=0.1"],
   [
     "query",
-    "?manageSellOffer&selling="
+    "?type=manageSellOffer&selling="
       + asset1
       + "&buying="
       + asset2
       + "&amount=500&price=1:50",
     {
       loopbackQuery:
-        "?manageSellOffer&selling=ETH:GBDEVU63Y6NTHJQQZIKVTC23NWLQVP3WJ2RI2OTSJTNYOIGICST6DUXR&buying=CNY:admin*ripplefox.com&amount=500&price=0.02"
+        "?type=manageSellOffer&selling=ETH:GBDEVU63Y6NTHJQQZIKVTC23NWLQVP3WJ2RI2OTSJTNYOIGICST6DUXR&buying=CNY:admin*ripplefox.com&amount=500&price=0.02"
     }
   ],
   [
     "query",
-    "?manageSellOffer&selling="
+    "?type=manageSellOffer&selling="
       + asset2
       + "&buying="
       + asset1
       + "&amount=500&price=1:25&offerId=12345",
     {
       loopbackQuery:
-        "?manageSellOffer&selling=CNY:admin*ripplefox.com&buying=ETH:GBDEVU63Y6NTHJQQZIKVTC23NWLQVP3WJ2RI2OTSJTNYOIGICST6DUXR&amount=500&price=0.04&offerId=12345"
+        "?type=manageSellOffer&selling=CNY:admin*ripplefox.com&buying=ETH:GBDEVU63Y6NTHJQQZIKVTC23NWLQVP3WJ2RI2OTSJTNYOIGICST6DUXR&amount=500&price=0.04&offerId=12345"
     }
   ],
-  ["query", "?manageSellOffer&amount=0&offerId=12345"],
+  ["query", "?type=manageSellOffer&amount=0&offerId=12345"],
   ["title", "Path Payment"],
   [
     "query",
-    "?pathPayment&sendAsset="
+    "?type=pathPayment&sendAsset="
       + asset1
       + "&sendMax=20&destination="
       + account1
@@ -221,7 +233,7 @@ const tests = [
   ],
   [
     "query",
-    "?pathPayment&sendAsset="
+    "?type=pathPayment&sendAsset="
       + asset1
       + "&sendMax=20&destination="
       + account1
@@ -235,25 +247,25 @@ const tests = [
   ["title", "Payment"],
   [
     "query",
-    "?payment&destination=" + account1 + "&asset=" + asset1 + "&amount=20"
+    "?type=payment&destination=" + account1 + "&asset=" + asset1 + "&amount=20"
   ],
-  ["query", "?payment&destination=" + account1 + "&amount=0.001"],
+  ["query", "?type=payment&destination=" + account1 + "&amount=0.001"],
   ["title", "setOptions"],
-  ["query", "?setOptions"],
-  ["query", "?setOptions&inflationDest=" + account1],
-  ["query", "?setOptions&clearFlags=3"],
-  ["query", "?setOptions&setFlags=4"],
-  ["query", "?setOptions&clearFlags=4&setFlags=3"],
-  ["query", "?setOptions&masterWeight=10"],
-  ["query", "?setOptions&lowThreshold=1&medThreshold=5&highThreshold=8"],
-  ["query", "?setOptions&signer=1:key:" + account1],
-  ["query", "?setOptions&signer=0:key:" + account1],
-  ["query", "?setOptions&signer=1:hash:" + shasum],
-  ["query", "?setOptions&signer=0:hash:" + shasum],
-  ["query", "?setOptions&signer=1:tx:" + txsum],
-  ["query", "?setOptions&signer=0:tx:" + txsum],
-  ["query", "?setOptions&homeDomain=cosmic.link"],
-  ["query", "?setOptions&homeDomain="],
+  ["query", "?type=setOptions"],
+  ["query", "?type=setOptions&inflationDest=" + account1],
+  ["query", "?type=setOptions&clearFlags=3"],
+  ["query", "?type=setOptions&setFlags=4"],
+  ["query", "?type=setOptions&clearFlags=4&setFlags=3"],
+  ["query", "?type=setOptions&masterWeight=10"],
+  ["query", "?type=setOptions&lowThreshold=1&medThreshold=5&highThreshold=8"],
+  ["query", "?type=setOptions&signer=1:key:" + account1],
+  ["query", "?type=setOptions&signer=0:key:" + account1],
+  ["query", "?type=setOptions&signer=1:hash:" + shasum],
+  ["query", "?type=setOptions&signer=0:hash:" + shasum],
+  ["query", "?type=setOptions&signer=1:tx:" + txsum],
+  ["query", "?type=setOptions&signer=0:tx:" + txsum],
+  ["query", "?type=setOptions&homeDomain=cosmic.link"],
+  ["query", "?type=setOptions&homeDomain="],
 
   /** * XDR conversion **/
   ["bigTitle", "XDR conversion"],
@@ -264,37 +276,41 @@ const tests = [
 
   /** * Sending tests ***/
   ["bigTitle", "Sending tests"],
-  ["query", "stellar://?manageData&name=name&value=Mister.Ticot", { send: 1 }],
-  ["query", "?manageData&name=planet&value=alert('pluton')", { send: 1 }],
   [
     "query",
-    "?manageData&name=other&value=spaces%20and%20UTF8%20%7B%C3%B0%E2%80%A6%C3%B0%7D",
+    "stellar://?type=manageData&name=name&value=Mister.Ticot",
     { send: 1 }
   ],
-  ["query", "?setOptions&homeDomain=cosmic.link", { send: 1 }],
+  ["query", "?type=manageData&name=planet&value=alert('pluton')", { send: 1 }],
   [
     "query",
-    "?payment&destination=" + account1 + "&amount=0.00001",
+    "?type=manageData&name=other&value=spaces%20and%20UTF8%20%7B%C3%B0%E2%80%A6%C3%B0%7D",
+    { send: 1 }
+  ],
+  ["query", "?type=setOptions&homeDomain=cosmic.link", { send: 1 }],
+  [
+    "query",
+    "?type=payment&destination=" + account1 + "&amount=0.00001",
     { send: 1 }
   ],
 
   /** * Error handling ***/
   ["bigTitle", "Error handling"],
   ["title", "Unknow operation"],
-  ["query", "?something"],
+  ["query", "?type=something"],
   ["title", "Unknow field"],
-  ["query", "?inflation&weird=true"],
+  ["query", "?type=inflation&weird=true"],
   ["title", "Empty field"],
-  ["query", "?manageData&name="],
+  ["query", "?type=manageData&name="],
   ["title", "Wrong address"],
-  ["query", "?payment&amount=1&destination=nobody*example.org"],
-  ["query", "?payment&amount=1&destination=weird"],
-  ["query", "?payment&amount=1&destination=" + invalidKey],
-  ["query", "?inflation&source=nobody*example.org"],
-  ["query", "?inflation&source=weird"],
-  ["query", "?inflation&source=" + invalidKey],
+  ["query", "?type=payment&amount=1&destination=nobody*example.org"],
+  ["query", "?type=payment&amount=1&destination=weird"],
+  ["query", "?type=payment&amount=1&destination=" + invalidKey],
+  ["query", "?type=inflation&source=nobody*example.org"],
+  ["query", "?type=inflation&source=weird"],
+  ["query", "?type=inflation&source=" + invalidKey],
   ["title", "Wrong amount"],
-  ["query", "?payment&amount=abc&destination=" + account1]
+  ["query", "?type=payment&amount=abc&destination=" + account1]
 ]
 
 cosmicLib.config.network = "test"

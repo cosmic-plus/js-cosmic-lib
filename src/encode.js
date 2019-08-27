@@ -24,7 +24,7 @@ encode.query = function (conf, tdesc) {
   } else {
     command = tdesc.operations[0].type
   }
-  let query = "?" + command
+  let query = "?type=" + command
 
   specs.transactionOptionalFields.forEach(field => {
     if (tdesc[field] !== undefined)
