@@ -38,10 +38,16 @@ resolve.server = function (
 /**
  * Switch to the current network, or to **network** if provided.
  *
+ * @deprecated StellarSdk global `Network` setting is deprecated.
  * @param {string} [network] 'public', 'test' or a network passphrase
  * @returns {Server} A StellarSdk Server object
  */
 resolve.useNetwork = function (conf, network = conf.network) {
+  // DEPRECATED - to be removed when in sync with stellar-sdk 3.x.
+  console.warn(
+    "`.selectNetwork()`, `.useNetwork()`, as well as StellarSdk global `Network` setting are deprecated. Please use `cosmicLib.config.network` or pass parameter explicitely."
+  )
+
   const passphrase = resolve.networkPassphrase(conf, network)
   const currentPassphrase = resolve.networkPassphrase()
   if (passphrase !== currentPassphrase) {
@@ -74,6 +80,7 @@ resolve.horizon = function (conf, network = conf.network) {
  */
 resolve.networkPassphrase = function (conf = {}, network = conf.network) {
   if (network === undefined) {
+    // DEPRECATED: To be removed in sync with stellar-sdk 3.x.
     const currentNetwork = StellarSdk.Network.current()
     if (currentNetwork) return currentNetwork.networkPassphrase()
   } else {

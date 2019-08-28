@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+### Deprecated
+
+- Api: Deprecate functions related to the global Network class. StellarSdk now
+  uses a scoped network parameter, hence the functions
+  `cosmicLink.selectNetwork()` and `resolve.useNetwork()`, which are helpers to
+  switch the StellarSdk global Network, are now deprecated. Those functions will
+  get removed in sync with StellarSdk removal of its global Network class.
+
 ### Changed
 
 - Api: Implement XDR-links param `strip`. It replaces parameters `stripSource`,
