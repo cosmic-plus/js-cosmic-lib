@@ -54,7 +54,8 @@ convert.xdrToSep7 = function (conf, xdr, options) {
 /** ****************************    XDR -> URI    ******************************/
 
 convert.xdrToTransaction = function (conf, xdr, options = {}) {
-  const transaction = new StellarSdk.Transaction(xdr)
+  const networkPassphrase = resolve.networkPassphrase(conf, options.network)
+  const transaction = new StellarSdk.Transaction(xdr, networkPassphrase)
   if (options.strip === "signatures") transaction.signatures = []
   return transaction
 }

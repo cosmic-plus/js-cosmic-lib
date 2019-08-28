@@ -68,6 +68,7 @@ async function makeTransactionBuilder (conf, tdesc) {
   const baseFee = await server.fetchBaseFee()
 
   let txOpts = {}
+  txOpts.networkPassphrase = resolve.networkPassphrase(conf)
   if (tdesc.fee) txOpts.fee = tdesc.fee
   else txOpts.fee = tdesc.operations.length * baseFee
   if (tdesc.memo) txOpts.memo = construct.memo(conf, tdesc.memo)

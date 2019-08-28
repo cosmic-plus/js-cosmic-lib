@@ -53,7 +53,6 @@ class SignersUtils {
     const extra = resolve.extra(conf, transaction)
 
     if (!extra.cache.signersUtils) {
-      resolve.useNetwork(extra)
       extra.cache.txHash = transaction.hash()
       const utils = new SignersUtils(extra, transaction)
       /**
