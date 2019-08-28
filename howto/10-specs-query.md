@@ -11,8 +11,8 @@ methods.
 
 > ...?type={operation}&{field}={value}&{...more_fields}
 
-Where `{field}` can be either a transaction field or a valid field for
-`{operation}`.
+Where `{field}` can be either a meta field, a transaction field or a valid field
+for `{operation}`.
 
 Example:
 
@@ -20,11 +20,10 @@ Example:
 
 ### Multi-operation link
 
-> ...?type=transaction&{...transactionFields}&operation={operation}&{...operationFields}&{...more_operations}
+> ...?type=transaction&{...metaFields|transactionFields}&operation={operation}&{...operationFields}&{...more_operations}
 
-Because both the transaction and each operation can have a `source`
-field, transactions fields have to be provided prior to any operation, then the
-operations should be described sequentially.
+Meta fields and transactions fields have to be provided prior to any operation,
+then the operations should be described sequentially.
 
 Example:
 
@@ -32,21 +31,12 @@ Example:
 
 ### XDR link
 
-> ...?xdr={xdr}&{...options}
+> ...?xdr={xdr}&{...metaFields}[&strip=source|sequence|signatures]
 
-6 options are possible:
-
-* `&network=["public"|"test"|{passphrase}]`: This one is always recommended as *cosmic-lib*
-  won't automatically detect the valid network for {xdr}, and the default
-  network may vary from one service to another.
-* `&horizon={url}`: Provide a fallback Horizon node for custom network in case
-  the client doesn't know any.
-* `&callback={url}`: Provide the destination at which the signed transaction
-  must be posted.
-* `&strip="source"|"sequence"|"signatures"`: Remove an element from the original
-  XDR transaction. Stripping out sequence means that the transaction request can
-  get signed anytime in the future, possibly several times. Stripping out source
-  means that it can get signed by any account.
+* `&strip`: Remove an element from the original XDR transaction. Stripping out
+  sequence means that the transaction request can get signed anytime in the
+  future, possibly several times. Stripping out source means that it can get
+  signed by any account.
 
 Example:
 
@@ -54,18 +44,18 @@ Example:
 
 ## Fields
 
-### Transaction fields
+### Meta Fields
 
-Those fields may be used in any transaction and are all of them are optionals.
-For multi-operations links, `source` will become the default source for any
-operation that doesn't define one. In cosmic links, having a `source` is
-optional as the source can be set by the wallet service when signing.
+Those fields contains data that is not strictly-speaking part of the
+transaction object, but that is essential to its validation. Those fields are
+optional.
 
 #### network
 
-> &network=["public"|"test"|{passphrase}]
+> &network=public|test|{passphrase}
 
-Tie the transaction to a specific network.
+Tie the transaction to a specific network. Network-less transaction requests are
+interpreted as transactions that can be validated on any network.
 
 #### horizon
 
@@ -79,6 +69,14 @@ know any.
 > &callback={url}
 
 Provide the destination at which the signed transaction must be posted.
+
+### Transaction fields
+
+Those fields may be used in any transaction and are all of them are optionals.
+For multi-operations links, `source` will become the default source for any
+operation that doesn't define one. In cosmic links, having a `source` is
+optional as the source can be set by the wallet service when signing.
+
 
 #### memo
 

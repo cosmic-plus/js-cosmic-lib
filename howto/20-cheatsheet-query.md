@@ -1,14 +1,16 @@
 ```
 /** Link general syntax **/
-...?type={operation}&{...transaction_or_operation_fields}
-...?type=transaction&{...transaction_fields}&operation={operation}&{...operation_fields}&{...more_operations}
-...?xdr={xdr}&network={"public"|"test"|passphrase}&[strip="source"|"sequence"|"signatures"]&[callback={url}]&[horizon={url}]
+...?type={operation}&{...meta_fields|transaction_fields|operation_fields}
+...?type=transaction&{...meta_fields|transaction_fields}&operation={operation}&{...operation_fields}&{...more_operations}
+...?xdr={xdr}&{...meta_fields}&[strip=source|sequence|signatures]
 
-/** Transaction optional fields **/
-&network="public"|"test"|{passphrase}
-&horizon={url}
-&callback={url}
-&memo={message}|{memoType}:{memoValue} // memoType = text|id|hash|return
+/** Meta fields **/
+network=public|test|{passphrase}
+callback={url}
+horizon={url}    // Fallback, only for custom networks
+
+/** Transaction fields **/
+&memo={message}|{memoType}:{memoValue}    // memoType = text|id|hash|return
 &source={address}
 &minTime={YYYY-MM-DD}|{YYYY-MM-DDTHH:mm:ssZ}|+{minutes}
 &maxTime={YYYY-MM-DD}|{YYYY-MM-DDTHH:mm:ssZ}|+{minutes}

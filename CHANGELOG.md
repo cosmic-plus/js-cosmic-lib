@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 - Api: Add a `type=` prefix to param queries. The previous syntax was not
   standard-compliant. Example:
   `?type=payment&destination=tips*cosmic.link&amount=20`
+- Documentation: Differenciate between meta & transaction fields.
 
 ## 1.7.2 - 2019-08-27
 
