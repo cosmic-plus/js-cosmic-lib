@@ -21,6 +21,7 @@ All notable changes to this project will be documented in this file.
   standard-compliant. Example:
   `?type=payment&destination=tips*cosmic.link&amount=20`
 - Documentation: Differenciate between meta & transaction fields.
+- Documentation: Update CONTRIBUTING.md.
 
 ## 1.7.2 - 2019-08-27
 
