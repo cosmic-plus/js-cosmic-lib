@@ -1,12 +1,11 @@
 .*
 *.config.js
+_config.yml
 jsdoc.json
 setenv.sh
-TODO.md
 
-extra**
-howto**
-test**
-
+static
+style
+test
 web/**
 !web/cosmic-lib.css
