@@ -1,4 +1,9 @@
-# Contributing Guidelines
+**cosmic-lib /**
+[Documentation](https://cosmic.plus/#view:js-cosmic-lib/web/doc)
+• [Contributing](https://cosmic.plus/#view:js-cosmic-lib/CONTRIBUTING)
+• [Changelog](https://cosmic.plus/#view:js-cosmic-lib/CHANGELOG)
+
+# Contributing
 
 Welcome to new contributors! This project is open to input & edits.
 

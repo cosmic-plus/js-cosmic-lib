@@ -1,4 +1,9 @@
-# cosmic-lib
+**cosmic-lib /**
+[Documentation](https://cosmic.plus/#view:js-cosmic-lib/web/doc)
+• [Contributing](https://cosmic.plus/#view:js-cosmic-lib/CONTRIBUTING)
+• [Changelog](https://cosmic.plus/#view:js-cosmic-lib/CHANGELOG)
+
+# Readme
 
 ![Licence](https://img.shields.io/github/license/cosmic-plus/js-cosmic-lib.svg)
 [![Dependencies](https://badgen.net/david/dep/cosmic-plus/js-cosmic-lib)](https://david-dm.org/cosmic-plus/js-cosmic-lib)

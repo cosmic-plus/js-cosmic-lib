@@ -1,3 +1,8 @@
+**cosmic-lib /**
+[Documentation](https://cosmic.plus/#view:js-cosmic-lib/web/doc)
+• [Contributing](https://cosmic.plus/#view:js-cosmic-lib/CONTRIBUTING)
+• [Changelog](https://cosmic.plus/#view:js-cosmic-lib/CHANGELOG)
+
 # Changelog
 
 All notable changes to this project will be documented in this file.
@@ -11,6 +16,10 @@ All notable changes to this project will be documented in this file.
   `cosmicLink.selectNetwork()` and `resolve.useNetwork()`, which are helpers to
   switch the StellarSdk global Network, are now deprecated. Those functions will
   get removed in sync with StellarSdk removal of its global Network class.
+
+### Added
+
+- Documentation: Add navigation header.
 
 ### Changed
 
