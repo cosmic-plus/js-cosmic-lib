@@ -73,9 +73,9 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.5.5",
-    "@cosmic-plus/base": "^2.0.5",
+    "@cosmic-plus/base": "^2.1.0",
     "@cosmic-plus/domutils": "^2.0.2",
     "@cosmic-plus/jsutils": "^2.0.2",
-    "stellar-sdk": "^2.3.0"
+    "stellar-sdk": "^3.0.0"
   }
 }

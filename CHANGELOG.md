@@ -23,6 +23,7 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
+- Meta: Upgrade [stellar-sdk] to 3.x.
 - Api: Implement XDR-links param `strip`. It replaces parameters `stripSource`,
   `stripSequence` & `stripSignatures` by the standard-compliant
   `strip="source"|"sequence"|"signatures"`.
