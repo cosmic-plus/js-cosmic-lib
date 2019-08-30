@@ -54,6 +54,7 @@ construct.operation = async function (conf, odesc) {
   delete odesc.type
 
   for (let field in odesc) {
+    // eslint-disable-next-line require-atomic-updates
     odesc[field] = await construct.field(conf, field, odesc[field])
   }
 
@@ -107,6 +108,7 @@ async function makeTransactionBuilder (conf, tdesc) {
             "throw"
           )
         } else {
+          // eslint-disable-next-line require-atomic-updates
           tdesc.memo = { type: memoType, value: memoValue }
           builder.addMemo(new StellarSdk.Memo(memoType, memoValue))
         }

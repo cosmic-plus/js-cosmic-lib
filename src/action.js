@@ -87,6 +87,7 @@ async function applyLock (cosmicLink, options) {
   delete cosmicLink._json
 
   if (!cosmicLink._transaction) {
+    // eslint-disable-next-line require-atomic-updates
     cosmicLink._transaction = await convert.tdescToTransaction(
       cosmicLink,
       cosmicLink.tdesc
