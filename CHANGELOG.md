@@ -7,7 +7,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## Unreleased
+## 1.0.8 - 2019-08-31
 
 ### Deprecated
 
