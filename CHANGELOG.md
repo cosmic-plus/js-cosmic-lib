@@ -7,7 +7,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## 1.0.8 - 2019-08-31
+## 1.8.0 - 2019-08-31
 
 ### Deprecated
 
