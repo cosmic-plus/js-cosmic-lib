@@ -27,7 +27,7 @@ decode.query = function (conf, query = "?") {
   // Backward compatibility with the old non-standard syntax, deprecated since
   // 2019-08-26. This adds `type=` at the beginning of the query when the first
   // parameter doesn't contains an `=` sign.
-  if (query.match(/^\w*&/)) query = `type=${query}`
+  if (query.match(/^\w*(&|$)/)) query = `type=${query}`
 
   let parser
   const params = query.split("&")

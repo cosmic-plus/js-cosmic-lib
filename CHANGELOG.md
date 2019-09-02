@@ -7,6 +7,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.8.1 - 2019-09-02
+
+### Fixed
+
+- Api: Fix a regression in the parser. 1.8.0 broke backward-compatibility for
+  queries made by one operation only, such as `?inflation` and `?setOptions`.
+
 ## 1.8.0 - 2019-08-31
 
 ### Deprecated
