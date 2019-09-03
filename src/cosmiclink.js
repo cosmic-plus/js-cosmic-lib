@@ -24,7 +24,7 @@ const status = require("./status")
  * | [json]{@link CosmicLink#json}               |[callback]{@link CosmicLink#callback}|await [send]{@link CosmicLink#send}             |[setOperation]{@link CosmicLink#setOperation}
  * | [transaction]{@link CosmicLink#transaction} |[source]{@link CosmicLink#source}    |[open]{@link CosmicLink#open}                   |[insertOperation]{@link CosmicLink#insertOperation}
  * | [xdr]{@link CosmicLink#xdr}                 |[status]{@link CosmicLink#status}    |
- * | [sep7]{@link CosmicLink#sep7}               |[errors]{@link CosmicLink#errors}    |
+ * | [sep7]{@link CosmicLink#sep7}               |[errors]{@link CosmicLink#errors}    |[verifySep7]{@link CosmicLink#verifySep7}
  * |                                             |[locker]{@link CosmicLink#locker}
  * |                                             |[cache]{@link CosmicLink#cache}
  * |                                             |[extra]{@link CosmicLink#extra}
@@ -536,6 +536,23 @@ class CosmicLink {
     default:
       throw new Error(`Invalid cosmicLink.open() target: ${target}`)
     }
+  }
+
+  /**
+   * Verify SEP-0007 signature by resolving [`cosmicLink.extra.domain`]{@link
+   * CosmicLink#extra}, if any.
+   * Throw an error if the signature is not valid.
+   *
+   * @return {undefined|String} The resolved `cosmicLink.extra.domain`, if any.
+   */
+  async verifySep7 () {
+    if (this.extra.originDomain instanceof Promise) {
+      const domain = await this.extra.originDomain
+      this.extra.originDomain = domain
+    } else if (this.extra.originDomain) {
+      sep7Utils.verifySignature(this, this.extra.originDomain)
+    }
+    return this.extra.originDomain
   }
 
   /// Backward compatibility (2018-09 -> 2019-03).

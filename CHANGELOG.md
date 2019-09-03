@@ -7,6 +7,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## Unreleased
+
+### Added
+
+- API: Add `cosmicLink.verifySep7()`. Verify SEP-0007 signature by resolving
+  `cosmicLink.extra.domain`, if any. Throw an error if the signature is not
+  valid.
+
 ## 1.8.1 - 2019-09-02
 
 ### Fixed
