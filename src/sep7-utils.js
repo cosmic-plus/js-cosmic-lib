@@ -172,6 +172,17 @@ sep7Utils.verifySignature = async function (cosmicLink, domain) {
     throw new Error(`No signature attached for domain: ${domain}`)
   }
 
+  const payload = sep7Utils.makePayload(link)
+  const keypair = await sep7Utils.getDomainKeypair(domain)
+
+  if (keypair.verify(payload, Buffer.from(signature, "base64"))) {
+    return domain
+  } else {
+    throw new Error(`Invalid signature for domain: ${domain}`)
+  }
+}
+
+sep7Utils.getDomainKeypair = async function (domain) {
   const toml = await StellarSdk.StellarTomlResolver.resolve(domain)
   const signingKey = toml.URI_REQUEST_SIGNING_KEY
 
@@ -179,14 +190,7 @@ sep7Utils.verifySignature = async function (cosmicLink, domain) {
     throw new Error(`Can't find signing key for domain: ${domain}`)
   }
 
-  const keypair = StellarSdk.Keypair.fromPublicKey(signingKey)
-  const payload = sep7Utils.makePayload(link)
-
-  if (keypair.verify(payload, Buffer.from(signature, "base64"))) {
-    return domain
-  } else {
-    throw new Error(`Invalid signature for domain: ${domain}`)
-  }
+  return StellarSdk.Keypair.fromPublicKey(signingKey)
 }
 
 sep7Utils.makePayload = function (link) {
