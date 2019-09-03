@@ -5,7 +5,7 @@
  *
  * @private
  */
-const parseSep7 = exports
+const sep7Utils = exports
 
 const Buffer = require("@cosmic-plus/base/es5/buffer")
 const StellarSdk = require("@cosmic-plus/base/es5/stellar-sdk")
@@ -16,29 +16,31 @@ const convert = require("./convert")
 const decode = require("./decode")
 const parse = require("./parse")
 
+/* Parsing */
+
 /**
  * Initialize cosmicLink using `sep7Request`.
  */
-parseSep7.request = function (cosmicLink, sep7Request, options) {
+sep7Utils.parseRequest = function (cosmicLink, sep7Request, options) {
   parse.page(cosmicLink, sep7Request)
 
   const query = convert.uriToQuery(cosmicLink, sep7Request)
   const sep7 = decodeURIComponent(query.substr(5))
-  return parseSep7.link(cosmicLink, sep7, options)
+  return sep7Utils.parseLink(cosmicLink, sep7, options)
 }
 
 /**
  * Initialize cosmicLink using `sep7`.
  */
-parseSep7.link = function (cosmicLink, sep7, options = {}) {
+sep7Utils.parseLink = function (cosmicLink, sep7, options = {}) {
   cosmicLink._sep7 = sep7
   if (!options.network) options.network = "public"
   if (sep7.substr(12, 4) === "pay?") {
     cosmicLink.extra.type = "pay"
-    return parseSep7.link.pay(cosmicLink, sep7, options)
+    return sep7Utils.parsePayLink(cosmicLink, sep7, options)
   } else if (sep7.substr(12, 3) === "tx?") {
     cosmicLink.extra.type = "tx"
-    return parseSep7.link.xdr(cosmicLink, sep7, options)
+    return sep7Utils.parseTxLink(cosmicLink, sep7, options)
   } else {
     throw new Error("Invalid SEP-0007 link.")
   }
@@ -47,7 +49,7 @@ parseSep7.link = function (cosmicLink, sep7, options = {}) {
 /**
  * Initialize cosmicLink using `sep7.xdr`.
  */
-parseSep7.link.xdr = function (cosmicLink, sep7, options = {}) {
+sep7Utils.parseTxLink = function (cosmicLink, sep7, options = {}) {
   const query = convert.uriToQuery(cosmicLink, sep7)
   const params = query.substr(1).split("&")
   let xdr
@@ -65,7 +67,7 @@ parseSep7.link.xdr = function (cosmicLink, sep7, options = {}) {
       cosmicLink.extra.pubkey = value
       break
     default:
-      parseSep7.link.common(cosmicLink, "xdr", field, value, options)
+      sep7Utils.parseLinkCommons(cosmicLink, "xdr", field, value, options)
     }
   })
 
@@ -76,7 +78,7 @@ parseSep7.link.xdr = function (cosmicLink, sep7, options = {}) {
 /**
  * Initialize cosmicLink using `sep7.pay`.
  */
-parseSep7.link.pay = function (cosmicLink, sep7, options = {}) {
+sep7Utils.parsePayLink = function (cosmicLink, sep7, options = {}) {
   const query = convert.uriToQuery(cosmicLink, sep7)
   const params = query.substr(1).split("&")
 
@@ -111,7 +113,7 @@ parseSep7.link.pay = function (cosmicLink, sep7, options = {}) {
       memo.value = decode.string(cosmicLink, value)
       break
     default:
-      parseSep7.link.common(cosmicLink, "pay", field, value, options)
+      sep7Utils.parseLinkCommons(cosmicLink, "pay", field, value, options)
     }
   })
 
@@ -128,7 +130,7 @@ parseSep7.link.pay = function (cosmicLink, sep7, options = {}) {
   return { type: "tdesc", value: tdesc, options }
 }
 
-parseSep7.link.common = function (cosmicLink, mode, field, value, options) {
+sep7Utils.parseLinkCommons = function (cosmicLink, mode, field, value, options) {
   switch (field) {
   case "network_passphrase":
     options.network = decode.network(cosmicLink, value)
@@ -141,7 +143,7 @@ parseSep7.link.common = function (cosmicLink, mode, field, value, options) {
     options.callback = value.substr(4)
     break
   case "origin_domain":
-    cosmicLink.extra.originDomain = parseSep7.checkSignature(
+    cosmicLink.extra.originDomain = sep7Utils.verifySignature(
       cosmicLink,
       value
     )
@@ -157,7 +159,9 @@ parseSep7.link.common = function (cosmicLink, mode, field, value, options) {
   }
 }
 
-parseSep7.checkSignature = async function (cosmicLink, domain) {
+/* Signing */
+
+sep7Utils.verifySignature = async function (cosmicLink, domain) {
   const link = cosmicLink.sep7.replace(/&signature=.*/, "")
 
   // Let parser parse signature.
@@ -176,7 +180,7 @@ parseSep7.checkSignature = async function (cosmicLink, domain) {
   }
 
   const keypair = StellarSdk.Keypair.fromPublicKey(signingKey)
-  const payload = makePayload(link)
+  const payload = sep7Utils.makePayload(link)
 
   if (keypair.verify(payload, Buffer.from(signature, "base64"))) {
     return domain
@@ -185,7 +189,7 @@ parseSep7.checkSignature = async function (cosmicLink, domain) {
   }
 }
 
-function makePayload (link) {
+sep7Utils.makePayload = function (link) {
   return Buffer.concat([
     Buffer.alloc(35),
     Buffer.alloc(1, 4),

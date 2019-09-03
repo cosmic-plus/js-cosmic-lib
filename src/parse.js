@@ -15,7 +15,7 @@ const check = require("./check")
 const convert = require("./convert")
 const decode = require("./decode")
 const expand = require("./expand")
-const parseSep7 = require("./parse-sep7")
+const sep7Utils = require("./sep7-utils")
 const status = require("./status")
 
 /**
@@ -152,8 +152,8 @@ parse.rule.xdrUri = function (cosmicLink, xdrUri, options) {
 /**
  * SEP-0007 parsing
  */
-parse.rule.sep7Request = parseSep7.request
-parse.rule.sep7 = parseSep7.link
+parse.rule.sep7Request = sep7Utils.parseRequest
+parse.rule.sep7 = sep7Utils.parseLink
 
 /******************************************************************************/
 
