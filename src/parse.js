@@ -65,6 +65,14 @@ parse.dispatch = function (cosmicLink, value = "?", options = {}) {
     if (error.tdesc) cosmicLink._tdesc = error.tdesc
   }
 
+  // Asynchronously check SEP-0007 link.
+  if (cosmicLink.extra.originDomain) {
+    cosmicLink.verifySep7().catch(error => {
+      status.error(cosmicLink, error.message)
+      status.fail(cosmicLink, "Invalid SEP-0007 link")
+    })
+  }
+
   if (options.page) parse.page(cosmicLink, options.page)
 }
 

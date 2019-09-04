@@ -23,6 +23,12 @@ All notable changes to this project will be documented in this file.
 - API: Add `cosmicLink.signSep7()`. Parameters: domain, keypair. Sign SEP-0007
   link for **domain**, using **keypair**.
 
+### Changed
+
+- Logic: Update status on SEP-0007 verification failure. You still need to
+  `await cosmicLink.verifySep7()` before signing a transaction request, as
+  signature verification is asynchronous.
+
 ### Fixed
 
 - API: Fix a regression in the parser. 1.8.1 did not properly handle empty
