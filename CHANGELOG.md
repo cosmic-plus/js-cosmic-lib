@@ -17,6 +17,11 @@ All notable changes to this project will be documented in this file.
 - API: Add `cosmicLink.signSep7()`. Parameters: domain, keypair. Sign SEP-0007
   link for **domain**, using **keypair**.
 
+### Fixed
+
+- API: Fix a regression in the parser. 1.8.1 did not properly handle empty
+  transactions (`?`).
+
 ## 1.8.1 - 2019-09-02
 
 ### Fixed
