@@ -22,6 +22,7 @@ All notable changes to this project will be documented in this file.
   valid.
 - API: Add `cosmicLink.signSep7()`. Parameters: domain, keypair. Sign SEP-0007
   link for **domain**, using **keypair**.
+- UI: Add SEP-0007 origin_domain in HTML description.
 
 ### Changed
 
