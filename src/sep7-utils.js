@@ -161,6 +161,19 @@ sep7Utils.parseLinkCommons = function (cosmicLink, mode, field, value, options) 
 
 /* Signing */
 
+sep7Utils.signLink = async function (cosmicLink, domain, keypair) {
+  if (!cosmicLink.locker) throw new Error("cosmicLink is not locked.")
+
+  cosmicLink.extra.originDomain = domain
+  delete cosmicLink.extra.signature
+  delete cosmicLink._sep7
+
+  const link = cosmicLink.sep7
+  const payload = sep7Utils.makePayload(link)
+  cosmicLink.extra.signature = keypair.sign(payload).toString("base64")
+  delete cosmicLink._sep7
+}
+
 sep7Utils.verifySignature = async function (cosmicLink, domain) {
   const link = cosmicLink.sep7.replace(/&signature=.*/, "")
 

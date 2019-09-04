@@ -12,6 +12,7 @@ const convert = require("./convert")
 const format = env.isBrowser && require("./format")
 const parse = require("./parse")
 const resolve = require("./resolve")
+const sep7Utils = require("./sep7-utils")
 const status = require("./status")
 
 /**
@@ -23,7 +24,7 @@ const status = require("./status")
  * | [tdesc]{@link CosmicLink#tdesc}             |[horizon]{@link CosmicLink#horizon}  |[sign]{@link CosmicLink#sign}                   |[addOperation]{@link CosmicLink#addOperation} |
  * | [json]{@link CosmicLink#json}               |[callback]{@link CosmicLink#callback}|await [send]{@link CosmicLink#send}             |[setOperation]{@link CosmicLink#setOperation}
  * | [transaction]{@link CosmicLink#transaction} |[source]{@link CosmicLink#source}    |[open]{@link CosmicLink#open}                   |[insertOperation]{@link CosmicLink#insertOperation}
- * | [xdr]{@link CosmicLink#xdr}                 |[status]{@link CosmicLink#status}    |
+ * | [xdr]{@link CosmicLink#xdr}                 |[status]{@link CosmicLink#status}    |[signSep7]{@link CosmicLink#signSep7}
  * | [sep7]{@link CosmicLink#sep7}               |[errors]{@link CosmicLink#errors}    |[verifySep7]{@link CosmicLink#verifySep7}
  * |                                             |[locker]{@link CosmicLink#locker}
  * |                                             |[cache]{@link CosmicLink#cache}
@@ -536,6 +537,14 @@ class CosmicLink {
     default:
       throw new Error(`Invalid cosmicLink.open() target: ${target}`)
     }
+  }
+
+  /**
+   * Sign SEP-0007 link for **domain**, using **keypair**.
+   */
+  signSep7 (domain, keypair) {
+    if (!this.locker) throw new Error("cosmicLink is not locked.")
+    sep7Utils.signLink(this, domain, keypair)
   }
 
   /**

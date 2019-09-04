@@ -45,6 +45,10 @@ convert.xdrToSep7 = function (conf, xdr, options) {
   if (options.callback) {
     sep7 += "&callback=" + encode.url(conf, `url:${options.callback}`)
   }
+  if (typeof conf.extra.originDomain === "string") {
+    sep7 += "&origin_domain=" + conf.extra.originDomain
+    sep7 += "&signature=" + conf.extra.signature
+  }
   // Not part of the standard.
   // if (options.horizon) sep7 +="&horizon=" + encode.url(conf, options.horizon)
 
