@@ -16,16 +16,16 @@ const sep7Utils = require("./sep7-utils")
 const status = require("./status")
 
 /**
- * | Formats                                     | Data                                | Actions                                        | Editor                                       | HTML elements
+ * | Formats                                     | Data                                | Actions                                        | Editor                                       | HTML
  * |---------------------------------------------|-------------------------------------|------------------------------------------------|----------------------------------------------|----------------------------------------
- * |-----------------------|-----------------------|-----------------------|-----------------------|-----------------------
- * | [uri]{@link CosmicLink#uri}                 |[page]{@link CosmicLink#page}        |[selectNetwork]{@link CosmicLink#selectNetwork} |[parse]{@link CosmicLink#parse}               |[htmlDescription]{@link CosmicLink#htmlDescription}
- * | [query]{@link CosmicLink#query}             |[network]{@link CosmicLink#network}  |await [lock]{@link CosmicLink#lock}             |[setTxFields]{@link CosmicLink#setTxFields}   |[htmlLink]{@link CosmicLink#htmlLink}
+ * |---------------------|---------------------|---------------------|---------------------|---------------------
+ * | [uri]{@link CosmicLink#uri}                 |[page]{@link CosmicLink#page}        |[open]{@link CosmicLink#open}                   |[parse]{@link CosmicLink#parse}               |[htmlDescription]{@link CosmicLink#htmlDescription}
+ * | [query]{@link CosmicLink#query}             |[network]{@link CosmicLink#network}  |[lock]{@link CosmicLink#lock} async             |[setTxFields]{@link CosmicLink#setTxFields}   |[htmlLink]{@link CosmicLink#htmlLink}
  * | [tdesc]{@link CosmicLink#tdesc}             |[horizon]{@link CosmicLink#horizon}  |[sign]{@link CosmicLink#sign}                   |[addOperation]{@link CosmicLink#addOperation} |
- * | [json]{@link CosmicLink#json}               |[callback]{@link CosmicLink#callback}|await [send]{@link CosmicLink#send}             |[setOperation]{@link CosmicLink#setOperation}
- * | [transaction]{@link CosmicLink#transaction} |[source]{@link CosmicLink#source}    |[open]{@link CosmicLink#open}                   |[insertOperation]{@link CosmicLink#insertOperation}
- * | [xdr]{@link CosmicLink#xdr}                 |[status]{@link CosmicLink#status}    |[signSep7]{@link CosmicLink#signSep7}
- * | [sep7]{@link CosmicLink#sep7}               |[errors]{@link CosmicLink#errors}    |[verifySep7]{@link CosmicLink#verifySep7}
+ * | [json]{@link CosmicLink#json}               |[callback]{@link CosmicLink#callback}|[send]{@link CosmicLink#send} async             |[setOperation]{@link CosmicLink#setOperation}
+ * | [transaction]{@link CosmicLink#transaction} |[source]{@link CosmicLink#source}    |[signSep7]{@link CosmicLink#signSep7}           |[insertOperation]{@link CosmicLink#insertOperation}
+ * | [xdr]{@link CosmicLink#xdr}                 |[status]{@link CosmicLink#status}    |[verifySep7]{@link CosmicLink#verifySep7} async
+ * | [sep7]{@link CosmicLink#sep7}               |[errors]{@link CosmicLink#errors}    |
  * |                                             |[locker]{@link CosmicLink#locker}
  * |                                             |[cache]{@link CosmicLink#cache}
  * |                                             |[extra]{@link CosmicLink#extra}
@@ -460,6 +460,8 @@ class CosmicLink {
   /// Actions
   /**
    * Select the network that this CosmicLink uses.
+   *
+   * @deprecated StellarSdk global `Network` setting is deprecated.
    */
   selectNetwork () {
     return resolve.useNetwork(this)
