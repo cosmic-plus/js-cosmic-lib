@@ -29,6 +29,17 @@ format.tdesc = function (conf, tdesc) {
   const trNode = html.create("div", ".cosmiclib_transactionNode")
   if (!tdesc) return trNode
 
+  // SEP-0007 verified domain.
+  if (conf.extra.originDomain) {
+    const domainNode = html.create("div")
+    html.append(trNode, domainNode)
+
+    conf.verifySep7().then(() => {
+      html.append(domainNode, `Request from: ${conf.extra.originDomain}`)
+      domainNode.className = "cosmicLib_signed"
+    })
+  }
+
   let infoNode
   for (let index in specs.transactionOptionalFields) {
     const entry = specs.transactionOptionalFields[index]

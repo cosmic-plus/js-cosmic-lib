@@ -20,8 +20,14 @@ All notable changes to this project will be documented in this file.
 - API: Add `cosmicLink.verifySep7()`. Verify SEP-0007 signature by resolving
   `cosmicLink.extra.domain`, if any. Throw an error if the signature is not
   valid.
-- API: Add `cosmicLink.signSep7()`. Parameters: domain, keypair. Sign SEP-0007
+- Api: Add `cosmicLink.signSep7()`. Parameters: domain, keypair. Sign SEP-0007
   link for **domain**, using **keypair**.
+
+### Changed
+
+- Logic: Update status on SEP-0007 verification failure. You still need to
+  `await cosmicLink.verifySep7()` before signing a transaction request, as
+  signature verification is asynchronous.
 
 ### Fixed
 
