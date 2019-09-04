@@ -9,6 +9,12 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+### Removed
+
+- API: Remove deprecated _CosmicLink_ properties. Those properties were
+  deprecated since a year: `server`, `htmlNode`, `transactionNode`,
+  `statusNode`, `signersNode`, `hasSigned`, `hasSigner`.
+
 ### Added
 
 - API: Add `cosmicLink.verifySep7()`. Verify SEP-0007 signature by resolving

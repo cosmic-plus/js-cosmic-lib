@@ -565,46 +565,6 @@ class CosmicLink {
     }
     return this.extra.originDomain
   }
-
-  /// Backward compatibility (2018-09 -> 2019-03).
-  get server () {
-    return resolve.server(this)
-  }
-
-  get htmlNode () {
-    misc.deprecated(
-      "2019-03",
-      "cosmicLink.htmlNode",
-      "cosmicLink.htmlDescription"
-    )
-    return this.htmlDescription
-  }
-  get transactionNode () {
-    return html.grab(".cosmiclib_transactionNode", this.htmlDescription)
-  }
-  get statusNode () {
-    return html.grab(".cosmiclib_statusNode", this.htmlDescription)
-  }
-  get signersNode () {
-    return html.grab(".cosmiclib_signersNode", this.htmlDescription)
-  }
-
-  hasSigned (accountId) {
-    misc.deprecated(
-      "2019-03",
-      "cosmicLink.hasSigned",
-      "cosmicLink.transaction.hasSigned"
-    )
-    return this.transaction.hasSigned(accountId)
-  }
-  hasSigner (accountId) {
-    misc.deprecated(
-      "2019-03",
-      "cosmicLink.hasSigner",
-      "cosmicLink.transaction.hasSigner"
-    )
-    return this.transaction.hasSigner(accountId)
-  }
 }
 
 /**
