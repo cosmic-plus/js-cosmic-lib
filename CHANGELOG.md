@@ -34,6 +34,8 @@ All notable changes to this project will be documented in this file.
 
 - API: Fix a regression in the parser. 1.8.1 did not properly handle empty
   transactions (`?`).
+- API: Add `&strip=source` to sourceless XDR query. Sourceless XDR query are
+  computed when calling `cosmicLink.lock()` without having a source defined.
 
 ## 1.8.1 - 2019-09-02
 

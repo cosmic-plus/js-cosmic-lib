@@ -71,6 +71,10 @@ convert.xdrToQuery = function (conf, xdr, options = {}) {
   if (options.horizon) query += "&horizon=" + encode.url(conf, options.horizon)
   if (options.callback)
     query += "&callback=" + encode.url(conf, options.callback)
+
+  // Handle with source-independent transactions.
+  if (conf.locker && !conf.locker.source) query += "&strip=source"
+
   return query
 }
 
