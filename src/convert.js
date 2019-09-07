@@ -42,6 +42,12 @@ convert.xdrToSep7 = function (conf, xdr, options) {
 
   let sep7 = "web+stellar:tx?xdr="
   sep7 += encodeURIComponent(xdr)
+  if (conf.extra.pubkey) {
+    sep7 += "&pubkey=" + encodeURIComponent(conf.extra.pubkey)
+  }
+  if (conf.extra.msg) {
+    sep7 += "&msg=" + encodeURIComponent(conf.extra.msg)
+  }
   if (options.network && options.network !== "public") {
     const passphrase = resolve.networkPassphrase(conf, options.network)
     sep7 += "&network_passphrase=" + encodeURIComponent(passphrase)
