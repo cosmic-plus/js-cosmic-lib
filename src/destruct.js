@@ -23,6 +23,12 @@ const specs = require("./specs")
 destruct.transaction = function (conf, tx, options = {}) {
   const tdesc = {}
 
+  if (tx.source === specs.neutralAccount && options.stripNeutralAccount) {
+    options.strip = "source"
+  } else if (tx.sequence === "0" && options.stripNeutralSequence) {
+    options.strip = "sequence"
+  }
+
   tdesc.network = options.network
   tdesc.horizon = options.horizon
   tdesc.callback = options.callback

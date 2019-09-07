@@ -72,6 +72,7 @@ sep7Utils.parseTxLink = function (cosmicLink, sep7, options = {}) {
   })
 
   if (!xdr) throw new Error("Missing XDR parameter")
+  options.stripNeutralSequence = true
   return { type: "xdr", value: xdr, options }
 }
 

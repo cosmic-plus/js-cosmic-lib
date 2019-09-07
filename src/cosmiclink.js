@@ -126,6 +126,11 @@ class CosmicLink {
    *     `signatures`. Stripping out sequence means that the transaction request
    *     can get signed anytime in the future, possibly several times.
    *     Stripping out source means that it can get signed by any account.
+   * @param {boolean} options.stripNeutralAccount If set, strip source account
+   *     out of SEP-0007/XDR requests when it is equal to the neutral account
+   *     (`GAAA...AWHF`).
+   * @param {boolean} options.stripNeutralSequence If set, strip sequence out
+   *     of SEP-0007/XDR requests when it is equal to `0`.
    * @return {CosmicLink}
    */
   constructor (transaction, options) {
