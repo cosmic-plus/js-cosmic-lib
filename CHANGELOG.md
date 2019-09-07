@@ -7,7 +7,22 @@
 
 All notable changes to this project will be documented in this file.
 
-## Unreleased
+## 2.0.0 - 2019-09-07
+
+### Breaking
+
+- Protocol: SEP-0007 `tx` now requires a source account. A recent change in
+  the SEP-0007 protocol removed `tx` operation support for source-independent
+  transaction requests. As a consequence, SEP-0007 links using the source
+  account `GAAA...AWHF` don't get stripped of their source by default anymore,
+  and trying to build SEP-0007 links without specifying a source will fail.
+- Protocol: Keep neutral account & sequence. When SEP-0007 `tx` support was
+  initially implemented, it required the neutral account (`GAAA...AWHF`) and
+  sequence to get stripped off & replaced by user account values. This feature
+  "leaked" into CosmicLink `xdr` queries parsing as a free addition. However,
+  this feature has never been included in the specs and is now getting removed.
+  _- Note: SEP-0007 `tx` neutral sequence still get stripped as required by its
+  own specifications._
 
 ### Removed
 
@@ -22,13 +37,22 @@ All notable changes to this project will be documented in this file.
   valid.
 - API: Add `cosmicLink.signSep7()`. Parameters: domain, keypair. Sign SEP-0007
   link for **domain**, using **keypair**.
+- API: Add options to strip neutral account & sequence. To compensate with the
+  protocol changes introduced in this release, two XDR/SEP-0007 options have
+  been introduced: `stripNeutralAccount` and `stripNeutralSequence`. cosmic-lib
+  1.x behavior can be implemented this way: `new CosmicLink(xdr, {
+  stripNeutralAccount: true, stripNeutralSequence: true})`.
 - UI: Add SEP-0007 origin_domain in HTML description.
 
 ### Changed
 
+- Demo: Display SEP-0007 source account error.
 - Logic: Update status on SEP-0007 verification failure. You still need to
   `await cosmicLink.verifySep7()` before signing a transaction request, as
   signature verification is asynchronous.
+- Logic: Allow to set SEP-0007 `pubkey` & `msg`. Those can be defined with
+  `cosmicLink.extra.pubkey` and `cosmicLink.extra.msg` before reading
+  `cosmicLink.sep7`.
 
 ### Fixed
 
@@ -36,6 +60,8 @@ All notable changes to this project will be documented in this file.
   transactions (`?`).
 - API: Add `&strip=source` to sourceless XDR query. Sourceless XDR query are
   computed when calling `cosmicLink.lock()` without having a source defined.
+- UI: Fix buying/selling description. Use "at {price}" rather than "for
+  {price}".
 
 ## 1.8.1 - 2019-09-02
 

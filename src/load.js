@@ -25,7 +25,7 @@ module.exports = load
  * @param {string} [href='cosmic-lib.css']
  */
 load.styles = async function (
-  href = "https://cdn.cosmic.plus/cosmic-lib@1.x/cosmic-lib.css"
+  href = "https://cdn.cosmic.plus/cosmic-lib@2.x/cosmic-lib.css"
 ) {
   const promise = load.css(href)
   load.styles = () => promise
