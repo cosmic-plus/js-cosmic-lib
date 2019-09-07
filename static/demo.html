@@ -204,8 +204,12 @@
     formats.forEach(format => {
       const box = formatBoxes[format]
       if (format === 'query') history.replaceState({}, '', cosmicLink[format])
-      box.value = cosmicLink[format] || ""
-      box.placeholder = cosmicLink.status || format
+      try {
+        box.value = cosmicLink[format] || ""
+        box.placeholder = cosmicLink.status || format
+      } catch (error) {
+        box.placeholder = error.message
+      }
     })
   }
 
