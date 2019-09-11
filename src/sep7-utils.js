@@ -26,7 +26,8 @@ const parse = require("./parse")
  * Proposes the user to register **handler** as her default SEP-0007 link
  * handler. SEP-0007 requests will hit `{handler}?sep7={sep7Request}`.
  *
- * Note that this makes use of a non-standard feature.
+ * Note that this makes use of a non-standard feature. Compatibility can be
+ * checked using `sep7Utils.isWebHandlerSupported()`.
  *
  * [List of compatible browsers](https://caniuse.com/#feat=registerprotocolhandler).
  *
@@ -51,6 +52,20 @@ sep7Utils.registerWebHandler = function (handler, description) {
   } else {
     throw new Error("This browser can't register a SEP-0007 web handler.")
   }
+}
+
+/**
+ * Returns whether or not the browser can register a SEP-0007 web handler.
+ *
+ * @example
+ * if (cosmicLib.sep7Utils.isWebHandlerSupported()) {
+ *    registerSep7HandlerButton.show()
+ * }
+ *
+ * @returns {Boolean}
+ */
+sep7Utils.isWebHandlerSupported = function () {
+  return env.isBrowser && !!navigator.registerProtocolHandler
 }
 
 /* Parsing */

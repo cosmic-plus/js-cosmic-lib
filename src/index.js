@@ -79,8 +79,8 @@ exportModule("signersUtils", require("./signers-utils"))
 exports.specs = require("./specs")
 
 // sep7Utils
-const { registerWebHandler } = require("./sep7-utils")
-exports.sep7Utils = { registerWebHandler }
+const { isWebHandlerSupported, registerWebHandler } = require("./sep7-utils")
+exports.sep7Utils = { isWebHandlerSupported, registerWebHandler }
 
 // Export helpers (not documented in the manual - please check the code).
 exportModule("check", require("./check"))
