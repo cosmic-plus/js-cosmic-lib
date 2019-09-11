@@ -78,6 +78,10 @@ exportModule("resolve", require("./resolve"))
 exportModule("signersUtils", require("./signers-utils"))
 exports.specs = require("./specs")
 
+// sep7Utils
+const { registerWebHandler } = require("./sep7-utils")
+exports.sep7Utils = { registerWebHandler }
+
 // Export helpers (not documented in the manual - please check the code).
 exportModule("check", require("./check"))
 exportModule("expand", require("./expand"))

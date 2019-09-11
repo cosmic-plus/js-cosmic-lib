@@ -1,13 +1,17 @@
 "use strict"
 /**
- * Sep-0007 support
- * https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0007.md
+ * Sep-0007 protocol utilities.
  *
- * @private
+ * The methods listed in the documentation are browser-only.
+ *
+ * @see https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0007.md
+ *
+ * @exports sep7Utils
  */
 const sep7Utils = exports
 
 const Buffer = require("@cosmic-plus/base/es5/buffer")
+const env = require("@cosmic-plus/jsutils/es5/env")
 const StellarSdk = require("@cosmic-plus/base/es5/stellar-sdk")
 const { timeout } = require("@cosmic-plus/jsutils/es5/misc")
 
@@ -16,10 +20,44 @@ const convert = require("./convert")
 const decode = require("./decode")
 const parse = require("./parse")
 
+/* Utils */
+
+/**
+ * Proposes the user to register **handler** as her default SEP-0007 link
+ * handler. SEP-0007 requests will hit `{handler}?sep7={sep7Request}`.
+ *
+ * Note that this makes use of a non-standard feature.
+ *
+ * [List of compatible browsers](https://caniuse.com/#feat=registerprotocolhandler).
+ *
+ * @example
+ * cosmicLib.sep7Utils.registerWebHandler(
+ *  "https://cosmic.link/",
+ *  "Cosmic.link"
+ * )
+ *
+ * @param handler {String} URL of the SEP-0007 web handler.
+ * @param description {String} A brief description of the service.
+ */
+sep7Utils.registerWebHandler = function (handler, description) {
+  if (!env.isBrowser) throw new Error("This is a browser-only function.")
+
+  if (navigator.registerProtocolHandler) {
+    navigator.registerProtocolHandler(
+      "web+stellar",
+      `${handler}?sep7=%s`,
+      description
+    )
+  } else {
+    throw new Error("This browser can't register a SEP-0007 web handler.")
+  }
+}
+
 /* Parsing */
 
 /**
  * Initialize cosmicLink using `sep7Request`.
+ * @private
  */
 sep7Utils.parseRequest = function (cosmicLink, sep7Request, options) {
   parse.page(cosmicLink, sep7Request)
@@ -31,6 +69,7 @@ sep7Utils.parseRequest = function (cosmicLink, sep7Request, options) {
 
 /**
  * Initialize cosmicLink using `sep7`.
+ * @private
  */
 sep7Utils.parseLink = function (cosmicLink, sep7, options = {}) {
   cosmicLink._sep7 = sep7
@@ -48,6 +87,7 @@ sep7Utils.parseLink = function (cosmicLink, sep7, options = {}) {
 
 /**
  * Initialize cosmicLink using `sep7.xdr`.
+ * @private
  */
 sep7Utils.parseTxLink = function (cosmicLink, sep7, options = {}) {
   const query = convert.uriToQuery(cosmicLink, sep7)
@@ -78,6 +118,7 @@ sep7Utils.parseTxLink = function (cosmicLink, sep7, options = {}) {
 
 /**
  * Initialize cosmicLink using `sep7.pay`.
+ * @private
  */
 sep7Utils.parsePayLink = function (cosmicLink, sep7, options = {}) {
   const query = convert.uriToQuery(cosmicLink, sep7)

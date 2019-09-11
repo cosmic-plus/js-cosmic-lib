@@ -145,10 +145,8 @@
   }
 
   function registerSep7Handler () {
-    const service = location.href.slice(0, -location.search.length)
-    navigator.registerProtocolHandler(
-      "web+stellar",
-      `${service}?sep7=%s`,
+    cosmicLib.sep7Utils.registerWebHandler(
+      location.href.slice(0, -location.search.length),
       "Cosmic.plus SEP-0007 debugger"
     )
   }
