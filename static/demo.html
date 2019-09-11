@@ -47,6 +47,11 @@
     // Setup format boxes.
     formats.forEach(format => initBox(format))
 
+    // Maybe show SEP-0007 handler registering.
+    if (cosmicLib.sep7Utils.isWebHandlerSupported()) {
+      document.querySelector('#registerSep7Handler').hidden = false
+    }
+
     // Create the initial cosmicLink.
     refresh()
   }
@@ -326,12 +331,14 @@ input, textarea {
         </a></li>
       </ul>
 
-      <h2>Setup</h2>
-      <ul>
-        <li><a href="javascript:registerSep7Handler()">
-          Set this page as your SEP-0007 handler
-        </a></li>
-      </ul>
+      <div id="registerSep7Handler" hidden>
+        <h2>Setup</h2>
+        <ul>
+          <li><a href="javascript:registerSep7Handler()">
+            Set this page as your SEP-0007 handler
+          </a></li>
+        </ul>
+      </div>
     </div>
 
     <div class="column">
