@@ -25,7 +25,7 @@ sep7Utils.parseRequest = function (cosmicLink, sep7Request, options) {
   parse.page(cosmicLink, sep7Request)
 
   const query = convert.uriToQuery(cosmicLink, sep7Request)
-  const sep7 = decodeURIComponent(query.substr(5))
+  const sep7 = decodeURIComponent(query.replace(/^\?(req|sep7)=/, ""))
   return sep7Utils.parseLink(cosmicLink, sep7, options)
 }
 

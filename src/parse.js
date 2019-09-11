@@ -84,6 +84,8 @@ function guessType (value) {
   if (typeof value === "string") {
     const query = convert.uriToQuery("", value)
     if (value.substr(0, 12) === "web+stellar:") type = "sep7"
+    else if (query && query.substr(0, 6) === "?sep7=") type = "sep7Request"
+    // DEPRECATED since 2019-09-11 / `req=` is deprecated in favor of `sep7=`.
     else if (query && query.substr(0, 5) === "?req=") type = "sep7Request"
     else if (query && query.substr(0, 5) === "?xdr=") type = "xdrUri"
     else if (value.substr(0, 1) === "?") type = "query"
