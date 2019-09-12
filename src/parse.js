@@ -15,6 +15,7 @@ const check = require("./check")
 const convert = require("./convert")
 const decode = require("./decode")
 const expand = require("./expand")
+const resolve = require("./resolve")
 const sep7Utils = require("./sep7-utils")
 const status = require("./status")
 
@@ -104,6 +105,17 @@ function guessType (value) {
  * Parse-type type extension
  */
 parse.rule = {}
+
+/**
+ * Initialize cosmicLink using `transaction`.
+ */
+parse.rule.transaction = function (cosmicLink, transaction, options) {
+  const network = transaction._networkPassphrase
+  if (network) {
+    options.network = resolve.networkName(cosmicLink, network)
+  }
+  return { type: "transaction", value: transaction, options }
+}
 
 /**
  * Initialize cosmicLink using `xdrUri`.
