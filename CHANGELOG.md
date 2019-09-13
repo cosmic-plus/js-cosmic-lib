@@ -41,8 +41,7 @@ All notable changes to this project will be documented in this file.
 - API: Add options to strip neutral account & sequence. To compensate with the
   protocol changes introduced in this release, two XDR/SEP-0007 options have
   been introduced: `stripNeutralAccount` and `stripNeutralSequence`. cosmic-lib
-  1.x behavior can be implemented this way: `new CosmicLink(xdr, {
-  stripNeutralAccount: true, stripNeutralSequence: true})`.
+  1.x behavior can be implemented this way: `new CosmicLink(xdr, { stripNeutralAccount: true, stripNeutralSequence: true})`.
 - UI: Add SEP-0007 origin_domain in HTML description.
 
 ### Changed

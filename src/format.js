@@ -177,8 +177,7 @@ function operationMeaning (odesc) {
         msg += "Change offer '{offerId}' into:{newline}"
       }
       if (odesc.type === "manageBuyOffer") {
-        msg
-            += "Offer to buy {buyAmount} {buying} at {price} {selling} / unit"
+        msg += "Offer to buy {buyAmount} {buying} at {price} {selling} / unit"
       } else {
         msg += "Offer to sell {amount} {selling} at {price} {buying} / unit"
       }
