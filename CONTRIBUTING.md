@@ -1,5 +1,6 @@
 **cosmic-lib /**
 [Documentation](https://cosmic.plus/#view:js-cosmic-lib/web/doc)
+• [Examples](https://cosmic.plus/#view:js-cosmic-lib/EXAMPLES)
 • [Contributing](https://cosmic.plus/#view:js-cosmic-lib/CONTRIBUTING)
 • [Changelog](https://cosmic.plus/#view:js-cosmic-lib/CHANGELOG)
 
