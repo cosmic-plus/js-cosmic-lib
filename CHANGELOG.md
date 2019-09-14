@@ -20,6 +20,32 @@ Versioning](https://semver.org/spec/v2.0.0.html)**. Version syntax is
 backward-compatibility and can be updated to without risk of breakage. For major
 releases, please check this changelog before upgrading.
 
+## 2.1.0 - 2019-09-14
+
+### Added
+
+- API: Add `sep7Utils.registerWebHandler()`. This is a helper to register a
+  page as a SEP-0007 web handler. [See
+  documentation](https://cosmic.plus/#view:js-cosmic-lib/web/doc/module-sep7Utils.html#.registerWebHandler).
+- API: Add `sep7Utils.isWebHandlerSupported()`. This helpers returns whether
+  or not web protocol handlers are supported by the current browser. [See
+  documentation](https://cosmic.plus/#view:js-cosmic-lib/web/doc/module-sep7Utils.html#.isWebHandlerSupported).
+- Documentation: Add [EXAMPLES.md](https://cosmic.plus/#view:js-cosmic-lib/EXAMPLES).
+
+### Changed
+
+- API: Change SEP-0007 handler default parameter. Replace the generic `?req=`
+  by the more specific `?sep7=`; Handlers should then register as
+  `{handler}?sep7=%s` where %s will be replaced by the encoded SEP-0007 link.
+  _Note: `?req=` is still accepted for backward-compatibility purpose._
+- API: Read `network` from Transaction. As StellarSdk _Transaction_ now embeds
+  a network passphrase, it gets parsed when calling `new CosmicLink(transaction)`.
+- Demo: Set as SEP-0007 handler on compatible browsers only.
+
+### Fixed
+
+- Meta: Set bower package to use stellar-sdk 3.x.
+
 ## 2.0.0 - 2019-09-07
 
 ### Breaking
