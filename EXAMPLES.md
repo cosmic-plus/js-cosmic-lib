@@ -1,8 +1,8 @@
-**ledger-wallet /**
-[Readme](https://cosmic.plus/#view:js-ledger-wallet)
-• [Examples](https://cosmic.plus/#view:js-ledger-wallet/EXAMPLES)
-• [Contributing](https://cosmic.plus/#view:js-ledger-wallet/CONTRIBUTING)
-• [Changelog](https://cosmic.plus/#view:js-ledger-wallet/CHANGELOG)
+**cosmic-lib /**
+[Documentation](https://cosmic.plus/#view:js-cosmic-lib/web/doc)
+• [Examples](https://cosmic.plus/#view:js-cosmic-lib/EXAMPLES)
+• [Contributing](https://cosmic.plus/#view:js-cosmic-lib/CONTRIBUTING)
+• [Changelog](https://cosmic.plus/#view:js-cosmic-lib/CHANGELOG)
 
 # Examples
 
