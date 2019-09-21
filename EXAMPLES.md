@@ -18,7 +18,7 @@ Here are some live examples for you to play with.
     <a href="https://codepen.io/cosmic-plus/pen/QWLdPeo?editors=1010#0">
       Codepen
     </a> or
-    <a href="https://cosmic-plus/#view:js-cosmic-lib/EXAMPLES.html">
+    <a href="https://cosmic.plus/#view:js-cosmic-lib/EXAMPLES">
       Cosmic.plus
     </a>
   </span>
@@ -32,7 +32,7 @@ Here are some live examples for you to play with.
     <a href="https://codepen.io/cosmic-plus/pen/wZEwjK?editors=1010#0">
       Codepen
     </a> or
-    <a href="https://cosmic-plus/#view:js-cosmic-lib/EXAMPLES.html">
+    <a href="https://cosmic.plus/#view:js-cosmic-lib/EXAMPLES">
       Cosmic.plus
     </a>
   </span>
@@ -46,7 +46,7 @@ Here are some live examples for you to play with.
     <a href="https://codepen.io/cosmic-plus/pen/rNBQGEP?editors=1010#0">
       Codepen
     </a> or
-    <a href="https://cosmic-plus/#view:js-cosmic-lib/EXAMPLES.html">
+    <a href="https://cosmic.plus/#view:js-cosmic-lib/EXAMPLES">
       Cosmic.plus
     </a>
   </span>
@@ -60,7 +60,7 @@ Here are some live examples for you to play with.
     <a href="https://codepen.io/cosmic-plus/pen/xxKLXNZ?editors=1000#0">
       Codepen
     </a> or
-    <a href="https://cosmic-plus/#view:js-cosmic-lib/EXAMPLES.html">
+    <a href="https://cosmic.plus/#view:js-cosmic-lib/EXAMPLES">
       Cosmic.plus
     </a>
   </span>
@@ -71,10 +71,10 @@ Here are some live examples for you to play with.
 <!--QWLQLBG--><p class="codepen" data-height="400" data-theme-id="37456" data-default-tab="html,result" data-user="cosmic-plus" data-slug-hash="QWLQLBG" data-preview="true" data-editable="true" style="height: 400px; box-sizing: border-box; display: flex; align-items: center; justify-content: center; border: 2px solid; margin: 1em 0; padding: 1em;" data-pen-title="cosmic-lib, Open Trustline Button">
   <span>
     Open the live editor on
-    <a href="https://codepen.io/cosmic-plus/pen/QWLQLBG?editors=1010#0">
+    <a href="https://codepen.io/cosmic-plus/pen/QWLQLBG?editors=1000#0">
       Codepen
     </a> or
-    <a href="https://cosmic-plus/#view:js-cosmic-lib/EXAMPLES.html">
+    <a href="https://cosmic.plus/#view:js-cosmic-lib/EXAMPLES">
       Cosmic.plus
     </a>
   </span>
@@ -88,7 +88,7 @@ Here are some live examples for you to play with.
     <a href="https://codepen.io/cosmic-plus/pen/zYOROWW?editors=1000#0">
       Codepen
     </a> or
-    <a href="https://cosmic-plus/#view:js-cosmic-lib/EXAMPLES.html">
+    <a href="https://cosmic.plus/#view:js-cosmic-lib/EXAMPLES">
       Cosmic.plus
     </a>
   </span>
