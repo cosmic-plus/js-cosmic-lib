@@ -548,6 +548,12 @@ class CosmicLink {
 
   /**
    * Sign SEP-0007 link for **domain**, using **keypair**.
+   *
+   * @see [SEP-0007 request signing](https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0007.md#request-signing)
+   *
+   * @param {String} domain The domain or subdomain you want to sign the request
+   * for. (example: "a-domain.org")
+   * @param {Keypair} keypair A StellarSdk Keypair.
    */
   signSep7 (domain, keypair) {
     if (!this.locker) throw new Error("cosmicLink is not locked.")
