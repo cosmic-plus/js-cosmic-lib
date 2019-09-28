@@ -20,6 +20,18 @@ Versioning](https://semver.org/spec/v2.0.0.html)**. Version syntax is
 backward-compatibility and can be updated to without risk of breakage. For major
 releases, please check this changelog before upgrading.
 
+## 2.1.1 - 2019-09-28
+
+### Added
+
+- Documentation: Add examples.
+- Documentation: Add `cosmicLink.signSep7()` documentation.
+
+### Fixed
+
+- API: `cosmicLink.signSep7()` is synchronous. The `async` attribute was kept
+  by mistake in the previous release.
+
 ## 2.1.0 - 2019-09-14
 
 ### Added
