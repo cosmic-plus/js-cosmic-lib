@@ -218,7 +218,7 @@ sep7Utils.parseLinkCommons = function (cosmicLink, mode, field, value, options) 
 
 /* Signing */
 
-sep7Utils.signLink = async function (cosmicLink, domain, keypair) {
+sep7Utils.signLink = function (cosmicLink, domain, keypair) {
   if (!cosmicLink.locker) throw new Error("cosmicLink is not locked.")
 
   cosmicLink.extra.originDomain = domain
