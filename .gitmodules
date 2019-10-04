@@ -1,3 +1,3 @@
 [submodule "web"]
 	path = web
-	url = https://github.com/cosmic-plus/web-cosmic-lib
+	url = https://github.com/cosmic-plus/js-cosmic-lib-web

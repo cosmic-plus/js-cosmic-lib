@@ -9,8 +9,8 @@
 ![Licence](https://img.shields.io/github/license/cosmic-plus/js-cosmic-lib.svg)
 [![Dependencies](https://badgen.net/david/dep/cosmic-plus/js-cosmic-lib)](https://david-dm.org/cosmic-plus/js-cosmic-lib)
 ![Vulnerabilities](https://snyk.io/test/npm/cosmic-lib/badge.svg)
-![Size](https://badgen.net/bundlephobia/minzip/cosmic-lib)
 ![Downloads](https://badgen.net/npm/dt/cosmic-lib)
+![Bundle](https://badgen.net/badgesize/gzip/cosmic-plus/js-cosmic-lib-web/master/cosmic-lib.js?label=bundle)
 
 cosmic-lib is a JavaScript implementation of the **CosmicLink protocol** that
 comes with a few useful additional tools.
@@ -236,17 +236,6 @@ transaction.hasSigner("GB...DECX")
 transaction.hasSigned("GB...DECX")
 ```
 
-## Release
-
-This is the beta-2 release. The codebase is mature and few to no compatibility
-breaks are expected.
-
-- [GitHub repository](https://github.com/cosmic-plus/js-cosmic-lib)
-- [NPM package](https://npmjs.com/cosmic-lib)
-- [Yarn package](https://yarn.pm/cosmic-lib)
-- [Changelog](https://github.com/cosmic-plus/js-cosmic-lib/blob/master/CHANGELOG.md)
-- [Tasklist](https://github.com/cosmic-plus/js-cosmic-lib/blob/master/TODO.md)
-
 ## Additional ressources
 
 ### Documentation
@@ -258,14 +247,6 @@ look at the manual:
 - [Cosmic queries specification](https://cosmic.plus/js-cosmic-lib/web/doc/tutorial-10-specs-query.html)
 - [Cosmic queries cheatsheet](https://cosmic.plus/js-cosmic-lib/web/doc/tutorial-20-cheatsheet-query.html)
 - [Emitting CosmicLinks without this library](https://cosmic.plus/js-cosmic-lib/web/doc/tutorial-30-emitting.html)
-
-### Support
-
-- [Keybase](https://keybase.io/team/cosmic_plus)
-- [Telegram](https://t.me/cosmic_plus)
-- [Reddit](https://reddit.com/r/cosmic_plus)
-- [Website](https://cosmic.plus)
-- [Mail](mailto:mister.ticot@cosmic.plus)
 
 ### Related tools
 
@@ -287,10 +268,10 @@ look at the manual:
 - The Cosmic.Link website: <https://cosmic.link>
 - Stellar Authenticator: <https://stellar-authenticator.org>
 
-## Contribute
+## Links
 
-cosmic-lib is a free software. You are very welcome to contribute by whatever
-means you'd like. Donation are also possible at
-[tips\*cosmic.link](https://cosmic.link/?payment&memo=Donation&destination=tips*cosmic.link&amount=20)
+**Organization:** [Cosmic.plus](https://cosmic.plus/) | [@GitHub](https://git.cosmic.plus) | [@NPM](https://www.npmjs.com/search?q=cosmic-plus)
 
-## Thank you :)
+**Follow:** [Reddit](https://reddit.com/r/cosmic_plus) | [Twitter](https://twitter.com/cosmic_plus) | [Medium](https://medium.com/cosmic-plus) | [Codepen](https://codepen.io/cosmic-plus)
+
+**Talk:** [Telegram](https://t.me/cosmic_plus) | [Keybase](https://keybase.io/team/cosmic_plus)
