@@ -1,4 +1,4 @@
-"use_strict"
+"use strict"
 
 const html = require("@cosmic-plus/domutils/es5/html")
 const friendbot = require("@cosmic-plus/base/es5/friendbot")

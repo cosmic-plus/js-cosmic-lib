@@ -1,4 +1,4 @@
-"use_strict"
+"use strict"
 /**
  * This module provides two ways to generate {@link SignersUtils} for a
  * Transaction object. The first one extends the object and is the intended way

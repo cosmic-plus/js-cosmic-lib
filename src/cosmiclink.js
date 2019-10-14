@@ -1,4 +1,4 @@
-"use_strict"
+"use strict"
 
 const env = require("@cosmic-plus/jsutils/es5/env")
 const misc = require("@cosmic-plus/jsutils/es5/misc")

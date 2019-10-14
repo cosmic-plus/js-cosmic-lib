@@ -1,4 +1,4 @@
-"use_strict"
+"use strict"
 /**
  * Methods to set tdesc/odesc defaults values and strip out useless data.
  *

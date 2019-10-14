@@ -1,4 +1,4 @@
-"use_strict"
+"use strict"
 /**
  * Methods that expand tdesc paramaters from their query/StellarSdk format into
  * their tdesc equivalent. This allows user to pass value in the format they
