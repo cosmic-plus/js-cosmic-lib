@@ -43,7 +43,7 @@
     "watch-js": "npm run build-es5 && webpack -d --watch & npm run watch-es5",
     "watch-static": "cp -fl static/*.* web",
     "watch": "npm run watch-static && npm run watch-css & npm run watch-js",
-    "serve": "npm run set-dev && npm run watch & cd web && live-server --no-browser",
+    "serve": "npm run set-dev && npm run watch & cd web && live-server",
     "commit-web": "cd web && git ci -am \"$message\"",
     "commit-main": "git ci -am \"$message\"",
     "commit-all": "[ \"$version\" ] && npm run commit-web && npm run commit-main",
