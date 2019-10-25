@@ -255,6 +255,30 @@ const tests = [
       + ","
       + asset4
   ],
+  ["title", "Path Payment Strict Send"],
+  [
+    "query",
+    "?type=pathPaymentStrictSend&sendAsset="
+      + asset1
+      + "&sendAmount=20&destination="
+      + account1
+      + "&destAsset="
+      + asset2
+      + "&destMin=200"
+  ],
+  [
+    "query",
+    "?type=pathPaymentStrictSend&sendAsset="
+      + asset1
+      + "&sendAmount=20&destination="
+      + account1
+      + "&destMin=500&path="
+      + asset2
+      + ","
+      + asset3
+      + ","
+      + asset4
+  ],
   ["title", "Payment"],
   [
     "query",

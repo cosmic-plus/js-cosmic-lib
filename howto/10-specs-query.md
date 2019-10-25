@@ -293,6 +293,25 @@ Optional fields:
   to set lumens as an intermediate conversion step.
 * &source={address}
 
+#### pathPaymentStrictSend
+
+Send at least `destMin` `destAsset` to `destination` for `sendAmount`
+`sendAsset` using the available offers for the conversion.
+
+> ...?pathPaymentStrictSend&destination={address}&destMin={amount}&destAsset={assetCode}:{assetIssuer}&sendAmount={amount}&sendAsset={assetCode}:{assetIssuer}
+
+Notes:
+
+* `destAsset` or `sendAsset` field may be omitted when it is lumens.
+
+Optional fields:
+
+* &path={asset1},{asset2},...,{assetN} Where each asset is
+  `{assetCode}:{assetIssuer}` or `XLM`. Define a conversion path to follow. If
+  neither `destAsset` or `sendAsset` are lumens, you'll likely need `&path=XLM`
+  to set lumens as an intermediate conversion step.
+* &source={address}
+
 
 #### payment
 

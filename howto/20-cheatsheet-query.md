@@ -66,6 +66,11 @@ Note: destAsset or sendAsset can be omitted for XLM.
 Note: pathPayment is still supported for backward compatibility.
 Optional: &path={asset1,asset2,...,assetN}&source={address}
 
+...?type=pathPaymentStrictSend&destination={address}&destMin={amount}
+    &destAsset={assetCode:assetIssuer}&sendAmount={amount}&sendAsset={assetCode}:{assetIssuer}
+Note: destAsset or sendAsset can be omitted for XLM.
+Optional: &path={asset1,asset2,...,assetN}&source={address}
+
 ...?type=payment&amount={amount}&destination={address}
 Optional: &asset={assetCode}:{assetIssuer}&source={address}
 

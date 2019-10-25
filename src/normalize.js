@@ -122,6 +122,7 @@ normalize.odesc = function (conf, odesc) {
     odesc.type = "pathPaymentStrictReceive"
     // Fall Through
   case "pathPaymentStrictReceive":
+  case "pathPaymentStrictSend":
     /// XLM as default asset.
     if (odesc.destAsset && !odesc.sendAsset) odesc.sendAsset = XLM
     if (odesc.sendAsset && !odesc.destAsset) odesc.destAsset = XLM

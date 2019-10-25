@@ -68,6 +68,13 @@ specs.operationMandatoryFields = {
     "destAsset",
     "destAmount"
   ],
+  pathPaymentStrictSend: [
+    "sendAsset",
+    "sendAmount",
+    "destination",
+    "destAsset",
+    "destMin"
+  ],
   payment: ["asset", "destination", "amount"],
   setOptions: []
 }
@@ -89,6 +96,7 @@ specs.operationOptionalFields = {
   manageBuyOffer: ["offerId", "source"],
   manageSellOffer: ["offerId", "source"],
   pathPaymentStrictReceive: ["path", "source"],
+  pathPaymentStrictSend: ["path", "source"],
   payment: ["source"],
   setOptions: [
     "inflationDest",
@@ -139,6 +147,7 @@ specs.fieldType = {
   clearFlags: "flags",
   destAsset: "asset",
   destAmount: "amount",
+  destMin: "amount",
   destination: "address",
   fee: "amount",
   highThreshold: "threshold",
@@ -164,6 +173,7 @@ specs.fieldType = {
   name: "string",
   path: "assetsArray",
   selling: "asset",
+  sendAmount: "amount",
   sendAsset: "asset",
   sendMax: "amount",
   sequence: "sequence",
