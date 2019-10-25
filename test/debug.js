@@ -220,7 +220,7 @@ const tests = [
     }
   ],
   ["query", "?type=manageSellOffer&amount=0&offerId=12345"],
-  ["title", "Path Payment"],
+  ["title", "Path Payment Strict Receive (backward compatibility)"],
   [
     "query",
     "?type=pathPayment&sendAsset="
@@ -231,9 +231,20 @@ const tests = [
       + asset2
       + "&destAmount=200"
   ],
+  ["title", "Path Payment Strict Receive"],
   [
     "query",
-    "?type=pathPayment&sendAsset="
+    "?type=pathPaymentStrictReceive&sendAsset="
+      + asset1
+      + "&sendMax=20&destination="
+      + account1
+      + "&destAsset="
+      + asset2
+      + "&destAmount=200"
+  ],
+  [
+    "query",
+    "?type=pathPaymentStrictReceive&sendAsset="
       + asset1
       + "&sendMax=20&destination="
       + account1

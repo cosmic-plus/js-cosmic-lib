@@ -61,7 +61,7 @@ specs.operationMandatoryFields = {
   manageOffer: ["selling", "buying", "amount", "price"],
   manageBuyOffer: ["selling", "buying", "buyAmount", "price"],
   manageSellOffer: ["selling", "buying", "amount", "price"],
-  pathPayment: [
+  pathPaymentStrictReceive: [
     "sendAsset",
     "sendMax",
     "destination",
@@ -88,7 +88,7 @@ specs.operationOptionalFields = {
   manageOffer: ["offerId", "source"],
   manageBuyOffer: ["offerId", "source"],
   manageSellOffer: ["offerId", "source"],
-  pathPayment: ["path", "source"],
+  pathPaymentStrictReceive: ["path", "source"],
   payment: ["source"],
   setOptions: [
     "inflationDest",

@@ -60,9 +60,10 @@ Note: manageOffer is still supported for backward compatibility.
 Optional: &offerId={integer}&source={address}
 Delete offer: ...?type=manageSellOffer&offerId={integer}&amount=0
 
-...?type=pathPayment&destination={address}&destAmount={amount}&destAsset={assetCode:assetIssuer}
-    &sendMax={amount}&sendAsset={assetCode}:{assetIssuer}
+...?type=pathPaymentStrictReceive&destination={address}&destAmount={amount}
+    &destAsset={assetCode:assetIssuer}&sendMax={amount}&sendAsset={assetCode}:{assetIssuer}
 Note: destAsset or sendAsset can be omitted for XLM.
+Note: pathPayment is still supported for backward compatibility.
 Optional: &path={asset1,asset2,...,assetN}&source={address}
 
 ...?type=payment&amount={amount}&destination={address}

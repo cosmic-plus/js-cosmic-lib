@@ -272,17 +272,18 @@ Syntactic sugar for deleting offer:
 > ...?manageSellOffer&offerId={integer}&amount=0
 
 
-#### pathPayment
+#### pathPaymentStrictReceive
 
-Send `destAmount` `destAsset` to `destination` for `sendMax` `sendAsset` using
-the available offers for the conversion.
+Send `destAmount` `destAsset` to `destination` for at most `sendMax` `sendAsset`
+using the available offers for the conversion.
 
-> ...?pathPayment&destination={address}&destAmount={amount}&destAsset={assetCode}:{assetIssuer}
-    &sendMax={amount}&sendAsset={assetCode}:{assetIssuer}
+> ...?pathPaymentStrictReceive&destination={address}&destAmount={amount}&destAsset={assetCode}:{assetIssuer}&sendMax={amount}&sendAsset={assetCode}:{assetIssuer}
 
 Notes:
 
 * `destAsset` or `sendAsset` field may be omitted when it is lumens.
+* Before protocol 12 update, this operation was named `pathPayment`. The old
+  name is still supported for backward compatibility.
 
 Optional fields:
 

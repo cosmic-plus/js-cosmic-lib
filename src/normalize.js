@@ -118,6 +118,10 @@ normalize.odesc = function (conf, odesc) {
     if (!odesc.value) odesc.value = ""
     break
   case "pathPayment":
+    /// Protocol 12 update renamed this operation.
+    odesc.type = "pathPaymentStrictReceive"
+    // Fall Through
+  case "pathPaymentStrictReceive":
     /// XLM as default asset.
     if (odesc.destAsset && !odesc.sendAsset) odesc.sendAsset = XLM
     if (odesc.sendAsset && !odesc.destAsset) odesc.destAsset = XLM
