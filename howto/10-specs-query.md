@@ -231,7 +231,7 @@ Optional fields
 
 Offer to buy `buyAmount` `buying` for `price` `selling` / unit.
 
-> ...?manageOffer&selling={assetCode}:{assetIssuer}&buying={assetCode}:{assetIssuer}&buyAmount={amount}&price={price}
+> ...?manageBuyOffer&selling={assetCode}:{assetIssuer}&buying={assetCode}:{assetIssuer}&buyAmount={amount}&price={price}
 
 Notes:
 
@@ -256,10 +256,10 @@ Offer to sell `amount` `selling` for `price` `buying` / unit.
 
 Notes:
 
-* Before protocol 11 update, this operation was named `manageOffer`. The old
-  name is still supported for backward compatibility.
 * `selling` or `buying` field may be omitted when it is lumens.
 * `price` can also be a fraction in the form `{1:2}` or `{sellAmount}:{buyAmount}`.
+* Before protocol 11 update, this operation was named `manageOffer`. The old
+  name is still supported for backward compatibility.
 
 Optional fields:
 
