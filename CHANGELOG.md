@@ -20,6 +20,21 @@ Versioning](https://semver.org/spec/v2.0.0.html)**. Version syntax is
 backward-compatibility and can be updated to without risk of breakage. For major
 releases, please check this changelog before upgrading.
 
+## 2.2.0 - 2019-10-26
+
+### Added
+
+- API: Add operation `pathPaymentStrictSend`.
+  [Example](https://cosmic.plus/js-cosmic-lib/web/demo?type=pathPaymentStrictSend&destination=tips*cosmic.link&destAsset=GILS:gils*cosmic.plus&destMin=100&sendAsset=XLM&sendAmount=20&network=test)
+  (part of [protocol 12
+  update](https://www.stellar.org/developers/blog/horizon-v0-22-0-released-protocol-12-support/#about-protocol-12))
+
+### Changed
+
+- API: Rename pathPayment in pathPaymentStrictReceive. (part of [protocol 12
+  update](https://www.stellar.org/developers/blog/horizon-v0-22-0-released-protocol-12-support/#about-protocol-12))
+- Logic: Update [stellar-sdk] to 3.1.2. (protocol 12 support)
+
 ## 2.1.1 - 2019-09-28
 
 ### Added
