@@ -33,17 +33,18 @@ decode.query = function (conf, query = "?") {
   const params = query.split("&")
 
   for (let index in params) {
-    const param = params[index].split("=", 2)
-    const field = param[0]
+    const entry = params[index]
+    const field = entry.split("=", 1)[0]
+    const value = entry.substring(field.length + 1)
     if (!field) continue
 
     if (field === "type") {
       if (parser) {
         status.error(conf, "Query declares 'type' several times", "throw")
-      } else if (param[1] !== "transaction") {
-        operations[0] = { type: param[1] }
+      } else if (value !== "transaction") {
+        operations[0] = { type: value }
       }
-      parser = param[1]
+      parser = value
       continue
     } else if (!parser) {
       status.error(
@@ -54,24 +55,24 @@ decode.query = function (conf, query = "?") {
     }
 
     if (field === "operation") {
-      operations.push({ type: param[1] })
+      operations.push({ type: value })
       parser = "operation"
       continue
     }
 
-    const value = decode.field(conf, field, param[1])
+    const decoded = decode.field(conf, field, value)
 
     /// Multi-operation link.
     if (parser === "transaction") {
-      tdesc[field] = value
+      tdesc[field] = decoded
     } else if (parser === "operation") {
-      operations[operations.length - 1][field] = value
+      operations[operations.length - 1][field] = decoded
       /// One-operation link.
     } else {
       if (specs.isTransactionField(field)) {
-        tdesc[field] = value
+        tdesc[field] = decoded
       } else {
-        operations[0][field] = value
+        operations[0][field] = decoded
       }
     }
   }
