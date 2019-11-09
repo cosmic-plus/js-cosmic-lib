@@ -9,11 +9,16 @@
 ![Licence](https://img.shields.io/github/license/cosmic-plus/js-cosmic-lib.svg)
 [![Dependencies](https://badgen.net/david/dep/cosmic-plus/js-cosmic-lib)](https://david-dm.org/cosmic-plus/js-cosmic-lib)
 ![Vulnerabilities](https://snyk.io/test/npm/cosmic-lib/badge.svg)
-![Downloads](https://badgen.net/npm/dt/cosmic-lib)
 ![Bundle](https://badgen.net/badgesize/gzip/cosmic-plus/js-cosmic-lib-web/master/cosmic-lib.js?label=bundle)
+![Downloads](https://badgen.net/npm/dt/cosmic-lib)
 
 cosmic-lib is a JavaScript implementation of the **CosmicLink protocol** that
 comes with a few useful additional tools.
+
+(Weekly updates: [Reddit](https://reddit.com/r/cosmic_plus),
+[Twitter](https://twitter.com/cosmic_plus),
+[Keybase](https://keybase.io/team/cosmic_plus),
+[Telegram](https://t.me/cosmic_plus))
 
 ## What are CosmicLinks?
 
