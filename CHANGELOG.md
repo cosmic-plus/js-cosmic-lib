@@ -20,6 +20,12 @@ Versioning](https://semver.org/spec/v2.0.0.html)**. Version syntax is
 backward-compatibility and can be updated to without risk of breakage. For major
 releases, please check this changelog before upgrading.
 
+## 2.2.1 - 2019-11-09
+
+### Fixed
+
+- API: Fix decoding of messages with an '=' sign.
+
 ## 2.2.0 - 2019-10-26
 
 ### Added
