@@ -20,6 +20,19 @@ Versioning](https://semver.org/spec/v2.0.0.html)**. Version syntax is
 backward-compatibility and can be updated to without risk of breakage. For major
 releases, please check this changelog before upgrading.
 
+## 2.3.0 - 2019-11-11
+
+### Added
+
+- Meta: Add `side-frame.js` web bundle. It is now possible to load the SideFrame
+  component independently from
+  <https://cdn.cosmic.plus/cosmic-lib/side-frame.js>. The component is then
+  available as `SideFrame`.
+
+### Changed
+
+- UI: Make SideFrame "close" button bigger.
+
 ## 2.2.1 - 2019-11-09
 
 ### Fixed

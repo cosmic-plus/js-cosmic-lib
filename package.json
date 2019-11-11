@@ -1,6 +1,6 @@
 {
   "name": "cosmic-lib",
-  "version": "2.2.1",
+  "version": "2.3.0",
   "description": "A JavaScript implementation of the CosmicLink protocol for Stellar",
   "author": "MisterTicot <mister.ticot@cosmic.plus>",
   "homepage": "https://cosmic.plus/#view:js-cosmic-lib",
@@ -67,7 +67,7 @@
     "live-server": "^1.2.1",
     "minami": "^1.2.3",
     "node-sass": "^4.13.0",
-    "prettier": "^1.19.0",
+    "prettier": "^1.19.1",
     "webpack": "^4.41.2",
     "webpack-cli": "^3.3.10"
   },
