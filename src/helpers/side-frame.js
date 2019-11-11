@@ -44,10 +44,11 @@ class SideFrame extends Observable {
 
     // Timeout is required for transition to play.
     timeout(0).then(() => this.domNode.style.transform = "none")
-    html.show(this.closeButton.domNode, this.domNode)
+    html.show(this.domNode)
 
     return this.shadow.enable().then(() => {
       this.shadow.onclick = () => this.close()
+      html.show(this.closeButton.domNode)
       this.closeButton.domNode.onclick = () => this.close()
       this.trigger("show")
     })
@@ -113,13 +114,15 @@ SideFrame.style = {
   width: "30em",
   maxWidth: "100%",
   height: "100vh",
-  border: "0.1em solid hsl(240, 10%, 75%)",
+
+  border: 0,
+  borderTop: "1.8em solid hsl(240, 40%, 98%)",
   background: "hsl(240, 40%, 98%)",
   backgroundImage: `url('${cosmicLinkIcon}')`,
   backgroundRepeat: "no-repeat",
   backgroundPosition: "center",
   backgroundSize: "12em 12em",
-  padding: 0,
+
   transition: "transform 0.4s",
   willChange: "transform"
 }
@@ -140,13 +143,14 @@ SideFrame.CloseButton.style = {
   zIndex: 1001,
   top: "0.1em",
   right: "0.1em",
+  width: "29.8em",
+  maxWidth: "100%",
+  lineHeight: "1.6em",
+
   color: "hsl(0, 0%, 40%)",
-  fontSize: "0.9em",
   fontWeight: "bold",
   cursor: "pointer",
-  background: "hsl(0, 0%, 95%)",
-  borderBottomLeftRadius: "0.1em",
-  padding: "0.1em 0.3em"
+  textAlign: "center"
 }
 
 /**
