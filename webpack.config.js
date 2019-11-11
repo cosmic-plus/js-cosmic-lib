@@ -10,6 +10,17 @@ const library = {
   devtool: "source-map"
 }
 
+const SideFrame = {
+  entry: "./es5/helpers/side-frame.js",
+  output: {
+    path: __dirname + "/web",
+    filename: "side-frame.js",
+    library: "SideFrame",
+    libraryTarget: "umd",
+  },
+  devtool: "source-map"
+}
+
 const debug = {
   entry: "./test/debug.js",
   output: {
@@ -21,4 +32,4 @@ const debug = {
   devtool: "source-map"
 }
 
-module.exports = [debug, library]
+module.exports = [debug, library, SideFrame]
