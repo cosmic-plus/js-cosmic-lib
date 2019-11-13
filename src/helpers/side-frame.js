@@ -41,10 +41,12 @@ class SideFrame extends Observable {
 
   show () {
     if (!this.domNode.hidden) return
-
-    // Timeout is required for transition to play.
-    timeout(0).then(() => this.domNode.style.transform = "none")
     html.show(this.domNode)
+
+
+    // That timeout is required for transition to play well.
+    this.setTransition(250, "cubic-bezier(0, 0, 0.2, 1)")
+    timeout(5).then(() => this.domNode.style.transform = "none")
 
     return this.shadow.enable().then(() => {
       this.shadow.onclick = () => this.close()
@@ -56,14 +58,22 @@ class SideFrame extends Observable {
 
   hide () {
     if (this.domNode.hidden) return
-
     html.hide(this.closeButton.domNode)
+
+    this.setTransition(200, "cubic-bezier(0.4, 0, 1, 1)")
     this.domNode.style.transform = "translateX(100%)"
 
     return this.shadow.disable().then(() => {
       html.hide(this.domNode)
       this.trigger("hide")
     })
+  }
+
+  setTransition (delay, ease) {
+    const transition = `transform ${delay}ms ${ease}`
+    this.domNode.style.transition = transition
+    this.shadow.domNode.style.transition = transition
+    this.shadow.delay = delay
   }
 
   close () {
@@ -123,7 +133,6 @@ SideFrame.style = {
   backgroundPosition: "center",
   backgroundSize: "12em 12em",
 
-  transition: "transform 0.4s",
   willChange: "transform"
 }
 
