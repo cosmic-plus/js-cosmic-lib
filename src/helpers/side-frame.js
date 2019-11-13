@@ -126,7 +126,8 @@ SideFrame.style = {
   height: "100vh",
 
   border: 0,
-  borderTop: "1.8em solid hsl(240, 40%, 98%)",
+  borderTop: "2em solid hsl(240, 40%, 98%)",
+  boxShadow: "0px 7px 10px 1px rgba(0, 0, 0, 0.14), 0px 2px 16px 1px rgba(0, 0, 0, 0.12)",
   background: "hsl(240, 40%, 98%)",
   backgroundImage: `url('${cosmicLinkIcon}')`,
   backgroundRepeat: "no-repeat",
@@ -154,7 +155,7 @@ SideFrame.CloseButton.style = {
   right: "0.1em",
   width: "29.8em",
   maxWidth: "100%",
-  lineHeight: "1.6em",
+  lineHeight: "1.8em",
 
   color: "hsl(0, 0%, 40%)",
   fontWeight: "bold",
