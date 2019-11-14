@@ -117,6 +117,7 @@ window.addEventListener("message", event => {
  */
 
 SideFrame.style = {
+  boxSizing: "border-box",
   position: "fixed",
   zIndex: 1000,
   right: 0,
