@@ -255,23 +255,22 @@ a {
 }
 
 main {
-  max-width: 60em;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+  max-width: 80em;
   margin: auto;
 }
 
 .column {
-  max-width: 40em;
-  margin: auto;
-  overflow: hidden;
-}
+  box-sizing: border-box;
+  min-width: 40%;
+  width: 32em;
+  max-width: 90%;
+  margin: 0 auto;
 
-@media (min-width: 80em) {
-  .column {
-    width: 40%;
-    min-width: 30em;
-    max-width: 50em;
-    float: left;
-  }
+  padding: 1%;
+  overflow: hidden;
 }
 
 label {

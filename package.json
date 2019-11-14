@@ -29,7 +29,7 @@
     "set-prod": "sh setenv.sh -p",
     "build-es5": "babel --out-dir es5 src",
     "build-js": "npm run build-es5 && webpack -p",
-    "build-scss": "node-sass style/cosmic-lib.scss -o web -t compressed",
+    "build-scss": "node-sass style/cosmic-lib.scss -o web -t compressed --precision 2",
     "build-css": "npm run build-scss && autoprefixer-cli web/cosmic-lib.css",
     "build-doc": "rm -rf web/doc; jsdoc -c jsdoc.json",
     "build-static": "cp -a static/. web",
