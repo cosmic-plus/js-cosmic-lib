@@ -16,7 +16,7 @@ const SideFrame = {
     path: __dirname + "/web",
     filename: "side-frame.js",
     library: "SideFrame",
-    libraryTarget: "umd",
+    libraryTarget: "umd"
   },
   devtool: "source-map"
 }

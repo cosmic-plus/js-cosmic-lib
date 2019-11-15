@@ -43,7 +43,6 @@ class SideFrame extends Observable {
     if (!this.domNode.hidden) return
     html.show(this.domNode)
 
-
     // That timeout is required for transition to play well.
     this.setTransition(250, "cubic-bezier(0, 0, 0.2, 1)")
     timeout(5).then(() => this.domNode.style.transform = "none")
@@ -128,7 +127,8 @@ SideFrame.style = {
 
   border: 0,
   borderTop: "2em solid hsl(240, 40%, 98%)",
-  boxShadow: "0px 7px 10px 1px rgba(0, 0, 0, 0.14), 0px 2px 16px 1px rgba(0, 0, 0, 0.12)",
+  boxShadow:
+    "0px 7px 10px 1px rgba(0, 0, 0, 0.14), 0px 2px 16px 1px rgba(0, 0, 0, 0.12)",
   background: "hsl(240, 40%, 98%)",
   backgroundImage: `url('${cosmicLinkIcon}')`,
   backgroundRepeat: "no-repeat",
