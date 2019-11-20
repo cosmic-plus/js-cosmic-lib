@@ -122,6 +122,7 @@ SideFrame.style = {
   right: 0,
   top: 0,
   width: "30em",
+  minWidth: "38%",
   maxWidth: "100%",
   height: "100vh",
 
@@ -155,6 +156,7 @@ SideFrame.CloseButton.style = {
   top: "0.1em",
   right: "0.1em",
   width: "29.8em",
+  minWidth: "38%",
   maxWidth: "100%",
   lineHeight: "1.8em",
 
