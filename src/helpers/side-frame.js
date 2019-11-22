@@ -36,6 +36,8 @@ class SideFrame extends Observable {
     this.domNode.style.transform = "translateX(100%)"
 
     html.append(document.body, this.closeButton, this.domNode)
+    this.closeButton.domNode.style.zIndex = +this.getRealZIndex() + 1
+
     this.show()
   }
 
@@ -85,6 +87,12 @@ class SideFrame extends Observable {
       this.trigger("close")
       this.destroy()
     })
+  }
+
+  getRealZIndex () {
+    return document.defaultView
+      .getComputedStyle(this.domNode)
+      .getPropertyValue("z-index")
   }
 }
 
@@ -152,7 +160,6 @@ SideFrame.CloseButton = class CloseButton {
 
 SideFrame.CloseButton.style = {
   position: "fixed",
-  zIndex: 1001,
   top: "0.1em",
   right: "0.1em",
   width: "29.8em",
