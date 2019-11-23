@@ -20,6 +20,17 @@ Versioning](https://semver.org/spec/v2.0.0.html)**. Version syntax is
 backward-compatibility and can be updated to without risk of breakage. For major
 releases, please check this changelog before upgrading.
 
+## 2.4.1 - 2019-11-23
+
+### Fixed
+
+- UI: Give SideFrame a minWidth. This is intended to improve big screens
+  support.
+- UI: Fix the shadow overlay positioning. In some cases, it was not covering
+  fully the window.
+- UI: Have SideFrame `Close` button always ontop. It was not showing up on
+  website where SideFrame z-index was set to be higher than 1000.
+
 ## 2.4.0 - 2019-11-15
 
 ### Changed
