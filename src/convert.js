@@ -36,10 +36,6 @@ convert.transactionToXdr = function (conf, transaction) {
 }
 
 convert.xdrToSep7 = function (conf, xdr, options) {
-  if (conf.locker && !conf.locker.source) {
-    throw new Error("SEP-0007 requires a source account.")
-  }
-
   let sep7 = "web+stellar:tx?xdr="
   sep7 += encodeURIComponent(xdr)
   if (conf.extra.pubkey) {
