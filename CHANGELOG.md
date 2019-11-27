@@ -20,6 +20,13 @@ Versioning](https://semver.org/spec/v2.0.0.html)**. Version syntax is
 backward-compatibility and can be updated to without risk of breakage. For major
 releases, please check this changelog before upgrading.
 
+## 2.5.0 - 2019-11-27
+
+### Changed
+
+- Protocol: Re-introduce source-less SEP7 requests. It's not part of the specs
+  anymore, but some Wallets such as StellarTerm or Lobstr use it anyway.
+
 ## 2.4.1 - 2019-11-23
 
 ### Fixed

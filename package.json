@@ -1,6 +1,6 @@
 {
   "name": "cosmic-lib",
-  "version": "2.4.1",
+  "version": "2.5.0",
   "description": "A JavaScript implementation of the CosmicLink protocol for Stellar",
   "author": "MisterTicot <mister.ticot@cosmic.plus>",
   "homepage": "https://cosmic.plus/#view:js-cosmic-lib",
@@ -62,7 +62,7 @@
     "@babel/plugin-transform-runtime": "^7.7.4",
     "@babel/preset-env": "^7.7.4",
     "autoprefixer-cli": "^1.0.0",
-    "eslint": "^6.7.0",
+    "eslint": "^6.7.1",
     "jsdoc": "^3.6.3",
     "live-server": "^1.2.1",
     "minami": "^1.2.3",
@@ -73,7 +73,7 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.7.4",
-    "@cosmic-plus/base": "^2.4.0",
+    "@cosmic-plus/base": "^2.5.1",
     "@cosmic-plus/domutils": "^2.0.4",
     "@cosmic-plus/jsutils": "^2.0.2",
     "stellar-sdk": "^3.1.2"
