@@ -76,6 +76,6 @@
     "@cosmic-plus/base": "^2.5.1",
     "@cosmic-plus/domutils": "^2.0.4",
     "@cosmic-plus/jsutils": "^2.0.2",
-    "stellar-sdk": "^3.1.2"
+    "stellar-sdk": "^4.0.2"
   }
 }
