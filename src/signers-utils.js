@@ -78,8 +78,11 @@ class SignersUtils {
     }
 
     if (extendFlag) {
-      if (!transaction.hasSigner)
+      if (!transaction.hasSigner) {
+        delete extra.cache.signersUtils.signatures
         Object.assign(transaction, extra.cache.signersUtils)
+        extra.cache.signersUtils.signatures = transaction.signatures
+      }
       return transaction
     } else {
       return extra.cache.signersUtils

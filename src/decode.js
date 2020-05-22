@@ -132,6 +132,17 @@ process.assetsArray = function (conf, assetsList) {
   return strArray.map(entry => decode.asset(conf, entry))
 }
 
+process.authorizeFlag = function (conf, flag) {
+  // Backward compatibility (protocol =< 12)
+  switch (flag) {
+  case "false":
+    return 0
+  case "true":
+    return 1
+  }
+  return Number(flag)
+}
+
 process.boolean = function (conf, string) {
   switch (string) {
   case "true":

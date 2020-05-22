@@ -295,6 +295,10 @@ check.assetsArray = function (conf, assetsArray) {
   if (!isValid) throw new Error("Invalid assets array")
 }
 
+check.authorizeFlag = function (conf, flag) {
+  check.integer(conf, flag, "authorize flag", 0, 3)
+}
+
 check.boolean = function (conf, boolean) {
   if (typeof boolean !== "boolean") {
     status.error(conf, "Invalid boolean: " + boolean, "throw")

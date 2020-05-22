@@ -66,7 +66,10 @@ convert.xdrToSep7 = function (conf, xdr, options) {
 convert.xdrToTransaction = function (conf, xdr, options = {}) {
   const networkPassphrase = resolve.networkPassphrase(conf, options.network)
   const transaction = new StellarSdk.Transaction(xdr, networkPassphrase)
-  if (options.strip === "signatures") transaction.signatures = []
+  if (options.strip === "signatures") {
+    // transaction.signatures can't be replaced.
+    while (transaction.signatures.length) transaction.signatures.pop()
+  }
   return transaction
 }
 

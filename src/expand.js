@@ -94,6 +94,10 @@ expand.assetPath = function (conf, assetPath) {
     return decode.assetPath(conf, assetPath)
 }
 
+expand.authorizeFlag = function (conf, flag) {
+  return decode.authorizeFlag(conf, flag)
+}
+
 expand.buffer = function (conf, buffer) {
   if (!buffer) return ""
   if (buffer instanceof Buffer) return destruct.buffer(conf, buffer)

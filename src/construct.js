@@ -73,13 +73,12 @@ async function makeTransactionBuilder (conf, tdesc) {
   if (tdesc.fee) txOpts.fee = tdesc.fee
   else txOpts.fee = tdesc.operations.length * baseFee
   if (tdesc.memo) txOpts.memo = construct.memo(conf, tdesc.memo)
-  if (tdesc.minTime || tdesc.maxTime) {
-    txOpts.timebounds = { minTime: 0, maxTime: 0 }
-    if (tdesc.minTime)
-      txOpts.timebounds.minTime = construct.date(conf, tdesc.minTime)
-    if (tdesc.maxTime)
-      txOpts.timebounds.maxTime = construct.date(conf, tdesc.maxTime)
-  }
+
+  txOpts.timebounds = { minTime: 0, maxTime: 0 }
+  if (tdesc.minTime)
+    txOpts.timebounds.minTime = construct.date(conf, tdesc.minTime)
+  if (tdesc.maxTime)
+    txOpts.timebounds.maxTime = construct.date(conf, tdesc.maxTime)
 
   const sourceAccount = await resolve.txSourceAccount(
     conf,
@@ -87,7 +86,6 @@ async function makeTransactionBuilder (conf, tdesc) {
     tdesc.sequence
   )
   const builder = new StellarSdk.TransactionBuilder(sourceAccount, txOpts)
-  if (!tdesc.maxTime) builder.setTimeout(StellarSdk.TimeoutInfinite)
 
   /// Check if memo is needed for destination account.
   for (let index in tdesc.operations) {

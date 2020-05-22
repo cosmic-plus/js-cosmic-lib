@@ -47,7 +47,7 @@ destruct.transaction = function (conf, tx, options = {}) {
     if (tx.timeBounds.maxTime)
       tdesc.maxTime = destruct.date(conf, tx.timeBounds.maxTime)
   }
-  tdesc.fee = tx.fee
+  tdesc.fee = Number(tx.fee)
 
   tdesc.operations = tx.operations.map(op => destruct.operation(conf, op))
 
@@ -125,7 +125,7 @@ destruct.buffer = function (conf, buffer) {
 }
 
 destruct.date = function (conf, timestamp) {
-  return new Date(timestamp * 1000).toISOString()
+  return new Date(Number(timestamp) * 1000).toISOString()
 }
 
 destruct.memo = function (conf, sdkMemo) {

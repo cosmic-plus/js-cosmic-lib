@@ -70,16 +70,39 @@ const tests = [
   ["title", "Allow trust"],
   [
     "query",
+    "?type=allowTrust&trustor=" + account1 + "&assetCode=DIA&authorize=0"
+  ],
+  [
+    "query",
+    "?type=allowTrust&trustor=" + account1 + "&assetCode=DIA&authorize=1"
+  ],
+  [
+    "query",
+    "?type=allowTrust&trustor=" + account1 + "&assetCode=DIA&authorize=2"
+  ],
+  [
+    "query",
     "?type=allowTrust&trustor=" + account1 + "&assetCode=DIA&authorize=true",
     {
       loopbackQuery:
-        "?type=allowTrust&trustor=GBWYUHFOHJECKDLFNCPGPVU6XRDJIBT5BYF6VXZEDHWVQRCR4HZVCGPU&assetCode=DIA"
+        "?type=allowTrust&trustor=GBWYUHFOHJECKDLFNCPGPVU6XRDJIBT5BYF6VXZEDHWVQRCR4HZVCGPU&assetCode=DIA&authorize=1"
     }
   ],
-  ["query", "?type=allowTrust&trustor=" + account1 + "&assetCode=DIA"],
   [
     "query",
-    "?type=allowTrust&trustor=" + account1 + "&assetCode=DIA&authorize=false"
+    "?type=allowTrust&trustor=" + account1 + "&assetCode=DIA",
+    {
+      loopbackQuery:
+        "?type=allowTrust&trustor=GBWYUHFOHJECKDLFNCPGPVU6XRDJIBT5BYF6VXZEDHWVQRCR4HZVCGPU&assetCode=DIA&authorize=1"
+    }
+  ],
+  [
+    "query",
+    "?type=allowTrust&trustor=" + account1 + "&assetCode=DIA&authorize=false",
+    {
+      loopbackQuery:
+        "?type=allowTrust&trustor=GBWYUHFOHJECKDLFNCPGPVU6XRDJIBT5BYF6VXZEDHWVQRCR4HZVCGPU&assetCode=DIA&authorize=0"
+    }
   ],
   ["title", "Bump Sequence"],
   ["query", "?type=bumpSequence&bumpTo=999999999"],

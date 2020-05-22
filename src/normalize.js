@@ -91,7 +91,7 @@ normalize.odesc = function (conf, odesc) {
   switch (odesc.type) {
   case "allowTrust":
     /// Allow trust by default.
-    if (odesc.authorize === undefined) odesc.authorize = true
+    if (odesc.authorize === undefined) odesc.authorize = 1
     break
   case "createPassiveOffer":
   case "manageOffer":

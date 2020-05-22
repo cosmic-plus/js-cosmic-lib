@@ -228,7 +228,8 @@ function setTdesc (cosmicLink, type, value, options) {
       delete cosmicLink._xdr
       delete cosmicLink._transaction
     } else if (options.strip === "signatures") {
-      cosmicLink.transaction.signatures = []
+      const signatures = cosmicLink.transaction.signatures
+      while (signatures.length) signatures.pop()
       delete cosmicLink._xdr
     }
   }

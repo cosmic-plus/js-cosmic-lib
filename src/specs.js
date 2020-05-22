@@ -139,7 +139,7 @@ specs.fieldType = {
   asset: "asset",
   assetCode: "string",
   assetIssuer: "address",
-  authorize: "boolean",
+  authorize: "authorizeFlag",
   bumpTo: "sequence",
   buyAmount: "amount",
   buying: "asset",
