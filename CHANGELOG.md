@@ -20,6 +20,12 @@ Versioning](https://semver.org/spec/v2.0.0.html)**. Version syntax is
 backward-compatibility and can be updated to without risk of breakage. For major
 releases, please check this changelog before upgrading.
 
+## 2.8.1 - 2020-05-24
+
+### Fixed
+
+- Logic: Update @cosmic-plus/base to 2.7.0.
+
 ## 2.8.0 - 2020-05-24
 
 ### Changed
