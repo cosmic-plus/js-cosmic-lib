@@ -32,7 +32,15 @@ construct.transaction = async function (conf, tdesc) {
       const operation = await construct.operation(conf, odesc)
       txBuilder.addOperation(operation)
     }
-    return txBuilder.build()
+    const tx = txBuilder.build()
+
+    // Fix timebounds related issues. (Trezor can't sign minTime:0+maxTime:0)
+    if (tx._timeBounds.minTime === "0" && tx._timeBounds.maxTime === "0") {
+      delete tx._timeBounds
+      delete tx._tx._attributes.timeBounds
+    }
+
+    return tx
   } catch (error) {
     if (!conf.errors) {
       console.error(error)
