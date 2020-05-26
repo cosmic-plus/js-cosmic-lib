@@ -135,7 +135,9 @@ function operationMeaning (odesc) {
   case "accountMerge":
     return "Merge account inside {destination}"
   case "allowTrust":
-    if (odesc.authorize) {
+    if (odesc.authorize === 2) {
+      return "Allow liabilities for your asset {assetCode} to {trustor}"
+    } else if (odesc.authorize === 1) {
       return "Allow usage of your asset {assetCode} to {trustor}"
     } else {
       return "Deny usage of your asset {assetCode} to {trustor}"
