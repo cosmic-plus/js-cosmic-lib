@@ -20,6 +20,18 @@ Versioning](https://semver.org/spec/v2.0.0.html)**. Version syntax is
 backward-compatibility and can be updated to without risk of breakage. For major
 releases, please check this changelog before upgrading.
 
+## 2.9.0 - 2020-05-31
+
+### Added
+
+- UI: Add description for the new `authorize` flag.
+
+### Fixed
+
+- Logic: Revert no-timebound handling to pre-5.x behavior. StellarSdk 5.x
+  introduced a new default for timeBounds that leads to failures on Trezor
+  wallets.
+
 ## 2.8.1 - 2020-05-24
 
 ### Fixed
