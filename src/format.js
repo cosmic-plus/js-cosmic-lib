@@ -153,7 +153,7 @@ function operationMeaning (odesc) {
       return "Accept asset {asset}"
     }
   case "createAccount":
-    return "Create account {destination} and send {startingBalance} XLM to it"
+    return "Create account {destination} with {startingBalance} XLM"
   case "createPassiveOffer":
   case "createPassiveSellOffer":
     return "Offer to passively sell {amount} {selling} at {price} {buying} / unit"
