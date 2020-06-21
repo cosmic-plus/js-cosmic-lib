@@ -20,6 +20,12 @@ Versioning](https://semver.org/spec/v2.0.0.html)**. Version syntax is
 backward-compatibility and can be updated to without risk of breakage. For major
 releases, please check this changelog before upgrading.
 
+## 2.10.0 - 2020-06-21
+
+### Changed
+
+- UI: Improve `createAccount` description.
+
 ## 2.9.0 - 2020-05-31
 
 ### Added
