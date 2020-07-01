@@ -125,7 +125,7 @@ parse.rule.xdrUri = function (cosmicLink, xdrUri, options) {
 
   const query = convert.uriToQuery(cosmicLink, xdrUri)
   const temp = query.split("&")
-  const xdr = temp[0].substr(5)
+  const xdr = decodeURIComponent(temp[0].substr(5))
 
   temp.slice(1).forEach(entry => {
     let field = entry.replace(/=.*$/, "")
