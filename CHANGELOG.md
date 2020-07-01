@@ -20,6 +20,12 @@ Versioning](https://semver.org/spec/v2.0.0.html)**. Version syntax is
 backward-compatibility and can be updated to without risk of breakage. For major
 releases, please check this changelog before upgrading.
 
+## 2.10.1 - 2020-07-01
+
+### Fixed
+
+- API: Fix decoding of escaped xdrUri.
+
 ## 2.10.0 - 2020-06-21
 
 ### Changed
