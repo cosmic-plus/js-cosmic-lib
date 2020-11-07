@@ -212,7 +212,7 @@ function operationMeaning (odesc) {
         msg += "Set master key weight at: {masterWeight}{newline}"
       }
     }
-    ["lowThreshold", "medThreshold", "highThreshold"].forEach(field => {
+    ["lowThreshold", "medThreshold", "highThreshold"].forEach((field) => {
       if (odesc[field])
         msg += "Set " + field + " at: {" + field + "}{newline}"
     })
@@ -245,10 +245,10 @@ function operationMeaning (odesc) {
 format.signatures = function (conf, transaction) {
   const signersNode = html.create("div", ".cosmiclib_signersNode")
 
-  signersUtils.for(conf, transaction).then(utils => {
+  signersUtils.for(conf, transaction).then((utils) => {
     if (utils.signersList.length < 2 && !utils.signatures.length) return
 
-    utils.sources.forEach(accountId => {
+    utils.sources.forEach((accountId) => {
       if (accountId !== specs.neutralAccountId) {
         const div = makeAccountSignersNode(conf, utils, accountId)
         html.append(signersNode, div)
@@ -267,7 +267,7 @@ function makeAccountSignersNode (conf, utils, accountId) {
   const listNode = html.create("ul", ".cosmiclib_signers")
   html.append(accountSignersNode, titleNode, listNode)
 
-  utils.signers[accountId].forEach(signer => {
+  utils.signers[accountId].forEach((signer) => {
     const signerNode = format.signer(conf, signer)
     const lineNode = html.create("li", null, signerNode)
     if (utils.hasSigned(signer.key)) {
@@ -357,7 +357,7 @@ format.type = function (conf, type, value) {
 }
 
 /// Provide a format method for each data type.
-specs.types.forEach(type => {
+specs.types.forEach((type) => {
   format[type] = (conf, value) => format.type(conf, type, value)
 })
 

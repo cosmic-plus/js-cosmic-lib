@@ -81,11 +81,11 @@ config.setupNetwork(
 )
 
 config.aliases = aliases.all
-config.addAliases = definitions => aliases.set(config, definitions)
-config.removeAliases = array => aliases.remove(config, array)
+config.addAliases = (definitions) => aliases.set(config, definitions)
+config.removeAliases = (array) => aliases.remove(config, array)
 
 config.clickHandlers = event.defaultClickHandlers
 config.setClickHandler = (fieldType, callback) =>
   event.setClickHandler(config, fieldType, callback)
-config.clearClickHandler = fieldType =>
+config.clearClickHandler = (fieldType) =>
   event.clearClickHandler(config, fieldType)

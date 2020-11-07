@@ -109,7 +109,7 @@ sep7Utils.parseTxLink = function (cosmicLink, sep7, options = {}) {
   const params = query.substr(1).split("&")
   let xdr
 
-  params.forEach(entry => {
+  params.forEach((entry) => {
     const field = entry.replace(/=.*$/, "")
     const value = entry.substr(field.length + 1)
 
@@ -148,7 +148,7 @@ sep7Utils.parsePayLink = function (cosmicLink, sep7, options = {}) {
   }
 
   // Parse
-  params.forEach(entry => {
+  params.forEach((entry) => {
     const field = entry.replace(/=.*$/, "")
     const value = entry.substr(field.length + 1)
 
@@ -187,7 +187,13 @@ sep7Utils.parsePayLink = function (cosmicLink, sep7, options = {}) {
   return { type: "tdesc", value: tdesc, options }
 }
 
-sep7Utils.parseLinkCommons = function (cosmicLink, mode, field, value, options) {
+sep7Utils.parseLinkCommons = function (
+  cosmicLink,
+  mode,
+  field,
+  value,
+  options
+) {
   switch (field) {
   case "network_passphrase":
     options.network = decode.network(cosmicLink, value)

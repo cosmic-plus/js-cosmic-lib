@@ -21,7 +21,7 @@ normalize.tdesc = function (conf, tdesc) {
   if (!tdesc.operations) tdesc.operations = []
 
   if (tdesc.fee === 100 * tdesc.operations.length) delete tdesc.fee
-  dateFields.forEach(field => {
+  dateFields.forEach((field) => {
     if (tdesc[field]) {
       tdesc[field] = normalize.date(conf, tdesc[field])
       if (tdesc[field] === "1970") delete tdesc[field]

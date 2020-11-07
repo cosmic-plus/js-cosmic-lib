@@ -68,7 +68,7 @@ parse.dispatch = function (cosmicLink, value = "?", options = {}) {
 
   // Asynchronously check SEP-0007 link.
   if (cosmicLink.extra.originDomain) {
-    cosmicLink.verifySep7().catch(error => {
+    cosmicLink.verifySep7().catch((error) => {
       status.error(cosmicLink, error.message)
       status.fail(cosmicLink, "Invalid SEP-0007 link")
     })
@@ -127,7 +127,7 @@ parse.rule.xdrUri = function (cosmicLink, xdrUri, options) {
   const temp = query.split("&")
   const xdr = decodeURIComponent(temp[0].substr(5))
 
-  temp.slice(1).forEach(entry => {
+  temp.slice(1).forEach((entry) => {
     let field = entry.replace(/=.*$/, "")
     let value = entry.substr(field.length + 1)
 

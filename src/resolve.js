@@ -262,7 +262,7 @@ resolve.txSources = function (conf, transaction) {
   const array = extra.cache.txSources = [transaction.source]
   for (let index in transaction.operations) {
     const source = transaction.operations[index].source
-    if (source && !array.find(a => a === source)) array.push(source)
+    if (source && !array.find((a) => a === source)) array.push(source)
   }
 
   return array
@@ -292,7 +292,7 @@ resolve.txSigners = async function (conf, transaction) {
     const source = txSources[index]
     const account = await resolveTxSource(extra, source)
     if (!signers[account.id]) {
-      signers[account.id] = account.signers.filter(signer => {
+      signers[account.id] = account.signers.filter((signer) => {
         return signer.type !== "preauthTx"
       })
     }
@@ -327,8 +327,8 @@ resolve.txSignersList = async function (conf, transaction) {
 function signersTableToSignersList (signersTable) {
   const array = []
   for (let accountId in signersTable) {
-    signersTable[accountId].forEach(signer => {
-      if (!array.find(key => key === signer.key)) array.push(signer.key)
+    signersTable[accountId].forEach((signer) => {
+      if (!array.find((key) => key === signer.key)) array.push(signer.key)
     })
   }
   return array

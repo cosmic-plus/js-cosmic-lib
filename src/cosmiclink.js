@@ -587,7 +587,7 @@ function initCosmicLink (cosmicLink, transaction, options = {}) {
   checkLock(cosmicLink)
 
   /// Reset object in case of reparse.
-  formatsFields.forEach(type => delete cosmicLink[type])
+  formatsFields.forEach((type) => delete cosmicLink[type])
   cosmicLink.page = cosmicLink.page || options.page || config.page
   /**
    * The status of a CosmicLink. It becomes non-null in case of failure.

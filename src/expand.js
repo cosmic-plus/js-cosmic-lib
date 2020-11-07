@@ -31,7 +31,7 @@ expand.tdesc = function (conf, tdesc) {
     else tdesc[field] = expand.field(conf, field, tdesc[field])
   }
   if (tdesc.operations)
-    tdesc.operations.forEach(odesc => expand.odesc(conf, odesc))
+    tdesc.operations.forEach((odesc) => expand.odesc(conf, odesc))
   normalize.tdesc(conf, tdesc)
   return tdesc
 }
@@ -89,7 +89,7 @@ expand.asset = function (conf, asset) {
 
 expand.assetPath = function (conf, assetPath) {
   if (Array.isArray(assetPath))
-    return assetPath.map(asset => expand.asset(conf, asset))
+    return assetPath.map((asset) => expand.asset(conf, asset))
   else if (typeof assetPath === "string")
     return decode.assetPath(conf, assetPath)
 }
@@ -142,7 +142,7 @@ expand.string = function (conf, string) {
  * Provide dummy aliases for every other type for convenience & backward
  * compatibility.
  */
-specs.types.forEach(type => {
+specs.types.forEach((type) => {
   if (!exports[type]) {
     exports[type] = (conf, value) => {
       if (typeof value === "number") return value + ""

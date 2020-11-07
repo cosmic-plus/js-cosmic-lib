@@ -98,7 +98,7 @@ status.makeHtmlNode = function (conf) {
   const errorsNode = html.create("ul", ".cosmiclib_errors")
   html.append(statusNode, errorsNode)
   if (conf.errors) {
-    conf.errors.forEach(error => {
+    conf.errors.forEach((error) => {
       const errorLine = html.create("li", null, error)
       html.append(errorsNode, errorLine)
     })

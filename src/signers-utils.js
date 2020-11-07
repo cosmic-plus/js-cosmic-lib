@@ -110,7 +110,7 @@ const utilities = {}
  * @return {boolean}
  */
 utilities.hasSigner = function (accountId) {
-  return this.signersList.find(key => key === accountId)
+  return this.signersList.find((key) => key === accountId)
 }
 
 /**
@@ -127,7 +127,7 @@ utilities.hasSigned = function (accountId) {
   if (accountId.substr(0, 1) === "G") {
     const keypair = StellarSdk.Keypair.fromPublicKey(accountId)
     const txHash = this._cosmicplus.cache.txHash
-    return !!this.signatures.find(entry =>
+    return !!this.signatures.find((entry) =>
       keypair.verify(txHash, entry.signature())
     )
   }

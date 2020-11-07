@@ -42,7 +42,7 @@ specs.fieldDesc = {
  * @return {boolean}
  */
 specs.isTransactionField = function (field) {
-  return specs.transactionOptionalFields.find(name => name === field)
+  return specs.transactionOptionalFields.find((name) => name === field)
 }
 
 /**
@@ -128,7 +128,7 @@ for (let field in specs.operationMandatoryFields) {
  * @return {boolean}
  */
 specs.isOperationField = function (operation, field) {
-  return specs.operationFields[operation].find(name => name === field)
+  return specs.operationFields[operation].find((name) => name === field)
 }
 
 /**
@@ -196,7 +196,7 @@ specs.fieldType = {
 specs.types = []
 for (let field in specs.fieldType) {
   const type = specs.fieldType[field]
-  specs.types.find(entry => entry === type) || specs.types.push(type)
+  specs.types.find((entry) => entry === type) || specs.types.push(type)
 }
 
 /**

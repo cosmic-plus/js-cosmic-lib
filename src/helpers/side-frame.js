@@ -100,7 +100,7 @@ class SideFrame extends Observable {
  * Event
  */
 
-window.addEventListener("message", event => {
+window.addEventListener("message", (event) => {
   const frameWindow =
     SideFrame.current && SideFrame.current.domNode.contentWindow
 

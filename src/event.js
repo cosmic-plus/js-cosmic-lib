@@ -87,5 +87,5 @@ event.defaultClickHandlers = {
       html.copyString(event.value)
     }
   },
-  id: event => html.copyString(event.value)
+  id: (event) => html.copyString(event.value)
 }

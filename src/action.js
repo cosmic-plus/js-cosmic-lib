@@ -152,7 +152,7 @@ action.sign = async function (cosmicLink, ...keypairsOrPreimage) {
   }
 
   /// Update other formats.
-  ["_query", "_xdr", "_sep7"].forEach(format => delete cosmicLink[format])
+  ["_query", "_xdr", "_sep7"].forEach((format) => delete cosmicLink[format])
   updateSignersNode(cosmicLink)
 
   if (!allFine) throw new Error("Some signers where invalid")
@@ -229,7 +229,7 @@ function sendToStellarGuard (cosmicLink) {
       xdr: cosmicLink.xdr,
       callback: cosmicLink.callback
     })
-    .then(result => result.data)
+    .then((result) => result.data)
 }
 
 const STELLARGUARD_PUBKEY =

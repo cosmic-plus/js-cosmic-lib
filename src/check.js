@@ -54,7 +54,7 @@ check.tdesc = function (conf, tdesc) {
     status.error(conf, "Too much operations (max 100)")
   }
 
-  tdesc.operations.forEach(odesc => {
+  tdesc.operations.forEach((odesc) => {
     try {
       check.odesc(conf, odesc)
     } catch (e) {
@@ -97,7 +97,7 @@ check.odesc = function (conf, odesc) {
     }
   }
 
-  specs.operationMandatoryFields[odesc.type].forEach(field => {
+  specs.operationMandatoryFields[odesc.type].forEach((field) => {
     if (odesc[field] === undefined) {
       isValid = false
       const error = new Error("Missing mandatory field: " + field)
@@ -118,7 +118,7 @@ check.odesc = function (conf, odesc) {
  */
 check.txField = function (conf, field, value) {
   if (field === "operations") return
-  if (!specs.transactionOptionalFields.find(name => name === field)) {
+  if (!specs.transactionOptionalFields.find((name) => name === field)) {
     status.error(conf, "Invalid transaction field: " + field, "throw")
   }
   check.field(conf, field, value)
@@ -186,7 +186,7 @@ check.field = function (conf, field, value) {
  * @param {string} value
  */
 check.type = function (conf, type, value) {
-  if (!specs.types.find(entry => entry === type)) {
+  if (!specs.types.find((entry) => entry === type)) {
     throw new Error("Invalid type: " + type)
   }
   return check[type](conf, value)
@@ -404,6 +404,6 @@ check.weight = function (conf, weight) {
  * Provide dummy aliases for every other type for convenience & backward
  * compatibility.
  */
-specs.types.forEach(type => {
+specs.types.forEach((type) => {
   if (!exports[type]) exports[type] = (conf, value) => value
 })

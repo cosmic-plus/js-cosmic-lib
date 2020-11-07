@@ -79,7 +79,7 @@ decode.query = function (conf, query = "?") {
 
   tdesc.operations = operations
   normalize.tdesc(conf, tdesc)
-  tdesc.operations.forEach(odesc => normalize.odesc(conf, odesc))
+  tdesc.operations.forEach((odesc) => normalize.odesc(conf, odesc))
   check.tdesc(conf, tdesc)
   return tdesc
 }
@@ -129,7 +129,7 @@ process.asset = function (conf, asset) {
 
 process.assetsArray = function (conf, assetsList) {
   const strArray = assetsList.split(",")
-  return strArray.map(entry => decode.asset(conf, entry))
+  return strArray.map((entry) => decode.asset(conf, entry))
 }
 
 process.authorizeFlag = function (conf, flag) {
@@ -216,6 +216,6 @@ process.network = process.string
  * Provide dummy aliases for every other type for convenience & backward
  * compatibility.
  */
-specs.types.forEach(type => {
+specs.types.forEach((type) => {
   exports[type] = (conf, value) => decode.type(conf, type, value)
 })

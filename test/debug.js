@@ -413,7 +413,7 @@ function makeNav () {
   let count = 0
   let queryNum = 0
 
-  tests.forEach(entry => {
+  tests.forEach((entry) => {
     if (entry[0] === "bigTitle") {
       if (count) summary[count].queryNum = queryNum
       count++

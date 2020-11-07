@@ -212,6 +212,6 @@ construct.signer = async function (conf, signer) {
  * Provide dummy aliases for every other type for convenience & backward
  * compatibility.
  */
-specs.types.forEach(type => {
+specs.types.forEach((type) => {
   if (!exports[type]) exports[type] = (conf, value) => value
 })

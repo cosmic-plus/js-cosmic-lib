@@ -49,7 +49,7 @@ destruct.transaction = function (conf, tx, options = {}) {
   }
   tdesc.fee = Number(tx.fee)
 
-  tdesc.operations = tx.operations.map(op => destruct.operation(conf, op))
+  tdesc.operations = tx.operations.map((op) => destruct.operation(conf, op))
 
   normalize.tdesc(conf, tdesc)
   return tdesc
@@ -106,7 +106,7 @@ destruct.asset = function (conf, asset) {
 }
 
 destruct.assetPath = function (conf, assetPath) {
-  return assetPath.map(asset => destruct.asset(asset))
+  return assetPath.map((asset) => destruct.asset(asset))
 }
 
 destruct.amount = function (conf, amount) {
@@ -169,6 +169,6 @@ destruct.signer = function (conf, sdkSigner) {
  * Provide dummy aliases for every other type for convenience & backward
  * compatibility.
  */
-specs.types.forEach(type => {
+specs.types.forEach((type) => {
   if (!exports[type]) exports[type] = (conf, value) => value
 })

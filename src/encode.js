@@ -26,12 +26,12 @@ encode.query = function (conf, tdesc) {
   }
   let query = "?type=" + command
 
-  specs.transactionOptionalFields.forEach(field => {
+  specs.transactionOptionalFields.forEach((field) => {
     if (tdesc[field] !== undefined)
       query += encode.field(conf, field, tdesc[field])
   })
 
-  tdesc.operations.forEach(odesc => {
+  tdesc.operations.forEach((odesc) => {
     if (command === "transaction") query += "&operation=" + odesc.type
     for (let field in odesc) {
       if (field === "type") continue
@@ -103,7 +103,7 @@ process.asset = function (conf, asset) {
 }
 
 process.assetsArray = function (conf, assetsArray) {
-  return assetsArray.map(asset => encode.asset(conf, asset)).toString()
+  return assetsArray.map((asset) => encode.asset(conf, asset)).toString()
 }
 
 process.boolean = function (conf, boolean) {
@@ -155,6 +155,6 @@ process.url = function (conf, url) {
  * Provide dummy aliases for every other type for convenience & backward
  * compatibility.
  */
-specs.types.forEach(type => {
+specs.types.forEach((type) => {
   exports[type] = (conf, value) => encode.type(conf, type, value)
 })
