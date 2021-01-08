@@ -4,7 +4,7 @@
   <meta name="viewport" content="width=device-width">
   <meta http-equiv="Content-Security-Policy" content="
     default-src 'none';
-    script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net;
+    script-src 'unsafe-inline' 'unsafe-eval' 'self' 'unsafe-inline' https://cdn.jsdelivr.net;
     style-src 'self' 'unsafe-inline' https://necolas.github.io;
     img-src 'self' data:;
     frame-src *;
@@ -378,7 +378,7 @@ input, textarea {
   <footer>
   </footer>
 
-  <script src="https://cdn.jsdelivr.net/gh/stellar/bower-js-stellar-sdk@5.x/stellar-sdk.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/stellar/bower-js-stellar-sdk@7.x/stellar-sdk.min.js"></script>
   <script>console.log(StellarSdk)</script>
   <script src="cosmic-lib.js"></script>
   <script>console.log(cosmicLib)</script>
