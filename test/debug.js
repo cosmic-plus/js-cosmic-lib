@@ -157,7 +157,7 @@ const tests = [
       + "&buyAmount=500&price=1:50",
     {
       loopbackQuery:
-        "?type=manageBuyOffer&selling=ETH:GBDEVU63Y6NTHJQQZIKVTC23NWLQVP3WJ2RI2OTSJTNYOIGICST6DUXR&buying=CNY:admin*ripplefox.com&buyAmount=500&price=0.02"
+        "?type=manageBuyOffer&selling=ETH:GBDEVU63Y6NTHJQQZIKVTC23NWLQVP3WJ2RI2OTSJTNYOIGICST6DUXR&buying=GILS:gils*cosmic.plus&buyAmount=500&price=0.02"
     }
   ],
   [
@@ -169,7 +169,7 @@ const tests = [
       + "&buyAmount=500&price=1:25&offerId=12345",
     {
       loopbackQuery:
-        "?type=manageBuyOffer&selling=CNY:admin*ripplefox.com&buying=ETH:GBDEVU63Y6NTHJQQZIKVTC23NWLQVP3WJ2RI2OTSJTNYOIGICST6DUXR&buyAmount=500&price=0.04&offerId=12345"
+        "?type=manageBuyOffer&selling=GILS:gils*cosmic.plus&buying=ETH:GBDEVU63Y6NTHJQQZIKVTC23NWLQVP3WJ2RI2OTSJTNYOIGICST6DUXR&buyAmount=500&price=0.04&offerId=12345"
     }
   ],
   [
@@ -193,7 +193,7 @@ const tests = [
       + "&amount=500&price=1:50",
     {
       loopbackQuery:
-        "?type=manageSellOffer&selling=ETH:GBDEVU63Y6NTHJQQZIKVTC23NWLQVP3WJ2RI2OTSJTNYOIGICST6DUXR&buying=CNY:admin*ripplefox.com&amount=500&price=0.02"
+        "?type=manageSellOffer&selling=ETH:GBDEVU63Y6NTHJQQZIKVTC23NWLQVP3WJ2RI2OTSJTNYOIGICST6DUXR&buying=GILS:gils*cosmic.plus&amount=500&price=0.02"
     }
   ],
   [
@@ -205,7 +205,7 @@ const tests = [
       + "&amount=500&price=1:25&offerId=12345",
     {
       loopbackQuery:
-        "?type=manageSellOffer&selling=CNY:admin*ripplefox.com&buying=ETH:GBDEVU63Y6NTHJQQZIKVTC23NWLQVP3WJ2RI2OTSJTNYOIGICST6DUXR&amount=500&price=0.04&offerId=12345"
+        "?type=manageSellOffer&selling=GILS:gils*cosmic.plus&buying=ETH:GBDEVU63Y6NTHJQQZIKVTC23NWLQVP3WJ2RI2OTSJTNYOIGICST6DUXR&amount=500&price=0.04&offerId=12345"
     }
   ],
   [
@@ -213,7 +213,7 @@ const tests = [
     "?type=manageSellOffer&amount=0&offerId=12345",
     {
       loopbackQuery:
-        "?type=manageSellOffer&buying=XLM:GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWHF&amount=0&price=1&offerId=12345"
+        "?type=manageSellOffer&amount=0&offerId=12345&buying=XLM:GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWHF&price=1"
     }
   ],
   ["title", "Manage sell offer"],
@@ -227,7 +227,7 @@ const tests = [
       + "&amount=500&price=1:50",
     {
       loopbackQuery:
-        "?type=manageSellOffer&selling=ETH:GBDEVU63Y6NTHJQQZIKVTC23NWLQVP3WJ2RI2OTSJTNYOIGICST6DUXR&buying=CNY:admin*ripplefox.com&amount=500&price=0.02"
+        "?type=manageSellOffer&selling=ETH:GBDEVU63Y6NTHJQQZIKVTC23NWLQVP3WJ2RI2OTSJTNYOIGICST6DUXR&buying=GILS:gils*cosmic.plus&amount=500&price=0.02"
     }
   ],
   [
@@ -239,7 +239,7 @@ const tests = [
       + "&amount=500&price=1:25&offerId=12345",
     {
       loopbackQuery:
-        "?type=manageSellOffer&selling=CNY:admin*ripplefox.com&buying=ETH:GBDEVU63Y6NTHJQQZIKVTC23NWLQVP3WJ2RI2OTSJTNYOIGICST6DUXR&amount=500&price=0.04&offerId=12345"
+        "?type=manageSellOffer&selling=GILS:gils*cosmic.plus&buying=ETH:GBDEVU63Y6NTHJQQZIKVTC23NWLQVP3WJ2RI2OTSJTNYOIGICST6DUXR&amount=500&price=0.04&offerId=12345"
     }
   ],
   ["query", "?type=manageSellOffer&amount=0&offerId=12345"],
@@ -537,7 +537,7 @@ async function checkCosmicLink (cosmicLink, options) {
     conversionCheck = false
     append(html.create("span", ".debug_error", "Inconsistent Query conversion"))
     append(html.create("textarea", null, initialQuery))
-    append(html.create("textarea", null, query))
+    append(html.create("textarea", null, options.loopbackQuery || query))
   }
 
   const xdr = await testXdrConsistency(cosmicLink.xdr, linkOpts)
@@ -577,8 +577,8 @@ function testQueryConsistency (
 ) {
   const loopback = new CosmicLink(cosmicLink.xdr, options)
   loopback._query = loopback.query.replace(
-    "GAREELUB43IRHWEASCFBLKHURCGMHE5IF6XSE7EXDLACYHGRHM43RFOX",
-    "admin*ripplefox.com"
+    "GBL4RZXIRGOVCA3NQIMNTPB4SJ4VUM6PUWNVFIV7U63GILTOAGAPDOWN",
+    "gils*cosmic.plus"
   )
   if (!expectedLoopback) expectedLoopback = query
   if (expectedLoopback !== loopback.query) return loopback.query
