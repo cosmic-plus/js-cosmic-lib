@@ -9,6 +9,6 @@
   "main": "cosmic-lib.js",
   "ignore": [ ".*", "package-lock.json", "doc" ],
   "dependencies": {
-    "stellar-sdk": "^7.0.0"
+    "stellar-sdk": "^8.0.0"
   }
 }
