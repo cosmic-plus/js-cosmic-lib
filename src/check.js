@@ -299,6 +299,12 @@ check.authorizeFlag = function (conf, flag) {
   check.integer(conf, flag, "authorize flag", 0, 3)
 }
 
+check.balanceId = function (conf, balanceId) {
+  if (balanceId.length !== 72 || !balanceId.match(/^[0-9a-f]*$/)) {
+    status.error(conf, "Invalid balanceId: " + balanceId, "throw")
+  }
+}
+
 check.boolean = function (conf, boolean) {
   if (typeof boolean !== "boolean") {
     status.error(conf, "Invalid boolean: " + boolean, "throw")

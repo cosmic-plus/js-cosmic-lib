@@ -152,6 +152,8 @@ function operationMeaning (odesc) {
     } else {
       return "Accept asset {asset}"
     }
+  case "claimClaimableBalance":
+    return "Claim claimable balance {balanceId}"
   case "createAccount":
     return "Create account {destination} with {startingBalance} XLM"
   case "createPassiveOffer":
@@ -455,6 +457,8 @@ process.assetsArray = function (conf, assetsArray) {
 
   return assetsArrayNode
 }
+
+process.balanceId = process.hash
 
 process.buffer = function (conf, object) {
   if (object.type === "base64") return format.hash(conf, object.value)

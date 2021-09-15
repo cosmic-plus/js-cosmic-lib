@@ -32,6 +32,9 @@ Optional: &source={address}
 ...?type=changeTrust&asset={assetCode}:{assetIssuer}
 Optional: &limit={integer}&source={address}
 
+...?type=claimClaimableBalance&balanceId={id}
+Optional: &source={address}
+
 ...?type=createAccount&destination={address}&initialBalance={amount}
 Optional: &source={address}
 

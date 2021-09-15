@@ -15,6 +15,8 @@ const asset1 = "ETH:GBDEVU63Y6NTHJQQZIKVTC23NWLQVP3WJ2RI2OTSJTNYOIGICST6DUXR"
 const asset2 = "GILS:gils*cosmic.plus"
 const asset3 = "EURT:GAP5LETOV6YIE62YAM56STDANPRDO7ZFDBGSNHJQIYGGKSMOZAHOOS2S"
 const asset4 = "XRP:GBXRPL45NPHCVMFFAYZVUVFFVKSIZ362ZXFP7I2ETNQ3QKZMFLPRDTD5"
+const balanceId =
+  "00000000178826fbfe339e1f5c53417c6fedfe2c05e8bec14303143ec46b38981b09c3f9"
 const shasum =
   "4a3ec3730504983f960fb2df35a1d68d640ff55d151fa3128ca0fc707f86882e"
 const txsum = "3389e9f0f1a65f19736cacf544c2e825313e8447f569233bb8db39aa607c1234"
@@ -137,6 +139,8 @@ const tests = [
       + asset1
       + "&amount=10&price=50"
   ],
+  ["title", "Claim claimable balance"],
+  ["query", "?type=claimClaimableBalance&balanceId=" + balanceId],
   ["title", "Inflation"],
   ["query", "?type=inflation"],
   ["title", "Manage data"],

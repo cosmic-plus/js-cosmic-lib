@@ -174,6 +174,16 @@ Optional fields:
   `asset` anymore.
 * &source={address}
 
+#### claimClaimableBalance
+
+Claim claimable balance `balanceId`
+
+> ...?claimclaimableBalance&balanceId={id}
+
+Optional fields:
+
+* &source={address}
+
 
 #### createAccount
 
